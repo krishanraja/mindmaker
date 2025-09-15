@@ -1,13 +1,38 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Hero from "@/components/Hero";
+import StatsSection from "@/components/StatsSection";
+import ProblemSection from "@/components/ProblemSection";
+import MethodologySection from "@/components/MethodologySection";
+import PathwaysSection from "@/components/PathwaysSection";
+import CTASection from "@/components/CTASection";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main className="min-h-screen">
+      {/* SEO-optimized structure */}
+      <header>
+        <Hero />
+      </header>
+      
+      <section aria-label="Proven Results">
+        <StatsSection />
+      </section>
+      
+      <section aria-label="The Problem">
+        <ProblemSection />
+      </section>
+      
+      <section aria-label="Our Methodology">
+        <MethodologySection />
+      </section>
+      
+      <section aria-label="Transformation Pathways">
+        <PathwaysSection />
+      </section>
+      
+      <footer>
+        <CTASection />
+      </footer>
+    </main>
   );
 };
 
