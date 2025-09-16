@@ -1,44 +1,77 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Download, FileText } from "lucide-react";
-import heroBackground from "@/assets/hero-background.jpg";
+import { ArrowRight, Sparkles, Target, TrendingUp } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={heroBackground}
-          alt="AI transformation visualization"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/50" />
-      </div>
-      
+    <section className="hero-clouds min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 text-center text-white">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-6xl md:text-8xl font-black leading-tight mb-8">
-            AI Literacy to{" "}
-            <span className="block text-accent-glow">Strategy Excellence</span>
+      <div className="container-width relative z-10 text-center text-white">
+        <div className="max-w-6xl mx-auto fade-in-up">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
+            <Sparkles size={16} className="text-white" />
+            <span className="text-sm font-medium">Stop waiting for AI to happen to you</span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="display-xl mb-6 leading-tight">
+            Transform Your Business with
+            <span className="block bg-gradient-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent">
+              Strategic AI Implementation
+            </span>
           </h1>
           
-          <p className="text-xl md:text-2xl leading-relaxed mb-12 max-w-4xl mx-auto opacity-90">
-            Bridge the dangerous gap between AI hype and practical enterprise implementation. 
-            Transform your leadership team from <strong>AI-confused to AI-confident</strong> through our proven 
-            literacy-first methodology that delivers <strong className="text-accent-glow">measurable competitive advantage</strong>.
+          {/* Subheadline */}
+          <p className="body-lg mb-12 max-w-4xl mx-auto opacity-90 leading-relaxed">
+            Break free from AI pilot purgatory. Our proven 4-phase methodology has delivered 
+            <strong className="text-white"> 3-5x revenue growth</strong> for 100+ enterprises. 
+            Move from AI hype to measurable competitive advantage.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Button variant="cta" size="xl" className="group">
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
+            <Button 
+              size="lg" 
+              className="btn-modern bg-white text-purple-600 hover:bg-white/90 font-semibold px-8 py-4 text-lg group"
+            >
               Get Your AI Readiness Assessment
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             
-            <Button variant="enterprise" size="xl" className="group bg-white/10 text-white border-white/20 hover:bg-white/20">
-              <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
-              Download CEO AI Strategy Playbook
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="btn-modern border-white/30 text-white hover:bg-white/10 font-medium px-8 py-4 text-lg"
+            >
+              Watch Success Stories
             </Button>
+          </div>
+
+          {/* Proof Points */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+            <div className="card-modern text-center p-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-2xl font-bold text-white mb-2">100+</div>
+              <div className="text-white/80 text-sm">Enterprises Transformed</div>
+            </div>
+            
+            <div className="card-modern text-center p-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
+                <TrendingUp className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-2xl font-bold text-white mb-2">3-5x</div>
+              <div className="text-white/80 text-sm">Revenue Growth</div>
+            </div>
+            
+            <div className="card-modern text-center p-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-2xl font-bold text-white mb-2">90%</div>
+              <div className="text-white/80 text-sm">Success Rate</div>
+            </div>
           </div>
         </div>
       </div>

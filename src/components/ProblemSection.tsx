@@ -1,61 +1,73 @@
+import { AlertTriangle, Clock, DollarSign, Users } from "lucide-react";
+
 const ProblemSection = () => {
   const problems = [
     {
-      stat: "88%",
-      description: "of enterprises fail to scale AI beyond pilots due to leadership AI illiteracy"
+      stat: "73%",
+      description: "of executives admit they don't understand AI well enough to make strategic decisions",
+      icon: Users,
     },
     {
-      stat: "74%", 
-      description: "of companies see no measurable value from AI investments without strategic frameworks"
+      stat: "89%", 
+      description: "of AI pilots never reach production due to lack of strategic direction",
+      icon: Clock,
     },
     {
-      stat: "67%",
-      description: "of executive teams lack confidence to make strategic AI decisions"
+      stat: "$2.3M",
+      description: "average cost of failed AI initiatives per enterprise annually",
+      icon: DollarSign,
     },
     {
-      stat: "Only 26%",
-      description: "can escape pilot purgatory and achieve AI production scale"
-    }
+      stat: "95%",
+      description: "of leaders fear being left behind by AI-powered competitors",
+      icon: AlertTriangle,
+    },
   ];
 
   return (
-    <section className="py-20 bg-muted/50">
-      <div className="container mx-auto px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="section-title text-primary mb-6">
-              The Critical Enterprise Challenge
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Team AI literacy is the missing piece in enterprise AI adoption, whilst AI product 
-              strategy usually goes missing - creating opportunity for emerging competitors to displace incumbents.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            {problems.map((problem, index) => (
-              <div 
-                key={index} 
-                className="bg-card rounded-xl p-8 shadow-soft hover:shadow-strong transition-all duration-300 group"
-              >
-                <div className="text-center">
-                  <div className="stat-number text-destructive mb-4 group-hover:scale-105 transition-transform">
-                    {problem.stat}
-                  </div>
-                  <p className="text-muted-foreground text-lg">
-                    {problem.description}
-                  </p>
-                </div>
+    <section className="section-padding bg-muted/30">
+      <div className="container-width">
+        <div className="text-center mb-16 fade-in-up">
+          <h2 className="display-lg mb-6">
+            The Critical{" "}
+            <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+              Enterprise Challenge
+            </span>
+          </h2>
+          <p className="body-lg text-muted-foreground max-w-3xl mx-auto">
+            While competitors race ahead with AI, most enterprises remain stuck in pilot purgatory, 
+            burning resources without measurable results.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          {problems.map((problem, index) => (
+            <div key={index} className="card-modern text-center p-6 fade-in-up" style={{animationDelay: `${index * 0.1}s`}}>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl mb-6">
+                <problem.icon className="h-8 w-8 text-white" />
               </div>
-            ))}
-          </div>
+              
+              <div className="text-3xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent mb-4">
+                {problem.stat}
+              </div>
+              
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {problem.description}
+              </p>
+            </div>
+          ))}
+        </div>
 
-          <div className="bg-primary/10 rounded-2xl p-8 md:p-12 text-center">
-            <blockquote className="text-2xl md:text-3xl font-semibold text-primary mb-6">
-              "Most worker talent fears AI extinction, not redundancy - but managers who understand AI will replace those who don't."
-            </blockquote>
-            <p className="text-xl text-muted-foreground">
-              Transform your leadership team's AI decision-making capabilities before competitors transform your market.
+        {/* Quote Section */}
+        <div className="card-modern p-8 max-w-4xl mx-auto text-center fade-in-up">
+          <blockquote className="body-lg italic text-muted-foreground mb-6">
+            "The gap between AI hype and practical implementation is costing enterprises millions. 
+            Without proper literacy and strategic direction, even the best AI tools become expensive experiments."
+          </blockquote>
+          
+          <div className="text-center">
+            <p className="font-semibold text-foreground">
+              That's why we created the AI Mindmaker methodology - to bridge this dangerous gap.
             </p>
           </div>
         </div>
