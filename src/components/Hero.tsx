@@ -7,7 +7,7 @@ const Hero = () => {
     <section className="hero-clouds min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Content */}
       <div className="container-width relative z-10 text-center text-white">
-        <div className="max-w-6xl mx-auto fade-in-up">
+        <div className="max-w-6xl mx-auto fade-in-up pt-8 md:pt-12">
           {/* Logo */}
           <div className="mb-8">
             <img 
