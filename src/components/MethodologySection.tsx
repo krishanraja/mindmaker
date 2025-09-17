@@ -1,67 +1,67 @@
 import { Button } from "@/components/ui/button";
-import { Search, Target, Rocket, TrendingUp, ArrowRight } from "lucide-react";
+import { Brain, BookOpen, Lightbulb, Zap, ArrowRight } from "lucide-react";
 
 const MethodologySection = () => {
 const phases = [
   {
     number: "01",
-    title: "LEARN", 
-    subtitle: "Discovery Sprint",
-    goal: "Comprehensive diagnostic across team capabilities, tech stack, and objectives",
-    description: "We assess your current AI literacy levels, technology infrastructure, and strategic objectives to identify gaps and opportunities for AI-driven competitive advantage.",
+    title: "ASSESS", 
+    subtitle: "Cognitive Baseline",
+    goal: "Comprehensive evaluation of current AI mental models and learning readiness",
+    description: "We evaluate your existing AI understanding, identify cognitive gaps, and establish personalized learning pathways based on your team's unique knowledge foundation and learning objectives.",
     benefits: [
-      "Team AI literacy assessment",
-      "Technology stack evaluation",
-      "Market position analysis",
-      "Strategic AI opportunity mapping"
+      "AI literacy baseline assessment",
+      "Cognitive gap analysis",
+      "Learning style evaluation",
+      "Personalized pathway design"
     ],
-    icon: Search,
-    cta: "Start Learning Sprint"
+    icon: Brain,
+    cta: "Begin Assessment"
   },
   {
     number: "02", 
-    title: "DECIDE",
-    subtitle: "Product Strategy",
-    goal: "AI + data-led product planning aligned with corporate revenue strategy",
-    description: "Transform discovery insights into concrete AI product strategies that deliver measurable business outcomes and sustainable competitive advantages.",
+    title: "ABSORB",
+    subtitle: "Deep Learning",
+    goal: "Structured knowledge acquisition of AI reasoning patterns and frameworks",
+    description: "Immerse in carefully curated learning experiences that build foundational AI literacy through interactive sessions, case studies, and hands-on exploration of AI thinking patterns.",
     benefits: [
-      "AI-first product roadmap",
-      "Revenue-aligned strategy framework",
-      "Competitive differentiation blueprint", 
-      "Investment prioritization matrix"
+      "Core AI concept mastery",
+      "Reasoning pattern recognition",
+      "Mental model restructuring", 
+      "Critical thinking development"
     ],
-    icon: Target,
-    cta: "Build Strategy Framework"
+    icon: BookOpen,
+    cta: "Start Learning Journey"
   },
   {
     number: "03",
-    title: "ALIGN",
-    subtitle: "Literacy & Operations", 
-    goal: "Team education paired with revenue operations and GTM planning",
-    description: "Build internal AI champions through comprehensive literacy programs while aligning operational processes for speed-to-market execution.",
+    title: "APPLY",
+    subtitle: "Practical Integration", 
+    goal: "Real-world application of AI knowledge through guided practice sessions",
+    description: "Transform theoretical understanding into practical capability through structured application exercises, problem-solving scenarios, and collaborative learning experiences.",
     benefits: [
-      "Executive and team AI education",
-      "Workflow redesign and automation",
-      "GTM process optimization",
-      "Internal capability development"
+      "Hands-on practice sessions",
+      "Real-world problem solving",
+      "Collaborative learning experiences",
+      "Confidence building exercises"
     ],
-    icon: Rocket,
-    cta: "Align Your Teams"
+    icon: Lightbulb,
+    cta: "Practice Application"
   },
   {
     number: "04",
-    title: "SELL",
-    subtitle: "GTM Excellence",
-    goal: "Agentic AI pricing, monetization, and automated sales & marketing systems",
-    description: "Deploy AI-powered go-to-market systems that automate sales processes, optimize pricing strategies, and create scalable revenue generation engines.",
+    title: "ACCELERATE",
+    subtitle: "Mastery & Leadership",
+    goal: "Advanced mastery development and thought leadership cultivation",
+    description: "Achieve advanced AI literacy mastery while developing the capability to teach others, lead AI initiatives, and become a recognized thought leader in your organization and industry.",
     benefits: [
-      "AI-powered pricing optimization",
-      "Automated sales and marketing systems", 
-      "Revenue generation at scale",
-      "Measurable ROI and growth metrics"
+      "Advanced mastery achievement",
+      "Teaching and mentoring skills", 
+      "Thought leadership development",
+      "Organizational AI advocacy"
     ],
-    icon: TrendingUp,
-    cta: "Launch GTM Excellence"
+    icon: Zap,
+    cta: "Achieve Mastery"
   }
 ];
 
@@ -70,11 +70,11 @@ const phases = [
       <div className="container-width">
         <div className="text-center mb-20 fade-in-up">
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-6">
-            LEARN → DECIDE → ALIGN → SELL
+            ASSESS → ABSORB → APPLY → ACCELERATE
           </h2>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            Our proven literacy-first methodology transforms leadership teams from AI-confused to AI-confident. 
-            Each phase builds strategic capability while delivering measurable business outcomes.
+            Our proven cognitive learning methodology transforms teams from AI-confused to AI-confident through structured literacy development. 
+            Each phase builds deep understanding while cultivating practical AI reasoning capabilities.
           </p>
         </div>
 
