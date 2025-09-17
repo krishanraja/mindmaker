@@ -16,7 +16,7 @@ const Hero = () => {
           {/* Main Headline */}
           <h1 className="display-xl mb-6 leading-tight">
             Transform Your Business with
-            <span className="block bg-gradient-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent">
               Strategic AI Implementation
             </span>
           </h1>
