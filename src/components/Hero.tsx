@@ -78,24 +78,24 @@ const Hero = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
                 <TrendingUp className="h-6 w-6 text-white" aria-hidden="true" />
               </div>
-              <div className="text-xl md:text-2xl font-bold text-white mb-2">90+</div>
-              <div className="text-white/80 text-xs md:text-sm leading-tight">Product Led Growth Strategies delivered</div>
+              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">90+</div>
+              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">Product Led Growth Strategies delivered</div>
             </div>
             
             <div className="glass-card-dark text-center p-4 md:p-6">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
                 <Database className="h-6 w-6 text-white" aria-hidden="true" />
               </div>
-              <div className="text-xl md:text-2xl font-bold text-white mb-2">50+</div>
-              <div className="text-white/80 text-xs md:text-sm leading-tight">Data/Automation/AI Seminars Delivered</div>
+              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">50+</div>
+              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">Data/Automation/AI Seminars Delivered</div>
             </div>
             
             <div className="glass-card-dark text-center p-4 md:p-6">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
                 <Briefcase className="h-6 w-6 text-white" aria-hidden="true" />
               </div>
-              <div className="text-xl md:text-2xl font-bold text-white mb-2">16</div>
-              <div className="text-white/80 text-xs md:text-sm leading-tight">years in tech, media & telco</div>
+              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">16</div>
+              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">years in tech, media & telco</div>
             </div>
           </div>
 
