@@ -7,7 +7,7 @@ const PathwaysSection = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="section-title">Choose Your Transformation Pathway</h2>
-          <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
+          <p className="text-xl text-readable-secondary max-w-4xl mx-auto">
             Whether you're transforming an enterprise or developing personal AI mastery, 
             our battle-tested methodology accelerates your journey from AI-anxious to AI-advantaged.
           </p>
@@ -21,7 +21,7 @@ const PathwaysSection = () => {
                 <Building2 className="w-10 h-10 text-primary" />
               </div>
               <h3 className="text-3xl font-bold text-primary mb-4">FOR BUSINESSES</h3>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-readable-secondary">
                 Escape pilot purgatory. Build AI-first competitive advantages that create sustainable revenue growth.
               </p>
             </div>
@@ -35,7 +35,7 @@ const PathwaysSection = () => {
                   </div>
                   <div className="flex-1">
                     <h4 className="text-xl font-semibold text-primary mb-2">1A: EXECUTIVE LEADERS</h4>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-readable-muted mb-4">
                       Strategic AI leadership for C-suite executives who need to make confident decisions that drive competitive advantage
                     </p>
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -59,7 +59,7 @@ const PathwaysSection = () => {
                   </div>
                   <div className="flex-1">
                     <h4 className="text-xl font-semibold text-primary mb-2">1B: ENTERPRISE TEAMS</h4>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-readable-muted mb-4">
                       Workforce transformation programs that move entire departments from AI-anxious to AI-advantaged
                     </p>
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -85,7 +85,7 @@ const PathwaysSection = () => {
                 <User className="w-10 h-10 text-accent" />
               </div>
               <h3 className="text-3xl font-bold text-accent mb-4">FOR INDIVIDUALS</h3>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-readable-secondary">
                 Future-proof your career and become indispensable in the AI-first economy
               </p>
             </div>
@@ -99,7 +99,7 @@ const PathwaysSection = () => {
                   </div>
                   <div className="flex-1">
                     <h4 className="text-xl font-semibold text-accent mb-2">2A: IDEAS-TO-BLUEPRINTS</h4>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-readable-muted mb-4">
                       For entrepreneurs and innovators who want to transform business ideas into AI-powered solutions
                     </p>
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -123,7 +123,7 @@ const PathwaysSection = () => {
                   </div>
                   <div className="flex-1">
                     <h4 className="text-xl font-semibold text-accent mb-2">2B: AI LITERACY MASTERY</h4>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-readable-muted mb-4">
                       For professionals who want to develop comprehensive AI fluency and career-protection skills
                     </p>
                     <div className="flex flex-wrap gap-2 mb-4">
