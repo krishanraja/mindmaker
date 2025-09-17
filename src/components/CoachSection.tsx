@@ -1,5 +1,6 @@
 import { Bot, Clock, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const CoachSection = () => {
   const features = [
@@ -29,14 +30,19 @@ const CoachSection = () => {
     <section className="section-padding bg-muted/30">
       <div className="container-width">
         <div className="text-center mb-16 fade-in-up">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-6">
-            AI-Enabled{" "}
-            <span className="text-primary">
-              Coach & Advisor
-            </span>
-          </h2>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
+              AI-Enabled{" "}
+              <span className="text-primary">
+                Coach & Advisor
+              </span>
+            </h2>
+            <Badge variant="secondary" className="text-xs font-semibold px-3 py-1">
+              Coming Soon
+            </Badge>
+          </div>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto mb-8">
-            Not just another consultant. We're your AI-augmented advisory team that combines human expertise 
+            Soon, we'll be your AI-augmented advisory team that will combine human expertise 
             with intelligent tools for an always-on, always-improving coaching experience.
           </p>
           
@@ -74,13 +80,13 @@ const CoachSection = () => {
         <div className="text-center">
           <Button 
             size="lg"
-            className="bg-primary hover:bg-primary-600 text-white px-8 py-4 text-lg"
-            onClick={() => window.location.href = 'mailto:krish@fractionl.ai?subject=AI-Enabled Coaching - Discovery Call'}
+            disabled
+            className="bg-muted text-muted-foreground px-8 py-4 text-lg cursor-not-allowed"
           >
-            Start Your AI Transformation
+            Coming Soon - Stay Tuned
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
-            Interactive toolkit maps your strengths to personalized recommendations
+            Our interactive toolkit will map your strengths to personalized recommendations
           </p>
         </div>
       </div>
