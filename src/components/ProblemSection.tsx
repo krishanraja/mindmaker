@@ -30,7 +30,7 @@ const ProblemSection = () => {
         <div className="text-center mb-16 fade-in-up">
           <h2 className="display-lg mb-6">
             The Critical{" "}
-            <span className="text-foreground bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+            <span className="text-slate-800 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text">
               Enterprise Challenge
             </span>
           </h2>
@@ -47,7 +47,7 @@ const ProblemSection = () => {
                 <problem.icon className="h-8 w-8 text-white" />
               </div>
               
-              <div className="text-3xl font-bold text-foreground bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent mb-4">
+              <div className="text-3xl font-bold text-slate-800 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text mb-4">
                 {problem.stat}
               </div>
               

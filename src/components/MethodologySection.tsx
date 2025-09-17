@@ -71,7 +71,7 @@ const MethodologySection = () => {
         <div className="text-center mb-20 fade-in-up">
           <h2 className="display-lg mb-6">
             Our Proven{" "}
-            <span className="text-foreground bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-slate-800 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text">
               4-Phase Methodology
             </span>
           </h2>
@@ -90,7 +90,7 @@ const MethodologySection = () => {
               {/* Content */}
               <div className={index % 2 === 1 ? 'lg:col-start-2' : ''}>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="text-4xl font-bold text-foreground bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  <div className="text-4xl font-bold text-slate-800 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text">
                     {phase.number}
                   </div>
                   <div>
@@ -133,7 +133,7 @@ const MethodologySection = () => {
                     <phase.icon className="h-12 w-12 text-white" />
                   </div>
                   
-                  <div className="text-6xl font-bold text-foreground bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+                  <div className="text-6xl font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text mb-4">
                     {phase.number}
                   </div>
                   
