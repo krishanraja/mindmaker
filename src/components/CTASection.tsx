@@ -2,10 +2,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowUp, Mail } from "lucide-react";
 
 const CTASection = () => {
-  const scrollToPathways = () => {
-    const pathwaysSection = document.getElementById('pathways');
-    if (pathwaysSection) {
-      pathwaysSection.scrollIntoView({ behavior: 'smooth' });
+  const scrollToOutcomes = () => {
+    const outcomesSection = document.getElementById('outcomes');
+    if (outcomesSection) {
+      outcomesSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -28,7 +28,7 @@ const CTASection = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
             <Button 
-              onClick={scrollToPathways}
+              onClick={scrollToOutcomes}
               className="bg-white text-primary hover:bg-gray-100 font-semibold px-8 py-3 text-lg group"
             >
               <ArrowUp className="mr-2 h-5 w-5 group-hover:-translate-y-1 transition-transform" />
@@ -36,7 +36,7 @@ const CTASection = () => {
             </Button>
             
             <Button asChild className="bg-accent text-white hover:bg-accent-400 font-semibold px-8 py-3 text-lg group">
-              <a href="mailto:krish@fractionl.ai?subject=Direct Consultation Request">
+              <a href="https://calendly.com/krish-raja/mindmaker-meeting" target="_blank" rel="noopener noreferrer">
                 <Mail className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                 Get Direct Consultation
               </a>

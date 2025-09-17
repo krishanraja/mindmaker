@@ -47,7 +47,12 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-primary text-white hover:bg-primary-600 focus:ring-2 focus:ring-ring font-semibold px-8 py-4 text-lg group"
-              onClick={() => window.location.href = 'mailto:hello@mindmaker.ai?subject=AI Literacy Assessment'}
+              onClick={() => {
+                const outcomesSection = document.getElementById('outcomes');
+                if (outcomesSection) {
+                  outcomesSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
               AI Literacy Assessment
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -57,7 +62,12 @@ const Hero = () => {
               variant="outline" 
               size="lg"
               className="glass-card-dark border-white/20 text-white hover:bg-white/10 font-medium px-8 py-4 text-lg"
-              onClick={() => window.location.href = 'mailto:hello@mindmaker.ai?subject=Educational Seminars'}
+              onClick={() => {
+                const pathwaysSection = document.getElementById('pathways');
+                if (pathwaysSection) {
+                  pathwaysSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
               Educational Seminars
             </Button>

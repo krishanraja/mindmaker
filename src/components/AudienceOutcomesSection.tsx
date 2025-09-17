@@ -89,10 +89,21 @@ const AudienceOutcomesSection = () => {
               </div>
               
               <Button 
+                asChild
                 className="w-full bg-primary hover:bg-primary-600 text-white mt-auto"
-                onClick={() => window.location.href = `mailto:krish@fractionl.ai?subject=${outcome.cta} - Let's Discuss`}
               >
-                {outcome.cta}
+                <a 
+                  href={
+                    outcome.cta === 'Executive Assessment' ? 'https://leaders.themindmaker.ai' :
+                    outcome.cta === 'Founder Sprint' ? 'https://founders.themindmaker.ai' :
+                    outcome.cta === 'Team Program' ? 'https://teams.themindmaker.ai' :
+                    '#'
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {outcome.cta}
+                </a>
               </Button>
             </div>
           ))}

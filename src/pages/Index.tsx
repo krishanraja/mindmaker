@@ -34,12 +34,12 @@ const Index = () => {
         <AudienceOutcomesSection />
       </section>
       
-      <section aria-label="Our Methodology" id="methodology">
-        <MethodologySection />
-      </section>
-      
       <section aria-label="AI MindMaker Program" id="pathways">
         <PathwaysSection />
+      </section>
+      
+      <section aria-label="Our Methodology" id="methodology">
+        <MethodologySection />
       </section>
       
       <section aria-label="AI-Enabled Coaching" id="coach">

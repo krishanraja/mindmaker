@@ -130,9 +130,26 @@ const PathwaysSection = () => {
           </p>
           
           {/* Button Section - Bottom Aligned */}
-          <Button variant="outline" size="sm" className="group w-full mt-auto">
-            Learn More
-            <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+          <Button 
+            asChild
+            variant="outline" 
+            size="sm" 
+            className="group w-full mt-auto"
+          >
+            <a 
+              href={
+                module.id === 'align-leaders' ? 'https://calendly.com/krish-raja/mindmaker-align-leaders' :
+                module.id === 'inspire-staff' ? 'https://calendly.com/krish-raja/mindmaker-inspire-staff' :
+                module.id === 'product-strategy' ? 'https://calendly.com/krish-raja/mindmaker-product-strategy' :
+                module.id === 'agent-opp-spotter' ? 'https://calendly.com/krish-raja/mindmaker-agent-opp-spotter' :
+                '#'
+              }
+              target={isCoreModule ? '_blank' : '_self'}
+              rel={isCoreModule ? 'noopener noreferrer' : ''}
+            >
+              {isCoreModule ? 'Book Session' : 'Learn More'}
+              <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+            </a>
           </Button>
         </div>
       </div>

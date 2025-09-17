@@ -126,10 +126,6 @@ const phases = [
                   </ul>
                 </div>
                 
-                <Button className="bg-primary text-white hover:bg-primary-600 focus:ring-2 focus:ring-ring group">
-                  {phase.cta}
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
               </div>
               
               {/* Visual */}
