@@ -1,26 +1,27 @@
 import { AlertTriangle, Clock, DollarSign, Users } from "lucide-react";
 
 const ProblemSection = () => {
-  const problems = [
+  const audienceProblems = [
     {
-      stat: "73%",
-      description: "of executives admit they don't understand AI well enough to make strategic decisions",
+      audience: "Leaders",
+      problem: "Drowning in AI noise",
+      quote: "I know AI will change everything, but I don't know where to start or who to trust",
+      pain: "Paralyzed by complexity, wasting resources on pilots that never scale",
       icon: Users,
     },
     {
-      stat: "89%", 
-      description: "of AI pilots never reach production due to lack of strategic direction",
-      icon: Clock,
-    },
-    {
-      stat: "$2.3M",
-      description: "average cost of failed AI initiatives per enterprise annually",
-      icon: DollarSign,
-    },
-    {
-      stat: "95%",
-      description: "of leaders fear being left behind by AI-powered competitors",
+      audience: "Founders", 
+      problem: "Existential competition fear",
+      quote: "Every competitor seems to be 'AI-powered' - am I already too late?",
+      pain: "Burning cash on shiny AI tools while core business fundamentals suffer",
       icon: AlertTriangle,
+    },
+    {
+      audience: "Teams",
+      problem: "Job displacement anxiety", 
+      quote: "Will I still be relevant in an AI world? How do I future-proof my career?",
+      pain: "Stuck between fear of being replaced and pressure to 'upskill' without direction",
+      icon: Clock,
     },
   ];
 
@@ -40,19 +41,27 @@ const ProblemSection = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {problems.map((problem, index) => (
-            <div key={index} className="card text-center p-6 fade-in-up" style={{animationDelay: `${index * 0.1}s`}}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {audienceProblems.map((item, index) => (
+            <div key={index} className="card p-8 fade-in-up" style={{animationDelay: `${index * 0.1}s`}}>
               <div className="inline-flex items-center justify-center w-16 h-16 bg-destructive text-white rounded-xl mb-6">
-                <problem.icon className="h-8 w-8" />
+                <item.icon className="h-8 w-8" />
               </div>
               
-              <div className="text-3xl font-bold text-destructive mb-4">
-                {problem.stat}
-              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {item.audience}
+              </h3>
+              
+              <h4 className="text-lg font-medium text-destructive mb-4">
+                {item.problem}
+              </h4>
+              
+              <blockquote className="text-sm text-muted-foreground italic mb-4 leading-relaxed">
+                "{item.quote}"
+              </blockquote>
               
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {problem.description}
+                <strong>Reality:</strong> {item.pain}
               </p>
             </div>
           ))}

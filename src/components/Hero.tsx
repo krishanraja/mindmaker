@@ -10,22 +10,26 @@ const Hero = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
             <Sparkles size={16} className="text-white" />
-            <span className="text-sm font-medium">Stop waiting for AI to happen to you</span>
+            <span className="text-sm font-medium">The existential challenge of our generation is coming</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight mb-6 leading-tight">
-            AI Literacy &
+            AI Literacy is
             <span className="block text-white">
-              Strategic Advisory
+              Non-Negotiable
             </span>
           </h1>
           
           {/* Subheadline */}
-          <p className="text-base md:text-lg leading-relaxed mb-12 max-w-4xl mx-auto opacity-90">
-            Bridge the dangerous gap between AI hype and practical enterprise implementation. 
-            Our proven literacy-first methodology transforms leadership teams into confident AI decision-makers. 
-            <strong className="text-white">16 years of expertise.</strong> 90+ product strategies delivered.
+          <p className="text-base md:text-lg leading-relaxed mb-4 max-w-4xl mx-auto opacity-90">
+            <strong className="text-white">3 in 5 workers need occupational transition.</strong> The dangerous gap between AI hype and practical enterprise implementation is widening every day. 
+            Our proven literacy-first methodology transforms leadership teams into confident AI decision-makers.
+          </p>
+          
+          {/* Urgency Statement */}
+          <p className="text-sm md:text-base leading-relaxed mb-12 max-w-3xl mx-auto opacity-80">
+            <strong className="text-white">16 years of expertise.</strong> 90+ product strategies delivered. Stop waiting for AI to happen to you.
           </p>
           
           {/* CTA Buttons */}
