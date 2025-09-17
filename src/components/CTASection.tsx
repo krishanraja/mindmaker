@@ -65,15 +65,25 @@ const CTASection = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Button className="bg-accent text-white hover:bg-accent-400 focus:ring-2 focus:ring-ring group">
-                AI Readiness Assessment
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <Button asChild className="bg-accent text-white hover:bg-accent-400 focus:ring-2 focus:ring-ring group">
+                <a href="mailto:krish@fractionl.ai?subject=AI Readiness Assessment">
+                  AI Readiness Assessment
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </a>
               </Button>
               
-              <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white/10">
-                Executive Consultation
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <Button asChild variant="outline" className="bg-transparent border-white text-white hover:bg-white/10">
+                <a href="mailto:krish@fractionl.ai?subject=Executive Consultation">
+                  Executive Consultation
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </a>
               </Button>
+            </div>
+            
+            <div className="mt-6 text-center">
+              <p className="text-sm opacity-80">
+                Contact <a href="mailto:krish@fractionl.ai" className="text-accent hover:underline font-medium">krish@fractionl.ai</a> to discuss your specific needs
+              </p>
             </div>
           </div>
         </div>
