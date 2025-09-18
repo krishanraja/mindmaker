@@ -160,7 +160,7 @@ const PathwaysSection = () => {
     <section className="section-padding bg-secondary/20">
       <div className="container-width">
         <div className="text-center mb-10 sm:mb-12 md:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4 sm:mb-6 text-foreground">AI MindMaker Program Modules</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4 sm:mb-6 text-foreground">Program Modules</h2>
           <p className="text-sm sm:text-base md:text-lg leading-relaxed text-muted-foreground max-w-4xl mx-auto mb-6 sm:mb-8">
             <strong>Agentic AI Sprints for Commercial Product Strategy Team Literacy</strong><br/>
             Personalized AI literacy → product strategy sprints with decades of media industry experience
@@ -170,22 +170,10 @@ const PathwaysSection = () => {
           </div>
         </div>
 
-        {/* Core Program Pillars */}
-        <div className="mb-12 sm:mb-16">
-          <div className="text-center mb-6 sm:mb-8">
-            <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">Core Program Pillars</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">Essential modules to establish your AI foundation</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
-            {coreModules.map((module) => renderModule(module, true))}
-          </div>
-        </div>
-
-        {/* Additional Specialized Modules */}
+        {/* All Program Modules */}
         <div className="mb-8 sm:mb-12">
-          <div className="text-center mb-6 sm:mb-8">
-            <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">Additional Specialized Modules</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">Advanced modules you can unlock as you progress</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto mb-8">
+            {coreModules.map((module) => renderModule(module, true))}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
             {specializedModules.map((module) => renderModule(module, false))}

@@ -8,7 +8,9 @@ import AudienceOutcomesSection from "@/components/AudienceOutcomesSection";
 import MethodologySection from "@/components/MethodologySection";
 import PathwaysSection from "@/components/PathwaysSection";
 import CoachSection from "@/components/CoachSection";
+import ContentHubSection from "@/components/ContentHubSection";
 import CTASection from "@/components/CTASection";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
@@ -51,9 +53,15 @@ const Index = () => {
         <CoachSection />  
       </section>
       
-      <footer id="cta">
+      <section aria-label="Content Hub" id="content-hub">
+        <ContentHubSection />
+      </section>
+      
+      <section aria-label="Call to Action" id="cta">
         <CTASection />
-      </footer>
+      </section>
+      
+      <Footer />
     </main>
   );
 };
