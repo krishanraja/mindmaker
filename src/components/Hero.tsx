@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, TrendingUp, Database, Briefcase } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle, Layers, Zap } from "lucide-react";
 import mindmakerLogo from "@/assets/mindmaker-logo.png";
 
 const Hero = () => {
@@ -73,26 +73,29 @@ const Hero = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto mb-8">
             <div className="glass-card-dark text-center p-4 md:p-6">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
-                <TrendingUp className="h-6 w-6 text-white" aria-hidden="true" />
+                <CheckCircle className="h-6 w-6 text-white" aria-hidden="true" />
               </div>
-              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">90+</div>
-              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">Product Led Growth Strategies delivered</div>
+              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">5-Minute</div>
+              <div className="text-lg font-semibold text-white mb-1">Assessment</div>
+              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">Discover your AI readiness gaps</div>
             </div>
             
             <div className="glass-card-dark text-center p-4 md:p-6">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
-                <Database className="h-6 w-6 text-white" aria-hidden="true" />
+                <Layers className="h-6 w-6 text-white" aria-hidden="true" />
               </div>
-              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">50+</div>
-              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">Data/Automation/AI Seminars Delivered</div>
+              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">4-Phase</div>
+              <div className="text-lg font-semibold text-white mb-1">Methodology</div>
+              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">Structured learning with measurable outcomes</div>
             </div>
             
             <div className="glass-card-dark text-center p-4 md:p-6">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
-                <Briefcase className="h-6 w-6 text-white" aria-hidden="true" />
+                <Zap className="h-6 w-6 text-white" aria-hidden="true" />
               </div>
-              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">16</div>
-              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">years in tech, media & telco</div>
+              <div className="text-xl md:text-2xl font-semibold tracking-tight text-white mb-2 drop-shadow-sm">Start</div>
+              <div className="text-lg font-semibold text-white mb-1">Day One</div>
+              <div className="text-white/90 text-sm md:text-base font-medium leading-relaxed tracking-wide">Apply AI thinking in your first session</div>
             </div>
           </div>
 
