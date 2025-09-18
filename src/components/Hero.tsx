@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, CheckCircle, Layers, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import mindmakerLogo from "@/assets/mindmaker-logo.png";
-import ExpandableProofCard from "@/components/ExpandableProofCard";
 
 const Hero = () => {
   return (
@@ -74,31 +73,20 @@ const Hero = () => {
             </Button>
           </div>
 
-          {/* Proof Points - Revolutionary Mobile Expandable Cards */}
-          <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 max-w-sm sm:max-w-4xl mx-auto mb-6 md:mb-8">
-            <ExpandableProofCard
-              icon={CheckCircle}
-              title="5-Minute"
-              subtitle="Assessment"
-              description="Discover your AI readiness gaps"
-              expandedContent="Take our scientifically-designed assessment to identify exactly where you stand in your AI literacy journey. Get personalized insights and recommendations tailored to your current knowledge level and professional needs."
-            />
-            
-            <ExpandableProofCard
-              icon={Layers}
-              title="4-Phase"
-              subtitle="Methodology"
-              description="Structured learning with measurable outcomes"
-              expandedContent="Our proven 4-phase approach takes you from AI-confused to AI-confident through Foundation, Application, Integration, and Mastery stages. Each phase builds systematically with clear milestones and practical exercises."
-            />
-            
-            <ExpandableProofCard
-              icon={Zap}
-              title="Start"
-              subtitle="Day One"
-              description="Apply AI thinking in your first session"
-              expandedContent="No theory-only learning here. From your very first session, you'll be applying AI concepts to real scenarios in your industry. Start seeing immediate value and building confidence from day one."
-            />
+          {/* Key Stats Integration */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-6 md:mb-8">
+            <div className="text-center">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1">Qualified</div>
+              <div className="text-xs sm:text-sm text-white/80">Educator & Teacher</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1">Advanced</div>
+              <div className="text-xs sm:text-sm text-white/80">Academic Credentials</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1">200+</div>
+              <div className="text-xs sm:text-sm text-white/80">Minds Transformed</div>
+            </div>
           </div>
 
 

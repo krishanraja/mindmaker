@@ -11,13 +11,13 @@ const Footer = () => {
           
           <div className="flex items-center gap-6">
             <a 
-              href="#" 
+              href="/privacy" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Privacy Policy
             </a>
             <a 
-              href="#" 
+              href="/terms" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Terms & Conditions

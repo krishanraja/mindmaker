@@ -1,13 +1,11 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import StatsSection from "@/components/StatsSection";
-import TrustSection from "@/components/TrustSection";
-import DifferenceSection from "@/components/DifferenceSection";
 import ProblemSection from "@/components/ProblemSection";
-import AudienceOutcomesSection from "@/components/AudienceOutcomesSection";
-import MethodologySection from "@/components/MethodologySection";
+import DifferenceSection from "@/components/DifferenceSection";
+import TrustSection from "@/components/TrustSection";
+import CollapsibleMethodologySection from "@/components/CollapsibleMethodologySection";
 import PathwaysSection from "@/components/PathwaysSection";
-import CoachSection from "@/components/CoachSection";
+import AudienceOutcomesSection from "@/components/AudienceOutcomesSection";
 import ContentHubSection from "@/components/ContentHubSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
@@ -20,44 +18,33 @@ const Index = () => {
       <header>
         <Hero />
       </header>
-      
-      <section aria-label="Proven Results" id="stats">
-        <StatsSection />
-      </section>
-      
-      <section aria-label="Trusted by Industry Leaders" id="trust">
+
+      <section aria-label="Trust Indicators">
         <TrustSection />
       </section>
-      
-      <section aria-label="The MindMaker Difference" id="difference">
+
+      <section aria-label="Problem Statement and Solution">
+        <ProblemSection />
         <DifferenceSection />
       </section>
-      
-      <section aria-label="The Problem" id="problem">
-        <ProblemSection />
-      </section>
-      
-      <section aria-label="Transformation Outcomes" id="outcomes">
+
+      <section aria-label="Audience Outcomes" id="outcomes">
         <AudienceOutcomesSection />
       </section>
-      
-      <section aria-label="AI MindMaker Program" id="pathways">
+
+      <section aria-label="Program Pathways" id="pathways">
         <PathwaysSection />
       </section>
-      
-      <section aria-label="Our Methodology" id="methodology">
-        <MethodologySection />
-      </section>
-      
-      <section aria-label="AI-Enabled Coaching" id="coach">
-        <CoachSection />  
-      </section>
-      
-      <section aria-label="Content Hub" id="content-hub">
+
+      <section aria-label="Content Hub">
         <ContentHubSection />
       </section>
-      
-      <section aria-label="Call to Action" id="cta">
+
+      <section aria-label="Learning Methodology">
+        <CollapsibleMethodologySection />
+      </section>
+
+      <section aria-label="Call to Action">
         <CTASection />
       </section>
       
