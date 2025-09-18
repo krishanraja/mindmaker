@@ -37,8 +37,9 @@ const Hero = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mb-12 md:mb-16 px-4">
             <Button 
+              variant="hero-primary"
               size="lg" 
-              className="bg-primary text-white hover:bg-primary-600 focus:ring-2 focus:ring-ring font-semibold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg group w-full sm:w-auto min-h-[44px]"
+              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg group w-full sm:w-auto min-h-[44px]"
               onClick={() => {
                 const outcomesSection = document.getElementById('outcomes');
                 if (outcomesSection) {
@@ -52,9 +53,9 @@ const Hero = () => {
             </Button>
             
             <Button 
-              variant="outline" 
+              variant="hero-secondary"
               size="lg"
-              className="glass-card-dark border-white/20 text-white hover:bg-white/10 font-medium px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto min-h-[44px]"
+              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto min-h-[44px]"
               onClick={() => {
                 const pathwaysSection = document.getElementById('pathways');
                 if (pathwaysSection) {
