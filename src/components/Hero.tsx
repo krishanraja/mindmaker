@@ -30,7 +30,7 @@ const Hero = () => {
           {/* Main Headline */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold tracking-tight mb-4 md:mb-6 leading-tight hero-text-shimmer">
             Transform How You
-            <span className="block text-white">
+            <span className="block">
               Think About AI
             </span>
           </h1>
@@ -44,7 +44,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mb-12 md:mb-16 px-4">
             <Button 
               size="lg" 
-              className="bg-primary text-white hover:bg-primary-600 focus:ring-2 focus:ring-ring font-semibold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg group w-full sm:w-auto min-h-[44px]"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-ring font-semibold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg group w-full sm:w-auto min-h-[44px]"
               onClick={() => {
                 const outcomesSection = document.getElementById('outcomes');
                 if (outcomesSection) {

@@ -1,31 +1,31 @@
-# 🎯 PERFECT DESIGN SYSTEM PROMPTING GUIDE
+# Design System Prompting Guide
 
-## 🚀 How to Prompt for Design Changes Without Issues
+This guide provides essential prompting strategies to prevent CSS conflicts and ensure smooth design system implementation.
 
-### ✅ WHAT TO INCLUDE IN EVERY DESIGN REQUEST
+## 🎯 Essential Elements for Every Design Request
 
-#### 1. **Specify Context & Element**
+### 1. Specify Exact Element & Context
 ```
-❌ BAD: "Make the text animated"
-✅ GOOD: "Add animated shimmer effect to the main hero headline (h1) only"
-```
-
-#### 2. **Brand Requirements**
-```
-❌ BAD: "Use blue colors"
-✅ GOOD: "Use our primary brand color (--primary) and maintain existing design system tokens"
+❌ BAD: "Make the text animated"  
+✅ GOOD: "Add shimmer animation to main hero headline (h1 element), not the span inside it"
 ```
 
-#### 3. **Behavior Specification**
+### 2. CSS Conflict Prevention
 ```
-❌ BAD: "Make it look modern"
-✅ GOOD: "Add a subtle gradient animation that loops every 3 seconds, maintaining white text readability"
+❌ BAD: "Add gradient to text"
+✅ GOOD: "Add gradient animation to h1, remove any conflicting text-white utilities that would override background-clip: text"
 ```
 
-#### 4. **Scope Limitations**
+### 3. Design System Compliance
 ```
-❌ BAD: "Update the hero section"
-✅ GOOD: "Only add shimmer to headline text, keep all other hero elements unchanged"
+❌ BAD: "Use purple color"
+✅ GOOD: "Use existing --primary CSS custom property, ensure it works with design system layers"
+```
+
+### 4. Implementation Requirements
+```
+❌ BAD: "Make it look good"
+✅ GOOD: "Use CSS custom properties with !important to override utility conflicts, test on both light/dark modes"
 ```
 
 ### 🛡️ CSS CONFLICT PREVENTION CHECKLIST
