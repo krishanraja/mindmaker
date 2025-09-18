@@ -30,7 +30,7 @@ const Hero = () => {
           </div>
           
           {/* Main Tagline - Enlarged with Gobold Font */}
-          <h1 className="font-gobold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-[0.15em] mb-4 md:mb-6 leading-tight max-w-5xl mx-auto px-4 text-white uppercase">
+          <h1 className="font-gobold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-[0.15em] mb-4 md:mb-6 leading-tight max-w-5xl mx-auto px-4 text-white uppercase hero-text-shimmer">
             ai literacy
           </h1>
           

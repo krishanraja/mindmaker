@@ -164,18 +164,17 @@ body {
   .hero-text-shimmer {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 255, 255, 1) 25%,
-      rgba(255, 255, 255, 1) 50%,
-      rgba(255, 255, 255, 1) 75%,
-      rgba(255, 255, 255, 0.8) 100%
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 1) 20%,
+      rgba(255, 255, 255, 1) 40%,
+      rgba(255, 255, 255, 0.4) 100%
     ) !important;
     background-size: 200% 100% !important;
     background-clip: text !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
-    animation: hero-text-shimmer 3s ease-in-out infinite !important;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    animation: hero-text-shimmer 3s linear infinite !important;
+    filter: drop-shadow(0 2px 8px rgba(255,255,255,0.3));
   }
 
   /* Brand gradient background utility */
