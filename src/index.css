@@ -133,9 +133,34 @@ body {
   }
 }
 
+@keyframes hero-text-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
 .fade-in-up {
   animation: fade-in-up 0.6s ease-out forwards;
   opacity: 0;
+}
+
+.hero-text-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 1) 25%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 1) 75%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-text-shimmer 3s ease-in-out infinite;
 }
 
 /* Hero background */

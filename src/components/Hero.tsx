@@ -28,9 +28,9 @@ const Hero = () => {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold tracking-tight mb-4 md:mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold tracking-tight mb-4 md:mb-6 leading-tight hero-text-shimmer">
             Transform How You
-            <span className="block text-white">
+            <span className="block">
               Think About AI
             </span>
           </h1>
