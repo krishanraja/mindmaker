@@ -21,7 +21,7 @@ const Hero = () => {
       <div className="container-width relative z-10 text-center">
         <div className="max-w-6xl mx-auto fade-in-up pt-safe-top pb-16 md:pb-20 px-4">
           {/* Logo - Half Size */}
-          <div className="mb-8 md:mb-12 mt-8 md:mt-16">
+          <div className="mb-6 md:mb-8 mt-8 md:mt-12">
             <img 
               src={mindmakerLogo} 
               alt="MindMaker" 
@@ -30,12 +30,17 @@ const Hero = () => {
           </div>
           
           {/* Main Tagline - Enlarged with Gobold Font */}
-          <h1 className="font-gobold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-[0.15em] mb-12 md:mb-16 leading-tight max-w-5xl mx-auto px-4 text-white uppercase">
+          <h1 className="font-gobold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-[0.15em] mb-4 md:mb-6 leading-tight max-w-5xl mx-auto px-4 text-white uppercase">
             ai literacy
           </h1>
           
+          {/* Supporting Tagline */}
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium tracking-wide mb-10 md:mb-12 leading-relaxed max-w-4xl mx-auto px-4 text-white/95">
+            Everyone's future foundation.
+          </p>
+          
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mb-12 md:mb-16 px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mb-10 md:mb-12 px-4">
             <Button 
               variant="hero-primary"
               size="lg" 
@@ -69,7 +74,7 @@ const Hero = () => {
           </div>
 
           {/* Proof Points */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto mb-6 md:mb-8">
             <div className="glass-card-dark text-center p-4 md:p-6">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-lg mb-4">
                 <CheckCircle className="h-6 w-6 text-white" aria-hidden="true" />
