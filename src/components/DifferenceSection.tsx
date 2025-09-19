@@ -4,8 +4,8 @@ const DifferenceSection = () => {
   const differences = [
     {
       number: "01",
-      title: "Media Industry Expertise",
-      description: "16+ years specializing in media, entertainment, and content strategy - not generic AI consulting",
+      title: "Education in Data & Tech",
+      description: "improving data & tech literacy in startups and enterprise",
       icon: Briefcase,
     },
     {
@@ -28,8 +28,8 @@ const DifferenceSection = () => {
     },
     {
       number: "05",
-      title: "Proven at Scale",
-      description: "90+ product strategies delivered. Real results with Fortune 500 companies and startups alike",
+      title: "From knowledge to outcomes",
+      description: "Real business outcomes with Fortune 500 companies and scale ups",
       icon: Users,
     },
   ];
@@ -39,9 +39,8 @@ const DifferenceSection = () => {
       <div className="container-width">
         <div className="text-center mb-16 fade-in-up">
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-6">
-            The{" "}
             <span className="text-primary">
-              MindMaker™ Difference
+              Practical Data & Tech Expertise
             </span>
           </h2>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
