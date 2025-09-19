@@ -366,13 +366,30 @@ const InteractiveTimeline = () => {
       {/* Fixed Height Content Container */}
       <div className="relative h-[400px] sm:h-[450px] mb-8">
         <div 
-          className="glass-card-dark h-full transition-all duration-700 ease-out transform hover:scale-[1.02] cursor-pointer overflow-hidden"
+          className="glass-card-dark h-full transition-all duration-700 ease-out transform hover:scale-[1.02] overflow-hidden relative"
           style={getGradientStyle(currentItem.gradientStep)}
-          onClick={handleContentClick}
-          role="button"
-          tabIndex={0}
-          aria-label="Tap to advance to next milestone"
         >
+          {/* Left Navigation Zone */}
+          <button
+            className="absolute left-0 top-0 w-1/2 h-full z-10 flex items-center justify-start pl-4 group cursor-pointer"
+            onClick={prevItem}
+            aria-label="Previous milestone"
+          >
+            <div className="opacity-0 group-hover:opacity-40 transition-opacity duration-300 text-white/60">
+              ←
+            </div>
+          </button>
+          
+          {/* Right Navigation Zone */}
+          <button
+            className="absolute right-0 top-0 w-1/2 h-full z-10 flex items-center justify-end pr-4 group cursor-pointer"
+            onClick={nextItem}
+            aria-label="Next milestone"
+          >
+            <div className="opacity-0 group-hover:opacity-40 transition-opacity duration-300 text-white/60">
+              →
+            </div>
+          </button>
           <div className="flex flex-col h-full p-6 sm:p-8">
             {/* Top Section - Icon and Year */}
             <div className="flex flex-col items-center text-center h-24 sm:h-28 justify-center">
