@@ -45,38 +45,52 @@ const Hero = () => {
           
           {/* CTA Buttons - Mobile-First Design */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4 md:gap-6 mb-8 md:mb-12 max-w-lg sm:max-w-none mx-auto">
+            {/* Primary CTA - Book a Call */}
             <Button 
               variant="hero-primary"
               size="lg" 
-              className="px-6 md:px-8 py-4 md:py-4 text-sm sm:text-base md:text-lg font-semibold group w-full sm:w-auto min-h-[48px] sm:min-h-[44px] rounded-lg sm:rounded-md"
-              onClick={() => {
-                const outcomesSection = document.getElementById('outcomes');
-                if (outcomesSection) {
-                  outcomesSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              aria-label="Take AI Literacy Assessment"
+              className="px-6 md:px-8 py-4 md:py-4 text-sm sm:text-base md:text-lg font-semibold group w-full sm:w-auto min-h-[48px] sm:min-h-[44px] rounded-lg sm:rounded-md order-1 sm:order-1"
+              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+              aria-label="Book a strategic consultation call"
             >
-              <span className="sm:hidden">Assess in 2 min</span>
-              <span className="hidden sm:inline">Assess your literacy in 2 min</span>
-              <ArrowRight className="ml-2 h-4 md:h-5 w-4 md:w-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              Book a Call
             </Button>
             
-            <Button 
-              variant="hero-secondary"
-              size="lg"
-              className="px-6 md:px-8 py-4 md:py-4 text-sm sm:text-base md:text-lg font-semibold w-full sm:w-auto min-h-[48px] sm:min-h-[44px] rounded-lg sm:rounded-md"
-              onClick={() => {
-                const pathwaysSection = document.getElementById('pathways');
-                if (pathwaysSection) {
-                  pathwaysSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              aria-label="View Educational Seminars"
-            >
-              <span className="sm:hidden">Explore Seminars</span>
-              <span className="hidden sm:inline">Explore Seminars</span>
-            </Button>
+            {/* Secondary CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 order-2 sm:order-2">
+              <Button 
+                variant="hero-secondary"
+                size="sm"
+                className="px-4 md:px-6 py-3 md:py-3 text-xs sm:text-sm md:text-base font-medium w-full sm:w-auto min-h-[44px] sm:min-h-[40px] rounded-lg sm:rounded-md"
+                onClick={() => {
+                  const outcomesSection = document.getElementById('outcomes');
+                  if (outcomesSection) {
+                    outcomesSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                aria-label="Take AI Literacy Assessment"
+              >
+                <span className="sm:hidden">Assess in 2 min</span>
+                <span className="hidden sm:inline">Assess your literacy in 2 min</span>
+                <ArrowRight className="ml-2 h-3 md:h-4 w-3 md:w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              </Button>
+              
+              <Button 
+                variant="hero-secondary"
+                size="sm"
+                className="px-4 md:px-6 py-3 md:py-3 text-xs sm:text-sm md:text-base font-medium w-full sm:w-auto min-h-[44px] sm:min-h-[40px] rounded-lg sm:rounded-md"
+                onClick={() => {
+                  const pathwaysSection = document.getElementById('pathways');
+                  if (pathwaysSection) {
+                    pathwaysSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                aria-label="View Educational Seminars"
+              >
+                <span className="sm:hidden">Explore Seminars</span>
+                <span className="hidden sm:inline">Explore Seminars</span>
+              </Button>
+            </div>
           </div>
 
           {/* Interactive AI Timeline */}
