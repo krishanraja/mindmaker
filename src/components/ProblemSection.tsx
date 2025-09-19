@@ -1,6 +1,19 @@
 import { AlertTriangle, Clock, DollarSign, Users } from "lucide-react";
+import { useScrollTrigger } from "@/hooks/useScrollTrigger";
+import LiveStatsPopup from "@/components/LiveStatsPopup";
+import { useState, useEffect } from "react";
 
 const ProblemSection = () => {
+  const { elementRef, isVisible } = useScrollTrigger({ threshold: 0.4 });
+  const [showPopup, setShowPopup] = useState(false);
+
+  // Show popup when section becomes visible
+  useEffect(() => {
+    if (isVisible) {
+      setShowPopup(true);
+    }
+  }, [isVisible]);
+
   const audienceProblems = [
     {
       audience: "Leaders",
@@ -26,7 +39,7 @@ const ProblemSection = () => {
   ];
 
   return (
-    <section className="section-padding bg-background">
+    <section ref={elementRef} className="section-padding bg-background">
       <div className="container-width">
         <div className="text-center mb-16 fade-in-up">
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-6">
@@ -80,6 +93,12 @@ const ProblemSection = () => {
           </div>
         </div>
       </div>
+
+      {/* Live Stats Popup */}
+      <LiveStatsPopup 
+        isVisible={showPopup} 
+        onClose={() => setShowPopup(false)} 
+      />
     </section>
   );
 };
