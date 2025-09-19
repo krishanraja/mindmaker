@@ -55,7 +55,6 @@
   --secondary-foreground: var(--foreground);
 
   /* Design System Custom Properties - Bulletproof Styles */
-  --hero-text-shimmer: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 1) 75%, rgba(255, 255, 255, 0.9) 100%);
   --brand-gradient: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
   }
 
@@ -196,7 +195,7 @@ html {
   opacity: 0;
 }
 
-  /* Enhanced Hero Text Shimmer - Optimized for Performance */
+  /* Enhanced Hero Text Shimmer - Plays Once */
   .hero-text-shimmer {
     background: linear-gradient(
       90deg,
@@ -210,9 +209,8 @@ html {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: hero-text-shimmer 6s ease-in-out 2s infinite;
+    animation: hero-text-shimmer 4s linear 2s 1;
     animation-fill-mode: forwards;
-    will-change: background-position;
   }
 
   /* Brand gradient background utility */
