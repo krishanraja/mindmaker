@@ -226,7 +226,8 @@ const PathwaysSection = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="group w-full mt-auto min-h-[40px] sm:min-h-[44px] text-xs sm:text-sm animate-pulse"
+              className="group w-full mt-auto min-h-[40px] sm:min-h-[44px] text-xs sm:text-sm"
+              onClick={() => toggleModule(module.id)}
             >
               {isExpanded ? 'Collapse' : 'Unlock'}
               <ArrowRight className={`ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
@@ -337,30 +338,34 @@ const PathwaysSection = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto mb-8">
             {coreModules.map((module) => renderModule(module, true))}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto specialized-modules-grid">
+          <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
             {specializedModules.map((module) => {
               const hasLevel3 = level3Modules[module.id as keyof typeof level3Modules];
               const isExpanded = expandedModules[module.id];
               
               if (hasLevel3) {
                 return (
-                  <div key={module.id} className="specialized-module-container">
-                    <Collapsible open={isExpanded} onOpenChange={() => toggleModule(module.id)}>
-                      <CollapsibleTrigger asChild>
-                        <div className="specialized-module-trigger">
-                          {renderModule(module, false)}
-                        </div>
-                      </CollapsibleTrigger>
-                      
-                      <CollapsibleContent className="specialized-module-content overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <Collapsible key={module.id} open={isExpanded} onOpenChange={() => toggleModule(module.id)}>
+                    <CollapsibleTrigger asChild>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 cursor-pointer">
+                        {renderModule(module, false)}
+                      </div>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                      <div className="mt-4 max-w-7xl mx-auto">
                         {renderLevel3Module(level3Modules[module.id as keyof typeof level3Modules])}
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 );
               }
               
-              return renderModule(module, false);
+              return (
+                <div key={module.id} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                  {renderModule(module, false)}
+                </div>
+              );
             })}
           </div>
         </div>

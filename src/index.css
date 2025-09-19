@@ -265,39 +265,35 @@ html {
   }
 }
 
-  /* Specialized modules grid layout for collapsible Level 3 content */
-  .specialized-modules-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
-  
-  @media (min-width: 1024px) {
-    .specialized-modules-grid {
-      grid-template-columns: repeat(4, 1fr);
+  /* Collapsible animations */
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
     }
   }
   
-  /* Container for each specialized module with Level 3 content */
-  .specialized-module-container {
-    display: contents; /* This makes the container invisible to the grid */
+  @keyframes collapsible-up {
+    from {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
   }
   
-  /* The trigger (Level 2 module) stays in the grid */
-  .specialized-module-trigger {
-    /* Normal grid item - no special positioning needed */
+  .animate-collapsible-down {
+    animation: collapsible-down 0.3s ease-out;
   }
   
-  /* The content (Level 3 module) breaks out of grid and spans full width */
-  .specialized-module-content {
-    grid-column: 1 / -1; /* Span all columns */
-    margin-top: 1rem;
-    width: 100%;
-  }
-  
-  /* Ensure proper z-index stacking */
-  .specialized-module-content > div {
-    position: relative;
-    z-index: 10;
+  .animate-collapsible-up {
+    animation: collapsible-up 0.3s ease-out;
   }
 }
 
