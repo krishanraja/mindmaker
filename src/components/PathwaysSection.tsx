@@ -133,7 +133,7 @@ const PathwaysSection = () => {
     const isLeadership = level3Module.track === "LEADERSHIP";
     
     return (
-      <div className="ml-4 mt-4 glass-card p-4 sm:p-6 rounded-xl border-l-4 border-primary/20">
+      <div className="glass-card p-4 sm:p-6 rounded-xl border-l-4 border-primary/20 max-w-4xl mx-auto">
         <div className="flex items-center justify-between w-full mb-3 sm:mb-4">
           <div className={`w-8 sm:w-10 h-8 sm:h-10 ${isLeadership ? 'bg-primary/10' : 'bg-accent/10'} rounded-lg flex items-center justify-center flex-shrink-0`}>
             <IconComponent className={`w-4 sm:w-5 h-4 sm:h-5 ${isLeadership ? 'text-primary' : 'text-accent'}`} />
@@ -185,7 +185,7 @@ const PathwaysSection = () => {
     // For specialized modules with Level 3 content, return card without onClick (Collapsible handles it)
     if (!isCoreModule && hasLevel3) {
       return (
-        <div className={`glass-card p-4 sm:p-6 hover:scale-105 transition-all duration-300 group flex flex-col h-full rounded-xl opacity-75 cursor-pointer`}>
+        <div className={`glass-card p-4 sm:p-6 hover:scale-105 transition-all duration-300 group flex flex-col rounded-xl cursor-pointer w-full max-w-4xl mx-auto`}>
           {/* Header Section - Fixed Height */}
           <div className="min-h-[100px] sm:min-h-[120px] flex flex-col">
             {/* Badge */}
@@ -352,15 +352,15 @@ const PathwaysSection = () => {
                 if (hasLevel3) {
                   return (
                     <Collapsible key={module.id} open={isExpanded} onOpenChange={() => toggleModule(module.id)}>
-                      <div>
+                      <div className="w-full">
                         <CollapsibleTrigger asChild>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 cursor-pointer">
+                          <div className="w-full cursor-pointer">
                             {renderModule(module, false)}
                           </div>
                         </CollapsibleTrigger>
                         
-                        <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-                          <div className="w-full">
+                        <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                          <div className="w-full mt-4">
                             {renderLevel3Module(level3Modules[module.id as keyof typeof level3Modules])}
                           </div>
                         </CollapsibleContent>
@@ -370,7 +370,7 @@ const PathwaysSection = () => {
                 }
                 
                 return (
-                  <div key={module.id} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                  <div key={module.id} className="w-full">
                     {renderModule(module, false)}
                   </div>
                 );
