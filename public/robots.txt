@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://aimindmaker.com/sitemap.xml
+Sitemap: https://www.themindmaker.ai/sitemap.xml
 
 # Crawl delay for polite crawling
 Crawl-delay: 1
