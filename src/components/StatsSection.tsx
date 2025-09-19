@@ -1,24 +1,28 @@
 import { GraduationCap, BookOpen, Users, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ResponsiveCardGrid from "@/components/ResponsiveCardGrid";
 
 const StatsSection = () => {
-  const stats = [
+  const credentialHighlights = [
     {
-      number: "Qualified",
-      label: "Teacher & Educator",
-      description: "with certification",
+      audience: "Qualified",
+      problem: "Teacher & Educator",
+      quote: "With proper certification and years of educational experience in transforming learning approaches",
+      pain: "Deep understanding of how adult learners absorb complex technical concepts",
       icon: GraduationCap,
     },
     {
-      number: "Advanced", 
-      label: "Academic Credentials",
-      description: "Linguistics, Computing & Psychology backgrounds",
+      audience: "Advanced", 
+      problem: "Academic Credentials",
+      quote: "Linguistics, Computing & Psychology backgrounds provide multidisciplinary insight into AI learning",
+      pain: "Scientific approach to breaking down AI complexity into digestible, actionable knowledge",
       icon: BookOpen,
     },
     {
-      number: "200+",
-      label: "Minds Transformed",
-      description: "through tech literacy acceleration programs",
+      audience: "200+",
+      problem: "Minds Transformed", 
+      quote: "Proven track record of accelerating tech literacy across diverse professional backgrounds",
+      pain: "Real results from executives, founders, and teams who now lead with AI confidence",
       icon: Users,
     },
   ];
@@ -38,27 +42,35 @@ const StatsSection = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
-          {stats.map((stat, index) => (
-            <div key={index} className="glass-card text-center p-4 sm:p-6 group fade-in-up hover:scale-105 transition-all duration-300 rounded-xl" style={{animationDelay: `${index * 0.1}s`}}>
-              <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 bg-primary text-white rounded-xl mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
-                <stat.icon className="h-6 sm:h-8 w-6 sm:w-8" />
+        <ResponsiveCardGrid 
+          desktopGridClass="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+          className="mb-16"
+          mobileCardHeight="h-[420px]"
+        >
+          {credentialHighlights.map((item, index) => (
+            <div key={index} className="card p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-success text-white rounded-xl mb-6">
+                <item.icon className="h-8 w-8" />
               </div>
               
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground group-hover:scale-110 transition-transform duration-300 mb-3 sm:mb-4 tracking-tight">
-                {stat.number}
-              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {item.audience}
+              </h3>
               
-              <div className="text-base sm:text-lg font-medium text-foreground mb-2 sm:mb-3 tracking-wide">
-                {stat.label}
-              </div>
+              <h4 className="text-lg font-medium text-success mb-4">
+                {item.problem}
+              </h4>
               
-              <div className="text-muted-foreground font-normal text-xs sm:text-sm md:text-base leading-relaxed">
-                {stat.description}
-              </div>
+              <blockquote className="text-sm text-muted-foreground italic mb-4 leading-relaxed">
+                "{item.quote}"
+              </blockquote>
+              
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <strong>Impact:</strong> {item.pain}
+              </p>
             </div>
           ))}
-        </div>
+        </ResponsiveCardGrid>
         
         {/* Founder CTA Button */}
         <div className="flex justify-center mt-8 sm:mt-12 md:mt-16">
