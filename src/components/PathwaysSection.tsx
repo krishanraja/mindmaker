@@ -194,9 +194,6 @@ const PathwaysSection = () => {
           <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
             These are just some of our available modules - tailored upon further discovery
           </p>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Reach out to <a href="mailto:krish@fractionl.ai" className="text-primary hover:underline font-medium">krish@fractionl.ai</a> to discuss your needs
-          </p>
         </div>
       </div>
     </section>
