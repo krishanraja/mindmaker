@@ -61,7 +61,7 @@ const AudienceOutcomesSection = () => {
         
         <ResponsiveCardGrid 
           desktopGridClass="flex flex-col lg:grid lg:grid-cols-3 gap-6 sm:gap-8"
-          mobileCardHeight="h-[500px]"
+          mobileCardHeight="h-[550px]"
         >
           {outcomes.map((outcome, index) => (
             <div key={index} className="card p-6 sm:p-8 fade-in-up flex flex-col h-full rounded-xl" style={{animationDelay: `${index * 0.1}s`}}>
