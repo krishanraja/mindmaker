@@ -30,14 +30,13 @@ const ProblemSection = () => {
       <div className="container-width">
         <div className="text-center mb-16 fade-in-up">
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-6">
-            The Critical{" "}
+            The Existential{" "}
             <span className="text-destructive">
-              Enterprise Challenge
+              Human Challenge
             </span>
           </h2>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            While competitors race ahead with AI, most enterprises remain stuck in pilot purgatory, 
-            burning resources without measurable results.
+            3 in 5 workers will need to rethink the way they work this decade as agentic automation rewrites roles and AI begins its ascent in to productivity.
           </p>
         </div>
         
