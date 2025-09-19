@@ -45,8 +45,7 @@ const DifferenceSection = () => {
             </span>
           </h2>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            Not another generic AI consultancy. We're media industry specialists with a proven methodology 
-            that bridges the gap between AI hype and practical implementation.
+            AI literacy is more than just prompting. Only if each worker shifts their mindset will they become a 10X orchestrator inside and out of work. We bridge that gap between casual AI usage and applicable implementation.
           </p>
         </div>
         
