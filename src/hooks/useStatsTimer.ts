@@ -69,32 +69,40 @@ export const useStatsTimer = ({ isActive, configs }: UseStatsTimerOptions) => {
   };
 };
 
-// Utility function to create time-based update intervals
 export const getTimeBasedInterval = (baseInterval: number): number => {
   const now = new Date();
   const hour = now.getHours();
-  const isWeekend = now.getDay() === 0 || now.getDay() === 6;
-  
-  // Business hours: 9 AM - 5 PM
-  const isBusinessHours = hour >= 9 && hour <= 17;
-  
-  // Peak hours: 9-11 AM, 2-4 PM, 7-9 PM
-  const isPeakHours = 
-    (hour >= 9 && hour <= 11) || 
-    (hour >= 14 && hour <= 16) || 
-    (hour >= 19 && hour <= 21);
+  const day = now.getDay(); // 0 = Sunday, 6 = Saturday
   
   let multiplier = 1;
   
-  if (isWeekend) {
-    multiplier = 2.5; // Slower updates on weekends
-  } else if (!isBusinessHours) {
-    multiplier = 3; // Much slower during off-hours
-  } else if (isPeakHours) {
-    multiplier = 0.5; // Faster during peak hours
+  // Business hours (9 AM - 5 PM) get faster updates
+  if (hour >= 9 && hour <= 17) {
+    multiplier = 0.3; // 70% faster
   }
   
-  return Math.round(baseInterval * multiplier);
+  // Peak hours (10 AM - 2 PM) get even faster
+  if (hour >= 10 && hour <= 14) {
+    multiplier = 0.2; // 80% faster
+  }
+  
+  // Evening hours (6 PM - 11 PM) are moderately slower but still active
+  if (hour >= 18 && hour <= 23) {
+    multiplier = 0.8; // Only 20% slower
+  }
+  
+  // Late night/early morning (12 AM - 8 AM) are slower but not too slow
+  if (hour >= 0 && hour <= 8) {
+    multiplier = 1.2; // Only 20% slower
+  }
+  
+  // Weekends are slightly slower but still active
+  if (day === 0 || day === 6) {
+    multiplier *= 1.2;
+  }
+  
+  // Ensure minimum responsiveness - never slower than 1.5x base interval
+  return Math.min(Math.max(baseInterval * multiplier, baseInterval * 0.15), baseInterval * 1.5);
 };
 
 // Utility function to add realistic randomization

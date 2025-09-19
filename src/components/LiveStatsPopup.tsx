@@ -10,14 +10,22 @@ interface LiveStatsPopupProps {
 
 const LiveStatsPopup: React.FC<LiveStatsPopupProps> = ({ isVisible, onClose }) => {
   const { counterData, formatNumber, marketSentiment } = useRealisticCounters({ isVisible });
+  const [lastUpdated, setLastUpdated] = React.useState<Date>(new Date());
 
-  // Auto dismiss after 15 seconds (increased for better UX)
+  // Track when data updates for "last updated" display
+  React.useEffect(() => {
+    if (isVisible && counterData.length > 0) {
+      setLastUpdated(new Date());
+    }
+  }, [counterData, isVisible]);
+
+  // Auto dismiss after 20 seconds (increased for better UX)
   React.useEffect(() => {
     if (!isVisible) return;
 
     const autoDismiss = setTimeout(() => {
       onClose();
-    }, 15000);
+    }, 20000);
 
     return () => {
       clearTimeout(autoDismiss);
@@ -46,6 +54,9 @@ const LiveStatsPopup: React.FC<LiveStatsPopupProps> = ({ isVisible, onClose }) =
             <div className="flex items-center gap-2 mb-1">
               <div className="w-2 h-2 bg-destructive rounded-full animate-pulse"></div>
               <span className="text-xs font-medium text-muted-foreground">LIVE STATS</span>
+              <span className="text-xs text-muted-foreground/70">
+                • {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </span>
             </div>
             <h3 className="text-sm font-semibold text-foreground">The Human Challenge</h3>
           </div>
@@ -74,10 +85,10 @@ const LiveStatsPopup: React.FC<LiveStatsPopupProps> = ({ isVisible, onClose }) =
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className={`text-lg font-bold ${stat.color} transition-all duration-500`}>
+                    <span className={`text-lg font-bold ${stat.color} transition-all duration-300 animate-pulse`}>
                       {formatNumber(stat.value)}{stat.suffix || ''}
                     </span>
-                    {stat.pulse && <TrendingUp className="h-3 w-3 text-destructive animate-pulse" />}
+                    <TrendingUp className="h-3 w-3 text-destructive animate-pulse opacity-60" />
                   </div>
                   <p className="text-xs text-muted-foreground leading-tight">
                     {stat.label}
@@ -88,12 +99,25 @@ const LiveStatsPopup: React.FC<LiveStatsPopupProps> = ({ isVisible, onClose }) =
           })}
         </div>
 
-        {/* Market Context (subtle) */}
-        {marketSentiment.newsContext && marketSentiment.newsContext !== 'Standard market conditions' && (
-          <div className="text-xs text-muted-foreground/80 italic border-t border-border/30 pt-3">
-            Market context: {marketSentiment.newsContext}
-          </div>
-        )}
+        {/* Market Context - Enhanced visibility */}
+        <div className="border-t border-border/30 pt-3 space-y-2">
+          {marketSentiment.newsContext && marketSentiment.newsContext !== 'Standard market conditions' && (
+            <div className="flex items-start gap-2">
+              <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 animate-pulse"></div>
+              <div className="text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">AI Impact:</span> {marketSentiment.newsContext}
+              </div>
+            </div>
+          )}
+          
+          {/* Multiplier indicators for debug */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="text-xs text-muted-foreground/60 space-y-1">
+              <div>Anxiety: {marketSentiment.aiAnxietyMultiplier.toFixed(2)}x</div>
+              <div>Training: {marketSentiment.trainingInterestMultiplier.toFixed(2)}x</div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

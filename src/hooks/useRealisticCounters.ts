@@ -106,37 +106,38 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
     const hour = currentTime.getHours();
     const isWeekend = currentTime.getDay() === 0 || currentTime.getDay() === 6;
     
-    // Determine base increment rate (searches per minute)
-    let baseSearchesPerMinute: number;
+    // Determine base increment (smaller for more frequent updates)
+    let baseIncrement = 40;
     
     if (hour >= 9 && hour <= 11 || hour >= 14 && hour <= 16 || hour >= 19 && hour <= 21) {
       // Peak hours
-      baseSearchesPerMinute = 5.5;
+      baseIncrement *= 2.5;
     } else if (hour >= 9 && hour <= 17) {
       // Business hours
-      baseSearchesPerMinute = 2.5;
+      baseIncrement *= 1.8;
     } else if (hour >= 6 && hour <= 23) {
       // Regular hours
-      baseSearchesPerMinute = 1.2;
+      baseIncrement *= 1.2;
     } else {
       // Late night/early morning
-      baseSearchesPerMinute = 0.3;
+      baseIncrement *= 0.6;
     }
     
     // Apply weekend multiplier
     if (isWeekend) {
-      baseSearchesPerMinute *= 0.4;
+      baseIncrement *= 0.7;
     }
     
     // Apply OpenAI market sentiment
-    baseSearchesPerMinute *= marketSentiment.trainingInterestMultiplier;
+    baseIncrement *= marketSentiment.trainingInterestMultiplier;
     
-    // Convert to increment for this specific time interval
-    const minutesSinceLastUpdate = timeSinceLastUpdate / 60000;
-    const expectedIncrement = baseSearchesPerMinute * minutesSinceLastUpdate;
+    // Add realistic randomization (±50%)
+    const increment = Math.max(0, addRandomVariation(baseIncrement, 50));
     
-    // Add realistic randomization (±30%)
-    const increment = Math.max(0, addRandomVariation(expectedIncrement, 30));
+    // Debug logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🧠 AI Training update: +${Math.round(increment)} (multiplier: ${marketSentiment.trainingInterestMultiplier.toFixed(2)})`);
+    }
     
     setCounters(prev => ({
       ...prev,
@@ -150,31 +151,45 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
     const hour = currentTime.getHours();
     const isWeekend = currentTime.getDay() === 0 || currentTime.getDay() === 6;
     
-    // Base increment (searches per 3-second interval)
-    let baseIncrement: number;
+    // Base increment - smaller for more frequent updates
+    let baseIncrement = 15;
     
+    // Peak anxiety times
     if (hour >= 9 && hour <= 17) {
       // Business hours - higher anxiety
-      baseIncrement = Math.random() < 0.8 ? Math.floor(Math.random() * 3) + 1 : 0;
+      baseIncrement *= 2.2;
     } else if (hour >= 6 && hour <= 22) {
       // Regular hours
-      baseIncrement = Math.random() < 0.4 ? Math.floor(Math.random() * 2) + 1 : 0;
+      baseIncrement *= 1.5;
     } else {
-      // Late night
-      baseIncrement = Math.random() < 0.1 ? 1 : 0;
+      // Late night - still some activity
+      baseIncrement *= 0.8;
     }
     
     // Apply weekend multiplier
     if (isWeekend) {
-      baseIncrement *= 0.5;
+      baseIncrement *= 0.7;
     }
     
     // Apply OpenAI market sentiment (anxiety multiplier)
-    baseIncrement = Math.round(baseIncrement * marketSentiment.aiAnxietyMultiplier);
+    baseIncrement *= marketSentiment.aiAnxietyMultiplier;
+    
+    // Add high randomization for anxiety bursts
+    const increment = Math.max(0, addRandomVariation(baseIncrement, 70));
+    
+    // Sometimes no searches (10% chance, reduced from higher)
+    if (Math.random() < 0.1) {
+      return;
+    }
+    
+    // Debug logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`😰 AI Replace update: +${Math.round(increment)} (multiplier: ${marketSentiment.aiAnxietyMultiplier.toFixed(2)})`);
+    }
     
     setCounters(prev => ({
       ...prev,
-      aiReplaceSearches: prev.aiReplaceSearches + baseIncrement
+      aiReplaceSearches: prev.aiReplaceSearches + Math.round(increment)
     }));
   }, [marketSentiment.aiAnxietyMultiplier]);
 
@@ -208,21 +223,21 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
     saveState(counters);
   }, [counters, saveState]);
 
-  // Set up timers with realistic intervals
+  // Set up timers with faster, more responsive intervals
   const timerConfigs = [
     {
       key: 'aiTrainingSearches',
-      updateInterval: getTimeBasedInterval(8000), // 8-40 seconds based on time
+      updateInterval: getTimeBasedInterval(3000), // 3 seconds base, 0.45-4.5s range
       callback: updateAiTrainingSearches
     },
     {
       key: 'aiReplaceSearches',
-      updateInterval: getTimeBasedInterval(3000), // 1.5-9 seconds based on time
+      updateInterval: getTimeBasedInterval(2000), // 2 seconds base, 0.3-3s range
       callback: updateAiReplaceSearches
     },
     {
       key: 'unpreparedPercentage',
-      updateInterval: 180000, // 3 minutes
+      updateInterval: 120000, // 2 minutes (reduced from 3)
       callback: updateUnpreparedPercentage
     },
     {
