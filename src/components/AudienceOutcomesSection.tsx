@@ -46,10 +46,10 @@ const AudienceOutcomesSection = () => {
   ];
 
   return (
-    <section className="section-padding bg-background">
+    <section className="py-8 sm:py-12 md:py-16 lg:py-16 bg-background">
       <div className="container-width">
-        <div className="text-center mb-10 sm:mb-12 md:mb-16 fade-in-up">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4 sm:mb-6">
+        <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-10 fade-in-up">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4 sm:mb-5 lg:mb-4">
             <span className="text-primary">
               Pick a Pathway
             </span>
@@ -60,26 +60,26 @@ const AudienceOutcomesSection = () => {
         </div>
         
         <ResponsiveCardGrid 
-          desktopGridClass="flex flex-col lg:grid lg:grid-cols-3 gap-6 sm:gap-8"
+          desktopGridClass="flex flex-col lg:grid lg:grid-cols-3 gap-6 lg:gap-6"
           mobileCardHeight="h-[550px]"
         >
           {outcomes.map((outcome, index) => (
-            <div key={index} className="card p-6 sm:p-8 fade-in-up flex flex-col h-full rounded-xl" style={{animationDelay: `${index * 0.1}s`}}>
-              <div className="text-center mb-6 sm:mb-8 lg:min-h-[280px] flex flex-col">
+            <div key={index} className="card p-6 sm:p-8 lg:p-6 fade-in-up flex flex-col h-full rounded-xl" style={{animationDelay: `${index * 0.1}s`}}>
+              <div className="text-center mb-5 sm:mb-6 lg:mb-5 flex flex-col">
                 <div className="inline-flex items-center justify-center w-14 sm:w-16 h-14 sm:h-16 bg-primary text-white rounded-xl mb-4 mx-auto">
                   <img src={outcome.icon} alt="MindMaker Icon" className="max-h-7 max-w-7 sm:max-h-8 sm:max-w-8 object-contain" />
                 </div>
                 <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground mb-2">
                   {outcome.audience}
                 </h3>
-                <h4 className="text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">
+                <h4 className="text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4 lg:mb-3">
                   {outcome.outcome}
                 </h4>
                 <p className="text-sm sm:text-sm font-normal leading-relaxed text-muted-foreground" dangerouslySetInnerHTML={{ __html: outcome.description }}>
                 </p>
               </div>
               
-              <div className="space-y-3 mb-6 sm:mb-8 flex-1">
+              <div className="space-y-3 mb-5 sm:mb-6 lg:mb-5 flex-1">
                 {outcome.benefits.map((benefit, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
