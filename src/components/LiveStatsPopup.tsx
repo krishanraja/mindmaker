@@ -47,14 +47,14 @@ const LiveStatsPopup: React.FC<LiveStatsPopupProps> = ({ isVisible, onClose }) =
 
   return (
     <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50 animate-fade-in">
-      <div className="glass-card p-4 sm:p-6 w-full max-w-sm sm:max-w-80 border border-border/50 shadow-2xl mx-auto">
+      <div className="glass-card p-3 sm:p-6 w-full max-w-xs sm:max-w-80 border border-border/50 shadow-2xl mx-auto overflow-hidden">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-2 h-2 bg-destructive rounded-full animate-pulse"></div>
               <span className="text-xs font-medium text-muted-foreground">LIVE STATS</span>
-              <span className="text-xs text-muted-foreground/70">
+              <span className="text-xs text-muted-foreground/70 truncate">
                 • {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </span>
             </div>
@@ -85,12 +85,12 @@ const LiveStatsPopup: React.FC<LiveStatsPopupProps> = ({ isVisible, onClose }) =
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className={`text-lg font-bold ${stat.color} transition-all duration-300 animate-pulse`}>
+                    <span className={`text-sm sm:text-lg font-bold ${stat.color} transition-all duration-300 animate-pulse truncate`}>
                       {formatNumber(stat.value)}{stat.suffix || ''}
                     </span>
-                    <TrendingUp className="h-3 w-3 text-destructive animate-pulse opacity-60" />
+                    <TrendingUp className="h-3 w-3 text-destructive animate-pulse opacity-60 flex-shrink-0" />
                   </div>
-                  <p className="text-xs text-muted-foreground leading-tight">
+                  <p className="text-xs text-muted-foreground leading-tight truncate">
                     {stat.label}
                   </p>
                 </div>
