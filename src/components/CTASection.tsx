@@ -20,7 +20,9 @@ const CTASection = () => {
         <div className="text-center max-w-4xl mx-auto">
           <div className="mb-8">
             <div className="inline-flex items-center bg-white/10 text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-6">
-              ⚡ Limited Availability • Q1 2025 Cohorts Filling Fast
+              ⚡ Limited Availability •{' '}
+              <span className="whitespace-nowrap">Q1 2025 Cohorts</span>{' '}
+              <span className="whitespace-nowrap">Filling&nbsp;Fast</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight mb-6 text-white leading-tight">
               Don't Let Your Competition<br />
