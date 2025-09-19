@@ -130,27 +130,44 @@ const PathwaysSection = () => {
           </p>
           
           {/* Button Section - Bottom Aligned */}
-          <Button 
-            asChild
-            variant="outline" 
-            size="sm" 
-            className="group w-full mt-auto min-h-[40px] sm:min-h-[44px] text-xs sm:text-sm"
-          >
-            <a 
-              href={
-                module.id === 'align-leaders' ? 'https://calendly.com/krish-raja/mindmaker-align-leaders' :
-                module.id === 'inspire-staff' ? 'https://calendly.com/krish-raja/mindmaker-inspire-staff' :
-                module.id === 'product-strategy' ? 'https://calendly.com/krish-raja/mindmaker-product-strategy' :
-                module.id === 'agent-opp-spotter' ? 'https://calendly.com/krish-raja/mindmaker-agent-opp-spotter' :
-                '#'
-              }
-              target={isCoreModule ? '_blank' : '_self'}
-              rel={isCoreModule ? 'noopener noreferrer' : ''}
+          {isCoreModule ? (
+            <Button 
+              asChild
+              variant="outline" 
+              size="sm" 
+              className="group w-full mt-auto min-h-[40px] sm:min-h-[44px] text-xs sm:text-sm"
             >
-              {isCoreModule ? 'Book Session' : 'Learn More'}
+              <a 
+                href={
+                  module.id === 'align-leaders' ? 'https://calendly.com/krish-raja/mindmaker-align-leaders' :
+                  module.id === 'inspire-staff' ? 'https://calendly.com/krish-raja/mindmaker-inspire-staff' :
+                  module.id === 'product-strategy' ? 'https://calendly.com/krish-raja/mindmaker-product-strategy' :
+                  module.id === 'agent-opp-spotter' ? 'https://calendly.com/krish-raja/mindmaker-agent-opp-spotter' :
+                  '#'
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Book Session
+                <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="group w-full mt-auto min-h-[40px] sm:min-h-[44px] text-xs sm:text-sm"
+              onClick={() => {
+                const coreModulesSection = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4');
+                if (coreModulesSection) {
+                  coreModulesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+            >
+              Unlock
               <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-            </a>
-          </Button>
+            </Button>
+          )}
         </div>
       </div>
     );
