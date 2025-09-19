@@ -10,7 +10,7 @@ const CTASection = () => {
   };
 
   return (
-    <section className="section-padding relative overflow-hidden bg-brand-gradient">
+    <section className="section-padding relative overflow-hidden bg-gradient-to-br from-indigo-900/90 via-purple-600/40 to-purple-500/50">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.15),transparent_70%)]" />
