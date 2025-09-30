@@ -247,7 +247,7 @@ const PathwaysSection = () => {
         <div className="mb-8 sm:mb-12">
           <ResponsiveCardGrid
             desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto mb-8"
-            mobileCardHeight="h-[420px]"
+            mobileCardHeight="h-[480px]"
           >
             {coreModules.map((module) => renderModule(module, true))}
           </ResponsiveCardGrid>
@@ -271,7 +271,7 @@ const PathwaysSection = () => {
               {/* Level 2 Grid */}
               <ResponsiveCardGrid
                 desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8"
-                mobileCardHeight="h-[420px]"
+                mobileCardHeight="h-[480px]"
               >
                 {specializedModules.map((module) => renderModule(module, false, false))}
               </ResponsiveCardGrid>
@@ -294,7 +294,7 @@ const PathwaysSection = () => {
                 <div className="max-w-7xl mx-auto animate-fade-in">
                   <ResponsiveCardGrid
                     desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
-                    mobileCardHeight="h-[420px]"
+                    mobileCardHeight="h-[480px]"
                   >
                     {level3ModulesArray.map((module) => renderModule(module, false, true))}
                   </ResponsiveCardGrid>

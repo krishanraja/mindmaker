@@ -25,7 +25,7 @@ const ContentHubSection = () => {
           <ResponsiveCardGrid 
             desktopGridClass="grid md:grid-cols-3 gap-6 mb-8"
             className="mb-8"
-            mobileCardHeight="h-[220px]"
+            mobileCardHeight="h-[480px]"
           >
             <div className="glass-card p-4 sm:p-6 lg:p-8 text-center h-full flex flex-col">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
