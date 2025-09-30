@@ -20,7 +20,7 @@ const StatsSection = () => {
     },
     {
       audience: "100+",
-      problem: "Minds Transformed", 
+      problem: "Sessions Run", 
       quote: "Proven track record of accelerating tech literacy across diverse professional backgrounds",
       pain: "Real results from executives, founders, and teams who now lead with AI confidence",
       icon: Users,
