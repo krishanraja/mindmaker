@@ -45,7 +45,7 @@ const DifferenceSection = () => {
             </span>
           </h2>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            Move beyond boring workshops and theoretical frameworks. Our gamified, interactive methodology transforms AI literacy into engaging experiences with measurable outcomes.
+            Our gamified, interactive methodology transforms AI literacy into engaging experiences with measurable outcomes.
           </p>
         </div>
         
