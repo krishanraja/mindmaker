@@ -221,7 +221,7 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
   // Save state whenever counters change
   useEffect(() => {
     saveState(counters);
-  }, [counters]); // saveState is stable with useCallback, no need in deps
+  }, [counters, saveState]);
 
   // Set up timers with consistent 1-2 second intervals for visual impact
   // Memoize to prevent recreation on every render
@@ -290,9 +290,12 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
     }
   ], [counters]);
 
+  // Memoize counterData to prevent unnecessary re-renders
+  const counterData = useMemo(() => getCounterData(), [counters, getCounterData]);
+
   return {
     counters,
-    counterData: getCounterData(),
+    counterData,
     formatNumber,
     marketSentiment
   };
