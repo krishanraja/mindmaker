@@ -61,7 +61,7 @@ const ProblemSection = () => {
         <ResponsiveCardGrid 
           desktopGridClass="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
           className="mb-16"
-          mobileCardHeight="h-[360px]"
+          mobileCardHeight="h-[450px]"
         >
           {audienceProblems.map((item, index) => (
             <div key={index} className="card p-4 sm:p-6 lg:p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>

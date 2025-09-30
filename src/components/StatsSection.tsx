@@ -42,27 +42,27 @@ const StatsSection = () => {
         <ResponsiveCardGrid 
           desktopGridClass="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
           className="mb-16"
-          mobileCardHeight="h-[360px]"
+          mobileCardHeight="h-[450px]"
         >
           {credentialHighlights.map((item, index) => (
             <div key={index} className="card p-4 sm:p-6 lg:p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-success text-white rounded-xl mb-5">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-success text-white rounded-xl mb-6">
                 <item.icon className="h-8 w-8" />
               </div>
               
-              <h3 className="text-lg font-semibold text-foreground mb-1.5">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 {item.audience}
               </h3>
               
-              <h4 className="text-base font-medium text-success mb-3">
+              <h4 className="text-lg font-medium text-success mb-4">
                 {item.problem}
               </h4>
               
-              <blockquote className="text-sm text-muted-foreground italic mb-3 leading-snug">
+              <blockquote className="text-sm text-muted-foreground italic mb-4 leading-relaxed">
                 "{item.quote}"
               </blockquote>
               
-              <p className="text-sm text-muted-foreground leading-snug">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 <strong>Impact:</strong> {item.pain}
               </p>
             </div>
