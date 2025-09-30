@@ -1,8 +1,11 @@
-import { GraduationCap, BookOpen, Users, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { GraduationCap, BookOpen, Users, ExternalLink, ChevronDown, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ResponsiveCardGrid from "@/components/ResponsiveCardGrid";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const StatsSection = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  
   const credentialHighlights = [
     {
       problem: "Real-World Experience",
@@ -27,7 +30,7 @@ const StatsSection = () => {
   return (
     <section className="section-padding bg-muted">
       <div className="container-width">
-        <div className="text-center mb-10 sm:mb-12 md:mb-16 fade-in-up">
+        <div className="text-center mb-8 sm:mb-10 md:mb-12 fade-in-up">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 sm:mb-4">
             Ready To Help{" "}
             <span className="text-primary">
@@ -36,43 +39,59 @@ const StatsSection = () => {
           </h2>
         </div>
         
-        <ResponsiveCardGrid 
-          desktopGridClass="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
-          className="mb-16"
-        >
-          {credentialHighlights.map((item, index) => (
-            <div key={index} className="card p-4 sm:p-6 lg:p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-success text-white rounded-xl mb-5">
-                <item.icon className="h-8 w-8" />
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-6">
+          <CollapsibleContent className="mb-6">
+            <div className="glass-card mobile-padding max-w-4xl mx-auto animate-collapsible-down">
+              <div className="space-y-6">
+                {credentialHighlights.map((item, index) => (
+                  <div key={index} className="flex gap-4 items-start">
+                    <div className="flex-shrink-0 inline-flex items-center justify-center w-12 h-12 bg-success text-white rounded-lg">
+                      <item.icon className="h-6 w-6" />
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-semibold text-success mb-2">
+                        {item.problem}
+                      </h3>
+                      
+                      <blockquote className="text-sm text-muted-foreground italic mb-2 leading-snug">
+                        "{item.quote}"
+                      </blockquote>
+                      
+                      <p className="text-sm text-muted-foreground leading-snug">
+                        {item.pain}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              
-              <h3 className="text-lg font-semibold text-success mb-3">
-                {item.problem}
-              </h3>
-              
-              <blockquote className="text-sm text-muted-foreground italic mb-3 leading-snug">
-                "{item.quote}"
-              </blockquote>
-              
-              <p className="text-sm text-muted-foreground leading-snug">
-                <strong>Impact:</strong> {item.pain}
-              </p>
             </div>
-          ))}
-        </ResponsiveCardGrid>
-        
-        {/* Founder CTA Button */}
-        <div className="flex justify-center mt-8 sm:mt-12 md:mt-16">
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="border-primary text-primary hover:bg-primary hover:text-white group transition-all duration-300 min-h-[48px] px-6 sm:px-8 text-sm sm:text-base"
-            onClick={() => window.open('https://www.krishraja.com/', '_blank')}
-          >
-            <ExternalLink className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
-            Check out our Founder
-          </Button>
-        </div>
+          </CollapsibleContent>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-primary text-primary hover:bg-primary hover:text-white group transition-all duration-300 min-h-[48px] px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
+              >
+                <Award className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
+                My Credentials
+                <ChevronDown className={`ml-2 h-4 sm:h-5 w-4 sm:w-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="border-primary text-primary hover:bg-primary hover:text-white group transition-all duration-300 min-h-[48px] px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
+              onClick={() => window.open('https://www.krishraja.com/', '_blank')}
+            >
+              <ExternalLink className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
+              Check out our Founder
+            </Button>
+          </div>
+        </Collapsible>
       </div>
     </section>
   );
