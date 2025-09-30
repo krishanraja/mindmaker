@@ -135,11 +135,11 @@ const PathwaysSection = () => {
     const isLeadership = module.track === "LEADERSHIP";
     
     return (
-      <div className={`glass-card p-6 hover:scale-105 transition-all duration-300 group flex flex-col justify-between h-full rounded-xl ${!isCoreModule && !isLevel3 ? 'opacity-75' : ''}`}>
-        {/* Header Section */}
-        <div className="flex flex-col">
+      <div className={`glass-card p-4 sm:p-6 hover:scale-105 transition-all duration-300 group flex flex-col h-full rounded-xl ${!isCoreModule && !isLevel3 ? 'opacity-75' : ''}`}>
+        {/* Header Section - Fixed Height */}
+        <div className="min-h-[100px] sm:min-h-[120px] flex flex-col">
           {/* Badge */}
-          <div className="flex justify-end mb-3">
+          <div className="flex justify-end mb-3 sm:mb-4">
             {isCoreModule ? (
               <span className="bg-primary text-white px-2 sm:px-3 py-1 rounded-full text-xs font-medium">
                 Start Here
@@ -156,7 +156,7 @@ const PathwaysSection = () => {
           </div>
           
           {/* Icon and Credits */}
-          <div className="flex items-center justify-between w-full mb-3">
+          <div className="flex items-center justify-between w-full mb-3 sm:mb-4">
             <div className={`w-10 sm:w-12 h-10 sm:h-12 ${isLeadership ? 'bg-primary/10' : 'bg-accent/10'} rounded-lg flex items-center justify-center flex-shrink-0`}>
               <IconComponent className={`w-5 sm:w-6 h-5 sm:h-6 ${isLeadership ? 'text-primary' : 'text-accent'}`} />
             </div>
@@ -172,14 +172,14 @@ const PathwaysSection = () => {
           </div>
           
           {/* Title */}
-          <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wide ${isLeadership ? 'text-primary' : 'text-accent'} mb-2`}>
+          <h4 className={`text-xs sm:text-sm font-bold uppercase tracking-wide ${isLeadership ? 'text-primary' : 'text-accent'} mb-2 sm:mb-3`}>
             {module.title}
           </h4>
         </div>
         
-        {/* Content Section */}
-        <div className="flex flex-col flex-1">
-          <p className="text-xs sm:text-sm font-normal leading-relaxed text-muted-foreground mb-4 flex-1">
+        {/* Content Section - Flexible Height */}
+        <div className="flex-1 flex flex-col">
+          <p className="text-xs sm:text-sm font-normal leading-relaxed text-muted-foreground mb-4 sm:mb-6 flex-1">
             {module.description}
           </p>
           
