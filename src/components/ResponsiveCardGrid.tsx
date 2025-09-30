@@ -42,7 +42,7 @@ const ResponsiveCardGrid = ({
                 key={index} 
                 className="pl-2 md:pl-4 basis-[85%] sm:basis-[70%] h-full"
               >
-                <div className={cn(mobileCardHeight, "w-full overflow-hidden")}>
+                <div className={cn(mobileCardHeight, "w-full")}>
                   {child}
                 </div>
               </CarouselItem>
