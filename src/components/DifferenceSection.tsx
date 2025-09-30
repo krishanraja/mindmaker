@@ -12,7 +12,7 @@ const DifferenceSection = () => {
     {
       number: "02", 
       title: "Literacy-First Methodology",
-      description: "Build understanding before tools. AI isn't software—it's more like a new species of worker we need to learn to communicate with.",
+      description: "Build understanding before tools. AI isn't software; it's more like a new species of worker we need to learn to communicate with.",
       icon: Target,
     },
     {
