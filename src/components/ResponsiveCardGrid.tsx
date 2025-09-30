@@ -40,9 +40,11 @@ const ResponsiveCardGrid = ({
             {children.map((child, index) => (
               <CarouselItem 
                 key={index} 
-                className={cn("pl-2 md:pl-4 basis-[85%] sm:basis-[70%]", mobileCardHeight)}
+                className="pl-2 md:pl-4 basis-[85%] sm:basis-[70%]"
               >
-                {child}
+                <div className={cn(mobileCardHeight, "w-full")}>
+                  {child}
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>

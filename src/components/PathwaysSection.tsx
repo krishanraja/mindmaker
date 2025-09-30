@@ -136,7 +136,7 @@ const PathwaysSection = () => {
     const isLeadership = module.track === "LEADERSHIP";
     
     return (
-      <div className={`glass-card p-4 sm:p-6 lg:p-8 hover:scale-105 transition-all duration-300 group flex flex-col h-full rounded-xl ${!isCoreModule && !isLevel3 ? 'opacity-75' : ''}`}>
+      <div key={module.id} className={`glass-card p-4 sm:p-6 lg:p-8 hover:scale-105 transition-all duration-300 group flex flex-col h-full rounded-xl ${!isCoreModule && !isLevel3 ? 'opacity-75' : ''}`}>
         {/* Header Section */}
         <div className="flex flex-col mb-4">
           {/* Badge */}
@@ -247,9 +247,9 @@ const PathwaysSection = () => {
         <div className="mb-8 sm:mb-12">
           <ResponsiveCardGrid
             desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto mb-8"
-            mobileCardHeight="h-[480px]"
+            mobileCardHeight="h-[380px]"
           >
-            {coreModules.map((module) => renderModule(module, true))}
+            {coreModules.map((module) => renderModule(module, true, false))}
           </ResponsiveCardGrid>
           
           {/* Show/Hide Specialized Modules Button */}
@@ -271,7 +271,7 @@ const PathwaysSection = () => {
               {/* Level 2 Grid */}
               <ResponsiveCardGrid
                 desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8"
-                mobileCardHeight="h-[480px]"
+                mobileCardHeight="h-[380px]"
               >
                 {specializedModules.map((module) => renderModule(module, false, false))}
               </ResponsiveCardGrid>
@@ -294,7 +294,7 @@ const PathwaysSection = () => {
                 <div className="max-w-7xl mx-auto animate-fade-in">
                   <ResponsiveCardGrid
                     desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
-                    mobileCardHeight="h-[480px]"
+                    mobileCardHeight="h-[380px]"
                   >
                     {level3ModulesArray.map((module) => renderModule(module, false, true))}
                   </ResponsiveCardGrid>
