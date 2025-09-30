@@ -53,8 +53,8 @@
   --popover: 0 0% 100%;
   --popover-foreground: var(--foreground);
   
-  /* Secondary system */
-  --secondary: 210 40% 96%;
+  /* Secondary system - Distinct gray background */
+  --secondary: 220 13% 91%;  /* Visibly different from white background */
   --secondary-foreground: var(--foreground);
 
   /* Design System Custom Properties - Bulletproof Styles */
@@ -73,7 +73,7 @@
     --input: 222 28% 18%;
     --popover: 222 47% 9%;
     --popover-foreground: var(--foreground);
-    --secondary: 222 32% 12%;
+    --secondary: 222 32% 15%;  /* Distinct from card background in dark mode */
     --secondary-foreground: var(--foreground);
     --destructive: 0 62% 30%;
     --destructive-foreground: 210 40% 98%;

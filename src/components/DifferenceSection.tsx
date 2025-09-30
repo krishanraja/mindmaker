@@ -36,7 +36,7 @@ const DifferenceSection = () => {
   ];
 
   return (
-    <section className="section-padding bg-muted/30">
+    <section className="section-padding bg-slate-100">
       <div className="container-width">
         <div className="text-center mb-16 fade-in-up">
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-6">
@@ -45,16 +45,16 @@ const DifferenceSection = () => {
             </span>
           </h2>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            Move beyond boring workshops and theoretical frameworks. Our gamified, interactive methodology transforms AI literacy into engaging experiences with measurable business outcomes.
+            Move beyond boring workshops and theoretical frameworks. Our gamified, interactive methodology transforms AI literacy into engaging experiences with measurable outcomes.
           </p>
         </div>
         
         <ResponsiveCardGrid 
           desktopGridClass="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          mobileCardHeight="h-[280px]"
+          mobileCardHeight="h-[360px]"
         >
           {differences.map((difference, index) => (
-            <div key={index} className="card p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>
+            <div key={index} className="card p-4 sm:p-6 lg:p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>
               <div className="flex items-start gap-4 mb-6">
                 <div className="flex-shrink-0 w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center">
                   <difference.icon className="h-6 w-6" />

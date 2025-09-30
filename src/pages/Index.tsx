@@ -1,15 +1,18 @@
+import { lazy, Suspense } from "react";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import ProblemSection from "@/components/ProblemSection";
 import DifferenceSection from "@/components/DifferenceSection";
 import TrustSection from "@/components/TrustSection";
-import CollapsibleMethodologySection from "@/components/CollapsibleMethodologySection";
-import StatsSection from "@/components/StatsSection";
-import PathwaysSection from "@/components/PathwaysSection";
 import AudienceOutcomesSection from "@/components/AudienceOutcomesSection";
-import ContentHubSection from "@/components/ContentHubSection";
+import StatsSection from "@/components/StatsSection";
 import CTASection from "@/components/CTASection";
-import Footer from "@/components/Footer";
+
+// Lazy load below-the-fold components
+const CollapsibleMethodologySection = lazy(() => import("@/components/CollapsibleMethodologySection"));
+const PathwaysSection = lazy(() => import("@/components/PathwaysSection"));
+const ContentHubSection = lazy(() => import("@/components/ContentHubSection"));
+const Footer = lazy(() => import("@/components/Footer"));
 
 const Index = () => {
   return (
@@ -24,26 +27,28 @@ const Index = () => {
         <TrustSection />
       </section>
 
-      <section aria-label="Problem Statement and Solution">
-        <ProblemSection />
-        <DifferenceSection />
-      </section>
+      <ProblemSection />
+      <DifferenceSection />
 
       <section aria-label="Audience Outcomes" id="outcomes">
         <AudienceOutcomesSection />
       </section>
 
-      <section aria-label="Program Pathways" id="pathways">
+      <Suspense fallback={<div className="min-h-[400px]" />}>
         <PathwaysSection />
-      </section>
+      </Suspense>
 
-      <section aria-label="Content Hub">
-        <ContentHubSection />
-      </section>
+      <Suspense fallback={<div className="min-h-[300px]" />}>
+        <section aria-label="Content Hub">
+          <ContentHubSection />
+        </section>
+      </Suspense>
 
-      <section aria-label="Learning Methodology">
-        <CollapsibleMethodologySection />
-      </section>
+      <Suspense fallback={<div className="min-h-[300px]" />}>
+        <section aria-label="Learning Methodology">
+          <CollapsibleMethodologySection />
+        </section>
+      </Suspense>
 
       <section aria-label="Founder Credentials">
         <StatsSection />
@@ -53,7 +58,9 @@ const Index = () => {
         <CTASection />
       </section>
       
-      <Footer />
+      <Suspense fallback={<div className="min-h-[200px]" />}>
+        <Footer />
+      </Suspense>
     </main>
   );
 };

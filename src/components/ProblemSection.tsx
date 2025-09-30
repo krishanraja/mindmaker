@@ -2,7 +2,7 @@ import { AlertTriangle, Clock, DollarSign, Users } from "lucide-react";
 import { useScrollTrigger } from "@/hooks/useScrollTrigger";
 import LiveStatsPopup from "@/components/LiveStatsPopup";
 import ResponsiveCardGrid from "@/components/ResponsiveCardGrid";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const ProblemSection = () => {
   const { elementRef, isVisible } = useScrollTrigger({ threshold: 0.4 });
@@ -14,6 +14,11 @@ const ProblemSection = () => {
       setShowPopup(true);
     }
   }, [isVisible]);
+
+  // Memoize onClose callback to prevent recreation
+  const handleClosePopup = useCallback(() => {
+    setShowPopup(false);
+  }, []);
 
   const audienceProblems = [
     {
@@ -56,10 +61,10 @@ const ProblemSection = () => {
         <ResponsiveCardGrid 
           desktopGridClass="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
           className="mb-16"
-          mobileCardHeight="h-[420px]"
+          mobileCardHeight="h-[360px]"
         >
           {audienceProblems.map((item, index) => (
-            <div key={index} className="card p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>
+            <div key={index} className="card p-4 sm:p-6 lg:p-8 fade-in-up h-full flex flex-col" style={{animationDelay: `${index * 0.1}s`}}>
               <div className="inline-flex items-center justify-center w-16 h-16 bg-destructive text-white rounded-xl mb-6">
                 <item.icon className="h-8 w-8" />
               </div>
@@ -101,7 +106,7 @@ const ProblemSection = () => {
       {/* Live Stats Popup */}
       <LiveStatsPopup 
         isVisible={showPopup} 
-        onClose={() => setShowPopup(false)} 
+        onClose={handleClosePopup} 
       />
     </section>
   );

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Megaphone, Target, Cog, Search, Hammer, UserCheck, GamepadIcon, Workflow, Telescope, Users2, PenTool, RotateCcw } from "lucide-react";
 import { useState } from "react";
+import ResponsiveCardGrid from "@/components/ResponsiveCardGrid";
 
 const PathwaysSection = () => {
   const [showSpecializedModules, setShowSpecializedModules] = useState(false);
@@ -135,9 +136,9 @@ const PathwaysSection = () => {
     const isLeadership = module.track === "LEADERSHIP";
     
     return (
-      <div className={`glass-card p-4 sm:p-6 hover:scale-105 transition-all duration-300 group flex flex-col h-full rounded-xl ${!isCoreModule && !isLevel3 ? 'opacity-75' : ''}`}>
-        {/* Header Section - Fixed Height */}
-        <div className="min-h-[100px] sm:min-h-[120px] flex flex-col">
+      <div key={module.id} className={`glass-card p-4 sm:p-6 lg:p-8 hover:scale-105 transition-all duration-300 group flex flex-col h-full rounded-xl ${!isCoreModule && !isLevel3 ? 'opacity-75' : ''}`}>
+        {/* Header Section */}
+        <div className="flex flex-col mb-4">
           {/* Badge */}
           <div className="flex justify-end mb-3 sm:mb-4">
             {isCoreModule ? (
@@ -233,20 +234,23 @@ const PathwaysSection = () => {
   };
 
   return (
-    <section className="section-padding bg-secondary/20" data-section="pathways">
+    <section className="section-padding bg-purple-50" data-section="pathways">
       <div className="container-width">
         <div className="text-center mb-10 sm:mb-12 md:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4 sm:mb-6 text-foreground">Modules You Can Combine</h2>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
-            Our modular credit system lets you <strong>choose what you need, when you need it</strong>. Build your custom learning pathway with flexible, pay-as-you-go modules designed for real business outcomes.
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-5xl mx-auto">
+            Our modular credit system lets you <strong>choose what you need, when you need it</strong>. Build your custom learning pathway with flexible, pay-as-you-go modules designed for business outcomes.
           </p>
         </div>
 
         {/* Core Modules - Always Visible */}
         <div className="mb-8 sm:mb-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto mb-8">
-            {coreModules.map((module) => renderModule(module, true))}
-          </div>
+          <ResponsiveCardGrid
+            desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto mb-8"
+            mobileCardHeight="h-[360px]"
+          >
+            {coreModules.map((module) => renderModule(module, true, false))}
+          </ResponsiveCardGrid>
           
           {/* Show/Hide Specialized Modules Button */}
           <div className="text-center mb-8">
@@ -265,9 +269,12 @@ const PathwaysSection = () => {
           {showSpecializedModules && (
             <div className="max-w-7xl mx-auto animate-fade-in">
               {/* Level 2 Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+              <ResponsiveCardGrid
+                desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8"
+                mobileCardHeight="h-[360px]"
+              >
                 {specializedModules.map((module) => renderModule(module, false, false))}
-              </div>
+              </ResponsiveCardGrid>
               
               {/* Show/Hide Level 3 Modules Button */}
               <div className="text-center mb-8">
@@ -285,9 +292,12 @@ const PathwaysSection = () => {
               {/* Level 3 Grid */}
               {showLevel3Modules && (
                 <div className="max-w-7xl mx-auto animate-fade-in">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                  <ResponsiveCardGrid
+                    desktopGridClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+                    mobileCardHeight="h-[360px]"
+                  >
                     {level3ModulesArray.map((module) => renderModule(module, false, true))}
-                  </div>
+                  </ResponsiveCardGrid>
                 </div>
               )}
             </div>

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useStatsTimer, getTimeBasedInterval, addRandomVariation } from './useStatsTimer';
 import { useOpenAIContext } from './useOpenAIContext';
 
@@ -221,10 +221,11 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
   // Save state whenever counters change
   useEffect(() => {
     saveState(counters);
-  }, [counters]); // saveState is stable with useCallback, no need in deps
+  }, [counters, saveState]);
 
   // Set up timers with consistent 1-2 second intervals for visual impact
-  const timerConfigs = [
+  // Memoize to prevent recreation on every render
+  const timerConfigs = useMemo(() => [
     {
       key: 'aiTrainingSearches',
       updateInterval: 1000, // 1 second for real-time visual updates
@@ -245,7 +246,7 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
       updateInterval: 60000, // 1 minute
       callback: checkHourlyReset
     }
-  ];
+  ], [updateAiTrainingSearches, updateAiReplaceSearches, updateUnpreparedPercentage, checkHourlyReset]);
 
   useStatsTimer({
     isActive: isVisible,
@@ -289,9 +290,12 @@ export const useRealisticCounters = ({ isVisible }: UseRealisticCountersOptions)
     }
   ], [counters]);
 
+  // Memoize counterData to prevent unnecessary re-renders
+  const counterData = useMemo(() => getCounterData(), [counters, getCounterData]);
+
   return {
     counters,
-    counterData: getCounterData(),
+    counterData,
     formatNumber,
     marketSentiment
   };

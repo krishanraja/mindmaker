@@ -61,33 +61,35 @@ const AudienceOutcomesSection = () => {
         
         <ResponsiveCardGrid 
           desktopGridClass="flex flex-col lg:grid lg:grid-cols-3 gap-6 lg:gap-6"
-          mobileCardHeight="h-[550px]"
+          mobileCardHeight="h-[360px]"
         >
           {outcomes.map((outcome, index) => (
-            <div key={index} className="card p-6 sm:p-8 lg:p-6 fade-in-up flex flex-col h-full rounded-xl" style={{animationDelay: `${index * 0.1}s`}}>
-              <div className="text-center mb-5 sm:mb-6 lg:mb-5 flex flex-col">
-                <div className="inline-flex items-center justify-center w-14 sm:w-16 h-14 sm:h-16 bg-primary text-white rounded-xl mb-4 mx-auto">
-                  <img src={outcome.icon} alt="MindMaker Icon" className="max-h-7 max-w-7 sm:max-h-8 sm:max-w-8 object-contain" />
-                </div>
-                <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground mb-2">
-                  {outcome.audience}
-                </h3>
-                <h4 className="text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4 lg:mb-3">
-                  {outcome.outcome}
-                </h4>
-                <p className="text-sm sm:text-sm font-normal leading-relaxed text-muted-foreground" dangerouslySetInnerHTML={{ __html: outcome.description }}>
-                </p>
-              </div>
-              
-              <div className="space-y-3 mb-5 sm:mb-6 lg:mb-5 flex-1">
-                {outcome.benefits.map((benefit, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm font-normal leading-relaxed text-muted-foreground">
-                      {benefit}  
-                    </span>
+            <div key={index} className="card p-4 sm:p-6 lg:p-8 fade-in-up flex flex-col justify-between h-full rounded-xl" style={{animationDelay: `${index * 0.1}s`}}>
+              <div className="flex flex-col flex-1">
+                <div className="text-center mb-5 sm:mb-6 lg:mb-5 flex flex-col">
+                  <div className="inline-flex items-center justify-center w-14 sm:w-16 h-14 sm:h-16 bg-primary text-white rounded-xl mb-4 mx-auto">
+                    <img src={outcome.icon} alt="MindMaker Icon" className="h-8 w-8 sm:h-10 sm:w-10 object-contain" loading="lazy" decoding="async" />
                   </div>
-                ))}
+                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground mb-2">
+                    {outcome.audience}
+                  </h3>
+                  <h4 className="text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4 lg:mb-3">
+                    {outcome.outcome}
+                  </h4>
+                  <p className="text-sm sm:text-sm font-normal leading-relaxed text-muted-foreground" dangerouslySetInnerHTML={{ __html: outcome.description }}>
+                  </p>
+                </div>
+                
+                <div className="space-y-3 mb-5 sm:mb-6 lg:mb-5">
+                  {outcome.benefits.map((benefit, idx) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-sm font-normal leading-relaxed text-muted-foreground">
+                        {benefit}  
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
               
               <Button 
