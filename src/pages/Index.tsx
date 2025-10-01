@@ -9,7 +9,6 @@ import StatsSection from "@/components/StatsSection";
 import CTASection from "@/components/CTASection";
 
 // Lazy load below-the-fold components
-const CollapsibleMethodologySection = lazy(() => import("@/components/CollapsibleMethodologySection"));
 const PathwaysSection = lazy(() => import("@/components/PathwaysSection"));
 const ContentHubSection = lazy(() => import("@/components/ContentHubSection"));
 const Footer = lazy(() => import("@/components/Footer"));
@@ -44,13 +43,7 @@ const Index = () => {
         </section>
       </Suspense>
 
-      <Suspense fallback={<div className="min-h-[300px]" />}>
-        <section aria-label="Learning Methodology">
-          <CollapsibleMethodologySection />
-        </section>
-      </Suspense>
-
-      <section aria-label="Founder Credentials">
+      <section aria-label="Founder Credentials and Methodology">
         <StatsSection />
       </section>
 

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { GraduationCap, BookOpen, Users, ExternalLink, ChevronDown, Award } from "lucide-react";
+import { GraduationCap, BookOpen, Users, ExternalLink, ChevronDown, Award, Brain, Lightbulb, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const StatsSection = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCredentialsOpen, setIsCredentialsOpen] = useState(false);
+  const [isMethodologyOpen, setIsMethodologyOpen] = useState(false);
   
   const credentialHighlights = [
     {
@@ -27,6 +28,57 @@ const StatsSection = () => {
     },
   ];
 
+  const methodologyPhases = [
+    {
+      number: "01",
+      title: "ASSESS",
+      description: "Comprehensive evaluation of current AI mental models and learning readiness",
+      benefits: [
+        "AI literacy baseline assessment",
+        "Cognitive gap analysis",
+        "Learning style evaluation",
+        "Personalized pathway design"
+      ],
+      icon: Brain,
+    },
+    {
+      number: "02",
+      title: "ABSORB",
+      description: "Structured knowledge acquisition of AI reasoning patterns and frameworks",
+      benefits: [
+        "Core AI concept mastery",
+        "Reasoning pattern recognition",
+        "Mental model restructuring",
+        "Critical thinking development"
+      ],
+      icon: BookOpen,
+    },
+    {
+      number: "03",
+      title: "APPLY",
+      description: "Real-world application of AI knowledge through guided practice sessions",
+      benefits: [
+        "Hands-on practice sessions",
+        "Real-world problem solving",
+        "Collaborative learning experiences",
+        "Confidence building exercises"
+      ],
+      icon: Lightbulb,
+    },
+    {
+      number: "04",
+      title: "ACCELERATE",
+      description: "Advanced mastery development and thought leadership cultivation",
+      benefits: [
+        "Advanced mastery achievement",
+        "Teaching and mentoring skills",
+        "Thought leadership development",
+        "Organizational AI advocacy"
+      ],
+      icon: Zap,
+    }
+  ];
+
   return (
     <section className="section-padding bg-muted">
       <div className="container-width">
@@ -39,7 +91,8 @@ const StatsSection = () => {
           </h2>
         </div>
         
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-6">
+        {/* Credentials Collapsible */}
+        <Collapsible open={isCredentialsOpen} onOpenChange={setIsCredentialsOpen} className="mb-6">
           <CollapsibleContent className="mb-6">
             <div className="glass-card mobile-padding max-w-4xl mx-auto animate-collapsible-down">
               <div className="space-y-6">
@@ -67,31 +120,83 @@ const StatsSection = () => {
               </div>
             </div>
           </CollapsibleContent>
+        </Collapsible>
+
+        {/* Methodology Collapsible */}
+        <Collapsible open={isMethodologyOpen} onOpenChange={setIsMethodologyOpen} className="mb-6">
+          <CollapsibleContent className="mb-6">
+            <div className="glass-card mobile-padding max-w-4xl mx-auto animate-collapsible-down">
+              <div className="space-y-6">
+                {methodologyPhases.map((phase, index) => (
+                  <div key={index} className="flex gap-4 items-start">
+                    <div className="flex-shrink-0 inline-flex items-center justify-center w-12 h-12 bg-primary text-white rounded-lg">
+                      <phase.icon className="h-6 w-6" />
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg font-bold text-primary">{phase.number}</span>
+                        <h3 className="text-base sm:text-lg font-semibold text-primary">
+                          {phase.title}
+                        </h3>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-3 leading-snug">
+                        {phase.description}
+                      </p>
+                      
+                      <ul className="space-y-1">
+                        {phase.benefits.map((benefit, benefitIndex) => (
+                          <li key={benefitIndex} className="flex items-start gap-2 text-sm text-muted-foreground">
+                            <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                            <span className="leading-snug">{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <CollapsibleTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-primary text-primary hover:bg-primary hover:text-white group transition-all duration-300 min-h-[48px] px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
-              >
-                <Award className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
-                My Credentials
-                <ChevronDown className={`ml-2 h-4 sm:h-5 w-4 sm:w-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-              </Button>
-            </CollapsibleTrigger>
-            
+        {/* Three Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center flex-wrap">
+          <CollapsibleTrigger asChild onClick={() => setIsCredentialsOpen(!isCredentialsOpen)}>
             <Button 
               variant="outline" 
               size="lg"
               className="border-primary text-primary hover:bg-primary hover:text-white group transition-all duration-300 min-h-[48px] px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
-              onClick={() => window.open('https://www.krishraja.com/', '_blank')}
             >
-              <ExternalLink className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
-              Check out our Founder
+              <Award className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
+              My Credentials
+              <ChevronDown className={`ml-2 h-4 sm:h-5 w-4 sm:w-5 transition-transform duration-300 ${isCredentialsOpen ? 'rotate-180' : ''}`} />
             </Button>
-          </div>
-        </Collapsible>
+          </CollapsibleTrigger>
+          
+          <CollapsibleTrigger asChild onClick={() => setIsMethodologyOpen(!isMethodologyOpen)}>
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="border-primary text-primary hover:bg-primary hover:text-white group transition-all duration-300 min-h-[48px] px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
+            >
+              <Brain className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
+              Our Methodology
+              <ChevronDown className={`ml-2 h-4 sm:h-5 w-4 sm:w-5 transition-transform duration-300 ${isMethodologyOpen ? 'rotate-180' : ''}`} />
+            </Button>
+          </CollapsibleTrigger>
+          
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="border-primary text-primary hover:bg-primary hover:text-white group transition-all duration-300 min-h-[48px] px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
+            onClick={() => window.open('https://www.krishraja.com/', '_blank')}
+          >
+            <ExternalLink className="mr-2 h-4 sm:h-5 w-4 sm:w-5 group-hover:scale-110 transition-transform" />
+            Founder Bio
+          </Button>
+        </div>
       </div>
     </section>
   );
