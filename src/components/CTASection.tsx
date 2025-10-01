@@ -45,7 +45,7 @@ const CTASection = () => {
                   <img 
                     src={krishHeadshot} 
                     alt="Krish Raja, AI Strategy Expert"
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover shadow-lg shadow-primary/20"
+                    className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full object-cover shadow-lg shadow-primary/20"
                   />
                 </div>
                 
