@@ -6,6 +6,28 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 const StatsSection = () => {
   const [isCredentialsOpen, setIsCredentialsOpen] = useState(false);
   const [isMethodologyOpen, setIsMethodologyOpen] = useState(false);
+
+  const handleCredentialsToggle = (open: boolean) => {
+    if (!open && isCredentialsOpen) {
+      // Scroll to top of section when closing
+      const section = document.getElementById('ready-to-help');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    setIsCredentialsOpen(open);
+  };
+
+  const handleMethodologyToggle = (open: boolean) => {
+    if (!open && isMethodologyOpen) {
+      // Scroll to top of section when closing
+      const section = document.getElementById('ready-to-help');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    setIsMethodologyOpen(open);
+  };
   
   const credentialHighlights = [
     {
@@ -80,7 +102,7 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="section-padding bg-muted">
+    <section id="ready-to-help" className="section-padding bg-muted">
       <div className="container-width">
         <div className="text-center mb-8 sm:mb-10 md:mb-12 fade-in-up">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 sm:mb-4">
@@ -92,7 +114,7 @@ const StatsSection = () => {
         </div>
         
         {/* Credentials Collapsible */}
-        <Collapsible open={isCredentialsOpen} onOpenChange={setIsCredentialsOpen} className="mb-6">
+        <Collapsible open={isCredentialsOpen} onOpenChange={handleCredentialsToggle} className="mb-6">
           <CollapsibleContent className="mb-6">
             <div className="glass-card mobile-padding max-w-4xl mx-auto animate-collapsible-down">
               <div className="space-y-6">
@@ -123,7 +145,7 @@ const StatsSection = () => {
         </Collapsible>
 
         {/* Methodology Collapsible */}
-        <Collapsible open={isMethodologyOpen} onOpenChange={setIsMethodologyOpen} className="mb-6">
+        <Collapsible open={isMethodologyOpen} onOpenChange={handleMethodologyToggle} className="mb-6">
           <CollapsibleContent className="mb-6">
             <div className="glass-card mobile-padding max-w-4xl mx-auto animate-collapsible-down">
               <div className="space-y-6">
@@ -163,7 +185,7 @@ const StatsSection = () => {
           
         {/* Three Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center flex-wrap">
-          <Collapsible open={isCredentialsOpen} onOpenChange={setIsCredentialsOpen} className="w-full sm:w-auto">
+          <Collapsible open={isCredentialsOpen} onOpenChange={handleCredentialsToggle} className="w-full sm:w-auto">
             <CollapsibleTrigger asChild>
               <Button 
                 variant="outline" 
@@ -177,7 +199,7 @@ const StatsSection = () => {
             </CollapsibleTrigger>
           </Collapsible>
           
-          <Collapsible open={isMethodologyOpen} onOpenChange={setIsMethodologyOpen} className="w-full sm:w-auto">
+          <Collapsible open={isMethodologyOpen} onOpenChange={handleMethodologyToggle} className="w-full sm:w-auto">
             <CollapsibleTrigger asChild>
               <Button 
                 variant="outline" 
