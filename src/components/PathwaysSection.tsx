@@ -193,13 +193,7 @@ const PathwaysSection = () => {
               className="group w-full mt-auto min-h-[40px] sm:min-h-[44px] text-xs sm:text-sm"
             >
               <a 
-                href={
-                  module.id === 'align-leaders' ? 'https://calendly.com/krish-raja/mindmaker-align-leaders' :
-                  module.id === 'inspire-staff' ? 'https://calendly.com/krish-raja/mindmaker-inspire-staff' :
-                  module.id === 'product-strategy' ? 'https://calendly.com/krish-raja/mindmaker-product-strategy' :
-                  module.id === 'agent-opp-spotter' ? 'https://calendly.com/krish-raja/mindmaker-agent-opp-spotter' :
-                  '#'
-                }
+                href="https://calendly.com/krish-raja/mindmaker-meeting"
                 target="_blank"
                 rel="noopener noreferrer"
               >
