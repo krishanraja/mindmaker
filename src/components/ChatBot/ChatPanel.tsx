@@ -173,7 +173,7 @@ export const ChatPanel = ({ onClose }: ChatPanelProps) => {
       <Sheet open onOpenChange={(open) => !open && onClose()}>
         <SheetContent 
           side="bottom" 
-          className="h-[85vh] p-0 flex flex-col border-t-2"
+          className="h-[85vh] p-0 flex flex-col border-t-2 [&>button]:hidden"
         >
           {chatContent}
         </SheetContent>
