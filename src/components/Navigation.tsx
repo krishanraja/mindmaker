@@ -9,7 +9,7 @@ const Navigation = () => {
   const { theme, setTheme } = useTheme();
 
   const navItems = [
-    { label: "How I Help", href: "#difference" },
+    { label: "How We Help", href: "#difference" },
     { label: "AI MindMaker", href: "#pathways" },
     { label: "Creds", href: "#stats" },
     { label: "Outcomes", href: "#outcomes" },
