@@ -41,12 +41,12 @@ const Hero = () => {
           
           {/* Main Tagline - Mobile-First Typography */}
           <h1 className={`${goboldLoaded ? 'font-gobold' : 'font-black'} text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-4 md:mb-6 leading-[1.1] sm:leading-tight max-w-5xl mx-auto hero-text-shimmer transition-[font-family] duration-200 ${goboldLoading ? 'opacity-80' : 'opacity-100'}`}>
-            The AI hype is over.<br />Leadership starts now.
+            AI LITERACY
           </h1>
           
           {/* Supporting Tagline - Mobile Optimized */}
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium tracking-wide mb-3 md:mb-4 leading-relaxed max-w-3xl mx-auto text-white/95">
-            Not about learning AI — about leading with it.
+            The future foundation of leadership
           </p>
           
           <p className="text-sm sm:text-base md:text-lg font-normal mb-8 md:mb-12 leading-relaxed max-w-4xl mx-auto text-white/80">
