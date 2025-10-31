@@ -66,7 +66,7 @@ const SimplifiedPathwaysSection = () => {
             return (
               <div 
                 key={index}
-                className="glass-card p-8 fade-in-up hover:scale-105 transition-all duration-300 flex flex-col"
+                className="glass-card p-8 fade-in-up hover:scale-105 transition-all duration-300 flex flex-col h-full min-h-[600px] lg:min-h-[700px]"
                 style={{animationDelay: `${index * 0.15}s`}}
               >
                 {/* Header */}
@@ -137,7 +137,7 @@ const SimplifiedPathwaysSection = () => {
           })}
           
           {/* Partners Card - Third Column */}
-          <div style={{animationDelay: '0.3s'}}>
+          <div className="h-full min-h-[600px] lg:min-h-[700px]" style={{animationDelay: '0.3s'}}>
             <PartnersCard />
           </div>
         </div>

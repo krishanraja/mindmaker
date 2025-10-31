@@ -3,7 +3,7 @@ import { Users, ArrowRight } from "lucide-react";
 
 const PartnersCard = () => {
   return (
-    <div className="glass-card p-8 fade-in-up hover:scale-105 transition-all duration-300 flex flex-col">
+    <div className="glass-card p-8 fade-in-up hover:scale-105 transition-all duration-300 flex flex-col h-full">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
@@ -25,9 +25,21 @@ const PartnersCard = () => {
         </p>
       </div>
 
-      {/* Key Benefits */}
+      {/* Timeline & Investment */}
+      <div className="flex items-center justify-between mb-6 pb-6 border-b border-border">
+        <div>
+          <div className="text-xs text-muted-foreground mb-1">Timeline</div>
+          <div className="text-sm font-semibold text-foreground">Annual</div>
+        </div>
+        <div className="text-right">
+          <div className="text-xs text-muted-foreground mb-1">Investment</div>
+          <div className="text-sm font-semibold text-primary">Custom</div>
+        </div>
+      </div>
+
+      {/* Deliverables */}
       <div className="flex-grow mb-6">
-        <div className="text-sm font-semibold text-foreground mb-3">Program Benefits:</div>
+        <div className="text-sm font-semibold text-foreground mb-3">What You Get:</div>
         <ul className="space-y-2">
           <li className="flex items-start gap-2 text-sm text-muted-foreground">
             <span className="text-primary mt-0.5">•</span>
@@ -44,27 +56,23 @@ const PartnersCard = () => {
         </ul>
       </div>
 
-      {/* CTAs */}
-      <div className="space-y-3">
-        <Button 
-          variant="hero-primary" 
-          size="lg" 
-          className="w-full group"
-          onClick={() => window.location.href = '/partners-interest'}
-        >
-          Register Portfolio Interest
-          <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          size="lg" 
-          className="w-full"
-          onClick={() => window.open('mailto:krish@mindmaker.ai?subject=Partner Enablement Pack Request', '_blank')}
-        >
-          Request Enablement Pack
-        </Button>
+      {/* Credits Badge */}
+      <div className="mb-6">
+        <div className="inline-flex items-center bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">
+          200+ Credits
+        </div>
       </div>
+
+      {/* CTA */}
+      <Button 
+        variant="hero-primary" 
+        size="lg" 
+        className="w-full group"
+        onClick={() => window.location.href = '/partners-interest'}
+      >
+        Register Portfolio Interest
+        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+      </Button>
     </div>
   );
 };
