@@ -53,54 +53,51 @@ const Hero = () => {
             Mindmaker builds the human capability that sits between algorithms and outcomes.
           </p>
           
-          {/* CTA Buttons - Mobile-First Design */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4 md:gap-6 mb-8 md:mb-12 max-w-lg sm:max-w-none mx-auto">
-            {/* Primary CTA */}
+          {/* Primary CTA - Mobile-First Design */}
+          <div className="flex flex-col gap-3 mb-4 md:mb-6 max-w-lg mx-auto">
             <Button 
               variant="hero-primary"
               size="lg" 
-              className="px-6 md:px-8 py-4 md:py-4 text-sm sm:text-base md:text-lg font-semibold group w-full sm:w-auto min-h-[48px] sm:min-h-[44px] rounded-lg sm:rounded-md"
+              className="px-6 md:px-8 py-4 md:py-4 text-sm sm:text-base md:text-lg font-semibold group w-full min-h-[48px] rounded-lg"
               onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
               aria-label="Start your AI alignment sprint"
             >
               Start Your AI Alignment Sprint
               <ArrowRight className="ml-2 h-4 md:h-5 w-4 md:w-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Button>
+          </div>
+
+          {/* Pathway Buttons - New Entry Routes */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 md:mb-12 max-w-2xl mx-auto justify-center">
+            <Button 
+              variant="hero-secondary"
+              size="sm"
+              className="px-4 md:px-6 py-3 text-xs sm:text-sm font-medium w-full sm:w-auto min-h-[44px] rounded-lg"
+              onClick={() => window.location.href = '/leaders'}
+              aria-label="Leaders benchmark assessment"
+            >
+              Leaders Benchmark
+            </Button>
             
-            {/* Secondary CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Button 
-                variant="hero-secondary"
-                size="sm"
-                className="px-4 md:px-6 py-3 md:py-3 text-xs sm:text-sm md:text-base font-medium w-full sm:w-auto min-h-[44px] sm:min-h-[40px] rounded-lg sm:rounded-md"
-                onClick={() => {
-                  const outcomesSection = document.getElementById('outcomes');
-                  if (outcomesSection) {
-                    outcomesSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                aria-label="Explore partner program"
-              >
-                <span className="sm:hidden">Partner Program</span>
-                <span className="hidden sm:inline">Explore Partner Program</span>
-              </Button>
-              
-              <Button 
-                variant="hero-secondary"
-                size="sm"
-                className="px-4 md:px-6 py-3 md:py-3 text-xs sm:text-sm md:text-base font-medium w-full sm:w-auto min-h-[44px] sm:min-h-[40px] rounded-lg sm:rounded-md"
-                onClick={() => {
-                  const systemSection = document.getElementById('system');
-                  if (systemSection) {
-                    systemSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                aria-label="See the framework"
-              >
-                <span className="sm:hidden">See Framework</span>
-                <span className="hidden sm:inline">See the Framework</span>
-              </Button>
-            </div>
+            <Button 
+              variant="hero-secondary"
+              size="sm"
+              className="px-4 md:px-6 py-3 text-xs sm:text-sm font-medium w-full sm:w-auto min-h-[44px] rounded-lg"
+              onClick={() => window.location.href = '/exec-teams'}
+              aria-label="Executive teams discovery"
+            >
+              Exec Teams Discovery
+            </Button>
+            
+            <Button 
+              variant="hero-secondary"
+              size="sm"
+              className="px-4 md:px-6 py-3 text-xs sm:text-sm font-medium w-full sm:w-auto min-h-[44px] rounded-lg"
+              onClick={() => window.location.href = '/partners-interest'}
+              aria-label="Partner inquiry"
+            >
+              Partner Inquiry
+            </Button>
           </div>
           
           {/* Value Prop */}

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Clock, Target, Rocket, ArrowRight } from "lucide-react";
+import { Target, Rocket, ArrowRight } from "lucide-react";
+import PartnersCard from "./PartnersCard";
 
 const SimplifiedPathwaysSection = () => {
   const pathways = [
@@ -41,26 +42,6 @@ const SimplifiedPathwaysSection = () => {
       icon: Rocket,
       gradient: "from-accent to-accent-400",
       cta: "Explore Accelerator",
-      ctaLink: "https://calendly.com/krish-raja/mindmaker-meeting"
-    },
-    {
-      track: "SCALE",
-      audience: "Investors/Consultants/Educators",
-      title: "Partner Program License",
-      timeline: "Annual Program",
-      investment: "$20-50K/year",
-      description: "Deploy framework across portfolio/clients at scale",
-      deliverables: [
-        "Licensed Mindmaker Method™ and Literacy-to-Leverage Loop™",
-        "White-label sprint delivery frameworks",
-        "Portfolio-wide AI Leadership Index™ dashboard",
-        "Partner revenue share model",
-        "Quarterly partner enablement program"
-      ],
-      credits: "Custom Credits",
-      icon: Clock,
-      gradient: "from-primary to-accent",
-      cta: "Become a Partner",
       ctaLink: "https://calendly.com/krish-raja/mindmaker-meeting"
     }
   ];
@@ -154,6 +135,11 @@ const SimplifiedPathwaysSection = () => {
               </div>
             );
           })}
+          
+          {/* Partners Card - Third Column */}
+          <div style={{animationDelay: '0.3s'}}>
+            <PartnersCard />
+          </div>
         </div>
 
         {/* Bottom CTA */}
