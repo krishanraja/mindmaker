@@ -22,16 +22,16 @@ const Terms = () => {
           <p className="text-muted-foreground mb-8">Effective Date: January 1, 2025</p>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">1. Acceptance of Terms</h2>
+          <h2 className="text-xl font-semibold mb-4">1. Acceptance of Terms</h2>
             <p className="mb-4">
-              By accessing or using Fractionl AI's services, website, or programs, you agree to be bound by these Terms & Conditions ("Terms"). If you do not agree to these Terms, please do not use our services.
+              By accessing or using Mindmaker LLC's services, website, or programs, you agree to be bound by these Terms & Conditions ("Terms"). If you do not agree to these Terms, please do not use our services.
             </p>
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">2. Description of Services</h2>
+          <h2 className="text-xl font-semibold mb-4">2. Description of Services</h2>
             <p className="mb-4">
-              Fractionl AI provides AI literacy training, coaching, and educational services including:
+              Mindmaker LLC provides AI literacy training, coaching, and educational services including:
             </p>
             <ul className="list-disc pl-6 mb-4">
               <li>AI literacy assessments and evaluations</li>
@@ -68,9 +68,9 @@ const Terms = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">5. Intellectual Property</h2>
+          <h2 className="text-xl font-semibold mb-4">5. Intellectual Property</h2>
             <p className="mb-4">
-              All content, materials, and intellectual property provided through Fractionl AI services are owned by us or our licensors. You may not:
+              All content, materials, and intellectual property provided through Mindmaker LLC services are owned by us or our licensors. You may not:
             </p>
             <ul className="list-disc pl-6 mb-4">
               <li>Copy, distribute, or reproduce our materials without permission</li>
@@ -94,9 +94,9 @@ const Terms = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">7. Limitation of Liability</h2>
+          <h2 className="text-xl font-semibold mb-4">7. Limitation of Liability</h2>
             <p className="mb-4">
-              To the maximum extent permitted by law, Fractionl AI shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our services. Our total liability shall not exceed the amount you paid for the specific service.
+              To the maximum extent permitted by law, Mindmaker LLC shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our services. Our total liability shall not exceed the amount you paid for the specific service.
             </p>
           </section>
 
@@ -122,9 +122,9 @@ const Terms = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">11. Governing Law</h2>
+          <h2 className="text-xl font-semibold mb-4">11. Governing Law</h2>
             <p className="mb-4">
-              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction where Fractionl AI operates, without regard to its conflict of law provisions.
+              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction where Mindmaker LLC operates, without regard to its conflict of law provisions.
             </p>
           </section>
 
@@ -134,9 +134,9 @@ const Terms = () => {
               If you have any questions about these Terms & Conditions, please contact us at:
             </p>
             <div className="bg-muted p-4 rounded-lg">
-              <p><strong>Fractionl AI</strong></p>
-              <p>Email: legal@fractionl.ai</p>
-              <p>Website: https://fractionl.ai</p>
+              <p><strong>Mindmaker LLC</strong></p>
+              <p>Email: legal@themindmaker.ai</p>
+              <p>Website: https://www.themindmaker.ai</p>
             </div>
           </section>
         </div>

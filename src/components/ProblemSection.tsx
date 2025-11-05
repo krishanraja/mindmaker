@@ -53,9 +53,6 @@ const ProblemSection = () => {
             <br />
             <span className="text-foreground">because leadership operates from hype, not capability</span>
           </h2>
-          <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            You've been over-sold on AI literacy and under-delivered on AI leadership infrastructure.
-          </p>
         </div>
         
         <ResponsiveCardGrid 

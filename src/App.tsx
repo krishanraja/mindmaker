@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import FAQ from "./pages/FAQ";
 import Coaching from "./pages/Coaching";
 import Leaders from "./pages/Leaders";
 import ExecTeams from "./pages/ExecTeams";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/faq" element={<FAQ />} />
             <Route path="/coaching" element={<Coaching />} />
             <Route path="/leaders" element={<Leaders />} />
             <Route path="/exec-teams" element={<ExecTeams />} />
