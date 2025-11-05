@@ -23,6 +23,9 @@ const PartnersCard = () => {
         <p className="text-sm text-muted-foreground mb-4">
           License the Mindmaker Method; roll up portfolio/team AI Leadership Index; co-deliver Sprints
         </p>
+        <p className="text-xs text-primary/80 italic mb-2">
+          Use our portfolio scoring tool to assess 1-10 companies and generate co-delivery plans with heatmap visualization.
+        </p>
       </div>
 
       {/* Timeline & Investment */}
@@ -64,15 +67,20 @@ const PartnersCard = () => {
       </div>
 
       {/* CTA */}
-      <Button 
-        variant="hero-primary" 
-        size="lg" 
-        className="w-full group"
-        onClick={() => window.location.href = '/partners-interest'}
-      >
-        Register Portfolio Interest
-        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-      </Button>
+      <div className="space-y-2">
+        <Button 
+          variant="hero-primary" 
+          size="lg" 
+          className="w-full group"
+          onClick={() => window.location.href = '/partners-interest'}
+        >
+          Register Portfolio Interest
+          <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+        </Button>
+        <p className="text-xs text-center text-muted-foreground/70">
+          Includes access to portfolio assessment tool
+        </p>
+      </div>
     </div>
   );
 };

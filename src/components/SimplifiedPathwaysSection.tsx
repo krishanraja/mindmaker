@@ -21,7 +21,7 @@ const SimplifiedPathwaysSection = () => {
       credits: "50 Credits",
       icon: Target,
       gradient: "from-primary to-primary-600",
-      cta: "Start Your Sprint",
+      cta: "Book Discovery Call",
       ctaLink: "https://calendly.com/krish-raja/mindmaker-meeting"
     },
     {
@@ -41,7 +41,7 @@ const SimplifiedPathwaysSection = () => {
       credits: "150 Credits",
       icon: Rocket,
       gradient: "from-accent to-accent-400",
-      cta: "Explore Accelerator",
+      cta: "Book Strategy Call",
       ctaLink: "https://calendly.com/krish-raja/mindmaker-meeting"
     }
   ];
@@ -88,6 +88,16 @@ const SimplifiedPathwaysSection = () => {
                   <p className="text-sm text-muted-foreground mb-4">
                     {pathway.description}
                   </p>
+                  {pathway.track === "FOUNDATION" && (
+                    <p className="text-xs text-primary/80 italic mb-2">
+                      Start with our free 2-minute AI Leadership Benchmark to assess your readiness and receive a personalized 90-day roadmap.
+                    </p>
+                  )}
+                  {pathway.track === "PERFORMANCE" && (
+                    <p className="text-xs text-primary/80 italic mb-2">
+                      Already completed the benchmark? This accelerator builds on your baseline with quarterly dashboards and innovation pipelines.
+                    </p>
+                  )}
                 </div>
 
                 {/* Timeline & Investment */}

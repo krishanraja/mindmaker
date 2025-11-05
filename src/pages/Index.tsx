@@ -6,6 +6,7 @@ import MindmakerSystemSection from "@/components/MindmakerSystemSection";
 import TrustSection from "@/components/TrustSection";
 import AILeadershipIndexSection from "@/components/AILeadershipIndexSection";
 import SimplifiedPathwaysSection from "@/components/SimplifiedPathwaysSection";
+import AssessmentPreviewSection from "@/components/AssessmentPreviewSection";
 import WhyThisWorksSection from "@/components/WhyThisWorksSection";
 import StatsSection from "@/components/StatsSection";
 import CTASection from "@/components/CTASection";
@@ -36,6 +37,8 @@ const Index = () => {
       <section aria-label="AI Leadership Index">
         <AILeadershipIndexSection />
       </section>
+
+      <AssessmentPreviewSection />
 
       <SimplifiedPathwaysSection />
 

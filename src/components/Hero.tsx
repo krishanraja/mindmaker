@@ -74,9 +74,9 @@ const Hero = () => {
               size="sm"
               className="px-4 md:px-6 py-3 text-xs sm:text-sm font-medium w-full sm:w-auto min-h-[44px] rounded-lg"
               onClick={() => window.location.href = '/leaders'}
-              aria-label="Leaders benchmark assessment"
+              aria-label="Free 2-minute AI leadership benchmark for individual executives"
             >
-              Leaders Benchmark
+              Take 2-Min Assessment
             </Button>
             
             <Button 
@@ -84,9 +84,9 @@ const Hero = () => {
               size="sm"
               className="px-4 md:px-6 py-3 text-xs sm:text-sm font-medium w-full sm:w-auto min-h-[44px] rounded-lg"
               onClick={() => window.location.href = '/exec-teams'}
-              aria-label="Executive teams discovery"
+              aria-label="Configure 4-hour AI bootcamp for your executive team"
             >
-              Exec Teams Discovery
+              Configure Team Bootcamp
             </Button>
             
             <Button 
@@ -94,15 +94,15 @@ const Hero = () => {
               size="sm"
               className="px-4 md:px-6 py-3 text-xs sm:text-sm font-medium w-full sm:w-auto min-h-[44px] rounded-lg"
               onClick={() => window.location.href = '/partners-interest'}
-              aria-label="Partner inquiry"
+              aria-label="Assess 1-10 portfolio companies with our scoring tool"
             >
-              Partner Inquiry
+              Score Your Portfolio
             </Button>
           </div>
           
           {/* Value Prop */}
           <p className="text-xs sm:text-sm text-white/70 max-w-4xl mx-auto mb-8">
-            Leaders save 5-10 hrs/week. Investors halve failed pilot spend. Partners unlock new revenue.
+            Individual leaders: Get your AI readiness score in 2 minutes. Executive teams: Configure custom bootcamps. Partners: Score up to 10 portfolio companies.
           </p>
 
           {/* Interactive AI Timeline */}
