@@ -4,32 +4,32 @@ const MindmakerSystemSection = () => {
   const systemSteps = [
     {
       number: "01",
-      title: "BASELINE",
-      description: "Map your current mental models and decision patterns",
-      icon: Brain,
-    },
-    {
-      number: "02",
-      title: "PRACTICE",
-      description: "Safe rehearsal on real decisions until patterns become instinct",
+      title: "SEE WHERE YOU STAND",
+      description: "Where you think you are vs where you actually are",
       icon: Target,
     },
     {
-      number: "03",
-      title: "INTEGRATION",
-      description: "Mental models become your default thinking, not conscious effort",
+      number: "02",
+      title: "PRACTICE ON REAL WORK",
+      description: "Use your actual decisions, not fake case studies",
       icon: Zap,
     },
     {
+      number: "03",
+      title: "IT BECOMES INSTINCT",
+      description: "Stop second-guessing yourself in vendor meetings",
+      icon: Brain,
+    },
+    {
       number: "04",
-      title: "MEASUREMENT",
-      description: "Track decision velocity and clarity improvements, not vanity metrics",
+      title: "TRACK REAL PROGRESS",
+      description: "See if you're getting sharper each quarter",
       icon: TrendingUp,
     },
     {
       number: "05",
-      title: "EVOLUTION",
-      description: "Mental models self-correct and improve every quarter",
+      title: "IT KEEPS COMPOUNDING",
+      description: "Doesn't fade like workshops do",
       icon: RefreshCw,
     },
   ];
@@ -38,17 +38,11 @@ const MindmakerSystemSection = () => {
     <section className="section-padding bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10">
       <div className="container-width">
         <div className="text-center mb-16 fade-in-up">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
-            <span className="text-foreground">
-              Not a course. Not a workshop.
-            </span>
-            <br />
-            <span className="text-primary">
-              A compounding performance system.
-            </span>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
+            How It Actually Works
           </h2>
-          <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto font-medium">
-            Built in, not bolted on.
+          <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
+            A 5-step system that helps you think clearly, make better calls, and get sharper each quarter—not another workshop that fades.
           </p>
         </div>
 
@@ -112,12 +106,9 @@ const MindmakerSystemSection = () => {
         {/* Key Differentiator */}
         <div className="max-w-3xl mx-auto text-center fade-in-up" style={{animationDelay: '0.6s'}}>
           <div className="glass-card p-8">
-            <p className="text-lg md:text-xl font-medium text-foreground mb-4">
-              "Workshops fade. Consultants tell you what to do. Tools do the work for you."
-            </p>
             <p className="text-base text-muted-foreground">
-              Mindmaker builds the cognitive infrastructure that lets you think for yourself—
-              spot substance vs theatre, make cleaner decisions, waste less capital.
+              Workshops fade. Consultants tell you what to do. Tools do the work for you. 
+              We build the system that lets you think for yourself—spot theatre, make better calls, stop wasting money.
             </p>
           </div>
         </div>

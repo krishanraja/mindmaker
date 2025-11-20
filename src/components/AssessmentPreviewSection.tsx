@@ -6,7 +6,7 @@ const AssessmentPreviewSection = () => {
     {
       audience: "Individual Leaders",
       title: "Literacy Diagnostic",
-      process: "2-min diagnostic → cognitive baseline → 90-day literacy roadmap",
+      process: "2 minutes → see where you stand → what to do next",
       icon: Target,
       gradient: "from-primary to-primary-600",
       link: "/leaders"
@@ -14,7 +14,7 @@ const AssessmentPreviewSection = () => {
     {
       audience: "Executive Teams",
       title: "Team Alignment",
-      process: "Team diagnostic → tension mapping → alignment charter",
+      process: "Team tool → see who's aligned (and who's not) → get on the same page",
       icon: Users,
       gradient: "from-accent to-accent-400",
       link: "/exec-teams"
@@ -22,7 +22,7 @@ const AssessmentPreviewSection = () => {
     {
       audience: "Partners & Investors",
       title: "Portfolio Tool",
-      process: "Portfolio diagnostic → readiness heat map → de-risk plan",
+      process: "Score 1-10 companies → see who's going to waste money → step in early",
       icon: TrendingUp,
       gradient: "from-primary-400 to-accent",
       link: "/partners-interest"
@@ -38,12 +38,12 @@ const AssessmentPreviewSection = () => {
       <div className="container-width">
         <div className="text-center mb-12 fade-in-up">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            <span className="text-foreground">Not Ready to Commit?</span>
+            <span className="text-foreground">Not Sure Yet?</span>
             <br />
-            <span className="text-primary">Start With a Free Diagnostic</span>
+            <span className="text-primary">Try This First (It's Free)</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Understand how you think about AI right now—before making any investment decisions.
+            See where you stand with AI right now—before making any decisions.
           </p>
         </div>
 

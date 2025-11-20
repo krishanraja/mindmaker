@@ -9,10 +9,10 @@ const WhatThisIsNotSection = () => {
   ];
 
   const isItems = [
-    "Infrastructure that lets you think clearly about AI",
-    "Practice on real work until it's instinct",
-    "Mental models you'll use every week",
-    "Capability to separate theatre from substance",
+    "A way to see through AI hype and make better calls",
+    "Questions you'll actually use when vendors pitch you",
+    "Practice with your real work until it clicks",
+    "Confidence in rooms where everyone's bluffing about AI",
   ];
 
   return (
@@ -67,7 +67,7 @@ const WhatThisIsNotSection = () => {
 
         <div className="text-center mt-8 fade-in-up">
           <p className="text-sm text-muted-foreground italic">
-            You don't need more AI hype. You need the mental infrastructure to navigate it.
+            You don't need more AI hype. You need a way to think clearly about it.
           </p>
         </div>
       </div>

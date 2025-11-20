@@ -50,7 +50,7 @@ const Hero = () => {
           </p>
           
           <p className="text-sm sm:text-base md:text-lg font-normal mb-8 md:mb-12 leading-relaxed max-w-4xl mx-auto text-white/80">
-            Mindmaker is the AI literacy infrastructure that lets leaders stay sharp, sceptical, and in control—not just skilled at prompts.
+            Most leaders feel behind on AI—but don't know what to actually do about it. We help you think clearly about AI, so you can make better decisions and spot the bullshit.
           </p>
           
           {/* Primary CTA - Mobile-First Design */}
@@ -102,7 +102,7 @@ const Hero = () => {
           
           {/* Value Prop */}
           <p className="text-xs sm:text-sm text-white/70 max-w-4xl mx-auto mb-8">
-            Individual leaders: Map your AI thinking. Executive teams: Align your cognitive infrastructure. Partners: De-risk portfolio AI spend.
+            Individual leaders: See where you actually stand. Teams: Get everyone on the same page. Partners: Stop portfolio companies wasting money on bad pilots.
           </p>
 
           {/* Interactive AI Timeline */}

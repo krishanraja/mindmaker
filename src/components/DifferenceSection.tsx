@@ -5,32 +5,32 @@ const DifferenceSection = () => {
   const differences = [
     {
       number: "01",
-      title: "Strategic Bridge",
-      description: "The essential step between confused humans and technical implementers. Technical builds mean nothing without confident non-technical teams.",
-      icon: Briefcase,
-    },
-    {
-      number: "02", 
-      title: "Literacy-First Methodology",
-      description: "Build understanding before tools. AI isn't software; it's more like a new species of worker we need to learn to communicate with.",
+      title: "You'll Actually Use This",
+      description: "Not another deck that dies in your email. Real questions you'll use in vendor meetings next week.",
       icon: Target,
     },
     {
-      number: "03",
-      title: "Flexible Engagement Model",
-      description: "Choose what you need, when you need it. From focused diagnostics to comprehensive literacy programs. Designed for real business outcomes.",
+      number: "02", 
+      title: "See Where You Really Stand",
+      description: "Most execs think they're further ahead than they are. We show you the gap—no judgment, just clarity.",
       icon: CheckCircle,
     },
     {
-      number: "04",
-      title: "Practice-Based Framework",
-      description: "Not another slide deck. Structured practice on real scenarios until thinking clearly about AI becomes instinct.",
+      number: "03",
+      title: "Practice on Your Real Work",
+      description: "Use your actual decisions as the training ground. Not fake case studies.",
       icon: Zap,
     },
     {
+      number: "04",
+      title: "Spot Vendor Theatre",
+      description: "Stop nodding along in sales pitches. Upgrade your bullshit detector for AI claims.",
+      icon: Briefcase,
+    },
+    {
       number: "05",
-      title: "From Knowledge to Revenue",
-      description: "Accelerated adoption without wasted pilots. Proven business outcomes with Fortune 500 companies and scale-ups.",
+      title: "It Doesn't Fade",
+      description: "Most workshops evaporate in weeks. This sticks because you practice on real work until it's instinct.",
       icon: Users,
     },
   ];
@@ -45,7 +45,7 @@ const DifferenceSection = () => {
             </span>
           </h2>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            A structured literacy system that gives leaders the mental infrastructure to stay sharp, sceptical, and in control as AI reshapes work.
+            A system that helps leaders think clearly about AI—so they can make better calls and stop wasting money on theatre.
           </p>
         </div>
         

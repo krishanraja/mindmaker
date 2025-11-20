@@ -31,61 +31,55 @@ const StatsSection = () => {
   
   const credentialHighlights = [
     {
-      problem: "Real-World Context",
-      quote: "Big Tech, telco, broadcaster, enterprise, and scale-up environments",
-      pain: "Practical insights from building cognitive infrastructure across diverse business contexts",
-      icon: GraduationCap,
+      title: "Real-World Context",
+      description: "Built 90+ leadership systems across Fortune 500 and scale-ups. Not theory—tested with real leaders making real AI decisions.",
+      icon: GraduationCap
     },
     {
-      problem: "Multidisciplinary Foundation",
-      quote: "Certified in Teaching, Linguistics, Psychology, Computing, and Business",
-      pain: "Comprehensive expertise bridging technical complexity with how leaders actually think",
-      icon: BookOpen,
+      title: "Actually Works",
+      description: "Combines behavioral science and decision architecture. Built for how leaders actually think—not how consultants wish they did.",
+      icon: BookOpen
     },
     {
-      problem: "90+ Leadership Systems Built", 
-      quote: "Establishing cognitive infrastructure for executives making high-stakes AI decisions",
-      pain: "Proven results from leaders who can now spot theatre vs substance",
-      icon: Users,
-    },
+      title: "Proven Outcomes",
+      description: "50+ executive keynotes and leadership systems. Real ROI: faster decisions, less wasted spend, more confidence.",
+      icon: Users
+    }
   ];
 
   const methodologyPhases = [
     {
-      number: "01",
-      title: "DIAGNOSE",
-      description: "Map how you currently think and decide when AI is involved",
+      phase: "SEE THE GAP",
+      title: "Where You Think You Are vs Where You Actually Are",
+      description: "See where you think you are vs where you actually are",
       benefits: [
-        "Surface where you stand vs where you think you stand",
-        "Identify cognitive blind spots and decision patterns",
-        "Establish baseline mental models",
-        "Reveal tensions between ambition and capability"
+        "Spot blind spots in how you think about AI",
+        "See where you're vulnerable to vendor theatre",
+        "Get clarity on what you actually need to work on"
       ],
-      icon: Brain,
+      icon: Brain
     },
     {
-      number: "02",
-      title: "PRACTICE",
-      description: "Safe rehearsal on real decisions until patterns become instinct",
+      phase: "PRACTICE",
+      title: "On Your Real Work, Until It Clicks",
+      description: "On your real work, until it clicks",
       benefits: [
-        "Apply to your actual work scenarios",
-        "Build muscle memory for AI thinking",
-        "Test mental models against real constraints",
-        "Make mistakes in safe environment"
+        "Practice on decisions you're making this quarter",
+        "Not fake case studies—your actual work",
+        "Build the ability to spot bullshit automatically"
       ],
-      icon: Lightbulb,
+      icon: Lightbulb
     },
     {
-      number: "03",
-      title: "COMPOUND",
-      description: "Infrastructure that persists and improves every quarter",
+      phase: "IT STICKS",
+      title: "Doesn't Fade Like Courses Do",
+      description: "Doesn't fade like courses do",
       benefits: [
-        "Decision velocity improves continuously",
-        "Mental models self-correct through practice",
-        "Capability builds on itself, not resets",
-        "Quarterly evolution, not one-time training"
+        "Track whether you're deciding faster and better",
+        "It compounds each quarter—doesn't evaporate",
+        "Real outcomes: clearer calls, less wasted money, more confidence"
       ],
-      icon: Zap,
+      icon: Zap
     }
   ];
 
@@ -101,7 +95,7 @@ const StatsSection = () => {
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
             After 90+ leadership systems and 50+ executive keynotes, the pattern became clear: 
-            leaders don't need more AI courses. They need <strong>cognitive infrastructure</strong> that lets them think clearly about AI—so they can make better decisions and spot vendor theatre.
+            leaders don't need more AI courses. They need a way to think clearly about AI—so they can make better decisions and spot vendor theatre.
           </p>
           <p className="text-sm md:text-base text-primary font-semibold mt-4">
             Creator of the Mindmaker Method™ and AI Leadership Index™
@@ -121,15 +115,11 @@ const StatsSection = () => {
                     
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base sm:text-lg font-semibold text-success mb-2">
-                        {item.problem}
+                        {item.title}
                       </h3>
                       
-                      <blockquote className="text-sm text-muted-foreground italic mb-2 leading-snug">
-                        "{item.quote}"
-                      </blockquote>
-                      
                       <p className="text-sm text-muted-foreground leading-snug">
-                        {item.pain}
+                        {item.description}
                       </p>
                     </div>
                   </div>
@@ -151,12 +141,9 @@ const StatsSection = () => {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg font-bold text-primary">{phase.number}</span>
-                        <h3 className="text-base sm:text-lg font-semibold text-primary">
-                          {phase.title}
-                        </h3>
-                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-primary mb-2">
+                        {phase.phase}
+                      </h3>
                       
                       <p className="text-sm text-muted-foreground mb-3 leading-snug">
                         {phase.description}
