@@ -9,10 +9,10 @@ const Navigation = () => {
   const { theme, setTheme } = useTheme();
 
   const navItems = [
-    { label: "System", href: "#system" },
-    { label: "Pathways", href: "#pathways" },
-    { label: "AI Index", href: "#ai-leadership-index" },
-    { label: "Partner Program", href: "#outcomes" },
+    { label: "About", href: "#system" },
+    { label: "Diagnostic", href: "#outcomes" },
+    { label: "For Teams", href: "/exec-teams" },
+    { label: "For Partners", href: "/partners-interest" },
     { label: "Founder", href: "#access-unique-expertise" },
   ];
 
@@ -45,9 +45,9 @@ const Navigation = () => {
             <Button 
               size="sm" 
               className="ml-4"
-              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+              onClick={() => window.location.href = '/leaders'}
             >
-              Start Sprint
+              Get Your Baseline
             </Button>
           </div>
 
@@ -89,9 +89,9 @@ const Navigation = () => {
                <Button 
                 size="sm" 
                 className="w-fit"
-                onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                onClick={() => window.location.href = '/leaders'}
               >
-                Start Sprint
+                Get Your Baseline
               </Button>
             </div>
           </div>

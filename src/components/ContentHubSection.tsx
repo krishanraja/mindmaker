@@ -11,13 +11,13 @@ const ContentHubSection = () => {
           <div className="mb-8">
             <div className="inline-flex items-center bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-medium mb-6">
               <BookOpen className="w-4 h-4 mr-2" />
-              Proprietary IP Showcase
+              Mental Models Behind the System
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-6 text-foreground">
-              The <span className="text-primary">Mindmaker Method™</span>
+              The <span className="text-primary">Cognitive Frameworks</span>
             </h2>
             <p className="text-sm sm:text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-              Proprietary frameworks and performance tools that turn literacy into leverage.
+              The mental models we use to map how leaders think about AI and make better decisions.
             </p>
           </div>
 
@@ -67,24 +67,24 @@ const ContentHubSection = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Mindmaker Method™</h3>
-              <p className="text-sm text-muted-foreground">Framework overview and licensing guide</p>
+              <h3 className="font-semibold text-foreground mb-2">Cognitive Diagnostic Framework</h3>
+              <p className="text-sm text-muted-foreground">How we map leadership thinking patterns</p>
             </div>
             
             <div className="glass-card p-4 sm:p-6 lg:p-8 text-center h-full flex flex-col">
               <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Target className="w-5 h-5 text-accent" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Literacy-to-Leverage Loop™</h3>
-              <p className="text-sm text-muted-foreground">System diagram and explainer</p>
+              <h3 className="font-semibold text-foreground mb-2">Mental Model Development</h3>
+              <p className="text-sm text-muted-foreground">How practice builds cognitive infrastructure</p>
             </div>
             
             <div className="glass-card p-4 sm:p-6 lg:p-8 text-center h-full flex flex-col">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Lightbulb className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">AI Leadership Index™</h3>
-              <p className="text-sm text-muted-foreground">Performance metrics and tracking guide</p>
+              <h3 className="font-semibold text-foreground mb-2">Decision Velocity Measurement</h3>
+              <p className="text-sm text-muted-foreground">Track clarity improvements over time</p>
             </div>
           </ResponsiveCardGrid>
           

@@ -4,32 +4,32 @@ const MindmakerSystemSection = () => {
   const systemSteps = [
     {
       number: "01",
-      title: "LITERACY",
-      description: "See AI through the lens of strategy, not hype",
+      title: "BASELINE",
+      description: "Map your current mental models and decision patterns",
       icon: Brain,
     },
     {
       number: "02",
-      title: "ALIGNMENT",
-      description: "30-day sprint to diagnose and design leverage points",
+      title: "PRACTICE",
+      description: "Safe rehearsal on real decisions until patterns become instinct",
       icon: Target,
     },
     {
       number: "03",
-      title: "ACTION",
-      description: "Apply AI to real business challenges with safe practice space",
+      title: "INTEGRATION",
+      description: "Mental models become your default thinking, not conscious effort",
       icon: Zap,
     },
     {
       number: "04",
-      title: "ROI",
-      description: "Measure decision velocity, leverage ratio, innovation cadence",
+      title: "MEASUREMENT",
+      description: "Track decision velocity and clarity improvements, not vanity metrics",
       icon: TrendingUp,
     },
     {
       number: "05",
-      title: "REINFORCEMENT",
-      description: "Quarterly performance tracking with AI Leadership Index™",
+      title: "EVOLUTION",
+      description: "Mental models self-correct and improve every quarter",
       icon: RefreshCw,
     },
   ];
@@ -113,11 +113,11 @@ const MindmakerSystemSection = () => {
         <div className="max-w-3xl mx-auto text-center fade-in-up" style={{animationDelay: '0.6s'}}>
           <div className="glass-card p-8">
             <p className="text-lg md:text-xl font-medium text-foreground mb-4">
-              "Most AI training dies in a graveyard of slide decks and forgotten demos."
+              "Workshops fade. Consultants tell you what to do. Tools do the work for you."
             </p>
             <p className="text-base text-muted-foreground">
-              Mindmaker builds the human capability that sits between algorithms and outcomes — 
-              turning literacy into compounding performance.
+              Mindmaker builds the cognitive infrastructure that lets you think for yourself—
+              spot substance vs theatre, make cleaner decisions, waste less capital.
             </p>
           </div>
         </div>

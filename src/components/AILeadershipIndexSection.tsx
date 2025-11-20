@@ -39,11 +39,11 @@ const AILeadershipIndexSection = () => {
           </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
             <span className="text-foreground">
-              Most AI programs end with a certificate.
+              Most vendors sell you tools.
             </span>
             <br />
             <span className="text-primary">
-              Ours starts with a dashboard.
+              We show you how you actually think.
             </span>
           </h2>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-3xl mx-auto">
@@ -118,7 +118,7 @@ const AILeadershipIndexSection = () => {
                 See Your Baseline
               </Button>
               <p className="text-sm text-muted-foreground mt-4">
-                Take the 2-minute diagnostic assessment
+                Get your cognitive baseline in 2 minutes
               </p>
             </div>
           </div>

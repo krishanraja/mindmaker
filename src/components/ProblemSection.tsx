@@ -22,24 +22,24 @@ const ProblemSection = () => {
 
   const infrastructureGaps = [
     {
-      gap: "Capability Infrastructure",
-      problem: "Operating from Hype, Not Capability",
-      impact: "70% of GenAI pilots stall because teams lack the fundamental infrastructure to execute",
-      solution: "Build leadership capability systems, not just awareness",
+      gap: "Cognitive Infrastructure",
+      problem: "Operating from Hype, Not Mental Models",
+      impact: "70% of GenAI pilots stall because leaders lack the cognitive scaffolding to spot substance vs theatre",
+      solution: "Build mental infrastructure for AI decisions, not just awareness",
       icon: Users,
     },
     {
-      gap: "Performance System", 
-      problem: "No Way to Measure AI Leadership",
-      impact: "Organizations invest in AI training but have no metrics to track leadership effectiveness",
-      solution: "Deploy AI Leadership Index™ to baseline and track real progress",
+      gap: "Baseline System", 
+      problem: "No Way to Map How Leaders Think",
+      impact: "Organizations invest in AI but have no baseline showing how leadership actually decides when AI is involved",
+      solution: "Establish cognitive baseline with diagnostic to track decision clarity",
       icon: AlertTriangle,
     },
     {
-      gap: "Compounding Framework",
-      problem: "One-Off Interventions Don't Scale", 
-      impact: "Training fades within weeks. Pilots don't compound into capabilities",
-      solution: "Integrate Literacy-to-Leverage Loop™ into daily operations",
+      gap: "Compounding Infrastructure",
+      problem: "Workshops Don't Build Lasting Patterns", 
+      impact: "Sessions fade within weeks. Mental models leave no lasting infrastructure",
+      solution: "Practice on real decisions until thinking patterns become instinct",
       icon: Clock,
     },
   ];
@@ -87,11 +87,10 @@ const ProblemSection = () => {
         {/* Quote Section */}
         <div className="glass-card p-8 md:p-12 max-w-4xl mx-auto text-center fade-in-up">
           <blockquote className="text-xl md:text-2xl font-bold text-foreground mb-6">
-            "Most teams sit through demos that fade."
+            "Vendors sell tools. Consultants sell strategy. Mindmaker builds the thinking infrastructure to evaluate both."
           </blockquote>
           <p className="text-base md:text-lg text-muted-foreground">
-            The market doesn't need more AI courses — it needs leaders who can lead with AI.
-            That's why we built the Mindmaker system.
+            The gap isn't tools or advice—it's cognitive infrastructure that lets leaders think clearly about AI.
           </p>
         </div>
       </div>

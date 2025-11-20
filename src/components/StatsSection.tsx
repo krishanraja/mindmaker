@@ -31,21 +31,21 @@ const StatsSection = () => {
   
   const credentialHighlights = [
     {
-      problem: "Real-World Experience",
+      problem: "Real-World Context",
       quote: "Big Tech, telco, broadcaster, enterprise, and scale-up environments",
-      pain: "Practical insights from implementing AI across diverse business contexts",
+      pain: "Practical insights from building cognitive infrastructure across diverse business contexts",
       icon: GraduationCap,
     },
     {
-      problem: "Multidisciplinary Expert",
+      problem: "Multidisciplinary Foundation",
       quote: "Certified in Teaching, Linguistics, Psychology, Computing, and Business",
-      pain: "Comprehensive expertise bridging technical complexity with human learning",
+      pain: "Comprehensive expertise bridging technical complexity with how leaders actually think",
       icon: BookOpen,
     },
     {
-      problem: "100+ Engagements", 
-      quote: "Leading enterprise teams through practical AI transformation workshops",
-      pain: "Proven results from executives and teams now driving AI-led innovation",
+      problem: "90+ Leadership Systems Built", 
+      quote: "Establishing cognitive infrastructure for executives making high-stakes AI decisions",
+      pain: "Proven results from leaders who can now spot theatre vs substance",
       icon: Users,
     },
   ];
@@ -53,49 +53,37 @@ const StatsSection = () => {
   const methodologyPhases = [
     {
       number: "01",
-      title: "ASSESS",
-      description: "Comprehensive evaluation of current AI mental models and learning readiness",
+      title: "DIAGNOSE",
+      description: "Map how you currently think and decide when AI is involved",
       benefits: [
-        "AI literacy baseline assessment",
-        "Cognitive gap analysis",
-        "Learning style evaluation",
-        "Personalized pathway design"
+        "Surface where you stand vs where you think you stand",
+        "Identify cognitive blind spots and decision patterns",
+        "Establish baseline mental models",
+        "Reveal tensions between ambition and capability"
       ],
       icon: Brain,
     },
     {
       number: "02",
-      title: "ABSORB",
-      description: "Structured knowledge acquisition of AI reasoning patterns and frameworks",
+      title: "PRACTICE",
+      description: "Safe rehearsal on real decisions until patterns become instinct",
       benefits: [
-        "Core AI concept mastery",
-        "Reasoning pattern recognition",
-        "Mental model restructuring",
-        "Critical thinking development"
-      ],
-      icon: BookOpen,
-    },
-    {
-      number: "03",
-      title: "APPLY",
-      description: "Real-world application of AI knowledge through guided practice sessions",
-      benefits: [
-        "Hands-on practice sessions",
-        "Real-world problem solving",
-        "Collaborative learning experiences",
-        "Confidence building exercises"
+        "Apply to your actual work scenarios",
+        "Build muscle memory for AI thinking",
+        "Test mental models against real constraints",
+        "Make mistakes in safe environment"
       ],
       icon: Lightbulb,
     },
     {
-      number: "04",
-      title: "ACCELERATE",
-      description: "Advanced mastery development and thought leadership cultivation",
+      number: "03",
+      title: "COMPOUND",
+      description: "Infrastructure that persists and improves every quarter",
       benefits: [
-        "Advanced mastery achievement",
-        "Teaching and mentoring skills",
-        "Thought leadership development",
-        "Organizational AI advocacy"
+        "Decision velocity improves continuously",
+        "Mental models self-correct through practice",
+        "Capability builds on itself, not resets",
+        "Quarterly evolution, not one-time training"
       ],
       icon: Zap,
     }
@@ -113,7 +101,7 @@ const StatsSection = () => {
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
             After 90+ leadership systems and 50+ executive keynotes, the pattern became clear: 
-            leaders don't need more AI courses. They need <strong>infrastructure</strong> that turns literacy into compounding performance.
+            leaders don't need more AI courses. They need <strong>cognitive infrastructure</strong> that lets them think clearly about AI—so they can make better decisions and spot vendor theatre.
           </p>
           <p className="text-sm md:text-base text-primary font-semibold mt-4">
             Creator of the Mindmaker Method™ and AI Leadership Index™

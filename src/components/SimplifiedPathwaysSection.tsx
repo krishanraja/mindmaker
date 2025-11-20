@@ -12,13 +12,12 @@ const SimplifiedPathwaysSection = () => {
       investment: "$5-10K",
       description: "Build AI-forward leadership confidence and speed of decision",
       deliverables: [
-        "Diagnose AI readiness across your org",
-        "Align leadership team on AI strategy",
-        "Design leverage points for measurable ROI",
-        "Safe practice framework on real work",
-        "Result: Save 5-10 hrs/week per leader"
+        "Map where you stand vs where you think you stand",
+        "Build mental models to spot theatre vs substance",
+        "Practice on real decisions until patterns become instinct",
+        "Upgrade questions for vendors and boards",
+        "Result: Better AI decisions, less wasted capital"
       ],
-      credits: "50 Credits",
       icon: Target,
       gradient: "from-primary to-primary-600",
       cta: "Book Discovery Call",
@@ -32,13 +31,12 @@ const SimplifiedPathwaysSection = () => {
       investment: "Custom",
       description: "Turn literacy into measurable ROI and competitive advantage",
       deliverables: [
-        "Quarterly performance dashboard",
-        "Innovation pipeline setup",
-        "Capability playbook development",
-        "AI Leadership Index™ baseline & tracking",
-        "Measurable ROI and speed metrics"
+        "Track how mental models improve decision velocity",
+        "Build cognitive infrastructure that compounds quarterly",
+        "Evolve thinking patterns based on real outcomes",
+        "Measure clarity improvements, not vanity metrics",
+        "Result: Decisions get faster and cleaner over time"
       ],
-      credits: "150 Credits",
       icon: Rocket,
       gradient: "from-accent to-accent-400",
       cta: "Book Strategy Call",
@@ -125,12 +123,6 @@ const SimplifiedPathwaysSection = () => {
                   </ul>
                 </div>
 
-                {/* Credits Badge */}
-                <div className="mb-6">
-                  <div className="inline-flex items-center bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">
-                    {pathway.credits}
-                  </div>
-                </div>
 
                 {/* CTA */}
                 <Button 

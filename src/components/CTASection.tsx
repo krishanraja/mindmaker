@@ -51,8 +51,8 @@ const CTASection = () => {
                 {/* Quote Content */}
                 <div className="flex-1 text-center sm:text-left">
                   <p className="text-white font-medium text-base leading-relaxed italic">
-                    "After 90+ product strategies and 50+ executive keynotes, the pattern became clear: 
-                    leaders don't need more AI courses. They need infrastructure that turns literacy into compounding performance."
+                    "After 90+ leadership systems and 50+ executive keynotes, the pattern became clear: 
+                    leaders don't need more AI courses. They need cognitive infrastructure that lets them think clearly about AI."
                   </p>
                   <p className="text-white/70 font-semibold text-base mt-4">— Krish Raja, Creator of Mindmaker Method™</p>
                 </div>
@@ -67,9 +67,9 @@ const CTASection = () => {
               size="lg" 
               className="w-full group"
             >
-              <a href="https://calendly.com/krish-raja/mindmaker-meeting" target="_blank" rel="noopener noreferrer">
+              <a href="/leaders" rel="noopener noreferrer">
                 <Target className="mr-2 h-5 w-5" />
-                Start Your 30-Day Sprint
+                Get Your Cognitive Baseline
               </a>
             </Button>
             
@@ -79,9 +79,9 @@ const CTASection = () => {
               size="lg" 
               className="w-full group"
             >
-              <a href="https://calendly.com/krish-raja/mindmaker-meeting" target="_blank" rel="noopener noreferrer">
+              <a href="/partners-interest" rel="noopener noreferrer">
                 <TrendingUp className="mr-2 h-5 w-5" />
-                License for Portfolio
+                Assess Your Portfolio
               </a>
             </Button>
             
@@ -91,9 +91,9 @@ const CTASection = () => {
               size="lg" 
               className="w-full group"
             >
-              <a href="https://calendly.com/krish-raja/mindmaker-meeting" target="_blank" rel="noopener noreferrer">
+              <a href="/exec-teams" rel="noopener noreferrer">
                 <Users className="mr-2 h-5 w-5" />
-                Become a Partner
+                Request Team Alignment
               </a>
             </Button>
           </div>

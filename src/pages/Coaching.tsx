@@ -9,23 +9,23 @@ const Coaching = () => {
   const features = [
     {
       icon: Zap,
-      title: "90-Day Executive Sprint",
-      description: "Intensive program that transforms AI literacy into strategic execution capability"
+      title: "90-Day Cognitive Sprint",
+      description: "Build mental models and practice on real decisions until patterns become instinct"
     },
     {
       icon: Bot,
-      title: "AI Agent Development", 
-      description: "Build custom AI agents that solve real business problems - not just demos"
+      title: "Decision Rehearsal", 
+      description: "Safe environment to test AI thinking on actual work scenarios with real constraints"
     },
     {
       icon: Users,
-      title: "Cohort Experience",
-      description: "Learn alongside other leaders facing similar challenges in intimate group settings"
+      title: "Cohort Practice",
+      description: "Practice alongside other leaders making similar high-stakes AI decisions"
     },
     {
       icon: Clock,
-      title: "Always-On Coaching",
-      description: "Interactive toolkit that maps your unique strengths to personalized service recommendations"
+      title: "Continuous Infrastructure",
+      description: "Mental models that improve quarterly, not one-time sessions that fade"
     }
   ];
 
@@ -51,15 +51,15 @@ const Coaching = () => {
                   </Badge>
                 </div>
                 <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-center mb-6">
-                  AI-Enabled{" "}
+                  Continuous{" "}
                   <span className="text-primary">
-                    Coach & Advisor
+                    Practice Infrastructure
                   </span>
                 </h1>
               </div>
               <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto mb-8">
-                Soon, we'll be your AI-augmented advisory team that will combine human expertise 
-                with intelligent tools for an always-on, always-improving coaching experience.
+                Soon: AI literacy infrastructure that helps you practice on real decisions continuously, 
+                building cognitive patterns that compound over time.
               </p>
               
               <div className="card p-8 max-w-4xl mx-auto mb-12">

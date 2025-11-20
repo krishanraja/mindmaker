@@ -25,19 +25,19 @@ const TrustSection = () => {
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            The World's First AI Leadership Infrastructure
+            Trusted AI Literacy Infrastructure
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-            Trusted by enterprises, telcos, media organizations and scale-ups worldwide.
+            Built for enterprises, telcos, media organizations and scale-ups that need leaders who can think clearly about AI.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm text-foreground/80">
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">90+</div>
-              <div className="text-xs text-muted-foreground">Leadership Systems Delivered</div>
+              <div className="text-xs text-muted-foreground">Leadership systems built</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">50+</div>
-              <div className="text-xs text-muted-foreground">Leaders Trained</div>
+              <div className="text-xs text-muted-foreground">Leaders with upgraded mental models</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">5-10</div>
@@ -45,7 +45,7 @@ const TrustSection = () => {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">50%</div>
-              <div className="text-xs text-muted-foreground">reduction in failed pilots</div>
+              <div className="text-xs text-muted-foreground">reduction in stalled pilots</div>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@ const TrustSection = () => {
         
         <div className="text-center">
           <p className="text-base md:text-lg font-medium text-foreground/80 italic">
-            "Courses teach theory. Mindmaker builds capability."
+            "Vendors sell tools. Consultants sell strategy. Mindmaker builds the thinking infrastructure to evaluate both."
           </p>
         </div>
       </div>
