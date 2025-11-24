@@ -2,7 +2,9 @@ import Navigation from "@/components/Navigation";
 import NewHero from "@/components/NewHero";
 import WhoThisIsFor from "@/components/WhoThisIsFor";
 import TheProblem from "@/components/TheProblem";
+import InteractiveROI from "@/components/InteractiveROI";
 import ProductLadder from "@/components/ProductLadder";
+import TrustSection from "@/components/TrustSection";
 import HowItsDifferent from "@/components/HowItsDifferent";
 import BuilderEconomyConnection from "@/components/BuilderEconomyConnection";
 import SimpleCTA from "@/components/SimpleCTA";
@@ -14,7 +16,7 @@ const Index = () => {
     <main className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Hero Section */}
+      {/* Hero Section - Bloomberg-level premium */}
       <NewHero />
       
       {/* Who This Is For */}
@@ -23,8 +25,14 @@ const Index = () => {
       {/* The Problem */}
       <TheProblem />
       
-      {/* Product Ladder */}
+      {/* Interactive ROI Calculator - NEW */}
+      <InteractiveROI />
+      
+      {/* Product Ladder - Premium redesign */}
       <ProductLadder />
+      
+      {/* Trust Section - NEW */}
+      <TrustSection />
       
       {/* How It's Different */}
       <HowItsDifferent />

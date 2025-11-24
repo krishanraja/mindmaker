@@ -24,16 +24,16 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full z-[100] bg-background/80 backdrop-blur-md border-b border-border">
+    <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm">
       <div className="container-width">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo - Larger */}
           <div className="flex items-center">
-            <a href="/">
+            <a href="/" className="transition-opacity hover:opacity-80">
               <img 
                 src={mindmakerLogo} 
                 alt="Mindmaker" 
-                className="h-7 w-auto"
+                className="h-10 w-auto"
               />
             </a>
           </div>
@@ -50,12 +50,13 @@ const Navigation = () => {
               </a>
             ))}
 
-            {/* CTA Button */}
+            {/* Premium CTA Button */}
             <Button 
-              size="sm" 
-              className="ml-4"
+              size="default" 
+              className="ml-4 relative"
               onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
             >
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-mint rounded-full animate-pulse" />
               Book Session
             </Button>
           </div>

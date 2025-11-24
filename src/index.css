@@ -45,6 +45,10 @@
     --accent: var(--mint);
     --accent-foreground: var(--ink);
     
+    /* PREMIUM ACCENTS */
+    --gold: 45 89% 52%;           /* #D4AF37 - Premium highlights */
+    --gold-light: 45 89% 62%;     /* Lighter gold for hover */
+    
     /* STATES */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -148,6 +152,53 @@ a:hover {
 
   .editorial-card:hover {
     border-color: hsl(var(--mint));
+  }
+
+  /* MINIMAL CARDS - Core card component */
+  .minimal-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    padding: 24px;
+    transition: all 0.3s ease;
+  }
+
+  .minimal-card:hover {
+    border-color: hsl(var(--mint));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px hsl(var(--foreground) / 0.08);
+  }
+
+  /* PREMIUM CARDS - Featured products */
+  .premium-card {
+    background: hsl(var(--card));
+    border: 2px solid hsl(var(--gold));
+    border-radius: 8px;
+    padding: 24px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .premium-card:hover {
+    border-color: hsl(var(--gold-light));
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px -8px hsl(var(--gold) / 0.2);
+  }
+
+  /* TRUST SIGNALS */
+  .trust-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+  }
+
+  .trust-bar > span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   /* MOBILE-FIRST TYPOGRAPHY */

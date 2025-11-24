@@ -25,6 +25,8 @@ export default {
         "light-grey": "hsl(var(--light-grey))",
         "mid-grey": "hsl(var(--mid-grey))",
         graphite: "hsl(var(--graphite))",
+        gold: "hsl(var(--gold))",
+        "gold-light": "hsl(var(--gold-light))",
         
         // SEMANTIC TOKENS
         background: "hsl(var(--background))",

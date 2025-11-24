@@ -63,12 +63,12 @@ const ProductLadder = () => {
             return (
               <div 
                 key={index}
-                className={`minimal-card ${product.featured ? 'border-mint border-2' : ''} fade-in-up`}
+                className={`${product.featured ? 'premium-card' : 'minimal-card'} fade-in-up`}
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 {product.featured && (
-                  <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4">
-                    START HERE
+                  <div className="inline-block bg-gold text-white text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg">
+                    ⭐ RECOMMENDED
                   </div>
                 )}
                 
@@ -100,7 +100,8 @@ const ProductLadder = () => {
                 )}
                 
                 <Button 
-                  className={product.featured ? "w-full bg-mint text-ink hover:bg-mint/90" : "w-full"}
+                  className={product.featured ? "w-full bg-gold text-white hover:bg-gold-light font-bold shadow-lg" : "w-full"}
+                  size="lg"
                   onClick={() => window.location.href = product.link}
                 >
                   {product.cta}
