@@ -1,0 +1,171 @@
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, CheckCircle, ArrowRight } from "lucide-react";
+
+const PartnerProgram = () => {
+  const phases = [
+    {
+      title: "Portfolio Scan",
+      description: "Use the Mindmaker scanner to score 5 to 20 companies across readiness, pressure and appetite. Receive a heatmap and a set of suggested first moves.",
+    },
+    {
+      title: "First Wave",
+      description: "Choose 3 to 5 companies for initial work. Run a 30-day Builder Sprint for a key leader in each, or an AI Leadership Lab for their exec team.",
+    },
+    {
+      title: "Program",
+      description: "Turn what worked into a standing offer in your fund or firm. Agree clear commercial terms so everyone benefits from repeat usage.",
+    },
+    {
+      title: "Index",
+      description: "Roll out the benchmark and tracking across your portfolio so you can talk about AI maturity with evidence, not hope.",
+    },
+  ];
+
+  const benefits = [
+    "Shared use of the Mindmaker methods and tools",
+    "Co-branded assets you can take into board meetings and partner sessions",
+    "Priority access for your portfolio to new experiments",
+    "Direct access to Krish as a thinking partner on difficult accounts",
+  ];
+
+  return (
+    <main className="min-h-screen bg-background">
+      <Navigation />
+      
+      <section className="section-padding">
+        <div className="container-width max-w-5xl">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="inline-block bg-ink/10 text-ink px-4 py-2 rounded-full text-sm font-bold mb-6">
+              FOR PARTNERS
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              Partner Portfolio Program
+            </h1>
+            <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
+              <TrendingUp className="h-5 w-5" />
+              <span className="text-lg">6-12 months</span>
+            </div>
+            <p className="text-xl text-foreground leading-relaxed max-w-3xl mx-auto">
+              For VC funds, advisory firms and consultancies that want to be credible on AI 
+              in front of their portfolio or client base without pretending to be a software company.
+            </p>
+          </div>
+          
+          {/* Who It's For */}
+          <div className="minimal-card mb-12">
+            <h2 className="text-2xl font-bold mb-4">Who It's For</h2>
+            <p className="text-foreground leading-relaxed mb-4">
+              <span className="font-semibold">Ideal partner:</span>
+            </p>
+            <ul className="space-y-2 text-foreground">
+              <li>• Already trusted at board or founder level</li>
+              <li>• Wants to move from slideware about AI to live experiments inside their portfolio</li>
+              <li>• Sees AI literacy as a value creation lever but lacks a concrete method</li>
+            </ul>
+          </div>
+          
+          {/* Outcome */}
+          <div className="minimal-card bg-mint/10 mb-12">
+            <h2 className="text-2xl font-bold mb-4">Outcome</h2>
+            <p className="text-foreground leading-relaxed mb-4">
+              In 6 to 12 months you:
+            </p>
+            <ul className="space-y-3 text-foreground">
+              <li>• Have a repeatable way to scan and prioritise companies for AI work</li>
+              <li>• Co-create sprints and labs that you can bring into your portfolio</li>
+              <li>• Share a simple dashboard that tracks adoption and pilots across companies</li>
+              <li>• Strengthen your own brand as the place that makes AI useful, not noisy</li>
+            </ul>
+          </div>
+          
+          {/* How It Works */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-6 text-center">How It Works</h2>
+            <div className="space-y-4">
+              {phases.map((phase, index) => (
+                <div 
+                  key={index} 
+                  className="minimal-card fade-in-up"
+                  style={{animationDelay: `${index * 0.05}s`}}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-16 h-16 bg-ink text-white rounded-md flex items-center justify-center">
+                      <span className="text-sm font-bold">Phase {index + 1}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-foreground mb-2">{phase.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{phase.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* What You Get */}
+          <div className="minimal-card mb-8">
+            <h2 className="text-2xl font-bold mb-6">What You Get</h2>
+            <div className="space-y-4">
+              {benefits.map((item, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-mint flex-shrink-0 mt-0.5" />
+                  <p className="text-foreground">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Pricing */}
+          <div className="minimal-card mb-12">
+            <h2 className="text-2xl font-bold mb-4">Pricing and Structure</h2>
+            <p className="text-foreground leading-relaxed mb-4">
+              Two typical routes:
+            </p>
+            <div className="space-y-4">
+              <div className="border-l-4 border-mint pl-4">
+                <h3 className="font-semibold text-foreground mb-2">Retainer</h3>
+                <p className="text-muted-foreground">
+                  A quarterly fee that covers a fixed number of sprints and labs.
+                </p>
+              </div>
+              
+              <div className="border-l-4 border-mint pl-4">
+                <h3 className="font-semibold text-foreground mb-2">Revenue Share</h3>
+                <p className="text-muted-foreground">
+                  A base fee plus a share of project revenue that Mindmaker helps you unlock.
+                </p>
+              </div>
+            </div>
+            
+            <p className="text-muted-foreground mt-6 text-sm">
+              Exact terms are set once we know the size, spread and pace of your portfolio.
+            </p>
+          </div>
+          
+          {/* CTA */}
+          <div className="text-center">
+            <Button 
+              size="lg"
+              className="bg-ink text-white hover:bg-ink/90 font-semibold px-12 py-6 text-lg touch-target group"
+              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+            >
+              Discuss Partnership Opportunities
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+            
+            <p className="text-sm text-muted-foreground mt-4">
+              Schedule a call to explore how we can work together
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      <Footer />
+    </main>
+  );
+};
+
+export default PartnerProgram;

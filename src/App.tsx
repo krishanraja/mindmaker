@@ -5,14 +5,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { ChatBot } from "@/components/ChatBot";
-import Index from "./pages/Index";
+import NewIndex from "./pages/NewIndex";
+import BuilderSession from "./pages/BuilderSession";
+import BuilderSprint from "./pages/BuilderSprint";
+import LeadershipLab from "./pages/LeadershipLab";
+import PartnerProgram from "./pages/PartnerProgram";
+import BuilderEconomy from "./pages/BuilderEconomy";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import FAQ from "./pages/FAQ";
-import Leaders from "./pages/Leaders";
-import ExecTeams from "./pages/ExecTeams";
-import PartnersInterest from "./pages/PartnersInterest";
 
 const queryClient = new QueryClient();
 
@@ -24,13 +26,15 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<NewIndex />} />
+            <Route path="/builder-session" element={<BuilderSession />} />
+            <Route path="/builder-sprint" element={<BuilderSprint />} />
+            <Route path="/leadership-lab" element={<LeadershipLab />} />
+            <Route path="/partner-program" element={<PartnerProgram />} />
+            <Route path="/builder-economy" element={<BuilderEconomy />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/faq" element={<FAQ />} />
-            <Route path="/leaders" element={<Leaders />} />
-            <Route path="/exec-teams" element={<ExecTeams />} />
-            <Route path="/partners-interest" element={<PartnersInterest />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
