@@ -1,5 +1,6 @@
 import Navigation from "@/components/Navigation";
 import NewHero from "@/components/NewHero";
+import ValuePropsSection from "@/components/ValuePropsSection";
 import WhoThisIsFor from "@/components/WhoThisIsFor";
 import TheProblem from "@/components/TheProblem";
 import InteractiveROI from "@/components/InteractiveROI";
@@ -18,6 +19,9 @@ const Index = () => {
       
       {/* Hero Section - Bloomberg-level premium */}
       <NewHero />
+      
+      {/* Value Props Section */}
+      <ValuePropsSection />
       
       {/* Who This Is For */}
       <WhoThisIsFor />

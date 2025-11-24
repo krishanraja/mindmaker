@@ -45,10 +45,6 @@
     --accent: var(--mint);
     --accent-foreground: var(--ink);
     
-    /* PREMIUM ACCENTS */
-    --gold: 45 89% 52%;           /* #D4AF37 - Premium highlights */
-    --gold-light: 45 89% 62%;     /* Lighter gold for hover */
-    
     /* STATES */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -172,7 +168,7 @@ a:hover {
   /* PREMIUM CARDS - Featured products */
   .premium-card {
     background: hsl(var(--card));
-    border: 2px solid hsl(var(--gold));
+    border: 2px solid hsl(var(--mint));
     border-radius: 8px;
     padding: 24px;
     position: relative;
@@ -180,9 +176,9 @@ a:hover {
   }
 
   .premium-card:hover {
-    border-color: hsl(var(--gold-light));
+    border-color: hsl(var(--mint));
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px -8px hsl(var(--gold) / 0.2);
+    box-shadow: 0 12px 32px -8px hsl(var(--mint) / 0.3);
   }
 
   /* TRUST SIGNALS */

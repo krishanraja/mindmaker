@@ -67,7 +67,7 @@ const ProductLadder = () => {
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 {product.featured && (
-                  <div className="inline-block bg-gold text-white text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg">
+                  <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg">
                     ⭐ RECOMMENDED
                   </div>
                 )}
@@ -100,8 +100,12 @@ const ProductLadder = () => {
                 )}
                 
                 <Button 
-                  className={product.featured ? "w-full bg-gold text-white hover:bg-gold-light font-bold shadow-lg" : "w-full"}
                   size="lg"
+                  variant={product.featured ? "mint" : "default"}
+                  className={product.featured 
+                    ? "w-full font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5" 
+                    : "w-full"
+                  }
                   onClick={() => window.location.href = product.link}
                 >
                   {product.cta}
