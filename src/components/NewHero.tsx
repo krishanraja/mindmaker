@@ -96,16 +96,16 @@ const NewHero = () => {
               View Programs
             </Button>
             </div>
+          
+          {/* Scroll Indicator - Left aligned with content */}
+          <div className="flex flex-col items-start gap-2 mt-32 opacity-60 hover:opacity-100 transition-opacity cursor-pointer fade-in-up" style={{animationDelay: '0.6s'}}>
+            <span className="text-white/70 text-xs uppercase tracking-wider font-medium">Scroll to explore</span>
+            <svg className="w-5 h-5 text-white/70 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
           </div>
         </div>
-      </div>
-      
-      {/* Scroll Indicator - Left aligned with content */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 lg:left-8 lg:translate-x-0 flex flex-col items-start gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer fade-in-up" style={{animationDelay: '0.6s'}}>
-        <span className="text-white/70 text-xs uppercase tracking-wider font-medium">Scroll to explore</span>
-        <svg className="w-5 h-5 text-white/70 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
       </div>
       
       {/* Add CSS animation for underline */}
