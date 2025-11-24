@@ -21,135 +21,109 @@ const NewHero = () => {
       </div>
       
       {/* Content */}
-      <div className="container-width relative z-10 text-center py-20">
-        {/* Logo - Larger, more prominent */}
-        <div className="mb-16 fade-in-up">
-          <img 
-            src={mindmakerLogo} 
-            alt="Mindmaker" 
-            className="h-16 md:h-20 w-auto mx-auto"
-            style={{
-              filter: 'drop-shadow(0 0 20px rgba(126, 244, 194, 0.3))'
-            }}
-          />
-        </div>
-        
-        {/* Main Headline - Bloomberg-level typography */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-[1.1] max-w-5xl mx-auto fade-in-up" style={{animationDelay: '0.1s'}}>
-          Turn non-technical leaders into{' '}
-          <span className="relative inline-block">
-            <span className="relative z-10">no-code AI builders</span>
-            <span 
-              className="absolute bottom-1 left-0 w-full h-3 bg-mint/30 -z-0"
-              style={{
-                animation: 'expandWidth 0.8s ease-out 0.5s forwards',
-                transformOrigin: 'left',
-                transform: 'scaleX(0)'
-              }}
-            />
-          </span>
-        </h1>
-        
-        {/* Subheadline - Refined spacing */}
-        <div className="space-y-2 mb-12 fade-in-up" style={{animationDelay: '0.2s'}}>
-          <p className="text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto text-white/90 font-medium">
-            Stop delegating the future to the IT team.
-          </p>
-          <p className="text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto text-white/90 font-medium">
-            Start designing it yourself.
-          </p>
-        </div>
-        
-        {/* Trust Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-6 mb-12 text-sm text-white/70 fade-in-up" style={{animationDelay: '0.3s'}}>
-          <span className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-mint" />
-            90+ leadership teams
-          </span>
-          <span className="hidden sm:inline text-white/40">•</span>
-          <span className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-mint" />
-            16 years experience
-          </span>
-          <span className="hidden sm:inline text-white/40">•</span>
-          <span className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-mint" />
-            Fortune 500 clients
-          </span>
-        </div>
-        
-        {/* Premium CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-4xl mx-auto mb-6 fade-in-up" style={{animationDelay: '0.4s'}}>
-          <Button 
-            size="xl"
-            className="bg-white text-ink hover:bg-white/90 font-bold px-10 py-7 text-lg w-full sm:w-auto touch-target shadow-2xl"
-            onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
-          >
-            Book a Builder Session
-          </Button>
-          
-          <Button 
-            size="xl"
-            variant="outline"
-            className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 font-semibold px-10 py-7 text-lg w-full sm:w-auto touch-target backdrop-blur-sm"
-            onClick={() => window.location.href = '/builder-sprint'}
-          >
-            View Programs
-          </Button>
-        </div>
-        
-        {/* Micro-copy under CTA */}
-        <p className="text-sm text-white/60 mb-16 fade-in-up" style={{animationDelay: '0.5s'}}>
-          Free 60-minute consultation • No obligation • Immediate value
-        </p>
-        
-        {/* Three Value Props - Editorial style */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto text-left fade-in-up" style={{animationDelay: '0.6s'}}>
-          <div className="border-l-2 border-mint/50 pl-4">
-            <h3 className="text-base font-bold mb-2 text-white">Individual Leaders</h3>
-            <p className="text-white/70 text-sm leading-relaxed">
-              Build working systems in 30 days
-            </p>
-          </div>
-          
-          <div className="border-l-2 border-mint/50 pl-4">
-            <h3 className="text-base font-bold mb-2 text-white">Executive Teams</h3>
-            <p className="text-white/70 text-sm leading-relaxed">
-              Run AI-enabled decisions in 4 hours
-            </p>
-          </div>
-          
-          <div className="border-l-2 border-mint/50 pl-4">
-            <h3 className="text-base font-bold mb-2 text-white">Partners</h3>
-            <p className="text-white/70 text-sm leading-relaxed">
-              Portfolio-wide AI implementation
-            </p>
-          </div>
-        </div>
-        
-        {/* Krish Headshot - Trust Signal */}
-        <div className="absolute bottom-12 right-8 hidden lg:block fade-in-up" style={{animationDelay: '0.7s'}}>
-          <div className="relative">
+      <div className="container-width relative z-10 py-20">
+        {/* Logo - Centered, prominent with glow */}
+        <div className="flex justify-center mb-24 fade-in-up">
+          <div className="bg-white/10 p-8 rounded-full backdrop-blur-sm">
             <img 
-              src={krishHeadshot} 
-              alt="Krish Raja" 
-              className="w-32 h-32 rounded-full border-4 border-mint/30 shadow-2xl object-cover"
+              src={mindmakerLogo} 
+              alt="Mindmaker" 
+              className="h-16 md:h-20 w-auto"
             />
-            <div className="absolute -bottom-2 -right-2 bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-              Founder
+          </div>
+        </div>
+        
+        {/* Hero Content - Main Section */}
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
+            {/* Left: Main Content */}
+            <div className="flex-1 text-center lg:text-left space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-white">
+                Stop Guessing About AI.
+                <span className="relative inline-block mt-2">
+                  <span className="relative z-10">Start Building Systems That Work.</span>
+                  <span className="absolute bottom-0 left-0 w-full h-3 bg-mint/60 -z-10 animate-expandWidth"></span>
+                </span>
+              </h1>
+        
+              <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed">
+                Most leaders feel behind on AI—but don't know what to actually do about it. 
+                We help you think clearly, make decisions 3x faster, and build AI systems that persist.
+              </p>
+              
+              {/* Trust Bar - Editorial proof points */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-white/70 font-medium fade-in-up" style={{animationDelay: '0.2s'}}>
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-mint" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  No vendor theatre
+                </span>
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-mint" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  Practice on real work
+                </span>
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-mint" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  Systems that persist
+                </span>
+              </div>
+              
+              {/* CTAs - Premium, high-contrast */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 fade-in-up" style={{animationDelay: '0.3s'}}>
+                <Button 
+                  size="xl" 
+                  className="bg-white text-ink hover:bg-white/90 font-semibold px-8 py-6 text-lg shadow-2xl hover:shadow-mint/20 transition-all hover:scale-105 hover:-translate-y-0.5 min-w-[240px] touch-target"
+                  onClick={() => window.location.href = '/builder-session'}
+                >
+                  Book a Builder Session
+                </Button>
+                <Button 
+                  size="xl" 
+                  variant="outline" 
+                  className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur-sm font-semibold px-8 py-6 text-lg min-w-[240px] touch-target"
+                  onClick={() => {
+                    const productsSection = document.getElementById('products');
+                    productsSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  View Programs
+                </Button>
+              </div>
+              
+              {/* Micro-copy - Trust reinforcement */}
+              <p className="text-sm text-white/60 fade-in-up mx-auto lg:mx-0" style={{animationDelay: '0.4s'}}>
+                No fluff. No theory. Just real AI systems you can build in 90 minutes.
+              </p>
+            </div>
+            
+            {/* Right: Krish Headshot - Trust Signal */}
+            <div className="hidden lg:block fade-in-up" style={{animationDelay: '0.5s'}}>
+              <div className="relative">
+                <img 
+                  src={krishHeadshot}
+                  alt="Krish, Founder & Builder" 
+                  className="w-48 h-48 rounded-full border-4 border-mint/30 shadow-2xl hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm border border-mint/30 rounded-full px-6 py-2 shadow-lg">
+                  <div className="text-ink text-xs font-semibold whitespace-nowrap">Built by Krish</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Refined Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-50 hover:opacity-100 transition-opacity">
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-xs text-white/60 font-medium">Scroll to explore</span>
-          <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/40 rounded-full mt-2 animate-pulse" />
-          </div>
-        </div>
+      {/* Scroll Indicator - Subtle, bottom-center */}
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer fade-in-up" style={{animationDelay: '0.6s'}}>
+        <span className="text-white/70 text-xs uppercase tracking-wider font-medium">Scroll to explore</span>
+        <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
       </div>
       
       {/* Add CSS animation for underline */}
