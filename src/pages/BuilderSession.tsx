@@ -2,8 +2,40 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Clock, CheckCircle } from "lucide-react";
 import { ConsultationBooking } from "@/components/ConsultationBooking";
+import { SEO } from "@/components/SEO";
 
 const BuilderSession = () => {
+  const seoData = {
+    title: "Builder Session - 60-Min AI Problem Solving with Expert",
+    description: "Live 60-minute session with Krish. Bring one real problem, leave with AI friction map and 1-2 working systems. Written follow-up with prompts included.",
+    canonical: "/builder-session",
+    keywords: "AI consultation, AI problem solving, AI expert session, AI strategy session, hands-on AI help, AI friction mapping, AI systems design, quick AI solution",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Builder Session",
+      "description": "60-minute live AI problem-solving session. Map friction points and design working AI systems for your specific challenge.",
+      "provider": {
+        "@type": "Organization",
+        "name": "The Mindmaker",
+        "url": "https://www.themindmaker.ai/"
+      },
+      "serviceType": "AI Consultation",
+      "duration": "PT1H",
+      "areaServed": "Worldwide",
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "Senior Leaders, Executives"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "348",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  };
+
   const outcomes = [
     "A map of where AI can remove friction",
     "1 or 2 draft systems or workflows designed live",
@@ -12,6 +44,7 @@ const BuilderSession = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      <SEO {...seoData} />
       <Navigation />
       
       <section className="section-padding">

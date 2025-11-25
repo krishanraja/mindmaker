@@ -1,33 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Homepage -->
   <url>
     <loc>https://www.themindmaker.ai/</loc>
-    <lastmod>2025-01-19</lastmod>
+    <lastmod>2025-01-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.themindmaker.ai/og-image.jpg</image:loc>
+      <image:title>The Mindmaker - Build AI Systems Without Code</image:title>
+      <image:caption>Turn non-technical leaders into no-code AI builders</image:caption>
+    </image:image>
   </url>
+
+  <!-- Builder Sprint Page -->
   <url>
-    <loc>https://www.themindmaker.ai/coaching</loc>
-    <lastmod>2025-01-19</lastmod>
+    <loc>https://www.themindmaker.ai/builder-sprint</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Leadership Lab Page -->
+  <url>
+    <loc>https://www.themindmaker.ai/leadership-lab</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Partner Program Page -->
+  <url>
+    <loc>https://www.themindmaker.ai/partner-program</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Builder Session Page -->
+  <url>
+    <loc>https://www.themindmaker.ai/builder-session</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Builder Economy Page -->
+  <url>
+    <loc>https://www.themindmaker.ai/builder-economy</loc>
+    <lastmod>2025-01-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://www.themindmaker.ai/privacy</loc>
-    <lastmod>2025-01-19</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://www.themindmaker.ai/terms</loc>
-    <lastmod>2025-01-19</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
+
+  <!-- FAQ Page -->
   <url>
     <loc>https://www.themindmaker.ai/faq</loc>
-    <lastmod>2025-01-19</lastmod>
+    <lastmod>2025-01-26</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://www.themindmaker.ai/privacy</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://www.themindmaker.ai/terms</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>

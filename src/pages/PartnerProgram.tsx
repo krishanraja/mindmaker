@@ -3,8 +3,34 @@ import Footer from "@/components/Footer";
 import { TrendingUp, CheckCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SEO } from "@/components/SEO";
 
 const PartnerProgram = () => {
+  const seoData = {
+    title: "Partner Portfolio Program - AI Enablement for VCs and Advisors",
+    description: "6-12 month program for VC funds, advisory firms, and consultancies. Portfolio-wide AI enablement with repeatable methods, co-branded assets, and direct expert access.",
+    canonical: "/partner-program",
+    keywords: "VC AI program, portfolio AI enablement, advisory AI, consultancy AI, investor AI tools, portfolio company AI, VC value creation, AI for advisors",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Partner Portfolio Program",
+      "description": "6-12 month program for VCs, advisors, and consultancies to enable AI across their portfolio with repeatable methods.",
+      "provider": {
+        "@type": "Organization",
+        "name": "The Mindmaker",
+        "url": "https://www.themindmaker.ai/"
+      },
+      "serviceType": "Partnership Program",
+      "areaServed": "Worldwide",
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "VC Funds, Advisory Firms, Consultancies"
+      },
+      "duration": "P6M"
+    }
+  };
+
   const phases = [
     {
       title: "Portfolio Scan",
@@ -33,6 +59,7 @@ const PartnerProgram = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      <SEO {...seoData} />
       <Navigation />
       
       <section className="section-padding">

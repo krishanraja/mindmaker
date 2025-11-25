@@ -2,8 +2,45 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Calendar, CheckCircle } from "lucide-react";
 import { ConsultationBooking } from "@/components/ConsultationBooking";
+import { SEO } from "@/components/SEO";
 
 const BuilderSprint = () => {
+  const seoData = {
+    title: "30-Day Builder Sprint - Build 3-5 AI Systems",
+    description: "4-week intensive program for senior leaders. Build 3-5 working AI systems around your actual work. Leave with a Builder Dossier and 90-day implementation plan. No coding required.",
+    canonical: "/builder-sprint",
+    keywords: "AI builder sprint, executive AI training, AI systems building, hands-on AI program, AI for leaders, 30-day AI program, AI implementation, practical AI training",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "30-Day Builder Sprint",
+      "description": "4-week intensive program for senior leaders to build 3-5 working AI-enabled systems around their actual work",
+      "provider": {
+        "@type": "Organization",
+        "name": "The Mindmaker",
+        "url": "https://www.themindmaker.ai/"
+      },
+      "courseMode": "Online",
+      "educationalLevel": "Executive",
+      "audience": {
+        "@type": "EducationalAudience",
+        "audienceType": "Senior Leaders, CEOs, GMs, Executives"
+      },
+      "timeRequired": "P30D",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "Online",
+        "duration": "P30D"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "2098",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  };
+
   const weeks = [
     {
       week: "Week 0",
@@ -41,6 +78,7 @@ const BuilderSprint = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      <SEO {...seoData} />
       <Navigation />
       
       <section className="section-padding">

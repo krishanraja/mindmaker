@@ -2,8 +2,39 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Users, CheckCircle } from "lucide-react";
 import { ConsultationBooking } from "@/components/ConsultationBooking";
+import { SEO } from "@/components/SEO";
 
 const LeadershipLab = () => {
+  const seoData = {
+    title: "AI Leadership Lab - Executive Team Transformation",
+    description: "4-hour executive team workshop for 6-12 leaders. Run two real decisions through AI-enabled workflows. Leave with a 90-day pilot charter and board-ready summary.",
+    canonical: "/leadership-lab",
+    keywords: "executive AI training, AI leadership workshop, executive team AI, AI transformation, executive workshop, AI for executives, leadership AI program, team AI training",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "EducationalEvent",
+      "name": "AI Leadership Lab",
+      "description": "Executive team transformation workshop. Run two real decisions through AI-enabled workflows in 4 hours.",
+      "provider": {
+        "@type": "Organization",
+        "name": "The Mindmaker",
+        "url": "https://www.themindmaker.ai/"
+      },
+      "duration": "PT4H",
+      "audience": {
+        "@type": "EducationalAudience",
+        "audienceType": "Executive Teams, C-Suite"
+      },
+      "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+      "offers": {
+        "@type": "Offer",
+        "price": "7000",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  };
+
   const segments = [
     {
       title: "The Myth Check",
@@ -40,6 +71,7 @@ const LeadershipLab = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      <SEO {...seoData} />
       <Navigation />
       
       <section className="section-padding">
