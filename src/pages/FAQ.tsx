@@ -54,36 +54,40 @@ const FAQ = () => {
       answer: "CEO, GM, CCO, CPO, CMO, CRO, COO—leaders with P&L responsibility who need to design the future, not delegate it. If you're tired of vendor theatre and want to build real systems, this is for you."
     },
     {
-      question: "What's a Builder Session?",
+      question: "What's a Drop In Builder Session?",
       answer: "A 60-minute live session with Krish where you bring one real leadership problem. You leave with an AI friction map, 1-2 draft systems, and a written follow-up with prompts you can use immediately."
     },
     {
+      question: "What are Curated Weekly Updates?",
+      answer: "A 4-week async program with weekly recommendations and access to Krish. Stay current on what matters for your context. Build at your own pace without the intensity of a full sprint."
+    },
+    {
       question: "What's the 30-Day Builder Sprint?",
-      answer: "A structured 4-week program where you build 3-5 working AI systems around your actual work. Includes intake mapping, live sessions, a Builder Dossier, metrics dashboard, and optional clips for your team. Investment: $5-8K USD."
+      answer: "A 4-week intensive program for senior leaders where you build 3-5 working AI-enabled systems around your actual week. You leave with a Builder Dossier and 90-day implementation plan."
     },
     {
       question: "How is the AI Leadership Lab different?",
-      answer: "The Lab is for executive teams (6-12 people). It's a 4-hour intensive where you run 2 real decisions: old way vs AI-enabled way. You leave with a 90-day pilot charter, exec summary deck, and team snapshot. Investment: $10-20K USD."
+      answer: "The Lab is for executive teams of 6-12 people. It's a 2-8 hour intensive where you run 2 real decisions through a new AI-enabled way of working. You leave with a 90-day pilot charter to implement across your team."
     },
     {
-      question: "What's the Partner Program?",
-      answer: "For VCs, advisors, and consultants managing portfolios. We run a phased implementation: portfolio scan → first wave (3-5 companies) → standing program → benchmark rollout. Pricing is retainer or revenue share, custom to your portfolio."
+      question: "What's the Portfolio Program for Partners?",
+      answer: "For VCs, advisors, and consultancies managing portfolios. We create a repeatable way to scan and prioritize your portfolio for AI work, then co-create sprints and labs for your companies. 6-12 month engagement."
     },
     {
       question: "What's The Builder Economy?",
-      answer: "The Builder Economy is our community flywheel: podcast episodes, live sessions, and weekly briefings. It's how we share what's working in real portfolios, not vendor hype. Join at mindmaker.ai/builder-economy."
+      answer: "The Builder Economy is our upcoming community platform featuring podcast episodes, live sessions, and insights on what's working in real portfolios—not vendor hype. Coming soon at thebuilderseconomy.com."
     },
     {
       question: "How is this different from AI training?",
-      answer: "Training fades. Consulting tells you what to do. Tools do it for you. We build the system so you can think for yourself—design systems, run decisions, and stop wasting money on vendor theatre."
+      answer: "Training fades. Consulting tells you what to do. Tools do it for you. We build the system with you so you can think for yourself—design systems, run decisions, and stop wasting money on vendor theatre."
     },
     {
       question: "What do I actually get?",
-      answer: "Working systems you can use tomorrow. Not slides, not theory—prompts, workflows, and frameworks built around your real work. Plus ongoing access to The Builder Economy for as long as you need it."
+      answer: "Working systems you can use tomorrow. Not slides, not theory—prompts, workflows, and frameworks built around your real work. Each engagement includes concrete deliverables you can implement immediately."
     },
     {
       question: "How do I start?",
-      answer: "Book a Builder Session. Bring one real problem, leave with systems. If you want the full 30-Day Sprint or Leadership Lab after that, we'll map it out together. No pressure, just clarity."
+      answer: "Book a Drop In Builder Session. Bring one real problem, leave with systems. From there, you can choose Weekly Updates for steady progress or dive into the 30-Day Sprint. No pressure, just clarity."
     }
   ];
 
