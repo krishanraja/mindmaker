@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { User, Users, TrendingUp } from "lucide-react";
 import { useState } from "react";
+import peerComparisonMatrix from "@/assets/peer-comparison-matrix.png";
+import battleTestStrategy from "@/assets/battle-test-strategy.png";
 
 const JourneySlider = () => {
   const [journeyStage, setJourneyStage] = useState([0]);
@@ -103,6 +105,7 @@ const ProductLadder = () => {
           description: "For 6-12 executives. Run two real decisions through a new AI-enabled way of working. Leave with a 90-day pilot charter.",
           cta: "Learn More",
           link: "/leadership-lab",
+          image: battleTestStrategy,
         },
       ],
     },
@@ -117,6 +120,7 @@ const ProductLadder = () => {
           description: "For VCs, advisors, consultancies. Repeatable way to scan and prioritize your portfolio for AI work. Co-create sprints and labs.",
           cta: "Learn More",
           link: "/partner-program",
+          image: peerComparisonMatrix,
         },
       ],
     },
@@ -174,6 +178,16 @@ const ProductLadder = () => {
                         <p className="text-sm leading-relaxed mb-4 text-foreground flex-1">
                           {offering.description}
                         </p>
+                        
+                        {offering.image && (
+                          <div className="mb-4 overflow-hidden rounded-lg transition-all duration-300 hover:scale-150 hover:z-50 hover:shadow-2xl cursor-zoom-in">
+                            <img 
+                              src={offering.image} 
+                              alt={offering.name}
+                              className="w-full h-auto transition-transform duration-300"
+                            />
+                          </div>
+                        )}
                         
                         <Button 
                           size="lg"
