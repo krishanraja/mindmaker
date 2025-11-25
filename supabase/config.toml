@@ -1,1 +1,13 @@
 project_id = "smvwbbilnsprexeuplex"
+
+[functions.chat-with-krish]
+verify_jwt = false
+
+[functions.get-ai-news]
+verify_jwt = false
+
+[functions.get-market-sentiment]
+verify_jwt = false
+
+[functions.create-consultation-hold]
+verify_jwt = false
