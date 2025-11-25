@@ -11,7 +11,7 @@ const SimpleCTA = () => {
             <img 
               src={krishHeadshot} 
               alt="Krish Raja" 
-              className="w-24 h-24 rounded-full border-4 border-mint/20"
+              className="w-48 h-48 rounded-full border-4 border-mint/20"
             />
           </div>
           
@@ -20,7 +20,8 @@ const SimpleCTA = () => {
           </h2>
           
           <p className="text-xl text-white/80 leading-relaxed mb-8">
-            Businesses with AI literate leaders will set the pace in 2026 - and those that don't will have to keep up with them
+            "Businesses with AI literate leaders will set the pace in 2026 - and those that don't will have to keep up with them"
+            <span className="block mt-2 text-lg">-Krish Raja, Founder</span>
           </p>
           
           <Button 
