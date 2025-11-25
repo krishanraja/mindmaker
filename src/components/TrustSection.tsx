@@ -3,23 +3,23 @@ import { Quote, TrendingUp, Clock, Users } from "lucide-react";
 const TrustSection = () => {
   const testimonials = [
     {
-      quote: "Saved 8 hours per week on strategic decisions. Now I build AI systems instead of waiting for IT.",
-      name: "Sarah Chen",
-      role: "VP Operations",
+      quote: "Invested 6 hours a week in to systems building instead of delegating, and I'm starting to see serious returns on my time!",
+      name: "Sarah Messir",
+      role: "Head of BizOps",
       company: "Fortune 500 Tech",
-      metric: "8 hrs/week saved",
+      metric: "6 hrs/week invested",
       icon: Clock,
     },
     {
-      quote: "Our exec team went from AI-curious to AI-fluent in 4 hours. Game-changing for decision velocity.",
-      name: "Marcus Williams",
+      quote: "Krish knows how to take you on a journey, help you realize the WHY and get you pumped instead of worried.",
+      name: "Marcus Davis",
       role: "Chief Strategy Officer",
       company: "Global Consulting Firm",
-      metric: "3x faster decisions",
+      metric: "Game-changing",
       icon: TrendingUp,
     },
     {
-      quote: "Finally, a practical approach. No vendor theatre, just real systems we actually use every day.",
+      quote: "It's great to help my portfolio build practically with an actual builder who has also run P&Ls",
       name: "Jennifer Park",
       role: "Managing Director",
       company: "PE Fund",
