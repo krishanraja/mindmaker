@@ -8,7 +8,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const navItems = [
     { label: "Builder Session", href: "/builder-session" },
@@ -33,14 +33,17 @@ const Navigation = () => {
   // Click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpenDropdown(null);
+      if (openDropdown) {
+        const currentRef = dropdownRefs.current[openDropdown];
+        if (currentRef && !currentRef.contains(event.target as Node)) {
+          setOpenDropdown(null);
+        }
       }
     };
     
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [openDropdown]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -65,36 +68,44 @@ const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6" ref={dropdownRef}>
+          <div className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <div 
                 key={item.label}
                 className="relative"
-                onMouseEnter={() => item.dropdown && setOpenDropdown(item.label)}
-                onMouseLeave={() => setOpenDropdown(null)}
+                ref={(el) => {
+                  if (item.dropdown) {
+                    dropdownRefs.current[item.label] = el;
+                  }
+                }}
                 onKeyDown={handleKeyDown}
               >
                 {item.dropdown ? (
                   <>
                     <button 
-                      className="text-sm font-semibold text-ink dark:text-white
-                        hover:text-mint transition-colors flex items-center gap-1.5
-                        py-2 px-3 rounded-md hover:bg-mint/5"
+                      onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                      className={`text-sm font-semibold transition-colors flex items-center gap-1.5
+                        py-2 px-3 rounded-md ${
+                        openDropdown === item.label 
+                          ? 'text-mint bg-mint/10' 
+                          : 'text-ink dark:text-white hover:text-mint hover:bg-mint/5'
+                      }`}
                       aria-expanded={openDropdown === item.label}
                       aria-haspopup="true"
                     >
                       {item.label}
-                      <ChevronDown className={`h-4 w-4 transition-transform ${
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${
                         openDropdown === item.label ? 'rotate-180' : ''
                       }`} />
                     </button>
                     {openDropdown === item.label && (
                       <div 
-                        className="absolute top-full left-0 mt-2 
+                        className="absolute top-full left-0 mt-1 
                           bg-white dark:bg-[#0e1a2b] 
                           border-2 border-border 
                           rounded-lg shadow-xl 
-                          py-2 min-w-[240px] z-50"
+                          py-3 min-w-[240px] z-50
+                          animate-in fade-in slide-in-from-top-2 duration-200"
                         role="menu"
                         aria-label={`${item.label} menu`}
                       >
@@ -105,7 +116,7 @@ const Navigation = () => {
                             target={subItem.external ? "_blank" : undefined}
                             rel={subItem.external ? "noopener noreferrer" : undefined}
                             role="menuitem"
-                            className={`flex items-center justify-between px-5 py-3 text-sm font-medium rounded-md mx-2
+                            className={`flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-md mx-2
                               transition-colors ${
                               subItem.comingSoon 
                                 ? 'text-muted-foreground/50 cursor-not-allowed' 
