@@ -9,10 +9,10 @@ const InteractiveROI = () => {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-              Build Your AI Transformation Roadmap
+              Lead from the front.
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground px-4 sm:px-0">
-              Select your tasks, see your potential savings, and get a personalized implementation plan
+              AI Agents will be working inside most businesses within six months. Are you ready to lead a new species of worker alongside your existing team? Creating a builder-mentality builds your muscle memory and starts your journey to becoming an AI forward leader.
             </p>
           </div>
           
