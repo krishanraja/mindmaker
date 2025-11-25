@@ -45,7 +45,7 @@ const NewHero = () => {
           <img 
             src={mindmakerIconDark} 
             alt="Mindmaker" 
-            className="h-24 sm:h-32 md:h-36 lg:h-48 w-auto"
+            className="h-16 sm:h-20 md:h-24 w-auto"
           />
         </div>
         
@@ -119,7 +119,7 @@ const NewHero = () => {
         {/* Scroll Indicator */}
         <div className="flex flex-col items-start gap-2 mt-16 sm:mt-24 md:mt-32 opacity-60 hover:opacity-100 transition-opacity cursor-pointer fade-in-up" style={{animationDelay: '0.6s'}}>
           <span className="text-white/70 text-xs uppercase tracking-wider font-medium">Scroll to explore</span>
-          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 animate-bounce" style={{animationDuration: '1.5s'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
         </div>

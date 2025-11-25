@@ -8,7 +8,6 @@ import ProductLadder from "@/components/ProductLadder";
 import TrustSection from "@/components/TrustSection";
 import BeforeAfterSplit from "@/components/ShowDontTell/BeforeAfterSplit";
 import TryItWidget from "@/components/ShowDontTell/TryItWidget";
-import BuilderEconomyConnection from "@/components/BuilderEconomyConnection";
 import SimpleCTA from "@/components/SimpleCTA";
 import Footer from "@/components/Footer";
 import { ChatBot } from "@/components/ChatBot";
@@ -51,9 +50,6 @@ const Index = () => {
       
       {/* Before/After Split */}
       <BeforeAfterSplit />
-      
-      {/* Builder Economy Connection */}
-      <BuilderEconomyConnection />
       
       {/* Simple CTA */}
       <SimpleCTA />
