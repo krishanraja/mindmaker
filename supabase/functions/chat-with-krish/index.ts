@@ -167,9 +167,9 @@ async function callVertexAI(messages: any[], accessToken: string, isTryItWidget:
       retrieval: {
         disable_attribution: false,
         vertex_rag_store: {
-          rag_resources: {
+          rag_resources: [{
             rag_corpus: `projects/${PROJECT_ID}/locations/${LOCATION}/ragCorpora/${RAG_CORPUS_ID}`,
-          },
+          }],
           similarity_top_k: 5,
           vector_distance_threshold: 0.5,
         },
