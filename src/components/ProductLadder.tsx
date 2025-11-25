@@ -1,5 +1,88 @@
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { User, Users, TrendingUp } from "lucide-react";
+import { useState } from "react";
+
+const JourneySlider = () => {
+  const [journeyStage, setJourneyStage] = useState([0]);
+  
+  const offerings = [
+    {
+      name: "Drop In Builder Session",
+      duration: "60 minutes",
+      description: "Live session with Krish. Bring one real leadership problem. Leave with an AI friction map, 1-2 draft systems, and written follow-up with prompts.",
+      cta: "Book Session",
+      link: "/builder-session",
+      intensity: "Light Touch",
+    },
+    {
+      name: "Curated Weekly Updates",
+      duration: "4 weeks async",
+      description: "Weekly recommendations and async access to Krish. Stay current on what matters for your context. Build at your own pace.",
+      cta: "Learn More",
+      link: "/builder-session",
+      intensity: "Steady Build",
+    },
+    {
+      name: "30-Day Builder Sprint",
+      duration: "4 weeks intensive",
+      description: "For senior leaders. Build 3-5 working AI-enabled systems around your actual week. Leave with a Builder Dossier and 90-day plan.",
+      cta: "Learn More",
+      link: "/builder-sprint",
+      intensity: "Deep Dive",
+    },
+  ];
+
+  const currentIndex = journeyStage[0] <= 33 ? 0 : journeyStage[0] <= 66 ? 1 : 2;
+  const currentOffering = offerings[currentIndex];
+
+  return (
+    <div className="premium-card h-full flex flex-col">
+      <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg w-fit">
+        ⭐ RECOMMENDED
+      </div>
+      
+      <div className="mb-6">
+        <div className="text-xs font-bold text-muted-foreground mb-2">YOUR JOURNEY</div>
+        <Slider
+          value={journeyStage}
+          onValueChange={setJourneyStage}
+          max={100}
+          step={1}
+          className="mb-4"
+        />
+        <div className="flex justify-between text-xs text-muted-foreground">
+          <span className={journeyStage[0] <= 33 ? "text-foreground font-semibold" : ""}>1 hr</span>
+          <span className={journeyStage[0] > 33 && journeyStage[0] <= 66 ? "text-foreground font-semibold" : ""}>4 weeks</span>
+          <span className={journeyStage[0] > 66 ? "text-foreground font-semibold" : ""}>30 days</span>
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col transition-all duration-300">
+        <div className="text-xs text-mint font-bold mb-2">{currentOffering.intensity}</div>
+        <h4 className="text-lg font-bold text-foreground mb-2">
+          {currentOffering.name}
+        </h4>
+        <div className="text-xs text-muted-foreground mb-3">
+          {currentOffering.duration}
+        </div>
+        
+        <p className="text-sm leading-relaxed mb-4 text-foreground flex-1">
+          {currentOffering.description}
+        </p>
+        
+        <Button 
+          size="lg"
+          variant="mint"
+          className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
+          onClick={() => window.location.href = currentOffering.link}
+        >
+          {currentOffering.cta}
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const ProductLadder = () => {
   const tracks = [
@@ -7,30 +90,7 @@ const ProductLadder = () => {
       icon: User,
       label: "1-1 LEADERS",
       title: "Individual Builder Journey",
-      offerings: [
-        {
-          name: "Drop In Builder Session",
-          duration: "60 minutes",
-          description: "Live session with Krish. Bring one real leadership problem. Leave with an AI friction map, 1-2 draft systems, and written follow-up with prompts.",
-          cta: "Book Session",
-          link: "/builder-session",
-          featured: true,
-        },
-        {
-          name: "Curated Weekly Updates",
-          duration: "4 weeks async",
-          description: "Weekly recommendations and async access to Krish. Stay current on what matters for your context. Build at your own pace.",
-          cta: "Learn More",
-          link: "/builder-session",
-        },
-        {
-          name: "30-Day Builder Sprint",
-          duration: "4 weeks intensive",
-          description: "For senior leaders. Build 3-5 working AI-enabled systems around your actual week. Leave with a Builder Dossier and 90-day plan.",
-          cta: "Learn More",
-          link: "/builder-sprint",
-        },
-      ],
+      useSlider: true,
     },
     {
       icon: Users,
@@ -74,11 +134,11 @@ const ProductLadder = () => {
           </p>
         </div>
         
-        <div className="space-y-12 max-w-6xl mx-auto px-4 sm:px-0">
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-4 sm:px-0">
           {tracks.map((track, trackIndex) => {
             const IconComponent = track.icon;
             return (
-              <div key={trackIndex} className="fade-in-up" style={{animationDelay: `${trackIndex * 0.1}s`}}>
+              <div key={trackIndex} className="fade-in-up flex flex-col" style={{animationDelay: `${trackIndex * 0.1}s`}}>
                 {/* Track Header */}
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
@@ -94,44 +154,39 @@ const ProductLadder = () => {
                   </div>
                 </div>
 
-                {/* Track Offerings */}
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {track.offerings.map((offering, offeringIndex) => (
-                    <div 
-                      key={offeringIndex}
-                      className={`${offering.featured ? 'premium-card' : 'minimal-card'}`}
-                    >
-                      {offering.featured && (
-                        <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg">
-                          ⭐ RECOMMENDED
-                        </div>
-                      )}
-                      
-                      <h4 className="text-lg font-bold text-foreground mb-2">
-                        {offering.name}
-                      </h4>
-                      <div className="text-xs text-muted-foreground mb-3">
-                        {offering.duration}
-                      </div>
-                      
-                      <p className="text-sm leading-relaxed mb-4 text-foreground">
-                        {offering.description}
-                      </p>
-                      
-                      <Button 
-                        size="lg"
-                        variant={offering.featured ? "mint" : "default"}
-                        className={`w-full touch-target ${offering.featured 
-                          ? "font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5" 
-                          : ""
-                        }`}
-                        onClick={() => window.location.href = offering.link}
+                {/* Track Content */}
+                {track.useSlider ? (
+                  <JourneySlider />
+                ) : (
+                  <div className="space-y-4 flex-1 flex flex-col">
+                    {track.offerings?.map((offering, offeringIndex) => (
+                      <div 
+                        key={offeringIndex}
+                        className="minimal-card flex-1 flex flex-col"
                       >
-                        {offering.cta}
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                        <h4 className="text-lg font-bold text-foreground mb-2">
+                          {offering.name}
+                        </h4>
+                        <div className="text-xs text-muted-foreground mb-3">
+                          {offering.duration}
+                        </div>
+                        
+                        <p className="text-sm leading-relaxed mb-4 text-foreground flex-1">
+                          {offering.description}
+                        </p>
+                        
+                        <Button 
+                          size="lg"
+                          variant="default"
+                          className="w-full touch-target"
+                          onClick={() => window.location.href = offering.link}
+                        >
+                          {offering.cta}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
