@@ -1,126 +1,118 @@
 # Mindmaker Project Documentation
 
-**Last Updated:** 2025-11-24  
-**Version:** 1.0  
-**Project ID:** ce33b9ef-a970-44f3-91e3-5c37cfff48cf
+**Last Updated:** 2025-11-25
 
 ---
 
 ## Overview
 
-This folder contains complete technical documentation for the Mindmaker AI literacy platform. All documentation uses standardized terminology and is written in a concise, technical, instruction-led style suitable for new developers, backend architects, and stakeholders.
+This documentation provides a complete reference for the Mindmaker platform - an AI literacy platform for business leaders. All documentation is standardized, cross-referenced, and maintained to ensure zero-friction onboarding and development.
 
 ---
 
-## Documentation Structure
+## Documentation Index
 
-### Core Definition
-- **[PURPOSE.md](./PURPOSE.md)** - Application purpose, mission, and vision
-- **[ICP.md](./ICP.md)** - Target users and ideal customer profiles
+### Core Project Documents
+- **[PURPOSE.md](./PURPOSE.md)** - Mission, vision, and core objectives
+- **[ICP.md](./ICP.md)** - Ideal customer profiles and target users
+- **[FEATURES.md](./FEATURES.md)** - Complete feature catalogue with implementation status
+- **[OUTCOMES.md](./OUTCOMES.md)** - User outcomes and success metrics
 - **[VALUE_PROP.md](./VALUE_PROP.md)** - Value proposition and positioning
 
-### Product & Features
-- **[FEATURES.md](./FEATURES.md)** - Core features and functionality map
-- **[OUTCOMES.md](./OUTCOMES.md)** - User outcomes and success metrics
-
 ### Design & Branding
-- **[DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md)** - Design tokens, spacing, typography, component system
-- **[BRANDING.md](./BRANDING.md)** - Tone, messaging guidelines, content strategy
-- **[VISUAL_GUIDELINES.md](./VISUAL_GUIDELINES.md)** - Color system, layout patterns, visual preferences
+- **[DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md)** - Design tokens, components, and patterns
+- **[BRANDING.md](./BRANDING.md)** - Brand voice, tone, messaging guidelines
+- **[VISUAL_GUIDELINES.md](./VISUAL_GUIDELINES.md)** - Visual design principles and layout patterns
 
-### Technical Architecture
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Backend architecture, data flow, integration patterns
-- **[REPLICATION_GUIDE.md](./REPLICATION_GUIDE.md)** - Step-by-step guide to replicate the project from scratch
-
-### Historical Context
-- **[HISTORY.md](./HISTORY.md)** - Evolution timeline and major transformations
-- **[COMMON_ISSUES.md](./COMMON_ISSUES.md)** - Recurring bugs, architectural pain points, solutions
-- **[DECISIONS_LOG.md](./DECISIONS_LOG.md)** - Prior architectural decisions and their rationale
+### Technical Documentation
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture, tech stack, data flow
+- **[HISTORY.md](./HISTORY.md)** - Evolution timeline and major changes
+- **[COMMON_ISSUES.md](./COMMON_ISSUES.md)** - Known issues, bugs, and solutions
+- **[DECISIONS_LOG.md](./DECISIONS_LOG.md)** - Architectural decisions and rationale
+- **[REPLICATION_GUIDE.md](./REPLICATION_GUIDE.md)** - Step-by-step setup from scratch
 
 ---
 
-## Quick Start for New Developers
+## Quick Start
 
-### 1. Understand the Product
-Read in this order:
-1. [PURPOSE.md](./PURPOSE.md) - What is Mindmaker?
-2. [ICP.md](./ICP.md) - Who uses it?
-3. [VALUE_PROP.md](./VALUE_PROP.md) - Why does it matter?
-4. [FEATURES.md](./FEATURES.md) - What does it do?
+### For Developers
+1. Start with [REPLICATION_GUIDE.md](./REPLICATION_GUIDE.md) to set up your environment
+2. Review [ARCHITECTURE.md](./ARCHITECTURE.md) to understand the system
+3. Check [COMMON_ISSUES.md](./COMMON_ISSUES.md) for known gotchas
 
-### 2. Learn the Design System
-Read in this order:
-1. [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) - Tokens, spacing, typography
-2. [BRANDING.md](./BRANDING.md) - Tone and messaging
-3. [VISUAL_GUIDELINES.md](./VISUAL_GUIDELINES.md) - Visual patterns
+### For Designers
+1. Read [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for tokens and components
+2. Review [VISUAL_GUIDELINES.md](./VISUAL_GUIDELINES.md) for layout patterns
+3. Check [BRANDING.md](./BRANDING.md) for voice and tone
 
-### 3. Understand the Architecture
-Read in this order:
-1. [ARCHITECTURE.md](./ARCHITECTURE.md) - Backend, data flow, integrations
-2. [COMMON_ISSUES.md](./COMMON_ISSUES.md) - Known pitfalls
-3. [DECISIONS_LOG.md](./DECISIONS_LOG.md) - Why things are built this way
-
-### 4. Build From Scratch
-Follow [REPLICATION_GUIDE.md](./REPLICATION_GUIDE.md) step-by-step.
+### For Product/Business
+1. Start with [PURPOSE.md](./PURPOSE.md) and [VALUE_PROP.md](./VALUE_PROP.md)
+2. Review [ICP.md](./ICP.md) for target users
+3. Check [FEATURES.md](./FEATURES.md) and [OUTCOMES.md](./OUTCOMES.md)
 
 ---
 
-## Key Terminology
+## Terminology Standards
 
-**Consistent terms used throughout documentation:**
+**Consistent terms used across all documentation:**
 
-- **AI Literacy** - The ability to think clearly about AI, separate hype from value, and make informed decisions
-- **Cognitive Infrastructure** - Internal term (not customer-facing) for mental frameworks that persist and compound
-- **Diagnostic** - 2-5 minute assessment that maps current thinking patterns (not a quiz)
-- **Baseline** - Where a leader/team actually stands vs where they think they stand
-- **Practice Infrastructure** - Continuous improvement system, not one-time training
-- **Mental Models** - Internal term for frameworks that guide decision-making
-- **Vendor Theatre** - AI pitches that prioritize demos over substance
-- **Decision Velocity** - Speed and confidence in making AI-related strategic decisions
-
----
-
-## File Update Protocol
-
-When updating any documentation file:
-
-1. **Update the "Last Updated" date** at the top of the file
-2. **Add entry to HISTORY.md** if the change is significant
-3. **Check for terminology consistency** across all files
-4. **Update related files** if changes affect multiple areas
-5. **Validate against DECISIONS_LOG.md** to ensure alignment with prior decisions
+- **Initial Consult** - 45-minute strategy call (replaces "consultation", "discovery call")
+- **Builder Session** - 60-minute one-on-one live session
+- **Builder Sprint** - 30-day intensive program
+- **Leadership Lab** - Team workshop (2-8 hours)
+- **Partner Program** - 6-12 month portfolio-wide engagement
+- **Hold** - $50 refundable authorization hold via Stripe (not "deposit" or "fee")
+- **Edge Function** - Supabase serverless function (not "cloud function" or "API endpoint")
+- **Design System** - Centralized tokens in index.css + tailwind.config.ts
+- **Ink** - Primary dark color (#0e1a2b)
+- **Mint** - Primary accent color (#7ef4c2)
 
 ---
 
-## Documentation Standards
+## Maintenance Guidelines
 
-All documentation in this folder follows these standards:
+### When to Update Documentation
 
-- **Tone:** Technical, concise, instruction-led
-- **Structure:** Hierarchical with clear headings
-- **Formatting:** Markdown with consistent styling
-- **Examples:** Real examples from the codebase, not hypotheticals
-- **Brevity:** No fluff, every sentence adds value
-- **Accessibility:** Readable by both technical and non-technical stakeholders
+**Update immediately when:**
+- Adding/removing features
+- Changing architecture or data flow
+- Modifying design tokens or components
+- Encountering recurring bugs or issues
+- Making decisions that affect future development
+
+**Update at end of sprint when:**
+- Minor UI adjustments
+- Copy changes
+- Non-breaking dependency updates
+
+### How to Update
+
+1. Edit the relevant markdown file(s)
+2. Update "Last Updated" date at top of file
+3. Cross-reference changes in related documents
+4. Update this README if adding new sections
+5. Commit with descriptive message: `docs: [section] - [change summary]`
 
 ---
 
-## Contact & Contribution
+## Document Status
 
-**Project Lead:** Krish (Founder)  
-**Tech Stack:** React, TypeScript, Vite, Tailwind CSS, Supabase (Lovable Cloud)  
-**Repository:** Connected via Lovable GitHub Integration  
-**Deployment:** Lovable Cloud auto-deploy
-
-For questions about this documentation, refer to the specific file or consult the [DECISIONS_LOG.md](./DECISIONS_LOG.md) for context on architectural choices.
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-11-24 | Initial comprehensive documentation created |
+| Document | Status | Last Updated |
+|----------|--------|--------------|
+| README.md | ✅ Current | 2025-11-25 |
+| PURPOSE.md | ✅ Current | 2025-11-25 |
+| ICP.md | ✅ Current | 2025-11-25 |
+| FEATURES.md | ✅ Current | 2025-11-25 |
+| OUTCOMES.md | ✅ Current | 2025-11-25 |
+| VALUE_PROP.md | ✅ Current | 2025-11-25 |
+| DESIGN_SYSTEM.md | ✅ Current | 2025-11-25 |
+| BRANDING.md | ✅ Current | 2025-11-25 |
+| VISUAL_GUIDELINES.md | ✅ Current | 2025-11-25 |
+| ARCHITECTURE.md | ✅ Current | 2025-11-25 |
+| HISTORY.md | ✅ Current | 2025-11-25 |
+| COMMON_ISSUES.md | ✅ Current | 2025-11-25 |
+| DECISIONS_LOG.md | ✅ Current | 2025-11-25 |
+| REPLICATION_GUIDE.md | ✅ Current | 2025-11-25 |
 
 ---
 
