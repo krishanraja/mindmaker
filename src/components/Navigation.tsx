@@ -243,6 +243,25 @@ const Navigation = () => {
                     <div className="h-px bg-border my-2" />}
                 </div>
               ))}
+              
+              {/* Builder Economy in Mobile */}
+              <div className="h-px bg-border my-2" />
+              <a
+                href="/builder-economy"
+                className="min-h-[44px] flex items-center px-4 py-3 
+                  text-base font-medium text-ink dark:text-white 
+                  hover:bg-mint/10 rounded-md transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Builder Economy
+              </a>
+              
+              {/* Lightning Lessons in Mobile */}
+              <div className="h-px bg-border my-2" />
+              <div className="px-4 py-2">
+                <LightningLessons />
+              </div>
+              
               <Button 
                 size="sm" 
                 className="w-fit mx-4 mt-2"
