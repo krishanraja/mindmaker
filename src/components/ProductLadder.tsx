@@ -166,7 +166,7 @@ const ProductLadder = () => {
                     {track.offerings?.map((offering, offeringIndex) => (
                       <div 
                         key={offeringIndex}
-                        className="minimal-card flex-1 flex flex-col"
+                        className="minimal-card flex flex-col"
                       >
                         <h4 className="text-lg font-bold text-foreground mb-2">
                           {offering.name}
@@ -175,21 +175,21 @@ const ProductLadder = () => {
                           {offering.duration}
                         </div>
                         
-                        <p className="text-sm leading-relaxed mb-4 text-foreground flex-1">
+                        <p className="text-sm leading-relaxed mb-3 text-foreground">
                           {offering.description}
                         </p>
                         
                         {offering.image && (
-                          <div className="mb-4 overflow-hidden rounded-lg transition-all duration-300 hover:scale-150 hover:z-50 hover:shadow-2xl cursor-zoom-in">
+                          <div className="mb-3 overflow-hidden rounded-lg transition-all duration-300 hover:scale-[2.5] hover:z-50 hover:shadow-2xl cursor-zoom-in origin-center h-20">
                             <img 
                               src={offering.image} 
                               alt={offering.name}
-                              className="w-full h-auto transition-transform duration-300"
+                              className="w-full h-full object-cover transition-transform duration-300"
                             />
                           </div>
                         )}
                         
-                        <Button 
+                        <Button
                           size="lg"
                           variant="default"
                           className="w-full touch-target"
