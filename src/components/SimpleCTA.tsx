@@ -29,7 +29,7 @@ const SimpleCTA = () => {
           </h2>
           
           <p className="text-xl text-white/80 leading-relaxed mb-8">
-            "Businesses with AI literate leaders will set the pace in 2026 - and those that don't will have to keep up with them"
+            "Businesses with AI literate leaders will set the pace in 2026 - and the rest will have to keep up with them"
             <span className="block mt-2 text-lg">-Krish Raja, Founder</span>
           </p>
           
