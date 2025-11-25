@@ -22,11 +22,44 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
   const { toast } = useToast();
 
   const programs = [
-    { value: "builder-session", label: "Builder Session", subtitle: "60 min one-off" },
-    { value: "builder-sprint", label: "30-Day Builder Sprint", subtitle: "4 weeks intensive" },
-    { value: "leadership-lab", label: "AI Leadership Lab", subtitle: "Team workshop" },
-    { value: "partner-program", label: "Portfolio Partner Program", subtitle: "6-12 months" },
-    { value: "not-sure", label: "Not sure yet - help me decide", subtitle: "Exploration call" },
+    { 
+      value: "builder-session", 
+      label: "Builder Session", 
+      subtitle: "60 min one-off",
+      price: "$348",
+      originalPrice: "$497",
+      priceId: "price_1SXSnwHGqJqsGEJL2K4m8nXV"
+    },
+    { 
+      value: "builder-sprint", 
+      label: "30-Day Builder Sprint", 
+      subtitle: "4 weeks intensive",
+      price: "$2,098",
+      originalPrice: "$2,997",
+      priceId: "price_1SXSoFHGqJqsGEJLfHZbf6BP"
+    },
+    { 
+      value: "leadership-lab", 
+      label: "AI Leadership Lab", 
+      subtitle: "Team workshop",
+      price: "$7,000",
+      originalPrice: "$10,000",
+      priceId: "price_1SXSofHGqJqsGEJLkxNwgoqd"
+    },
+    { 
+      value: "partner-program", 
+      label: "Portfolio Partner Program", 
+      subtitle: "6-12 months",
+      price: "Free consultation",
+      priceId: null
+    },
+    { 
+      value: "not-sure", 
+      label: "Not sure yet - help me decide", 
+      subtitle: "Exploration call",
+      price: null,
+      priceId: null
+    },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,10 +77,29 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     setIsLoading(true);
 
     try {
+      const selectedProgramData = programs.find(p => p.value === selectedProgram);
+      
+      // For partner program, go directly to Calendly
+      if (selectedProgram === 'partner-program') {
+        const calendlyUrl = `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}&a1=${encodeURIComponent(selectedProgram)}`;
+        window.open(calendlyUrl, '_blank');
+        onOpenChange(false);
+        toast({
+          title: "Opening Calendly",
+          description: "Booking your partner consultation...",
+        });
+        return;
+      }
+
       console.log('Invoking edge function with:', { name, email, selectedProgram });
       
       const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
-        body: { name, email, selectedProgram }
+        body: { 
+          name, 
+          email, 
+          selectedProgram,
+          priceId: selectedProgramData?.priceId
+        }
       });
 
       console.log('Edge function response:', { data, error });
@@ -102,8 +154,22 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
                     htmlFor={program.value} 
                     className="font-normal cursor-pointer flex-1 leading-tight"
                   >
-                    <span className="font-semibold block">{program.label}</span>
-                    <span className="text-xs text-muted-foreground">{program.subtitle}</span>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="font-semibold block">{program.label}</span>
+                        <span className="text-xs text-muted-foreground">{program.subtitle}</span>
+                      </div>
+                      {program.price && (
+                        <div className="text-right">
+                          {program.originalPrice && (
+                            <span className="text-xs text-muted-foreground line-through block">{program.originalPrice}</span>
+                          )}
+                          <span className={`text-sm font-bold ${program.originalPrice ? 'text-mint' : ''}`}>
+                            {program.price}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </Label>
                 </div>
               ))}
@@ -137,13 +203,23 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
 
           {/* Value Props */}
           <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border/50">
-            <div className="flex items-start gap-2 text-sm">
-              <span className="text-lg">🔒</span>
-              <div>
-                <span className="font-semibold">$50 hold</span>
-                <span className="text-muted-foreground"> • Fully refundable if not satisfied • Deducted from any program you choose</span>
+            {selectedProgram === 'partner-program' ? (
+              <div className="flex items-start gap-2 text-sm">
+                <span className="text-lg">🎯</span>
+                <div>
+                  <span className="font-semibold">Partner Program</span>
+                  <span className="text-muted-foreground"> • Free consultation for portfolio partners • Direct booking</span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-start gap-2 text-sm">
+                <span className="text-lg">🔒</span>
+                <div>
+                  <span className="font-semibold">$50 hold</span>
+                  <span className="text-muted-foreground"> • Fully refundable if not satisfied • Deducted from any program you choose</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Submit Button */}
@@ -167,7 +243,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
 
           {/* Urgency Element */}
           <p className="text-center text-sm text-muted-foreground">
-            ⚡ <span className="font-semibold">Holiday rates</span> available through December
+            ⚡ <span className="font-semibold text-mint">Holiday Special: 30% off</span> for Individuals & Teams through December
           </p>
         </form>
       </DialogContent>
