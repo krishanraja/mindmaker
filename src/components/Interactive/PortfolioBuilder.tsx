@@ -72,23 +72,23 @@ Generated via https://themindmaker.ai
             <div className="space-y-3">
               {portfolioData.tasks.map(task => (
                 <div key={task.id} className="p-4 rounded-lg bg-background border">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="font-semibold text-sm">{task.name}</div>
-                    <div className="text-right">
-                      <div className="text-xs text-muted-foreground">Saves</div>
-                      <div className="text-lg font-bold text-mint">{task.potentialSavings}h/wk</div>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="font-semibold text-sm">{task.name}</div>
+                      <div className="text-right">
+                        <div className="text-xs text-muted-foreground">Saves</div>
+                        <div className="text-lg font-bold text-mint-dark">{task.potentialSavings}h/wk</div>
                     </div>
                   </div>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <div>Current: {task.hoursPerWeek}h/week</div>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {task.aiTools.map((tool, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-mint/10 text-mint rounded-full text-xs">
-                          {tool}
-                        </span>
-                      ))}
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <div>Current: {task.hoursPerWeek}h/week</div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {task.aiTools.map((tool, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-mint/10 text-mint-dark rounded-full text-xs">
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
                 </div>
               ))}
             </div>
@@ -97,7 +97,7 @@ Generated via https://themindmaker.ai
           {/* Total Impact */}
           <div className="grid sm:grid-cols-2 gap-4 p-4 rounded-lg bg-background">
             <div className="text-center">
-              <div className="text-3xl font-bold text-mint">{portfolioData.totalTimeSaved}h</div>
+              <div className="text-3xl font-bold text-mint-dark">{portfolioData.totalTimeSaved}h</div>
               <div className="text-xs text-muted-foreground">Saved per week</div>
             </div>
             <div className="text-center">
@@ -112,7 +112,7 @@ Generated via https://themindmaker.ai
             <div className="space-y-2">
               {portfolioData.implementationRoadmap.map((step, i) => (
                 <div key={i} className="flex items-start gap-3 text-sm">
-                  <div className="w-6 h-6 rounded-full bg-mint/20 text-mint flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-mint/20 text-mint-dark flex items-center justify-center text-xs font-bold flex-shrink-0">
                     {i + 1}
                   </div>
                   <div className="pt-0.5">{step}</div>
@@ -180,7 +180,7 @@ Generated via https://themindmaker.ai
                   className="w-full"
                 />
                 {task.hoursPerWeek > 0 && (
-                  <div className="text-xs text-mint font-semibold">
+                  <div className="text-xs text-mint-dark font-semibold">
                     → Could save {task.potentialSavings}h per week
                   </div>
                 )}

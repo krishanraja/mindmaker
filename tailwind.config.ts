@@ -21,6 +21,7 @@ export default {
         // MINDMAKER 2.0 - INK + MINT PALETTE
         ink: "hsl(var(--ink))",
         mint: "hsl(var(--mint))",
+        "mint-dark": "hsl(var(--mint-dark))",
         "off-white": "hsl(var(--off-white))",
         "light-grey": "hsl(var(--light-grey))",
         "mid-grey": "hsl(var(--mid-grey))",

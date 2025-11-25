@@ -243,7 +243,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
 
           {/* Urgency Element */}
           <p className="text-center text-sm text-muted-foreground">
-            ⚡ <span className="font-semibold text-mint">Holiday Special: 30% off</span> for Individuals & Teams through December
+            ⚡ <span className="font-semibold text-mint-dark">Holiday Special: 30% off</span> for Individuals & Teams through December
           </p>
         </form>
       </DialogContent>

@@ -43,7 +43,7 @@ export const FrictionMapBuilder = ({ compact = false }: FrictionMapBuilderProps)
           <div className="space-y-1">
             {frictionMap.toolRecommendations.slice(0, 2).map((tool, i) => (
               <div key={i} className="flex items-start gap-2 text-xs">
-                <div className="w-4 h-4 rounded-full bg-mint/20 text-mint flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                <div className="w-4 h-4 rounded-full bg-mint/20 text-mint-dark flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
                   {i + 1}
                 </div>
                 <div className="line-clamp-2">{tool}</div>
@@ -180,7 +180,7 @@ via https://themindmaker.ai
             <div className="space-y-2">
               {frictionMap.toolRecommendations.map((tool, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <div className="w-6 h-6 rounded-full bg-mint/20 dark:bg-mint/30 text-mint flex items-center justify-center text-xs font-bold">
+                  <div className="w-6 h-6 rounded-full bg-mint/20 dark:bg-mint/30 text-mint-dark flex items-center justify-center text-xs font-bold">
                     {i + 1}
                   </div>
                   {tool}

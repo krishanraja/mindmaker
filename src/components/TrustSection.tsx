@@ -72,7 +72,7 @@ const TrustSection = () => {
                     <div className="text-xs text-muted-foreground truncate">{testimonial.company}</div>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-xs font-bold text-mint bg-mint/10 px-2 sm:px-3 py-1.5 rounded-full whitespace-nowrap">
+                  <div className="flex items-center gap-2 text-xs font-bold text-mint-dark bg-mint/10 px-2 sm:px-3 py-1.5 rounded-full whitespace-nowrap">
                     <IconComponent className="h-3 w-3 flex-shrink-0" />
                     <span className="hidden sm:inline">{testimonial.metric}</span>
                   </div>

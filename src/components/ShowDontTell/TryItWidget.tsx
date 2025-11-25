@@ -61,8 +61,8 @@ const TryItWidget = () => {
             className="text-center mb-8"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-mint/10 border border-mint/20 mb-6">
-              <Sparkles className="w-4 h-4 text-mint" />
-              <span className="text-sm font-semibold text-mint">Try It Now</span>
+              <Sparkles className="w-4 h-4 text-mint-dark" />
+              <span className="text-sm font-semibold text-mint-dark">Try It Now</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               Stuck on an AI Decision?

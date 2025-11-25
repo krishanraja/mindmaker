@@ -62,7 +62,7 @@ const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void
       </div>
 
       <div className="flex-1 flex flex-col transition-all duration-300">
-        <div className="text-xs text-mint font-bold mb-2">{currentOffering.intensity}</div>
+        <div className="text-xs text-mint-dark font-bold mb-2">{currentOffering.intensity}</div>
         <h4 className="text-lg font-bold text-foreground mb-2">
           {currentOffering.name}
         </h4>

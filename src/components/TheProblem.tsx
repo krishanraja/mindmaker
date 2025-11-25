@@ -74,28 +74,28 @@ const TheProblem = () => {
   const cards = [
     {
       id: 'quiz' as const,
-      icon: <User className="w-5 h-5 text-mint" />,
+      icon: <User className="w-5 h-5 text-mint-dark" />,
       title: "Builder Profile Quiz",
       subtitle: "60-second assessment",
       description: "Where are you on your AI journey? Take a quick assessment to get personalized recommendations."
     },
     {
       id: 'decision' as const,
-      icon: <Lightbulb className="w-5 h-5 text-mint" />,
+      icon: <Lightbulb className="w-5 h-5 text-mint-dark" />,
       title: "AI Decision Helper",
       subtitle: "Instant clarity",
       description: "Stuck on an AI decision? Get structured advice and a clear next step right now."
     },
     {
       id: 'friction' as const,
-      icon: <Map className="w-5 h-5 text-mint" />,
+      icon: <Map className="w-5 h-5 text-mint-dark" />,
       title: "Friction Map Builder",
       subtitle: "Map your time sink",
       description: "Visualize your biggest friction point and see how AI can help you reclaim your time."
     },
     {
       id: 'portfolio' as const,
-      icon: <TrendingUp className="w-5 h-5 text-mint" />,
+      icon: <TrendingUp className="w-5 h-5 text-mint-dark" />,
       title: "Model out your starting points",
       subtitle: "Build your AI portfolio",
       description: "Select your weekly tasks and see your personalized transformation roadmap."
@@ -201,7 +201,7 @@ const TheProblem = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-mint/10 border border-mint/30 rounded-lg">
-                <Sparkles className="w-3.5 h-3.5 text-mint flex-shrink-0" />
+                <Sparkles className="w-3.5 h-3.5 text-mint-dark flex-shrink-0" />
                 <span className="text-muted-foreground text-[0.7rem]">
                   <strong className="text-foreground">Sample tools for exploration.</strong> Actual tool recommendations and strategies are delivered through our Sprint services.
                 </span>

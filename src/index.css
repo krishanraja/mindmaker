@@ -18,6 +18,7 @@
     /* INK + MINT PRIMARY PALETTE */
     --ink: 210 58% 11%;           /* #0e1a2b - Main structure, typography */
     --mint: 158 82% 73%;          /* #7ef4c2 - Highlights, sparingly */
+    --mint-dark: 158 60% 35%;     /* Darker mint for text on light backgrounds */
     
     /* NEUTRALS */
     --off-white: 60 9% 96%;       /* #F7F7F5 - Background */

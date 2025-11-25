@@ -15,14 +15,14 @@ export const BuilderAssessment = ({ compact = false }: BuilderAssessmentProps) =
     return (
       <div className="space-y-4">
         <div className="text-center p-4 bg-mint/10 rounded-lg border border-mint/20">
-          <div className="text-sm font-bold text-mint mb-2">{profile.type}</div>
+          <div className="text-sm font-bold text-mint-dark mb-2">{profile.type}</div>
           <p className="text-xs text-muted-foreground line-clamp-2">{profile.description}</p>
         </div>
         <div className="space-y-2">
           <div className="text-xs font-bold text-muted-foreground">NEXT STEPS</div>
           {profile.nextSteps.slice(0, 2).map((step, i) => (
             <div key={i} className="flex items-start gap-2 text-xs">
-              <div className="w-4 h-4 rounded-full bg-mint/20 text-mint flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+              <div className="w-4 h-4 rounded-full bg-mint/20 text-mint-dark flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
                 {i + 1}
               </div>
               <div className="line-clamp-2">{step}</div>
@@ -142,7 +142,7 @@ export const BuilderAssessment = ({ compact = false }: BuilderAssessmentProps) =
             <div className="space-y-3">
               {profile.nextSteps.map((step, i) => (
                 <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-background">
-                  <div className="w-6 h-6 rounded-full bg-mint/20 text-mint flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-mint/20 text-mint-dark flex items-center justify-center text-xs font-bold flex-shrink-0">
                     {i + 1}
                   </div>
                   <div className="text-sm pt-0.5">{step}</div>

@@ -51,7 +51,7 @@ const BuilderSession = () => {
         <div className="container-width max-w-4xl">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-block bg-mint/10 text-mint px-4 py-2 rounded-full text-sm font-bold mb-6">
+            <div className="inline-block bg-mint/10 text-mint-dark px-4 py-2 rounded-full text-sm font-bold mb-6">
               ENTRY PRODUCT
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
