@@ -44,25 +44,35 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     setIsLoading(true);
 
     try {
+      console.log('Invoking edge function with:', { name, email, selectedProgram });
+      
       const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
         body: { name, email, selectedProgram }
       });
 
-      if (error) throw error;
+      console.log('Edge function response:', { data, error });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
 
       if (data?.url) {
+        console.log('Opening checkout URL:', data.url);
         window.open(data.url, '_blank');
         onOpenChange(false);
         toast({
           title: "Redirecting to checkout",
           description: "Opening Stripe checkout in a new tab...",
         });
+      } else {
+        throw new Error('No checkout URL returned from server');
       }
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast({
-        title: "Something went wrong",
-        description: error instanceof Error ? error.message : "Please try again",
+        title: "Booking error",
+        description: error instanceof Error ? error.message : "Please try again or contact support",
         variant: "destructive",
       });
     } finally {
