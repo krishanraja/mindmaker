@@ -1,45 +1,53 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
+import { Menu, X, Sun, Moon, ChevronDown, ExternalLink } from "lucide-react";
 import { useTheme } from "next-themes";
 import mindmakerFavicon from "/mindmaker-favicon.png";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
-    { 
-      label: "For Individuals", 
-      href: "/builder-session",
-      dropdown: [
-        { label: "Builder Session", href: "/builder-session" },
-      ]
-    },
+    { label: "Builder Session", href: "/builder-session" },
     { 
       label: "For Teams", 
-      href: "/builder-sprint",
       dropdown: [
         { label: "Builder Sprint", href: "/builder-sprint" },
         { label: "AI Leadership Lab", href: "/leadership-lab" },
       ]
     },
-    { 
-      label: "For Partners", 
-      href: "/partner-program"
-    },
+    { label: "Partner Program", href: "/partner-program" },
     { 
       label: "Content", 
-      href: "#",
       dropdown: [
-        { label: "The Builder Economy (Coming Soon)", href: "#", comingSoon: true },
+        { label: "The Builder Economy", href: "#", comingSoon: true, description: "Podcast" },
         { label: "Blog", href: "https://content.themindmaker.ai", external: true },
       ]
     },
     { label: "FAQ", href: "/faq" },
   ];
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setOpenDropdown(null);
+    }
+  };
 
   return (
     <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm">
@@ -51,40 +59,67 @@ const Navigation = () => {
               <img 
                 src={mindmakerFavicon} 
                 alt="Mindmaker" 
-                className="h-8 w-auto"
+                className="h-10 w-auto"
               />
             </a>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center gap-6" ref={dropdownRef}>
             {navItems.map((item) => (
               <div 
                 key={item.label}
                 className="relative"
                 onMouseEnter={() => item.dropdown && setOpenDropdown(item.label)}
                 onMouseLeave={() => setOpenDropdown(null)}
+                onKeyDown={handleKeyDown}
               >
                 {item.dropdown ? (
                   <>
-                    <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+                    <button 
+                      className="text-sm font-semibold text-ink dark:text-white
+                        hover:text-mint transition-colors flex items-center gap-1.5
+                        py-2 px-3 rounded-md hover:bg-mint/5"
+                      aria-expanded={openDropdown === item.label}
+                      aria-haspopup="true"
+                    >
                       {item.label}
-                      <ChevronDown className="h-3 w-3" />
+                      <ChevronDown className={`h-4 w-4 transition-transform ${
+                        openDropdown === item.label ? 'rotate-180' : ''
+                      }`} />
                     </button>
                     {openDropdown === item.label && (
-                      <div className="absolute top-full left-0 mt-2 bg-background border border-border rounded-md shadow-lg py-2 min-w-[200px] z-50">
+                      <div 
+                        className="absolute top-full left-0 mt-2 
+                          bg-white dark:bg-[#0e1a2b] 
+                          border-2 border-border 
+                          rounded-lg shadow-xl 
+                          py-2 min-w-[240px] z-50"
+                        role="menu"
+                        aria-label={`${item.label} menu`}
+                      >
                         {item.dropdown.map((subItem) => (
                           <a
                             key={subItem.label}
                             href={subItem.href}
                             target={subItem.external ? "_blank" : undefined}
                             rel={subItem.external ? "noopener noreferrer" : undefined}
-                            className={`block px-4 py-2 text-sm hover:bg-accent transition-colors ${
-                              subItem.comingSoon ? 'text-muted-foreground/50 cursor-default' : 'text-muted-foreground hover:text-foreground'
+                            role="menuitem"
+                            className={`flex items-center justify-between px-5 py-3 text-sm font-medium rounded-md mx-2
+                              transition-colors ${
+                              subItem.comingSoon 
+                                ? 'text-muted-foreground/50 cursor-not-allowed' 
+                                : 'text-ink dark:text-white hover:bg-mint/10 hover:text-ink dark:hover:text-white'
                             }`}
                             onClick={(e) => subItem.comingSoon && e.preventDefault()}
                           >
-                            {subItem.label}
+                            <span>{subItem.label}</span>
+                            {subItem.comingSoon && (
+                              <span className="text-xs text-mint font-semibold">Coming Soon</span>
+                            )}
+                            {subItem.external && (
+                              <ExternalLink className="h-3 w-3 ml-2" />
+                            )}
                           </a>
                         ))}
                       </div>
@@ -93,7 +128,9 @@ const Navigation = () => {
                 ) : (
                   <a
                     href={item.href}
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm font-semibold text-ink dark:text-white 
+                      hover:text-mint transition-colors py-2 px-3 rounded-md 
+                      hover:bg-mint/5"
                   >
                     {item.label}
                   </a>
@@ -104,7 +141,7 @@ const Navigation = () => {
             {/* Premium CTA Button */}
             <Button 
               size="default" 
-              className="ml-4 relative"
+              className="ml-8 relative"
               onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
             >
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-mint rounded-full animate-pulse" />
@@ -136,47 +173,62 @@ const Navigation = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden py-4 border-t border-border">
-            <div className="flex flex-col space-y-4">
-              {navItems.map((item) => (
+            <div className="flex flex-col space-y-2">
+              {navItems.map((item, index) => (
                 <div key={item.label}>
                   {item.dropdown ? (
-                    <>
-                      <div className="text-sm font-medium text-foreground mb-2">{item.label}</div>
-                      <div className="flex flex-col space-y-2 pl-4">
+                    <div className="py-2">
+                      <div className="text-xs font-bold uppercase tracking-wider 
+                        text-muted-foreground mb-3 px-4">{item.label}</div>
+                      <div className="flex flex-col space-y-1">
                         {item.dropdown.map((subItem) => (
                           <a
                             key={subItem.label}
                             href={subItem.href}
                             target={subItem.external ? "_blank" : undefined}
                             rel={subItem.external ? "noopener noreferrer" : undefined}
-                            className={`text-sm ${
-                              subItem.comingSoon ? 'text-muted-foreground/50' : 'text-muted-foreground hover:text-foreground'
-                            } transition-colors`}
+                            className={`min-h-[44px] flex items-center justify-between px-4 py-3 
+                              text-base font-medium rounded-md transition-colors ${
+                              subItem.comingSoon 
+                                ? 'text-muted-foreground/50 cursor-not-allowed' 
+                                : 'text-ink dark:text-white hover:bg-mint/10'
+                            }`}
                             onClick={(e) => {
                               if (subItem.comingSoon) e.preventDefault();
                               else setIsOpen(false);
                             }}
                           >
-                            {subItem.label}
+                            <span>{subItem.label}</span>
+                            {subItem.comingSoon && 
+                              <span className="text-xs text-mint font-semibold">Coming Soon</span>}
+                            {subItem.external && 
+                              <ExternalLink className="h-3 w-3" />}
                           </a>
                         ))}
                       </div>
-                    </>
+                    </div>
                   ) : (
                     <a
                       href={item.href}
-                      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                      className="min-h-[44px] flex items-center px-4 py-3 
+                        text-base font-medium text-ink dark:text-white 
+                        hover:bg-mint/10 rounded-md transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       {item.label}
                     </a>
                   )}
+                  {index < navItems.length - 1 && 
+                    <div className="h-px bg-border my-2" />}
                 </div>
               ))}
-               <Button 
+              <Button 
                 size="sm" 
-                className="w-fit"
-                onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                className="w-fit mx-4 mt-2"
+                onClick={() => {
+                  window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank');
+                  setIsOpen(false);
+                }}
               >
                 Book Session
               </Button>
