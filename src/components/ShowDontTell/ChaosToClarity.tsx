@@ -39,27 +39,57 @@ const concepts: Concept[] = [
 const ChaosToClarity = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [headlinePhase, setHeadlinePhase] = useState<'chaos' | 'organizing' | 'clarity'>('chaos');
+  const frameRef = useRef<number>();
 
   useEffect(() => {
     const handleScroll = () => {
       if (!sectionRef.current) return;
       
-      const rect = sectionRef.current.getBoundingClientRect();
-      const sectionHeight = rect.height;
-      const windowHeight = window.innerHeight;
+      // Cancel any pending frame
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
       
-      // Calculate scroll progress through section
-      const scrolled = windowHeight - rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / (sectionHeight + windowHeight)));
-      
-      setScrollProgress(progress);
+      // Throttle using requestAnimationFrame (60fps max)
+      frameRef.current = requestAnimationFrame(() => {
+        const rect = sectionRef.current!.getBoundingClientRect();
+        const sectionHeight = rect.height;
+        const windowHeight = window.innerHeight;
+        
+        // Calculate scroll progress through section
+        const scrolled = windowHeight - rect.top;
+        const progress = Math.max(0, Math.min(1, scrolled / (sectionHeight + windowHeight)));
+        
+        setScrollProgress(progress);
+        
+        // Hysteresis pattern: only change headline phase with buffer zones
+        // This prevents rapid switching that causes flashing
+        const organizationLevel = 
+          progress < 0.15 ? 0 : 
+          progress > 0.5 ? 1 : 
+          (progress - 0.15) / 0.35;
+        
+        if (organizationLevel < 0.25 && headlinePhase !== 'chaos') {
+          setHeadlinePhase('chaos');
+        } else if (organizationLevel >= 0.35 && organizationLevel < 0.65 && headlinePhase !== 'organizing') {
+          setHeadlinePhase('organizing');
+        } else if (organizationLevel >= 0.75 && headlinePhase !== 'clarity') {
+          setHeadlinePhase('clarity');
+        }
+      });
     };
     
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    };
+  }, [headlinePhase]);
 
   // Faster animation: 0.15-0.5 instead of 0.2-0.8
   const organizationLevel = 
@@ -82,7 +112,15 @@ const ChaosToClarity = () => {
 
   // Organized 2x2 grid positions with better spacing to prevent overlap
   const getOrganizedPosition = (concept: Concept, index: number) => {
-    const categoryPositions = {
+    // Responsive positioning: mobile uses centered layout, desktop uses wider spread
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    
+    const categoryPositions = isMobile ? {
+      Technical: { baseX: 30, baseY: 15 },
+      Commercial: { baseX: 70, baseY: 15 },
+      Organizational: { baseX: 30, baseY: 58 },
+      Competitive: { baseX: 70, baseY: 58 },
+    } : {
       Technical: { baseX: 18, baseY: 22 },
       Commercial: { baseX: 62, baseY: 22 },
       Organizational: { baseX: 18, baseY: 62 },
@@ -95,7 +133,7 @@ const ChaosToClarity = () => {
 
     const base = categoryPositions[concept.category];
     // Vertical stacking with more space between items
-    const offsetY = categoryIndex * 7;
+    const offsetY = categoryIndex * (isMobile ? 8 : 7);
 
     return {
       x: base.baseX,
@@ -124,10 +162,10 @@ const ChaosToClarity = () => {
     return `${month} ${year}`;
   };
 
-  // Dynamic headline based on organization level
+  // Dynamic headline based on stable phase state (prevents flashing)
   const getHeadline = () => {
-    if (organizationLevel < 0.3) return "From chaos and a firehose of info, to...";
-    if (organizationLevel < 0.7) return "Organizing your acceleration plan...";
+    if (headlinePhase === 'chaos') return "From chaos and a firehose of info, to...";
+    if (headlinePhase === 'organizing') return "Organizing your acceleration plan...";
     return "Your individualized acceleration plan";
   };
 
@@ -206,9 +244,9 @@ const ChaosToClarity = () => {
                   }}
                   transition={{
                     type: "spring",
-                    stiffness: 120,
-                    damping: 20,
-                    mass: 0.5,
+                    stiffness: 80,
+                    damping: 25,
+                    mass: 0.8,
                   }}
                   style={{
                     transform: 'translate(-50%, -50%)',
@@ -236,9 +274,9 @@ const ChaosToClarity = () => {
                       }}
                       transition={{
                         type: "spring",
-                        stiffness: 120,
-                        damping: 20,
-                        mass: 0.5,
+                        stiffness: 80,
+                        damping: 25,
+                        mass: 0.8,
                       }}
                       style={{
                         transform: 'translate(-50%, -50%)',
