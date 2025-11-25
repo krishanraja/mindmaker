@@ -12,7 +12,7 @@ const NewHero = () => {
       <div 
         className="absolute inset-0 opacity-20"
         style={{
-          backgroundImage: 'url(/mindmaker-background.gif)',
+          backgroundImage: 'url(/mindmaker-background-green.gif)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
