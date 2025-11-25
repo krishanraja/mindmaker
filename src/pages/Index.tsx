@@ -1,17 +1,17 @@
 import Navigation from "@/components/Navigation";
 import NewHero from "@/components/NewHero";
-import ValuePropsSection from "@/components/ValuePropsSection";
+import ChaosToClarity from "@/components/ShowDontTell/ChaosToClarity";
 import WhoThisIsFor from "@/components/WhoThisIsFor";
 import TheProblem from "@/components/TheProblem";
 import InteractiveROI from "@/components/InteractiveROI";
 import ProductLadder from "@/components/ProductLadder";
 import TrustSection from "@/components/TrustSection";
-import HowItsDifferent from "@/components/HowItsDifferent";
+import BeforeAfterSplit from "@/components/ShowDontTell/BeforeAfterSplit";
+import TryItWidget from "@/components/ShowDontTell/TryItWidget";
 import BuilderEconomyConnection from "@/components/BuilderEconomyConnection";
 import SimpleCTA from "@/components/SimpleCTA";
 import Footer from "@/components/Footer";
 import { ChatBot } from "@/components/ChatBot";
-import { ProgressNavigator } from "@/components/Navigation/ProgressNavigator";
 import { ParticleBackground } from "@/components/Animations/ParticleBackground";
 
 const Index = () => {
@@ -22,33 +22,35 @@ const Index = () => {
       
       {/* Navigation */}
       <Navigation />
-      <ProgressNavigator />
       
       {/* Hero Section */}
       <NewHero />
       
-      {/* Value Props Section */}
+      {/* Chaos to Clarity Animation */}
       <div id="problem">
-        <ValuePropsSection />
+        <ChaosToClarity />
       </div>
       
-      {/* Builder Assessment (replaces Who This Is For) */}
+      {/* Builder Assessment */}
       <WhoThisIsFor />
       
       {/* The Problem */}
       <TheProblem />
       
-      {/* Interactive Portfolio Builder (enhanced ROI) */}
+      {/* Interactive Portfolio Builder */}
       <InteractiveROI />
       
       {/* Product Ladder */}
       <ProductLadder />
       
+      {/* Try It Widget */}
+      <TryItWidget />
+      
       {/* Trust Section */}
       <TrustSection />
       
-      {/* How It's Different */}
-      <HowItsDifferent />
+      {/* Before/After Split */}
+      <BeforeAfterSplit />
       
       {/* Builder Economy Connection */}
       <BuilderEconomyConnection />
