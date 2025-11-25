@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import AINewsTicker from '@/components/AINewsTicker';
 
 type Category = "Technical" | "Commercial" | "Organizational" | "Competitive";
 
@@ -115,6 +116,14 @@ const ChaosToClarity = () => {
     };
   };
 
+  // Get current month and year
+  const getCurrentMonthYear = () => {
+    const date = new Date();
+    const month = date.toLocaleString('en-US', { month: 'long' });
+    const year = date.getFullYear();
+    return `${month} ${year}`;
+  };
+
   // Dynamic headline based on organization level
   const getHeadline = () => {
     if (organizationLevel < 0.3) return "From chaos and a firehose of info, to...";
@@ -169,8 +178,17 @@ const ChaosToClarity = () => {
             animate={{ opacity: organizationLevel > 0.7 ? 1 : 0 }}
             transition={{ duration: 0.3 }}
           >
-            We transform the overwhelming complexity into a clear, actionable roadmap.
+            Tailored to your role, industry, competitive set and current AI updates from {getCurrentMonthYear()}.
           </motion.p>
+        </motion.div>
+
+        {/* AI News Ticker */}
+        <motion.div
+          className="mb-12"
+          animate={{ opacity: organizationLevel > 0.8 ? 1 : 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <AINewsTicker />
         </motion.div>
 
         {/* Concepts Visualization with Category Labels */}

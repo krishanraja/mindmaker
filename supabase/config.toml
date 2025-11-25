@@ -2,3 +2,6 @@ project_id = "ksyuwacuigshvcyptlhe"
 
 [functions.chat-with-krish]
 verify_jwt = false
+
+[functions.get-ai-news]
+verify_jwt = false
