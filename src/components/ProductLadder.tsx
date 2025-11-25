@@ -4,8 +4,9 @@ import { User, Users, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import peerComparisonMatrix from "@/assets/peer-comparison-matrix.png";
 import battleTestStrategy from "@/assets/battle-test-strategy.png";
+import { InitialConsultModal } from "@/components/InitialConsultModal";
 
-const JourneySlider = () => {
+const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void }) => {
   const [journeyStage, setJourneyStage] = useState([0]);
   
   const offerings = [
@@ -14,7 +15,7 @@ const JourneySlider = () => {
       duration: "60 minutes",
       description: "Live session with Krish. Bring one real leadership problem. Leave with an AI friction map, 1-2 draft systems, and written follow-up with prompts.",
       cta: "Book Session",
-      link: "/builder-session",
+      program: "builder-session",
       intensity: "Light Touch",
     },
     {
@@ -22,7 +23,7 @@ const JourneySlider = () => {
       duration: "4 weeks async",
       description: "Weekly recommendations and async access to Krish. Stay current on what matters for your context. Build at your own pace.",
       cta: "Learn More",
-      link: "/builder-session",
+      program: "builder-session",
       intensity: "Steady Build",
     },
     {
@@ -30,7 +31,7 @@ const JourneySlider = () => {
       duration: "4 weeks intensive",
       description: "For senior leaders. Build 3-5 working AI-enabled systems around your actual week. Leave with a Builder Dossier and 90-day plan.",
       cta: "Learn More",
-      link: "/builder-sprint",
+      program: "builder-sprint",
       intensity: "Deep Dive",
     },
   ];
@@ -77,7 +78,7 @@ const JourneySlider = () => {
           size="lg"
           variant="mint"
           className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
-          onClick={() => window.location.href = currentOffering.link}
+          onClick={() => onBookClick(currentOffering.program)}
         >
           {currentOffering.cta}
         </Button>
@@ -87,6 +88,14 @@ const JourneySlider = () => {
 };
 
 const ProductLadder = () => {
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
+  const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
+
+  const handleBookClick = (program: string) => {
+    setPreselectedProgram(program);
+    setConsultModalOpen(true);
+  };
+
   const tracks = [
     {
       icon: User,
@@ -104,7 +113,7 @@ const ProductLadder = () => {
           duration: "2-8 hours",
           description: "For 6-12 executives. Run two real decisions through a new AI-enabled way of working. Leave with a 90-day pilot charter.",
           cta: "Learn More",
-          link: "/leadership-lab",
+          program: "leadership-lab",
           image: battleTestStrategy,
         },
       ],
@@ -119,7 +128,7 @@ const ProductLadder = () => {
           duration: "6-12 months",
           description: "For VCs, advisors, consultancies. Repeatable way to scan and prioritize your portfolio for AI work. Co-create sprints and labs.",
           cta: "Learn More",
-          link: "/partner-program",
+          program: "partner-program",
           image: peerComparisonMatrix,
         },
       ],
@@ -160,7 +169,7 @@ const ProductLadder = () => {
 
                 {/* Track Content */}
                 {track.useSlider ? (
-                  <JourneySlider />
+                  <JourneySlider onBookClick={handleBookClick} />
                 ) : (
                   <div className="h-full flex flex-col">
                     {track.offerings?.map((offering, offeringIndex) => (
@@ -195,7 +204,7 @@ const ProductLadder = () => {
                           size="lg"
                           variant="default"
                           className="w-full touch-target mt-auto"
-                          onClick={() => window.location.href = offering.link}
+                          onClick={() => handleBookClick(offering.program)}
                         >
                           {offering.cta}
                         </Button>
@@ -204,12 +213,19 @@ const ProductLadder = () => {
                   </div>
                 )}
               </div>
-            );
-          })}
-        </div>
+          );
+        })}
       </div>
-    </section>
-  );
+
+      {/* Initial Consult Modal */}
+      <InitialConsultModal 
+        open={consultModalOpen} 
+        onOpenChange={setConsultModalOpen}
+        preselectedProgram={preselectedProgram}
+      />
+    </div>
+  </section>
+);
 };
 
 export default ProductLadder;
