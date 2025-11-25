@@ -196,8 +196,11 @@ export const BuilderAssessment = ({ compact = false }: BuilderAssessmentProps) =
           {currentQuestion.options.map((option) => (
             <button
               key={option.value}
-              onClick={() => answerQuestion(currentQuestion.id, option.value)}
-              className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+              onClick={() => {
+                answerQuestion(currentQuestion.id, option.value);
+                setTimeout(() => nextQuestion(), 300);
+              }}
+              className={`w-full p-4 rounded-lg border-2 text-left transition-all text-ink ${
                 answers[currentQuestion.id] === option.value
                   ? 'border-mint bg-mint/10 font-semibold'
                   : 'border-border hover:border-mint/50 hover:bg-mint/5'
@@ -208,17 +211,6 @@ export const BuilderAssessment = ({ compact = false }: BuilderAssessmentProps) =
           ))}
         </div>
       </div>
-
-      {/* Next Button */}
-      <Button
-        onClick={nextQuestion}
-        disabled={!hasAnswered}
-        size="lg"
-        className="w-full bg-mint text-ink hover:bg-mint/90 font-bold disabled:opacity-50"
-      >
-        {currentStep === questions.length - 1 ? 'See My Profile' : 'Next Question'}
-        <ArrowRight className="h-4 w-4 ml-2" />
-      </Button>
     </Card>
   );
 };

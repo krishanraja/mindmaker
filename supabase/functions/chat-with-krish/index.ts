@@ -218,33 +218,36 @@ async function callVertexAI(messages: any[], accessToken: string, isTryItWidget:
   // COMPREHENSIVE RAG DIAGNOSTIC LOGGING
   console.log('=== RAG DIAGNOSTIC START ===');
   
-  // Check for grounding metadata (snake_case is correct format)
-  if (data.grounding_metadata) {
-    console.log('✅ RAG is working - grounding_metadata found');
-    console.log('Full grounding metadata:', JSON.stringify(data.grounding_metadata, null, 2));
+  // Check for grounding metadata at correct path: data.candidates[0].groundingMetadata (camelCase)
+  const candidate = data.candidates?.[0];
+  
+  if (candidate?.groundingMetadata) {
+    console.log('✅ RAG is working - groundingMetadata found');
+    console.log('Full grounding metadata:', JSON.stringify(candidate.groundingMetadata, null, 2));
     
-    // Log retrieval queries
-    if (data.grounding_metadata.retrieval_queries) {
-      console.log('Retrieval queries used:', data.grounding_metadata.retrieval_queries);
+    // Log retrieval queries (camelCase)
+    if (candidate.groundingMetadata.retrievalQueries) {
+      console.log('Retrieval queries used:', candidate.groundingMetadata.retrievalQueries);
     }
     
     // Log grounding chunks (actual corpus content retrieved)
-    if (data.grounding_metadata.grounding_chunks) {
-      console.log(`Retrieved ${data.grounding_metadata.grounding_chunks.length} chunks from corpus`);
-      data.grounding_metadata.grounding_chunks.forEach((chunk: any, idx: number) => {
+    if (candidate.groundingMetadata.groundingChunks) {
+      console.log(`Retrieved ${candidate.groundingMetadata.groundingChunks.length} chunks from corpus`);
+      candidate.groundingMetadata.groundingChunks.forEach((chunk: any, idx: number) => {
         console.log(`\nChunk ${idx + 1}:`);
-        console.log('  Source:', chunk.retrieved_context?.title || 'Unknown');
-        console.log('  Content preview:', chunk.retrieved_context?.text?.substring(0, 200) || 'No text');
-        console.log('  Relevance score:', chunk.relevance_score || 'N/A');
+        console.log('  Source:', chunk.retrievedContext?.title || 'Unknown');
+        console.log('  Content preview:', chunk.retrievedContext?.text?.substring(0, 200) || 'No text');
+        console.log('  Relevance score:', chunk.relevanceScore || 'N/A');
       });
     }
     
     // Log grounding supports (how corpus was used in response)
-    if (data.grounding_metadata.grounding_supports) {
-      console.log('\nGrounding supports:', data.grounding_metadata.grounding_supports.length);
+    if (candidate.groundingMetadata.groundingSupports) {
+      console.log('\nGrounding supports:', candidate.groundingMetadata.groundingSupports.length);
     }
   } else {
-    console.warn('❌ No grounding_metadata found - RAG is NOT working');
+    console.warn('❌ No groundingMetadata found - RAG is NOT working');
+    console.log('Full candidate structure:', JSON.stringify(candidate ? Object.keys(candidate) : 'No candidate', null, 2));
     console.log('Full response structure:', JSON.stringify(Object.keys(data), null, 2));
   }
   
