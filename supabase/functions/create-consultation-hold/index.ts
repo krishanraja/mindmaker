@@ -7,16 +7,29 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+    console.log('Function invoked');
+    
+    // Check for Stripe key
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      console.error('STRIPE_SECRET_KEY not found');
+      throw new Error('Stripe configuration missing');
+    }
+    
+    const stripe = new Stripe(stripeKey, {
       apiVersion: '2023-10-16',
     });
 
-    const { name, email, selectedProgram } = await req.json();
+    const body = await req.json();
+    console.log('Request body:', { ...body, email: '***' });
+    
+    const { name, email, selectedProgram } = body;
 
     // Create a Checkout session for the consultation hold
     const session = await stripe.checkout.sessions.create({
@@ -63,11 +76,26 @@ serve(async (req) => {
         status: 200,
       },
     );
+    console.log('Checkout session created successfully');
+    
+    return new Response(
+      JSON.stringify({ 
+        sessionId: session.id,
+        url: session.url
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      },
+    );
   } catch (error) {
     console.error('Error creating checkout session:', error);
     const errorMessage = error instanceof Error ? error.message : 'An error occurred';
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ 
+        error: errorMessage,
+        details: error instanceof Error ? error.stack : undefined
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
