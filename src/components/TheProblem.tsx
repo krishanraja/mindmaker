@@ -47,7 +47,7 @@ const InteractiveCard = ({ icon, title, subtitle, description, onClick, delay = 
           {description}
         </p>
         <div className="mt-auto">
-          <button className="w-full py-2 px-4 bg-mint/10 hover:bg-mint/20 text-mint rounded-lg text-sm font-semibold transition-colors">
+          <button className="w-full py-2 px-4 bg-mint/10 hover:bg-mint/20 text-ink rounded-lg text-sm font-semibold transition-colors">
             Open Tool →
           </button>
         </div>

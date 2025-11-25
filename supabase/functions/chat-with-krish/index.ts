@@ -161,27 +161,27 @@ async function callVertexAI(messages: any[], accessToken: string, isTryItWidget:
 
   const requestBody = {
     contents,
-    tools: [
-      {
-        retrieval: {
-          vertex_rag_store: {
-            rag_resources: [
-              {
-                rag_corpus: `projects/${PROJECT_ID}/locations/${LOCATION}/ragCorpora/${RAG_CORPUS_ID}`,
-              }
-            ],
-            similarity_top_k: 5,
+    tools: {
+      retrieval: {
+        disable_attribution: false,
+        vertex_rag_store: {
+          rag_resources: {
+            rag_corpus: `projects/${PROJECT_ID}/locations/${LOCATION}/ragCorpora/${RAG_CORPUS_ID}`,
           },
+          similarity_top_k: 5,
+          vector_distance_threshold: 0.5,
         },
       },
-    ],
+    },
     generation_config: {
       temperature: 0.8,
       max_output_tokens: isTryItWidget ? 400 : 800,
     },
   };
 
-  console.log('Calling Vertex AI:', endpoint);
+  console.log('=== VERTEX AI RAG REQUEST ===');
+  console.log('Endpoint:', endpoint);
+  console.log('Request body:', JSON.stringify(requestBody, null, 2));
   
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -214,6 +214,11 @@ async function callVertexAI(messages: any[], accessToken: string, isTryItWidget:
   }
 
   const data = await response.json();
+  
+  console.log('=== VERTEX AI RESPONSE RECEIVED ===');
+  console.log('Response status:', response.status);
+  console.log('Full response keys:', Object.keys(data));
+  console.log('Candidates count:', data.candidates?.length || 0);
   
   // COMPREHENSIVE RAG DIAGNOSTIC LOGGING
   console.log('=== RAG DIAGNOSTIC START ===');
