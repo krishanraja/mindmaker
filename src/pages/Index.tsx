@@ -11,31 +11,40 @@ import BuilderEconomyConnection from "@/components/BuilderEconomyConnection";
 import SimpleCTA from "@/components/SimpleCTA";
 import Footer from "@/components/Footer";
 import { ChatBot } from "@/components/ChatBot";
+import { ProgressNavigator } from "@/components/Navigation/ProgressNavigator";
+import { ParticleBackground } from "@/components/Animations/ParticleBackground";
 
 const Index = () => {
   return (
-    <main className="min-h-screen bg-background">
-      <Navigation />
+    <main className="min-h-screen bg-background relative">
+      {/* Particle Background Effect */}
+      <ParticleBackground />
       
-      {/* Hero Section - Bloomberg-level premium */}
+      {/* Navigation */}
+      <Navigation />
+      <ProgressNavigator />
+      
+      {/* Hero Section */}
       <NewHero />
       
       {/* Value Props Section */}
-      <ValuePropsSection />
+      <div id="problem">
+        <ValuePropsSection />
+      </div>
       
-      {/* Who This Is For */}
+      {/* Builder Assessment (replaces Who This Is For) */}
       <WhoThisIsFor />
       
       {/* The Problem */}
       <TheProblem />
       
-      {/* Interactive ROI Calculator - NEW */}
+      {/* Interactive Portfolio Builder (enhanced ROI) */}
       <InteractiveROI />
       
-      {/* Product Ladder - Premium redesign */}
+      {/* Product Ladder */}
       <ProductLadder />
       
-      {/* Trust Section - NEW */}
+      {/* Trust Section */}
       <TrustSection />
       
       {/* How It's Different */}

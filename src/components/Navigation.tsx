@@ -53,16 +53,16 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm">
+    <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm pt-safe-top">
       <div className="container-width">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo - Favicon */}
+        <div className="flex items-center justify-between h-14 sm:h-16">
+          {/* Logo */}
           <div className="flex items-center">
             <a href="/" className="transition-opacity hover:opacity-80">
               <img 
                 src={mindmakerFavicon} 
                 alt="Mindmaker" 
-                className="h-10 w-auto"
+                className="h-8 sm:h-10 w-auto"
               />
             </a>
           </div>
@@ -151,8 +151,8 @@ const Navigation = () => {
 
             {/* Premium CTA Button */}
             <Button 
-              size="default" 
-              className="ml-8 relative"
+              size="sm" 
+              className="ml-6 relative touch-target"
               onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
             >
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-mint rounded-full animate-pulse" />
@@ -161,11 +161,12 @@ const Navigation = () => {
           </div>
 
           {/* Theme toggle and mobile menu button */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="touch-target"
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -174,7 +175,7 @@ const Navigation = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden"
+              className="md:hidden touch-target"
             >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
@@ -183,8 +184,8 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <div className="flex flex-col space-y-2">
+          <div className="md:hidden py-4 border-t border-border pb-safe-bottom">
+            <div className="flex flex-col space-y-1">
               {navItems.map((item, index) => (
                 <div key={item.label}>
                   {item.dropdown ? (

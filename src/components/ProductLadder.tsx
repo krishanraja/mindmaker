@@ -46,18 +46,19 @@ const ProductLadder = () => {
   ];
 
   return (
-    <section className="section-padding bg-background">
+    <section className="section-padding bg-background" id="products">
       <div className="container-width">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            The Product Ladder
+        <div className="text-center mb-8 sm:mb-12 px-4 sm:px-0">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
+            Choose Your Builder Journey
           </h2>
-          <p className="text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             From a 60-minute entry session to portfolio-wide transformation
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+        {/* Mobile: Vertical Stack, Desktop: Grid */}
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 max-w-6xl mx-auto px-4 sm:px-0">
           {products.map((product, index) => {
             const IconComponent = product.icon;
             return (
@@ -72,24 +73,24 @@ const ProductLadder = () => {
                   </div>
                 )}
                 
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-                    <IconComponent className="h-6 w-6" />
+                <div className="flex items-start gap-3 sm:gap-4 mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
+                    <IconComponent className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold text-muted-foreground mb-1">
                       {product.label}
                     </div>
-                    <h3 className="text-xl font-bold text-foreground">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground">
                       {product.title}
                     </h3>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       {product.duration}
                     </div>
                   </div>
                 </div>
                 
-                <p className="text-sm text-foreground leading-relaxed mb-4">
+                <p className="text-sm leading-relaxed mb-4 text-foreground">
                   {product.description}
                 </p>
                 
@@ -102,10 +103,10 @@ const ProductLadder = () => {
                 <Button 
                   size="lg"
                   variant={product.featured ? "mint" : "default"}
-                  className={product.featured 
-                    ? "w-full font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5" 
-                    : "w-full"
-                  }
+                  className={`w-full touch-target ${product.featured 
+                    ? "font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5" 
+                    : ""
+                  }`}
                   onClick={() => window.location.href = product.link}
                 >
                   {product.cta}
