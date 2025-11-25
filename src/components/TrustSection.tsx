@@ -89,11 +89,11 @@ const TrustSection = () => {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8 opacity-40 mb-6">
             <div className="text-xl font-bold text-foreground">Fortune 500</div>
-            <div className="text-xl font-bold text-foreground">PE Firms</div>
+            <div className="text-xl font-bold text-foreground">VC Firms</div>
             <div className="text-xl font-bold text-foreground">Scale-ups</div>
             <div className="text-xl font-bold text-foreground">Consulting</div>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-6 opacity-30">
+          <div className="flex flex-wrap items-center justify-center gap-6 opacity-50">
             <div className="text-sm font-medium text-muted-foreground">Media</div>
             <div className="text-sm font-medium text-muted-foreground">E-Commerce</div>
             <div className="text-sm font-medium text-muted-foreground">Marketing</div>
@@ -101,6 +101,7 @@ const TrustSection = () => {
             <div className="text-sm font-medium text-muted-foreground">Wellness</div>
             <div className="text-sm font-medium text-muted-foreground">Entertainment</div>
             <div className="text-sm font-medium text-muted-foreground">Music</div>
+            <div className="text-sm font-medium text-muted-foreground">Legal</div>
           </div>
         </div>
       </div>
