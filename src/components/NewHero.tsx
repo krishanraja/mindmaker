@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import mindmakerIconDark from "@/assets/mindmaker-icon-dark.png";
-import { FrictionMapBuilder } from "@/components/Interactive/FrictionMapBuilder";
 
 const NewHero = () => {
   return (
@@ -49,11 +48,10 @@ const NewHero = () => {
           />
         </div>
         
-        {/* Two Column Layout: Text + Interactive */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Left: Hero Content */}
+        {/* Hero Content */}
+        <div className="max-w-5xl mx-auto">
           <div className="space-y-6 sm:space-y-8 md:space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white max-w-4xl">
               Become the next version of yourself with{" "}
               <span className="relative inline-block">
                 <span className="relative z-10 text-mint animate-pulse" style={{animationDuration: '2s'}}>AI literacy for leaders</span>
@@ -61,7 +59,7 @@ const NewHero = () => {
               </span>
             </h1>
       
-            <p className="text-base sm:text-lg md:text-xl lg:text-xl text-white/90 max-w-3xl font-light leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-xl text-white/90 max-w-4xl font-light leading-relaxed">
               Most leaders feel behind on AI, but don't know what to actually do about it. We help you become an AI-age business leader by getting you on the path to AI literacy that outlives any one tool.
             </p>
               
@@ -108,11 +106,6 @@ const NewHero = () => {
                 View Programs
               </Button>
             </div>
-          </div>
-
-          {/* Right: Interactive Friction Map Builder */}
-          <div className="fade-in-up lg:mt-8" style={{animationDelay: '0.4s'}}>
-            <FrictionMapBuilder />
           </div>
         </div>
         
