@@ -1,7 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Users, CheckCircle, ArrowRight } from "lucide-react";
+import { Users, CheckCircle } from "lucide-react";
+import { ConsultationBooking } from "@/components/ConsultationBooking";
 
 const LeadershipLab = () => {
   const segments = [
@@ -126,20 +126,7 @@ const LeadershipLab = () => {
           </div>
           
           {/* CTA */}
-          <div className="text-center">
-            <Button 
-              size="lg"
-              className="bg-ink text-white hover:bg-ink/90 font-semibold px-12 py-6 text-lg touch-target group"
-              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
-            >
-              Discuss a Leadership Lab
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            
-            <p className="text-sm text-muted-foreground mt-4">
-              Schedule a call to discuss your team's needs
-            </p>
-          </div>
+          <ConsultationBooking variant="default" />
         </div>
       </section>
       

@@ -1,7 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Calendar, CheckCircle, ArrowRight } from "lucide-react";
+import { Calendar, CheckCircle } from "lucide-react";
+import { ConsultationBooking } from "@/components/ConsultationBooking";
 
 const BuilderSprint = () => {
   const weeks = [
@@ -132,20 +132,7 @@ const BuilderSprint = () => {
           </div>
           
           {/* CTA */}
-          <div className="text-center">
-            <Button 
-              size="lg"
-              className="bg-ink text-white hover:bg-ink/90 font-semibold px-12 py-6 text-lg touch-target group"
-              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
-            >
-              Book a Builder Session First
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            
-            <p className="text-sm text-muted-foreground mt-4">
-              Start with a 60-minute Builder Session to see if the Sprint is right for you
-            </p>
-          </div>
+          <ConsultationBooking variant="default" />
         </div>
       </section>
       
