@@ -36,7 +36,7 @@ const AINewsTicker = () => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: headlines.length * 10,
+              duration: headlines.length * 7,
               ease: "linear",
             },
           }}
