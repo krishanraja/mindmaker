@@ -145,6 +145,43 @@ Mint: Highlights, CTAs, accents (sparingly)
 
 ---
 
+## AI & Backend Decisions
+
+### Decision: Switch Chatbot to Vertex AI RAG (2025-01-25)
+
+**Context:** Original implementation used OpenAI GPT-4o-mini for all AI features. Client has custom Vertex AI RAG corpus trained on business materials.
+
+**Decision:** 
+- Migrate `chat-with-krish` edge function to Vertex AI RAG with Gemini 2.5 Flash
+- Keep news ticker (`get-ai-news`, `get-market-sentiment`) on OpenAI
+- Implement anti-fragile error handling with graceful fallbacks
+
+**Rationale:**
+- Custom RAG corpus provides business-specific knowledge
+- Gemini 2.5 Flash offers comparable performance to GPT-4o-mini
+- Separation of concerns: chatbot uses custom knowledge, news uses general knowledge
+- Anti-fragile design ensures UI never breaks on API failures
+
+**Implementation Details:**
+- Service account authentication with RS256 JWT signing
+- Token caching (50-minute lifetime) to reduce auth overhead
+- RAG corpus ID: `6917529027641081856`
+- Project: `gen-lang-client-0174430158`, Region: `us-east1`
+- Fallback message provides actionable alternatives on any failure
+
+**Alternatives Considered:**
+1. Switch all AI features to Vertex AI → Rejected (news ticker doesn't need custom knowledge)
+2. Keep OpenAI for everything → Rejected (client has existing investment in RAG)
+3. No error fallbacks → Rejected (breaks user experience on API failures)
+
+**Impact:**
+- Frontend: Bug fixes only (response path corrections)
+- Backend: Complete edge function rewrite
+- UX: More relevant, business-specific responses from chatbot
+- Reliability: Graceful degradation on all failure modes
+
+---
+
 ## Product Decisions
 
 ### 2025-11-25: Holiday Urgency Messaging

@@ -74,7 +74,7 @@ export const useChatBot = () => {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.message,
+        content: data?.message ?? 'Unable to get response.',
         timestamp: new Date(),
       };
 

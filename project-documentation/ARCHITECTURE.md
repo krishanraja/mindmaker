@@ -23,7 +23,8 @@
 **Third-Party Services:**
 - Stripe (payments)
 - Calendly (scheduling)
-- OpenAI API (chatbot)
+- Vertex AI RAG (chatbot with custom business knowledge)
+- OpenAI API (news ticker)
 
 **Hosting & Deployment:**
 - Lovable Cloud (auto-deploy)
@@ -125,16 +126,19 @@ mindmaker/
 
 3. Frontend calls edge function
    └─> supabase.functions.invoke('chat-with-krish', {
-         body: { message, conversationHistory }
+         body: { messages: conversationHistory }
        })
 
-4. Edge function calls OpenAI
-   └─> OpenAI generates response
+4. Edge function authenticates with Google
+   └─> JWT signed with service account → Access token
 
-5. Response streamed back to frontend
+5. Edge function calls Vertex AI RAG
+   └─> Gemini 2.5 Flash + custom RAG corpus
+
+6. Response returned to frontend
    └─> Displayed in ChatPanel
 
-6. Conversation persists in session
+7. Conversation persists in session
    └─> localStorage (client-side only)
 ```
 
@@ -202,6 +206,69 @@ serve(async (req) => {
 - Auto-deploy on code push to GitHub
 - Deploy time: 30-60 seconds
 - Logs available in Lovable Cloud console
+
+### Current Functions
+
+#### `chat-with-krish`
+**Purpose:** AI chatbot powered by Google Vertex AI RAG with Gemini 2.5 Flash
+
+**Secrets Required:** `GOOGLE_SERVICE_ACCOUNT_KEY`
+
+**Architecture:**
+- Service account authentication (RS256 JWT signing)
+- Token caching (50-minute lifetime)
+- RAG corpus integration for business-specific knowledge
+- Comprehensive error handling with graceful fallbacks
+- Anti-fragile design: always returns usable content
+
+**Request Format:**
+```typescript
+{
+  messages: Array<{
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+  }>;
+}
+```
+
+**Response Format:**
+```typescript
+{
+  message: string;
+  metadata?: {
+    model: string;
+    cached: boolean;
+    fallback: boolean;
+  };
+}
+```
+
+**Vertex AI Configuration:**
+- Project: `gen-lang-client-0174430158`
+- Region: `us-east1`
+- Model: `gemini-2.5-flash`
+- RAG Corpus: `6917529027641081856`
+
+**Error Handling:**
+- 429 Rate Limit → User-friendly message
+- 402 Payment Required → Quota message
+- 401 Unauthorized → Token refresh
+- All other errors → Fallback message with CTAs
+
+#### `get-ai-news`
+**Purpose:** Fetches AI-related news for ticker using OpenAI
+
+**Secrets Required:** `OPENAI_API_KEY`
+
+#### `get-market-sentiment`
+**Purpose:** Analyzes market sentiment using OpenAI
+
+**Secrets Required:** `OPENAI_API_KEY`
+
+#### `create-consultation-hold`
+**Purpose:** Creates Stripe authorization hold for consultations
+
+**Secrets Required:** `STRIPE_SECRET_KEY`
 
 ---
 
@@ -322,7 +389,8 @@ try {
 ### Environment Variables
 **Secrets stored in Lovable Cloud:**
 - `STRIPE_SECRET_KEY` (Stripe API key)
-- `OPENAI_API_KEY` (OpenAI API key)
+- `GOOGLE_SERVICE_ACCOUNT_KEY` (Google service account JSON for Vertex AI)
+- `OPENAI_API_KEY` (OpenAI API key for news ticker)
 - `SUPABASE_URL` (auto-configured)
 - `SUPABASE_ANON_KEY` (auto-configured)
 - `SUPABASE_SERVICE_ROLE_KEY` (auto-configured)

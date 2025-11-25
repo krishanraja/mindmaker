@@ -43,7 +43,7 @@ Keep it practical and actionable.`
 
       if (error) throw error;
 
-      setResponse(data.response || 'Unable to generate response. Please try again.');
+      setResponse(data?.message || 'Unable to generate response. Please try again.');
     } catch (error: any) {
       console.error('Error:', error);
       if (error.message?.includes('429')) {
