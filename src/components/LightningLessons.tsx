@@ -13,17 +13,17 @@ export const LightningLessons = () => {
     {
       title: "Learn How To Program Your AI Tools",
       url: "https://maven.com/p/1eb66a/learn-how-to-program-your-ai-tools",
-      image: "/lesson-program-ai-tools.png"
+      image: "/lesson-program-ai-tools.jpg"
     },
     {
       title: "Build In Public with Gen AI as your cofounder",
       url: "https://maven.com/p/1054a6/build-in-public-with-gen-ai-as-your-co-founder",
-      image: "/lesson-build-in-public.png"
+      image: "/lesson-build-in-public.jpg"
     },
     {
       title: "Vibe Code Your Way To A New Income Stream",
       url: "https://maven.com/p/b95f6c/vibe-code-your-way-to-a-new-income-stream",
-      image: "/lesson-vibe-code.png"
+      image: "/lesson-vibe-code.jpg"
     }
   ];
 
