@@ -145,7 +145,7 @@ function extractContent(response: any): string {
 }
 
 // Call Vertex AI with RAG
-async function callVertexAI(messages: any[], accessToken: string, isTryItWidget: boolean = false): Promise<string> {
+async function callVertexAI(messages: any[], accessToken: string, isTryItWidget: boolean = false, systemInstruction?: string): Promise<string> {
   const PROJECT_ID = 'gen-lang-client-0174430158';
   const LOCATION = 'us-east1';
   const MODEL = 'gemini-2.5-flash';
@@ -153,31 +153,40 @@ async function callVertexAI(messages: any[], accessToken: string, isTryItWidget:
 
   const endpoint = `https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL}:generateContent`;
 
-  // Convert messages to Gemini format
-  const contents = messages.map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }],
-  }));
+  // Convert messages to Gemini format - filter out system messages
+  const contents = messages
+    .filter(msg => msg.role !== 'system')
+    .map(msg => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }],
+    }));
 
-  const requestBody = {
+  const requestBody: any = {
     contents,
-    tools: [{
+    tools: {
       retrieval: {
         disable_attribution: false,
         vertex_rag_store: {
-          rag_resources: [{
+          rag_resources: {
             rag_corpus: `projects/${PROJECT_ID}/locations/${LOCATION}/ragCorpora/${RAG_CORPUS_ID}`,
-          }],
+          },
           similarity_top_k: 5,
           vector_distance_threshold: 0.5,
         },
       },
-    }],
+    },
     generation_config: {
       temperature: 0.8,
       max_output_tokens: isTryItWidget ? 400 : 800,
     },
   };
+
+  // Add system instruction if provided
+  if (systemInstruction) {
+    requestBody.systemInstruction = {
+      parts: [{ text: systemInstruction }]
+    };
+  }
 
   console.log('=== VERTEX AI RAG REQUEST ===');
   console.log('Endpoint:', endpoint);
@@ -379,15 +388,9 @@ You: "60 minutes: bring one real problem, we map where AI removes friction and d
 User: "How is this different from training?"
 You: "We don't train—we build. You leave with working systems, not slides. [See the 30-Day Sprint](/builder-sprint) or [try the tool](/) now."`;
 
-    // Add system message
-    const fullMessages = [
-      { role: 'system', content: systemPrompt },
-      ...messages,
-    ];
-
-    // Get access token and call Vertex AI
+    // Get access token and call Vertex AI with system instruction
     const accessToken = await getAccessToken(serviceAccount);
-    const assistantMessage = await callVertexAI(fullMessages, accessToken, isTryItWidget);
+    const assistantMessage = await callVertexAI(messages, accessToken, isTryItWidget, systemPrompt);
 
     const response: ChatResponse = {
       message: assistantMessage,
