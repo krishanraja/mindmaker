@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from 'https://esm.sh/stripe@14.21.0';
+import Stripe from 'https://esm.sh/stripe@18.5.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,13 +23,13 @@ serve(async (req) => {
     }
     
     const stripe = new Stripe(stripeKey, {
-      apiVersion: '2023-10-16',
+      apiVersion: '2025-08-27.basil',
     });
 
     const body = await req.json();
     console.log('Request body:', { ...body, email: '***' });
     
-    const { name, email, selectedProgram } = body;
+    const { name, email, selectedProgram, priceId } = body;
 
     // Create a Checkout session for the consultation hold
     const session = await stripe.checkout.sessions.create({
@@ -41,6 +41,8 @@ serve(async (req) => {
           customer_name: name,
           customer_email: email,
           type: 'consultation_hold',
+          selected_program: selectedProgram || 'not-specified',
+          program_price_id: priceId || 'not-specified',
         },
       },
       customer_email: email,
@@ -63,6 +65,7 @@ serve(async (req) => {
         customer_name: name,
         customer_email: email,
         selected_program: selectedProgram || 'not-specified',
+        program_price_id: priceId || 'not-specified',
       },
     });
 
