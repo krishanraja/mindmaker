@@ -16,7 +16,7 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    const { name, email } = await req.json();
+    const { name, email, selectedProgram } = await req.json();
 
     // Create a Checkout session for the consultation hold
     const session = await stripe.checkout.sessions.create({
@@ -44,11 +44,12 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}`,
+      success_url: `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}&a1=${encodeURIComponent(selectedProgram || 'not-specified')}`,
       cancel_url: `${req.headers.get('origin') || 'https://mindmaker.ai'}?booking_cancelled=true`,
       metadata: {
         customer_name: name,
         customer_email: email,
+        selected_program: selectedProgram || 'not-specified',
       },
     });
 

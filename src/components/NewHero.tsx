@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import mindmakerIconDark from "@/assets/mindmaker-icon-dark.png";
+import { InitialConsultModal } from "@/components/InitialConsultModal";
 
 const NewHero = () => {
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
+
   return (
     <section id="hero" className="min-h-screen flex items-center justify-center bg-ink text-white relative overflow-hidden pt-safe-area-top">
       {/* Dynamic Gradient Background */}
@@ -90,9 +94,9 @@ const NewHero = () => {
               <Button 
                 size="lg" 
                 className="bg-mint text-ink hover:bg-mint/90 font-bold px-8 sm:px-10 py-6 sm:py-7 text-base sm:text-lg shadow-2xl shadow-mint/30 hover:shadow-mint/50 transition-all hover:scale-105 hover:-translate-y-1 touch-target group"
-                onClick={() => window.location.href = '/builder-session'}
+                onClick={() => setConsultModalOpen(true)}
               >
-                <span className="group-hover:animate-pulse">Book a Builder Session</span>
+                <span className="group-hover:animate-pulse">Book Your Initial Consult</span>
               </Button>
               <Button 
                 size="lg" 
@@ -130,6 +134,12 @@ const NewHero = () => {
           }
         }
       `}</style>
+
+      {/* Initial Consult Modal */}
+      <InitialConsultModal 
+        open={consultModalOpen} 
+        onOpenChange={setConsultModalOpen}
+      />
     </section>
   );
 };

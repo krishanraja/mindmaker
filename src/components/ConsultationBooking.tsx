@@ -9,9 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface ConsultationBookingProps {
   variant?: 'default' | 'compact';
+  preselectedProgram?: string;
 }
 
-export const ConsultationBooking = ({ variant = 'default' }: ConsultationBookingProps) => {
+export const ConsultationBooking = ({ variant = 'default', preselectedProgram }: ConsultationBookingProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +35,7 @@ export const ConsultationBooking = ({ variant = 'default' }: ConsultationBooking
     try {
       // Call edge function to create Stripe Checkout session
       const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
-        body: { name, email }
+        body: { name, email, selectedProgram: preselectedProgram || 'not-specified' }
       });
 
       if (error) throw error;
@@ -100,9 +101,9 @@ export const ConsultationBooking = ({ variant = 'default' }: ConsultationBooking
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-mint/20 mb-4">
           <DollarSign className="w-8 h-8 text-mint" />
         </div>
-        <h3 className="text-2xl font-bold mb-2">Book Your Free Consultation</h3>
+        <h3 className="text-2xl font-bold mb-2">Book Your Initial Consult</h3>
         <p className="text-muted-foreground">
-          Reserve your spot with a $50 refundable hold
+          45 minutes to map your outcomes • Zero pressure • Real conversation
         </p>
       </div>
 
@@ -133,23 +134,19 @@ export const ConsultationBooking = ({ variant = 'default' }: ConsultationBooking
           />
         </div>
 
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
-          <div className="flex items-start gap-2">
-            <Lock className="w-4 h-4 text-muted-foreground mt-0.5" />
+        <div className="bg-muted/50 rounded-lg p-4 space-y-3 border border-border/50">
+          <div className="flex items-start gap-2 text-sm">
+            <span className="text-lg">🔒</span>
             <div>
-              <p className="font-medium">Fully Refundable</p>
-              <p className="text-muted-foreground">
-                If you choose not to proceed, your $50 is fully refunded
-              </p>
+              <span className="font-semibold">$50 hold</span>
+              <span className="text-muted-foreground"> • Fully refundable if not satisfied • Deducted from any program you choose</span>
             </div>
           </div>
-          <div className="flex items-start gap-2">
-            <DollarSign className="w-4 h-4 text-muted-foreground mt-0.5" />
+          <div className="flex items-start gap-2 text-sm">
+            <span className="text-lg">⚡</span>
             <div>
-              <p className="font-medium">Deductible from Service</p>
-              <p className="text-muted-foreground">
-                When you proceed, this $50 is deducted from your final invoice
-              </p>
+              <span className="font-semibold text-mint">Holiday rates available</span>
+              <span className="text-muted-foreground"> through December</span>
             </div>
           </div>
         </div>
@@ -157,15 +154,15 @@ export const ConsultationBooking = ({ variant = 'default' }: ConsultationBooking
         <Button
           type="submit"
           size="lg"
-          className="w-full bg-ink text-white hover:bg-ink/90 font-semibold"
+          className="w-full bg-mint text-ink hover:bg-mint/90 font-bold text-lg py-6"
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Place Hold & Book Consultation"}
+          {isLoading ? "Processing..." : "Reserve My Spot"}
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
 
-        <p className="text-xs text-muted-foreground text-center">
-          Secure payment processing via Stripe • You'll be redirected to schedule your call after payment
+        <p className="text-center text-sm text-muted-foreground mt-4">
+          No prep required. Just bring your real work.
         </p>
       </form>
     </Card>
