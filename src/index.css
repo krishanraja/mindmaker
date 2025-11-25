@@ -105,7 +105,7 @@ html {
 /* EDITORIAL TYPOGRAPHY */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
-  color: hsl(var(--ink));
+  color: hsl(var(--foreground));
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
@@ -137,48 +137,138 @@ a:hover {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  /* EDITORIAL CARDS - Clean borders, generous padding, no shadows */
+  /* INKED PAPER CARD SYSTEM */
+  
+  /* Default Content Cards - Subtle mint tint + ink border */
   .editorial-card {
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: 6px;
+    background: linear-gradient(to bottom, hsl(var(--card)), hsl(var(--mint) / 0.02));
+    border: 2px solid hsl(var(--ink) / 0.15);
+    border-radius: 4px;
     padding: 24px;
-    transition: border-color 0.2s ease;
+    transition: all 0.3s ease;
   }
 
   .editorial-card:hover {
-    border-color: hsl(var(--mint));
+    border-color: hsl(var(--mint) / 0.5);
+    box-shadow: 0 4px 16px -4px hsl(var(--mint) / 0.15);
   }
 
-  /* MINIMAL CARDS - Core card component */
+  .dark .editorial-card {
+    background: linear-gradient(to bottom, hsl(var(--card)), hsl(var(--mint) / 0.03));
+    border-color: hsl(var(--mint) / 0.2);
+    box-shadow: 0 2px 12px -2px hsl(var(--mint) / 0.1);
+  }
+
+  .dark .editorial-card:hover {
+    border-color: hsl(var(--mint) / 0.5);
+    box-shadow: 0 8px 24px -4px hsl(var(--mint) / 0.2);
+  }
+
+  /* Minimal Cards - Clean and simple */
   .minimal-card {
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: 8px;
+    background: linear-gradient(to bottom, hsl(var(--card)), hsl(var(--mint) / 0.02));
+    border: 2px solid hsl(var(--ink) / 0.15);
+    border-radius: 4px;
     padding: 24px;
     transition: all 0.3s ease;
   }
 
   .minimal-card:hover {
-    border-color: hsl(var(--mint));
+    border-color: hsl(var(--mint) / 0.5);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px -8px hsl(var(--foreground) / 0.08);
+    box-shadow: 0 8px 24px -8px hsl(var(--mint) / 0.15);
   }
 
-  /* PREMIUM CARDS - Featured products */
-  .premium-card {
+  .dark .minimal-card {
+    background: linear-gradient(to bottom, hsl(var(--card)), hsl(var(--mint) / 0.03));
+    border-color: hsl(var(--mint) / 0.2);
+  }
+
+  .dark .minimal-card:hover {
+    border-color: hsl(var(--mint) / 0.5);
+    box-shadow: 0 12px 32px -8px hsl(var(--mint) / 0.25);
+  }
+
+  /* Accent Cards - Ink left border + mint top line */
+  .accent-card {
+    background: hsl(var(--off-white));
+    border: 1px solid hsl(var(--border));
+    border-left: 4px solid hsl(var(--ink));
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .accent-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: hsl(var(--mint));
+  }
+
+  .accent-card:hover {
+    border-left-color: hsl(var(--mint));
+    box-shadow: 0 4px 16px -4px hsl(var(--ink) / 0.15);
+  }
+
+  .dark .accent-card {
     background: hsl(var(--card));
-    border: 2px solid hsl(var(--mint));
-    border-radius: 8px;
+    border-left-color: hsl(var(--mint));
+    border-color: hsl(var(--border));
+  }
+
+  .dark .accent-card:hover {
+    box-shadow: 0 8px 24px -4px hsl(var(--mint) / 0.2);
+  }
+
+  /* Premium Cards - Featured with strong mint presence */
+  .premium-card {
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--mint) / 0.04));
+    border: 2px solid hsl(var(--mint) / 0.4);
+    border-radius: 4px;
     padding: 24px;
     position: relative;
     transition: all 0.3s ease;
   }
 
   .premium-card:hover {
-    border-color: hsl(var(--mint));
+    border-color: hsl(var(--mint) / 0.7);
     transform: translateY(-4px);
     box-shadow: 0 12px 32px -8px hsl(var(--mint) / 0.3);
+  }
+
+  .dark .premium-card {
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--mint) / 0.05));
+    border-color: hsl(var(--mint) / 0.5);
+    box-shadow: 0 4px 20px -4px hsl(var(--mint) / 0.15);
+  }
+
+  .dark .premium-card:hover {
+    border-color: hsl(var(--mint));
+    box-shadow: 0 16px 40px -8px hsl(var(--mint) / 0.3);
+  }
+
+  /* Editorial Rules - Section dividers */
+  .editorial-rule {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, hsl(var(--ink) / 0.2), transparent);
+    margin: 3rem 0;
+  }
+
+  .dark .editorial-rule {
+    background: linear-gradient(to right, transparent, hsl(var(--mint) / 0.3), transparent);
+  }
+
+  .editorial-rule-mint {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, hsl(var(--mint) / 0.5), transparent);
+    margin: 2rem 0;
   }
 
   /* TRUST SIGNALS */
