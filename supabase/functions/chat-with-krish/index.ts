@@ -58,7 +58,21 @@ async function generateJWT(serviceAccount: any): Promise<string> {
   const privateKey = serviceAccount.private_key;
   const pemHeader = '-----BEGIN PRIVATE KEY-----';
   const pemFooter = '-----END PRIVATE KEY-----';
-  const pemContents = privateKey.substring(pemHeader.length, privateKey.length - pemFooter.length).trim();
+  // Properly strip PEM headers/footers and ALL whitespace including newlines
+  const pemContents = privateKey
+    .replace(pemHeader, '')
+    .replace(pemFooter, '')
+    .replace(/\\n/g, '')   // Handle escaped newlines from JSON storage
+    .replace(/\n/g, '')    // Handle actual newlines
+    .replace(/\r/g, '')    // Handle carriage returns
+    .replace(/\s/g, '')    // Remove any remaining whitespace
+    .trim();
+
+  console.log('PEM header found:', privateKey.includes(pemHeader));
+  console.log('PEM footer found:', privateKey.includes(pemFooter));
+  console.log('PEM contents length after cleanup:', pemContents.length);
+  console.log('First 50 chars of cleaned PEM:', pemContents.substring(0, 50));
+
   const binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
 
   const cryptoKey = await crypto.subtle.importKey(
