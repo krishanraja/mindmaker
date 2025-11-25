@@ -11,19 +11,20 @@ const Navigation = () => {
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const navItems = [
-    { label: "Builder Session", href: "/builder-session" },
     { 
-      label: "For Teams", 
+      label: "For Individuals", 
       dropdown: [
+        { label: "Builder Session", href: "/builder-session" },
+        { label: "Weekly Updates", href: "/builder-session" },
         { label: "Builder Sprint", href: "/builder-sprint" },
-        { label: "AI Leadership Lab", href: "/leadership-lab" },
       ]
     },
-    { label: "Partner Program", href: "/partner-program" },
+    { label: "For Teams", href: "/leadership-lab" },
+    { label: "For Partners", href: "/partner-program" },
     { 
       label: "Content", 
       dropdown: [
-        { label: "The Builder Economy", href: "#", comingSoon: true, description: "Podcast" },
+        { label: "The Builder Economy", href: "https://thebuilderseconomy.com", external: true, comingSoon: true },
         { label: "Blog", href: "https://content.themindmaker.ai", external: true },
       ]
     },
