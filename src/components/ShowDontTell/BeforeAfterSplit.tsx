@@ -102,7 +102,7 @@ const BeforeAfterSplit = () => {
             </div>
 
             <div className="pt-4 border-t border-mint/20">
-              <p className="text-xs font-semibold text-mint">
+              <p className="text-xs font-semibold text-green-700 dark:text-green-600">
                 "I know exactly what we're building, why it matters, and how to get there."
               </p>
               <p className="text-xs font-bold text-foreground mt-2">
