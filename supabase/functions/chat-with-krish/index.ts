@@ -165,7 +165,11 @@ async function callVertexAI(messages: any[], accessToken: string, isTryItWidget:
       {
         retrieval: {
           vertex_rag_store: {
-            rag_corpora: [`projects/${PROJECT_ID}/locations/${LOCATION}/ragCorpora/${RAG_CORPUS_ID}`],
+            rag_resources: [
+              {
+                rag_corpus: `projects/${PROJECT_ID}/locations/${LOCATION}/ragCorpora/${RAG_CORPUS_ID}`,
+              }
+            ],
             similarity_top_k: 5,
           },
         },
@@ -211,12 +215,40 @@ async function callVertexAI(messages: any[], accessToken: string, isTryItWidget:
 
   const data = await response.json();
   
-  // Log RAG retrieval info for debugging
-  if (data.groundingMetadata) {
-    console.log('RAG retrieval successful. Retrieved chunks:', data.groundingMetadata.retrievalQueries?.length || 0);
+  // COMPREHENSIVE RAG DIAGNOSTIC LOGGING
+  console.log('=== RAG DIAGNOSTIC START ===');
+  
+  // Check for grounding metadata (snake_case is correct format)
+  if (data.grounding_metadata) {
+    console.log('✅ RAG is working - grounding_metadata found');
+    console.log('Full grounding metadata:', JSON.stringify(data.grounding_metadata, null, 2));
+    
+    // Log retrieval queries
+    if (data.grounding_metadata.retrieval_queries) {
+      console.log('Retrieval queries used:', data.grounding_metadata.retrieval_queries);
+    }
+    
+    // Log grounding chunks (actual corpus content retrieved)
+    if (data.grounding_metadata.grounding_chunks) {
+      console.log(`Retrieved ${data.grounding_metadata.grounding_chunks.length} chunks from corpus`);
+      data.grounding_metadata.grounding_chunks.forEach((chunk: any, idx: number) => {
+        console.log(`\nChunk ${idx + 1}:`);
+        console.log('  Source:', chunk.retrieved_context?.title || 'Unknown');
+        console.log('  Content preview:', chunk.retrieved_context?.text?.substring(0, 200) || 'No text');
+        console.log('  Relevance score:', chunk.relevance_score || 'N/A');
+      });
+    }
+    
+    // Log grounding supports (how corpus was used in response)
+    if (data.grounding_metadata.grounding_supports) {
+      console.log('\nGrounding supports:', data.grounding_metadata.grounding_supports.length);
+    }
   } else {
-    console.warn('No grounding metadata found - RAG may not be working');
+    console.warn('❌ No grounding_metadata found - RAG is NOT working');
+    console.log('Full response structure:', JSON.stringify(Object.keys(data), null, 2));
   }
+  
+  console.log('=== RAG DIAGNOSTIC END ===');
   
   return extractContent(data);
 }
