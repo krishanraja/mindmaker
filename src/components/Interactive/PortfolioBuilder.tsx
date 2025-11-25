@@ -6,7 +6,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { TrendingUp, Download, ArrowRight } from 'lucide-react';
 
-export const PortfolioBuilder = () => {
+interface PortfolioBuilderProps {
+  compact?: boolean;
+}
+
+export const PortfolioBuilder = ({ compact = false }: PortfolioBuilderProps) => {
   const { tasks, toggleTask, updateTaskHours, getPortfolioData } = usePortfolio();
   const [showResults, setShowResults] = useState(false);
   const portfolioData = getPortfolioData();
@@ -138,7 +142,7 @@ Generated via https://themindmaker.ai
   return (
     <Card className="p-6 sm:p-8 bg-background/50 backdrop-blur-sm border-2 border-mint/30 hover:border-mint transition-colors">
       <div className="mb-6">
-        <h3 className="text-xl font-bold mb-2">Build Your AI Portfolio</h3>
+        <h3 className="text-xl font-bold mb-2">Model out your starting points</h3>
         <p className="text-sm text-muted-foreground">
           Select your weekly tasks and see your personalized transformation roadmap
         </p>

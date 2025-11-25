@@ -2,7 +2,6 @@ import Navigation from "@/components/Navigation";
 import NewHero from "@/components/NewHero";
 import ChaosToClarity from "@/components/ShowDontTell/ChaosToClarity";
 import TheProblem from "@/components/TheProblem";
-import InteractiveROI from "@/components/InteractiveROI";
 import ProductLadder from "@/components/ProductLadder";
 import TrustSection from "@/components/TrustSection";
 import BeforeAfterSplit from "@/components/ShowDontTell/BeforeAfterSplit";
@@ -30,9 +29,6 @@ const Index = () => {
       
       {/* Interactive Command Centre */}
       <TheProblem />
-      
-      {/* Interactive Portfolio Builder */}
-      <InteractiveROI />
       
       {/* Product Ladder */}
       <ProductLadder />
