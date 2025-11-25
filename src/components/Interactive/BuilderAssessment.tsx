@@ -3,9 +3,104 @@ import { Card } from '@/components/ui/card';
 import { useAssessment } from '@/hooks/useAssessment';
 import { ArrowRight, RotateCcw, Award, CheckCircle2 } from 'lucide-react';
 
-export const BuilderAssessment = () => {
+interface BuilderAssessmentProps {
+  compact?: boolean;
+}
+
+export const BuilderAssessment = ({ compact = false }: BuilderAssessmentProps) => {
   const { currentStep, questions, answers, profile, answerQuestion, nextQuestion, reset } = useAssessment();
 
+  // Compact mode - Results view
+  if (compact && profile) {
+    return (
+      <div className="space-y-4">
+        <div className="text-center p-4 bg-mint/10 rounded-lg border border-mint/20">
+          <div className="text-sm font-bold text-mint mb-2">{profile.type}</div>
+          <p className="text-xs text-muted-foreground line-clamp-2">{profile.description}</p>
+        </div>
+        <div className="space-y-2">
+          <div className="text-xs font-bold text-muted-foreground">NEXT STEPS</div>
+          {profile.nextSteps.slice(0, 2).map((step, i) => (
+            <div key={i} className="flex items-start gap-2 text-xs">
+              <div className="w-4 h-4 rounded-full bg-mint/20 text-mint flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                {i + 1}
+              </div>
+              <div className="line-clamp-2">{step}</div>
+            </div>
+          ))}
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={reset}
+        >
+          <RotateCcw className="h-3 w-3 mr-2" />
+          Retake
+        </Button>
+      </div>
+    );
+  }
+
+  // Compact mode - Start button
+  if (compact && !profile) {
+    const hasStarted = Object.keys(answers).length > 0;
+    
+    if (!hasStarted) {
+      return (
+        <Button
+          size="sm"
+          className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
+          onClick={() => {
+            // This will trigger the quiz to start
+            const firstQuestion = questions[0];
+            // Just mark as started by scrolling into the full quiz state
+          }}
+        >
+          Start Assessment
+          <ArrowRight className="h-3 w-3 ml-2" />
+        </Button>
+      );
+    }
+
+    // Show compact question view
+    const currentQuestion = questions[currentStep];
+    const progress = ((currentStep + 1) / questions.length) * 100;
+    
+    return (
+      <div className="space-y-3">
+        <div className="h-1 bg-muted rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-mint transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div>
+          <p className="text-xs font-semibold mb-3">{currentQuestion.question}</p>
+          <div className="space-y-2">
+            {currentQuestion.options.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => {
+                  answerQuestion(currentQuestion.id, option.value);
+                  setTimeout(() => nextQuestion(), 300);
+                }}
+                className={`w-full p-2 rounded text-xs text-left transition-all border ${
+                  answers[currentQuestion.id] === option.value
+                    ? 'border-mint bg-mint/10 font-semibold'
+                    : 'border-border hover:border-mint/50 hover:bg-mint/5'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Full mode - Results view
   if (profile) {
     return (
       <Card className="p-6 sm:p-8 bg-gradient-to-br from-mint/10 to-ink/10 border-2 border-mint animate-in fade-in duration-500">

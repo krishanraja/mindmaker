@@ -171,24 +171,19 @@ const ChaosToClarity = () => {
               opacity: 0.7 + (organizationLevel * 0.3),
             }}
           >
-            {getHeadline()}
+          {getHeadline()}
+          {organizationLevel > 0.7 && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="text-base md:text-lg text-foreground/70 mt-4 leading-relaxed"
+            >
+              Built for leaders navigating complexity. Grounded in your commercial reality. 
+              Designed to turn chaos into competitive advantage.
+            </motion.p>
+          )}
           </h2>
-          <motion.p 
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-            animate={{ opacity: organizationLevel > 0.7 ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            Tailored to your role, industry, competitive set and current AI updates from {getCurrentMonthYear()}.
-          </motion.p>
-        </motion.div>
-
-        {/* AI News Ticker */}
-        <motion.div
-          className="mb-12"
-          animate={{ opacity: organizationLevel > 0.8 ? 1 : 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <AINewsTicker />
         </motion.div>
 
         {/* Concepts Visualization with Category Labels */}
@@ -263,16 +258,20 @@ const ChaosToClarity = () => {
           })}
         </div>
 
-        {/* Final Message */}
-        <motion.div 
-          className="text-center mt-16"
-          animate={{ opacity: organizationLevel > 0.8 ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <p className="text-lg text-foreground font-semibold">
-            Clear. Structured. Actionable.
-          </p>
-        </motion.div>
+        {/* News Ticker and Final Message */}
+        {organizationLevel > 0.8 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mt-16"
+          >
+            <p className="text-base md:text-lg text-center text-foreground/90 mb-6 leading-relaxed max-w-4xl mx-auto">
+              Tailored to your role, industry, competitive set and current AI updates from {getCurrentMonthYear()}.
+            </p>
+            <AINewsTicker />
+          </motion.div>
+        )}
       </div>
     </section>
   );

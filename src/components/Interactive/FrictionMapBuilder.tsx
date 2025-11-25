@@ -5,7 +5,11 @@ import { Card } from '@/components/ui/card';
 import { useFrictionMap } from '@/hooks/useFrictionMap';
 import { ArrowRight, Download, Sparkles, Clock, Zap } from 'lucide-react';
 
-export const FrictionMapBuilder = () => {
+interface FrictionMapBuilderProps {
+  compact?: boolean;
+}
+
+export const FrictionMapBuilder = ({ compact = false }: FrictionMapBuilderProps) => {
   const [problem, setProblem] = useState('');
   const { frictionMap, isGenerating, generateFrictionMap, clearFrictionMap } = useFrictionMap();
 
@@ -15,6 +19,81 @@ export const FrictionMapBuilder = () => {
       await generateFrictionMap(problem.trim());
     }
   };
+
+  // Compact mode - Results view
+  if (compact && frictionMap) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <div className="text-xs font-bold text-muted-foreground mb-2">TIME SAVED</div>
+          <div className="flex items-center justify-center gap-4 p-3 bg-mint/10 rounded-lg">
+            <div className="text-center">
+              <div className="text-lg font-bold">{frictionMap.timeSaved}h</div>
+              <div className="text-[10px] text-muted-foreground">per week</div>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <div className="text-center">
+              <div className="text-lg font-bold">{frictionMap.timeSaved * 52}h</div>
+              <div className="text-[10px] text-muted-foreground">per year</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="text-xs font-bold text-muted-foreground mb-2">TOP TOOLS</div>
+          <div className="space-y-1">
+            {frictionMap.toolRecommendations.slice(0, 2).map((tool, i) => (
+              <div key={i} className="flex items-start gap-2 text-xs">
+                <div className="w-4 h-4 rounded-full bg-mint/20 text-mint flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                  {i + 1}
+                </div>
+                <div className="line-clamp-2">{tool}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={clearFrictionMap}
+        >
+          Build Another
+        </Button>
+      </div>
+    );
+  }
+
+  // Compact mode - Input form
+  if (compact) {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <Input
+          value={problem}
+          onChange={(e) => setProblem(e.target.value)}
+          placeholder="e.g., Weekly reports take 5 hours"
+          className="text-sm"
+          disabled={isGenerating}
+        />
+        <Button
+          type="submit"
+          size="sm"
+          className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
+          disabled={isGenerating || !problem.trim()}
+        >
+          {isGenerating ? (
+            <>
+              <Sparkles className="h-3 w-3 mr-2 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            'Generate Map'
+          )}
+        </Button>
+      </form>
+    );
+  }
+
+  // Full mode continues below...
 
   const handleDownload = () => {
     if (!frictionMap) return;

@@ -1,13 +1,11 @@
 import Navigation from "@/components/Navigation";
 import NewHero from "@/components/NewHero";
 import ChaosToClarity from "@/components/ShowDontTell/ChaosToClarity";
-import WhoThisIsFor from "@/components/WhoThisIsFor";
 import TheProblem from "@/components/TheProblem";
 import InteractiveROI from "@/components/InteractiveROI";
 import ProductLadder from "@/components/ProductLadder";
 import TrustSection from "@/components/TrustSection";
 import BeforeAfterSplit from "@/components/ShowDontTell/BeforeAfterSplit";
-import TryItWidget from "@/components/ShowDontTell/TryItWidget";
 import SimpleCTA from "@/components/SimpleCTA";
 import Footer from "@/components/Footer";
 import { ChatBot } from "@/components/ChatBot";
@@ -30,10 +28,7 @@ const Index = () => {
         <ChaosToClarity />
       </div>
       
-      {/* Builder Assessment */}
-      <WhoThisIsFor />
-      
-      {/* The Problem */}
+      {/* Interactive Command Centre */}
       <TheProblem />
       
       {/* Interactive Portfolio Builder */}
@@ -41,9 +36,6 @@ const Index = () => {
       
       {/* Product Ladder */}
       <ProductLadder />
-      
-      {/* Try It Widget */}
-      <TryItWidget />
       
       {/* Trust Section */}
       <TrustSection />
