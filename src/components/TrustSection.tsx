@@ -3,7 +3,7 @@ import { Quote, TrendingUp, Clock, Users } from "lucide-react";
 const TrustSection = () => {
   const testimonials = [
     {
-      quote: "Invested 6 hr/week in to systems-building instead of delegating, and starting to see speed-to decision improving!",
+      quote: "Invested 6 hr/week in to systems-building instead of delegating, starting to see decision-velocity improving!",
       name: "Sarah Messir",
       role: "Head of BizOps",
       company: "Fortune 500 Tech",
