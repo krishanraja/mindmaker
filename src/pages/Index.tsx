@@ -31,7 +31,9 @@ const Index = () => {
       <TheProblem />
       
       {/* Product Ladder */}
-      <ProductLadder />
+      <div id="book">
+        <ProductLadder />
+      </div>
       
       {/* Trust Section */}
       <TrustSection />

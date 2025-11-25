@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { User, Users, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import peerComparisonMatrix from "@/assets/peer-comparison-matrix.png";
 import battleTestStrategy from "@/assets/battle-test-strategy.png";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
@@ -90,6 +90,24 @@ const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void
 const ProductLadder = () => {
   const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
+
+  // Auto-open modal when #book hash is present
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#book') {
+        setConsultModalOpen(true);
+        // Remove the hash to clean up URL
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    };
+
+    // Check on mount
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const handleBookClick = (program: string) => {
     setPreselectedProgram(program);
