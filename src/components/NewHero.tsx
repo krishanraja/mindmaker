@@ -8,6 +8,17 @@ const NewHero = () => {
       {/* Dynamic Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-ink via-ink to-mint/10"></div>
       
+      {/* GIF Background Overlay - 20% opacity */}
+      <div 
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: 'url(/mindmaker-background.gif)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      ></div>
+      
       {/* Animated Grid Background */}
       <div className="absolute inset-0 opacity-[0.08]">
         <div 
@@ -30,11 +41,11 @@ const NewHero = () => {
       {/* Content */}
       <div className="container-width relative z-10 py-20">
       {/* Logo - Left aligned */}
-      <div className="flex justify-start mb-24 fade-in-up -ml-3">
+      <div className="flex justify-start mb-24 fade-in-up -ml-6">
         <img 
           src={mindmakerIconDark} 
           alt="Mindmaker" 
-          className="h-24 md:h-32 w-auto"
+          className="h-36 md:h-48 w-auto"
         />
         </div>
         
