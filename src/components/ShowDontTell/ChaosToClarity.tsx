@@ -116,10 +116,10 @@ const ChaosToClarity = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     
     const categoryPositions = isMobile ? {
-      Technical: { baseX: 30, baseY: 15 },
-      Commercial: { baseX: 70, baseY: 15 },
-      Organizational: { baseX: 30, baseY: 58 },
-      Competitive: { baseX: 70, baseY: 58 },
+      Technical: { baseX: 25, baseY: 15 },
+      Commercial: { baseX: 58, baseY: 15 },
+      Organizational: { baseX: 25, baseY: 58 },
+      Competitive: { baseX: 58, baseY: 58 },
     } : {
       Technical: { baseX: 18, baseY: 22 },
       Commercial: { baseX: 62, baseY: 22 },
