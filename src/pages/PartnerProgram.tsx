@@ -118,33 +118,6 @@ const PartnerProgram = () => {
             </div>
           </div>
           
-          {/* Pricing */}
-          <div className="minimal-card mb-12">
-            <h2 className="text-2xl font-bold mb-4">Pricing and Structure</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              Two typical routes:
-            </p>
-            <div className="space-y-4">
-              <div className="border-l-4 border-mint pl-4">
-                <h3 className="font-semibold text-foreground mb-2">Retainer</h3>
-                <p className="text-muted-foreground">
-                  A quarterly fee that covers a fixed number of sprints and labs.
-                </p>
-              </div>
-              
-              <div className="border-l-4 border-mint pl-4">
-                <h3 className="font-semibold text-foreground mb-2">Revenue Share</h3>
-                <p className="text-muted-foreground">
-                  A base fee plus a share of project revenue that Mindmaker helps you unlock.
-                </p>
-              </div>
-            </div>
-            
-            <p className="text-muted-foreground mt-6 text-sm">
-              Exact terms are set once we know the size, spread and pace of your portfolio.
-            </p>
-          </div>
-          
           {/* CTA */}
           <div className="text-center">
             <Button 

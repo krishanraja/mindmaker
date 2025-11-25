@@ -131,19 +131,6 @@ const BuilderSprint = () => {
             </ul>
           </div>
           
-          {/* Pricing */}
-          <div className="minimal-card mb-12">
-            <h2 className="text-2xl font-bold mb-4">Pricing and Format</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              <span className="font-semibold">Typical fee:</span> $5,000 to $8,000 USD for the sprint, 
-              depending on scope and whether extra working sessions are added.
-            </p>
-            <p className="text-foreground leading-relaxed">
-              <span className="font-semibold">Format:</span> Remote first, with optional in-person sessions 
-              if travel and fees are covered.
-            </p>
-          </div>
-          
           {/* CTA */}
           <div className="text-center">
             <Button 

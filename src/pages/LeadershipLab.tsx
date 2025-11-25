@@ -125,19 +125,6 @@ const LeadershipLab = () => {
             </div>
           </div>
           
-          {/* Pricing */}
-          <div className="minimal-card mb-12">
-            <h2 className="text-2xl font-bold mb-4">Pricing and Logistics</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              <span className="font-semibold">Typical fee:</span> $10,000 to $20,000 USD for a single lab, 
-              depending on travel and whether follow-up clinics are included.
-            </p>
-            <p className="text-foreground leading-relaxed">
-              <span className="font-semibold">Format:</span> Half day in-person where possible, or tightly run 
-              remote session in two blocks.
-            </p>
-          </div>
-          
           {/* CTA */}
           <div className="text-center">
             <Button 
