@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.get-ai-news]
 verify_jwt = false
+
+[functions.create-consultation-hold]
+verify_jwt = false

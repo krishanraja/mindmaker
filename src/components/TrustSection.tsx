@@ -29,8 +29,18 @@ const TrustSection = () => {
   ];
 
   return (
-    <section className="section-padding bg-muted" id="trust">
-      <div className="container-width">
+    <section className="section-padding bg-muted relative overflow-hidden" id="trust">
+      {/* Background GIF overlay */}
+      <div 
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: 'url(/mindmaker-background.gif)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      <div className="container-width relative z-10">
         <div className="text-center mb-12 sm:mb-16 px-4 sm:px-0">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
             Trusted by leaders who build, not just buy

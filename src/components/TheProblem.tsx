@@ -158,7 +158,17 @@ const TheProblem = () => {
       ref={sectionRef}
       className="section-padding bg-muted/30 relative overflow-hidden"
     >
-      <div ref={triggerRef as any} className="container-width">
+      {/* Background GIF overlay */}
+      <div 
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: 'url(/mindmaker-background.gif)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      <div ref={triggerRef as any} className="container-width relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div 
