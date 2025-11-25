@@ -117,20 +117,31 @@ const ChaosToClarity = () => {
 
   // Dynamic headline based on organization level
   const getHeadline = () => {
-    if (organizationLevel < 0.3) return "AI feels like chaos";
+    if (organizationLevel < 0.3) return "From chaos and a firehose of info, to...";
     if (organizationLevel < 0.7) return "Organizing your acceleration plan...";
     return "Your individualized acceleration plan";
   };
 
-  const getCategoryColor = (category: Category) => {
+  const getCategoryColor = (category: Category, isLabel: boolean = false) => {
+    if (organizationLevel < 0.7) {
+      return isLabel ? "text-foreground" : "text-muted-foreground";
+    }
+    
     const colors = {
-      Technical: "text-muted-foreground",
-      Commercial: "text-amber-600 dark:text-amber-400",
-      Organizational: "text-red-600 dark:text-red-400",
-      Competitive: "text-purple-600 dark:text-purple-400",
+      Technical: "text-foreground",
+      Commercial: "text-amber-700 dark:text-amber-400",
+      Organizational: "text-red-700 dark:text-red-400",
+      Competitive: "text-purple-700 dark:text-purple-400",
     };
     return colors[category];
   };
+
+  // Group concepts by category for rendering
+  const groupedConcepts = concepts.reduce((acc, concept) => {
+    if (!acc[concept.category]) acc[concept.category] = [];
+    acc[concept.category].push(concept);
+    return acc;
+  }, {} as Record<Category, Concept[]>);
 
   return (
     <section 
@@ -162,50 +173,74 @@ const ChaosToClarity = () => {
           </motion.p>
         </motion.div>
 
-        {/* Category Labels - fade in when organized */}
-        <motion.div 
-          className="grid grid-cols-2 gap-8 max-w-4xl mx-auto mb-8"
-          animate={{ opacity: organizationLevel > 0.5 ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {["Technical", "Commercial", "Organizational", "Competitive"].map((cat) => (
-            <div 
-              key={cat} 
-              className={`text-sm font-bold uppercase tracking-wider text-center ${getCategoryColor(cat as Category)}`}
-            >
-              {cat}
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Concepts Visualization */}
+        {/* Concepts Visualization with Category Labels */}
         <div className="relative h-[500px] md:h-[600px] max-w-4xl mx-auto">
-          {concepts.map((concept, index) => {
-            const pos = getPosition(concept, index);
+          {Object.entries(groupedConcepts).map(([category, categoryPieces]) => {
+            const cat = category as Category;
+            const categoryPos = getOrganizedPosition(categoryPieces[0], 0);
+            
+            // Category label position (above its group)
+            const labelPos = organizationLevel > 0.5 
+              ? { x: categoryPos.x, y: categoryPos.y - 12, rotation: 0 }
+              : getRandomPosition(categoryPieces[0].id - 100);
             
             return (
-              <motion.div
-                key={concept.id}
-                className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap
-                  ${organizationLevel > 0.7 ? 'bg-mint/10 border-mint/30 text-foreground' : 'bg-muted/50 border-border text-muted-foreground'}`}
-                animate={{
-                  left: `${pos.x}%`,
-                  top: `${pos.y}%`,
-                  rotate: pos.rotation,
-                  opacity: 0.6 + (organizationLevel * 0.4),
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 120,
-                  damping: 20,
-                  mass: 0.5,
-                }}
-                style={{
-                  transform: 'translate(-50%, -50%)',
-                }}
-              >
-                {concept.label}
-              </motion.div>
+              <div key={category}>
+                {/* Category Label */}
+                <motion.div
+                  className={`absolute text-xs md:text-sm font-bold uppercase tracking-wider whitespace-nowrap ${getCategoryColor(cat, true)}`}
+                  animate={{
+                    left: `${labelPos.x}%`,
+                    top: `${labelPos.y}%`,
+                    rotate: organizationLevel > 0.5 ? 0 : (labelPos.rotation || 0),
+                    opacity: organizationLevel > 0.3 ? 1 : 0.7,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 120,
+                    damping: 20,
+                    mass: 0.5,
+                  }}
+                  style={{
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                >
+                  {category}
+                </motion.div>
+                
+                {/* Category Concepts */}
+                {categoryPieces.map((concept, index) => {
+                  const pos = getPosition(concept, index);
+                  
+                  return (
+                    <motion.div
+                      key={concept.id}
+                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap transition-colors duration-300
+                        ${organizationLevel > 0.7 
+                          ? 'bg-muted/30 border-border text-foreground' 
+                          : 'bg-muted/50 border-border text-muted-foreground'}`}
+                      animate={{
+                        left: `${pos.x}%`,
+                        top: `${pos.y}%`,
+                        rotate: pos.rotation,
+                        opacity: 0.6 + (organizationLevel * 0.4),
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 120,
+                        damping: 20,
+                        mass: 0.5,
+                      }}
+                      style={{
+                        transform: 'translate(-50%, -50%)',
+                        zIndex: 1,
+                      }}
+                    >
+                      {concept.label}
+                    </motion.div>
+                  );
+                })}
+              </div>
             );
           })}
         </div>
@@ -216,7 +251,7 @@ const ChaosToClarity = () => {
           animate={{ opacity: organizationLevel > 0.8 ? 1 : 0 }}
           transition={{ duration: 0.5 }}
         >
-          <p className="text-lg text-mint font-semibold">
+          <p className="text-lg text-foreground font-semibold">
             Clear. Structured. Actionable.
           </p>
         </motion.div>
