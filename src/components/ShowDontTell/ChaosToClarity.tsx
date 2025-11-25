@@ -79,13 +79,13 @@ const ChaosToClarity = () => {
     };
   };
 
-  // Organized 2x2 grid positions
+  // Organized 2x2 grid positions with better spacing to prevent overlap
   const getOrganizedPosition = (concept: Concept, index: number) => {
     const categoryPositions = {
-      Technical: { baseX: 20, baseY: 25 },
-      Commercial: { baseX: 60, baseY: 25 },
-      Organizational: { baseX: 20, baseY: 65 },
-      Competitive: { baseX: 60, baseY: 65 },
+      Technical: { baseX: 18, baseY: 22 },
+      Commercial: { baseX: 62, baseY: 22 },
+      Organizational: { baseX: 18, baseY: 62 },
+      Competitive: { baseX: 62, baseY: 62 },
     };
 
     const categoryIndex = concepts
@@ -93,12 +93,12 @@ const ChaosToClarity = () => {
       .findIndex(c => c.id === concept.id);
 
     const base = categoryPositions[concept.category];
-    const offsetX = (categoryIndex % 2) * 15;
-    const offsetY = Math.floor(categoryIndex / 2) * 8;
+    // Vertical stacking with more space between items
+    const offsetY = categoryIndex * 7;
 
     return {
-      x: base.baseX + offsetX - 10,
-      y: base.baseY + offsetY - 4,
+      x: base.baseX,
+      y: base.baseY + offsetY,
       rotation: 0,
     };
   };

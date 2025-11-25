@@ -50,9 +50,9 @@ via https://themindmaker.ai
 
   if (frictionMap) {
     return (
-      <Card className="p-6 sm:p-8 bg-gradient-to-br from-mint/5 to-ink/5 border-2 border-mint animate-in fade-in duration-500">
+      <Card className="p-6 sm:p-8 bg-card/50 dark:bg-card/30 border border-border/50 dark:border-border/30 backdrop-blur-sm animate-in fade-in duration-500">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold flex items-center gap-2">
+          <h3 className="text-xl font-bold flex items-center gap-2 text-foreground dark:text-foreground">
             <Sparkles className="h-5 w-5 text-mint" />
             Your AI Friction Map
           </h3>
@@ -129,7 +129,7 @@ via https://themindmaker.ai
   }
 
   return (
-    <Card className="p-6 sm:p-8 bg-background/50 backdrop-blur-sm border-2 border-mint/30 hover:border-mint transition-colors">
+    <Card className="p-6 sm:p-8 bg-card/50 dark:bg-card/30 backdrop-blur-sm border border-border/50 dark:border-mint/30 hover:border-mint transition-colors">
       <div className="mb-4">
         <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-mint animate-pulse" />

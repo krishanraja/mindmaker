@@ -1,47 +1,64 @@
 import { Button } from "@/components/ui/button";
-import { Clock, Calendar, Users, TrendingUp } from "lucide-react";
+import { User, Users, TrendingUp } from "lucide-react";
 
 const ProductLadder = () => {
-  const products = [
+  const tracks = [
     {
-      icon: Clock,
-      label: "ENTRY",
-      title: "Builder Session",
-      duration: "60 minutes",
-      description: "Live session with Krish. Bring one real leadership problem. Leave with an AI friction map, 1-2 draft systems, and written follow-up with prompts.",
-      cta: "Book Session",
-      link: "/builder-session",
-      featured: true,
-    },
-    {
-      icon: Calendar,
-      label: "LEADERS",
-      title: "30-Day Builder Sprint",
-      duration: "4 weeks",
-      description: "For senior leaders. Build 3-5 working AI-enabled systems around your actual week. Leave with a Builder Dossier and 90-day plan.",
-      pricing: "$5-8K USD",
-      cta: "Learn More",
-      link: "/builder-sprint",
+      icon: User,
+      label: "1-1 LEADERS",
+      title: "Individual Builder Journey",
+      offerings: [
+        {
+          name: "Drop In Builder Session",
+          duration: "60 minutes",
+          description: "Live session with Krish. Bring one real leadership problem. Leave with an AI friction map, 1-2 draft systems, and written follow-up with prompts.",
+          cta: "Book Session",
+          link: "/builder-session",
+          featured: true,
+        },
+        {
+          name: "Curated Weekly Updates",
+          duration: "4 weeks async",
+          description: "Weekly recommendations and async access to Krish. Stay current on what matters for your context. Build at your own pace.",
+          cta: "Learn More",
+          link: "/builder-session",
+        },
+        {
+          name: "30-Day Builder Sprint",
+          duration: "4 weeks intensive",
+          description: "For senior leaders. Build 3-5 working AI-enabled systems around your actual week. Leave with a Builder Dossier and 90-day plan.",
+          cta: "Learn More",
+          link: "/builder-sprint",
+        },
+      ],
     },
     {
       icon: Users,
-      label: "TEAMS",
-      title: "AI Leadership Lab",
-      duration: "4 hours",
-      description: "For 6-12 executives. Run two real decisions through a new AI-enabled way of working. Leave with a 90-day pilot charter.",
-      pricing: "$10-20K USD",
-      cta: "Learn More",
-      link: "/leadership-lab",
+      label: "EXEC TEAMS",
+      title: "Team Transformation",
+      offerings: [
+        {
+          name: "AI Leadership Lab",
+          duration: "2-8 hours",
+          description: "For 6-12 executives. Run two real decisions through a new AI-enabled way of working. Leave with a 90-day pilot charter.",
+          cta: "Learn More",
+          link: "/leadership-lab",
+        },
+      ],
     },
     {
       icon: TrendingUp,
       label: "PARTNERS",
-      title: "Portfolio Program",
-      duration: "6-12 months",
-      description: "For VCs, advisors, consultancies. Repeatable way to scan and prioritize your portfolio for AI work. Co-create sprints and labs.",
-      pricing: "Retainer or Revenue Share",
-      cta: "Learn More",
-      link: "/partner-program",
+      title: "Portfolio-Wide Programs",
+      offerings: [
+        {
+          name: "Portfolio Program",
+          duration: "6-12 months",
+          description: "For VCs, advisors, consultancies. Repeatable way to scan and prioritize your portfolio for AI work. Co-create sprints and labs.",
+          cta: "Learn More",
+          link: "/partner-program",
+        },
+      ],
     },
   ];
 
@@ -53,64 +70,68 @@ const ProductLadder = () => {
             Choose Your Builder Journey
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            From a 60-minute entry session to portfolio-wide transformation
+            From 60-minute sessions to portfolio-wide transformation
           </p>
         </div>
         
-        {/* Mobile: Vertical Stack, Desktop: Grid */}
-        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 max-w-6xl mx-auto px-4 sm:px-0">
-          {products.map((product, index) => {
-            const IconComponent = product.icon;
+        <div className="space-y-12 max-w-6xl mx-auto px-4 sm:px-0">
+          {tracks.map((track, trackIndex) => {
+            const IconComponent = track.icon;
             return (
-              <div 
-                key={index}
-                className={`${product.featured ? 'premium-card' : 'minimal-card'} fade-in-up`}
-                style={{animationDelay: `${index * 0.1}s`}}
-              >
-                {product.featured && (
-                  <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg">
-                    ⭐ RECOMMENDED
+              <div key={trackIndex} className="fade-in-up" style={{animationDelay: `${trackIndex * 0.1}s`}}>
+                {/* Track Header */}
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
+                    <IconComponent className="h-5 w-5" />
                   </div>
-                )}
-                
-                <div className="flex items-start gap-3 sm:gap-4 mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-                    <IconComponent className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-muted-foreground mb-1">
-                      {product.label}
+                  <div>
+                    <div className="text-xs font-bold text-muted-foreground">
+                      {track.label}
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground">
-                      {product.title}
+                    <h3 className="text-xl font-bold text-foreground">
+                      {track.title}
                     </h3>
-                    <div className="text-xs sm:text-sm text-muted-foreground">
-                      {product.duration}
-                    </div>
                   </div>
                 </div>
-                
-                <p className="text-sm leading-relaxed mb-4 text-foreground">
-                  {product.description}
-                </p>
-                
-                {product.pricing && (
-                  <div className="text-sm font-semibold text-primary mb-4">
-                    {product.pricing}
-                  </div>
-                )}
-                
-                <Button 
-                  size="lg"
-                  variant={product.featured ? "mint" : "default"}
-                  className={`w-full touch-target ${product.featured 
-                    ? "font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5" 
-                    : ""
-                  }`}
-                  onClick={() => window.location.href = product.link}
-                >
-                  {product.cta}
-                </Button>
+
+                {/* Track Offerings */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {track.offerings.map((offering, offeringIndex) => (
+                    <div 
+                      key={offeringIndex}
+                      className={`${offering.featured ? 'premium-card' : 'minimal-card'}`}
+                    >
+                      {offering.featured && (
+                        <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg">
+                          ⭐ RECOMMENDED
+                        </div>
+                      )}
+                      
+                      <h4 className="text-lg font-bold text-foreground mb-2">
+                        {offering.name}
+                      </h4>
+                      <div className="text-xs text-muted-foreground mb-3">
+                        {offering.duration}
+                      </div>
+                      
+                      <p className="text-sm leading-relaxed mb-4 text-foreground">
+                        {offering.description}
+                      </p>
+                      
+                      <Button 
+                        size="lg"
+                        variant={offering.featured ? "mint" : "default"}
+                        className={`w-full touch-target ${offering.featured 
+                          ? "font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5" 
+                          : ""
+                        }`}
+                        onClick={() => window.location.href = offering.link}
+                      >
+                        {offering.cta}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
             );
           })}

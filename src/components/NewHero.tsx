@@ -45,12 +45,12 @@ const NewHero = () => {
           <img 
             src={mindmakerIconDark} 
             alt="Mindmaker" 
-            className="h-16 sm:h-20 md:h-24 w-auto"
+            className="h-16 sm:h-20 md:h-24 w-auto -ml-3"
           />
         </div>
         
         {/* Two Column Layout: Text + Interactive */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left: Hero Content */}
           <div className="space-y-6 sm:space-y-8 md:space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white">
@@ -83,7 +83,7 @@ const NewHero = () => {
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 text-mint" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                Systems that persist
+                No coding needed
               </span>
             </div>
             

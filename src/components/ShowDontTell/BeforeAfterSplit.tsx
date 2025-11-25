@@ -23,7 +23,7 @@ const BeforeAfterSplit = () => {
             className="editorial-card space-y-6"
           >
             <div className="border-l-4 border-destructive pl-4">
-              <h3 className="text-xl font-bold text-foreground mb-2">Week 0: Chaos</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">Before: Chaos</h3>
               <p className="text-sm text-muted-foreground">Overwhelmed by AI hype</p>
             </div>
 
@@ -70,7 +70,7 @@ const BeforeAfterSplit = () => {
             className="premium-card space-y-6"
           >
             <div className="border-l-4 border-mint pl-4">
-              <h3 className="text-xl font-bold text-foreground mb-2">Week 4: Clarity</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">After: Clarity</h3>
               <p className="text-sm text-muted-foreground">Building with conviction</p>
             </div>
 
@@ -99,11 +99,18 @@ const BeforeAfterSplit = () => {
                 <div className="w-2 h-2 rounded-full bg-mint mt-2 flex-shrink-0" />
                 <p>Confidence to say "no" to shiny objects</p>
               </div>
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-mint mt-2 flex-shrink-0" />
+                <p>Boss the Boardroom with data-driven AI insights</p>
+              </div>
             </div>
 
             <div className="pt-4 border-t border-mint/20">
               <p className="text-xs font-semibold text-mint">
                 "I know exactly what we're building, why it matters, and how to get there."
+              </p>
+              <p className="text-xs font-bold text-foreground mt-2">
+                Guarantee or your money back
               </p>
             </div>
           </motion.div>
