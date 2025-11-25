@@ -190,11 +190,12 @@ const ProductLadder = () => {
                         
                         {offering.image && (
                           <div className="mb-4 flex-1 flex items-center justify-center overflow-visible relative group">
-                            <div className="w-full h-32 rounded-lg overflow-hidden border border-border/50 transition-all duration-300 group-hover:scale-[2] group-hover:z-50 group-hover:shadow-2xl cursor-zoom-in bg-background">
+                            <div className="w-full h-32 rounded-lg overflow-hidden border border-border/50 transition-all duration-300 md:group-hover:scale-[2] md:group-hover:z-50 md:group-hover:shadow-2xl md:cursor-zoom-in bg-background">
                               <img 
                                 src={offering.image} 
                                 alt={offering.name}
                                 className="w-full h-full object-contain"
+                                loading="eager"
                               />
                             </div>
                           </div>

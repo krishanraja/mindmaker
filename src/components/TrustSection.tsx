@@ -83,11 +83,11 @@ const TrustSection = () => {
         </div>
         
         {/* Client Logos Placeholder */}
-        <div className="mt-16 text-center">
+        <div className="mt-16 text-center px-4 sm:px-0">
           <p className="text-sm text-muted-foreground mb-6 font-medium">
             Worked with teams from
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 opacity-40 mb-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 opacity-40 mb-6">
             <div className="text-xl font-bold text-foreground">Fortune 500</div>
             <div className="text-xl font-bold text-foreground">VC Firms</div>
             <div className="text-xl font-bold text-foreground">Scale-ups</div>

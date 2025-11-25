@@ -165,11 +165,7 @@ const ChaosToClarity = () => {
           animate={{ opacity: 1 }}
         >
           <h2 
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 transition-all duration-500"
-            style={{
-              fontWeight: 300 + (organizationLevel * 600),
-              opacity: 0.7 + (organizationLevel * 0.3),
-            }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4"
           >
           {getHeadline()}
           {organizationLevel > 0.7 && (

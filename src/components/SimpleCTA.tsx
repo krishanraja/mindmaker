@@ -21,6 +21,7 @@ const SimpleCTA = () => {
               src={krishHeadshot} 
               alt="Krish Raja" 
               className="w-48 h-48 rounded-full border-4 border-mint/20"
+              loading="eager"
             />
           </div>
           

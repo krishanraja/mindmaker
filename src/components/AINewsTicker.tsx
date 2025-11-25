@@ -8,9 +8,9 @@ const AINewsTicker = () => {
   if (isLoading) {
     return (
       <div className="w-full py-4 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
-        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <Sparkles className="w-4 h-4 animate-pulse" />
-          <span>Loading latest AI news...</span>
+          <span className="italic">Loading latest news in AI...</span>
         </div>
       </div>
     );
@@ -21,6 +21,11 @@ const AINewsTicker = () => {
 
   return (
     <div className="relative w-full py-6 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 overflow-hidden">
+      {/* Header */}
+      <div className="text-center mb-4">
+        <p className="text-sm text-foreground/80 italic">Today's latest news in AI</p>
+      </div>
+      
       {/* Fade edges */}
       <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
       <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
