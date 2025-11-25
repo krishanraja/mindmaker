@@ -145,7 +145,7 @@ function extractContent(response: any): string {
 }
 
 // Call Vertex AI with RAG
-async function callVertexAI(messages: any[], accessToken: string): Promise<string> {
+async function callVertexAI(messages: any[], accessToken: string, isTryItWidget: boolean = false): Promise<string> {
   const PROJECT_ID = 'gen-lang-client-0174430158';
   const LOCATION = 'us-east1';
   const MODEL = 'gemini-2.5-flash';
@@ -173,7 +173,7 @@ async function callVertexAI(messages: any[], accessToken: string): Promise<strin
     ],
     generation_config: {
       temperature: 0.8,
-      max_output_tokens: 800,
+      max_output_tokens: isTryItWidget ? 400 : 800,
     },
   };
 
@@ -210,6 +210,14 @@ async function callVertexAI(messages: any[], accessToken: string): Promise<strin
   }
 
   const data = await response.json();
+  
+  // Log RAG retrieval info for debugging
+  if (data.groundingMetadata) {
+    console.log('RAG retrieval successful. Retrieved chunks:', data.groundingMetadata.retrievalQueries?.length || 0);
+  } else {
+    console.warn('No grounding metadata found - RAG may not be working');
+  }
+  
   return extractContent(data);
 }
 
@@ -219,11 +227,14 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, widgetMode } = await req.json();
     
     if (!messages || !Array.isArray(messages)) {
       throw new Error('Invalid messages format');
     }
+    
+    const isTryItWidget = widgetMode === 'tryit';
+    console.log('Widget mode:', widgetMode, 'isTryItWidget:', isTryItWidget);
 
     // Get service account credentials
     const serviceAccountJson = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_KEY');
@@ -247,8 +258,25 @@ serve(async (req) => {
       throw new Error('Invalid service account configuration');
     }
 
-    // System prompt (Krish persona)
-    const systemPrompt = `You are Krish, founder of Mindmaker. You help non-technical leaders build AI systems without code.
+    // System prompt based on context
+    const systemPrompt = isTryItWidget 
+      ? `You are Krish, founder of Mindmaker. The user has a specific AI decision challenge.
+
+CRITICAL INSTRUCTIONS:
+1. ALWAYS pull specific insights from the Mindmaker methodology corpus - cite frameworks, approaches, or principles
+2. Your response MUST be 3-4 sentences maximum
+3. Provide ONE unique insight from Mindmaker's approach (use RAG content)
+4. Give ONE concrete next step with a clickable link
+5. Use **bold** for emphasis, never use markdown headers (no ###)
+6. Format ALL links as [text](url) for clickability
+7. Sound like Krish: direct, practical, zero fluff
+
+RESPONSE STRUCTURE:
+[Brief acknowledgment + one Mindmaker insight from corpus] [One practical action they can take] [Link to next step: either Builder Session https://calendly.com/krish-raja/mindmaker-meeting OR a relevant pathway page]
+
+EXAMPLE:
+"**This is a classic build vs buy tension.** From our friction mapping approach: start by mapping where the chatbot actually removes work versus adds coordination overhead. Most teams skip this and regret it. **Next step:** [Try our friction mapping tool](/) to visualize the hidden costs, or [book a Builder Session](https://calendly.com/krish-raja/mindmaker-meeting) to map your specific case in 60 minutes."`
+      : `You are Krish, founder of Mindmaker. You help non-technical leaders build AI systems without code.
 
 CORE PHILOSOPHY:
 Be incredibly helpful and direct. Don't ask follow-up questions—give actionable answers immediately and point to the right next step.
@@ -319,7 +347,7 @@ You: "We don't train—we build. You leave with working systems, not slides. [Se
 
     // Get access token and call Vertex AI
     const accessToken = await getAccessToken(serviceAccount);
-    const assistantMessage = await callVertexAI(fullMessages, accessToken);
+    const assistantMessage = await callVertexAI(fullMessages, accessToken, isTryItWidget);
 
     const response: ChatResponse = {
       message: assistantMessage,

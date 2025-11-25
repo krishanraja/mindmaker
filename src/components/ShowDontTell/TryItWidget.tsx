@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { MarkdownResponse } from '@/components/ui/markdown-response';
 
 const TryItWidget = () => {
   const [input, setInput] = useState('');
@@ -24,16 +25,10 @@ const TryItWidget = () => {
           messages: [
             {
               role: 'user',
-              content: `I'm stuck on this AI decision: ${input}
-
-Please help me organize my thinking by providing:
-1. The 3 key questions I should be asking
-2. A simple decision framework to use
-3. One concrete next step I can take today
-
-Keep it practical and actionable.`
+              content: input
             }
-          ]
+          ],
+          widgetMode: 'tryit'
         }
       });
 
@@ -121,11 +116,10 @@ Keep it practical and actionable.`
                   transition={{ duration: 0.4 }}
                   className="mt-6 pt-6 border-t border-mint/20"
                 >
-                  <div className="prose prose-sm max-w-none">
-                    <div className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                      {response}
-                    </div>
-                  </div>
+                  <MarkdownResponse 
+                    content={response} 
+                    className="text-sm text-muted-foreground leading-relaxed"
+                  />
                   
                   <div className="mt-6 pt-6 border-t border-border">
                     <p className="text-xs text-muted-foreground text-center mb-4">
