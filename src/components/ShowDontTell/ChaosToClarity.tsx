@@ -116,15 +116,15 @@ const ChaosToClarity = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     
     const categoryPositions = isMobile ? {
-      Technical: { baseX: 25, baseY: 15, anchor: 'center' },
-      Commercial: { baseX: 98, baseY: 15, anchor: 'right' },
-      Organizational: { baseX: 25, baseY: 58, anchor: 'center' },
-      Competitive: { baseX: 98, baseY: 58, anchor: 'right' },
+      Technical: { baseX: 5, baseY: 15, translateX: '0%' },
+      Commercial: { baseX: 95, baseY: 15, translateX: '-100%' },
+      Organizational: { baseX: 5, baseY: 58, translateX: '0%' },
+      Competitive: { baseX: 95, baseY: 58, translateX: '-100%' },
     } : {
-      Technical: { baseX: 18, baseY: 22, anchor: 'center' },
-      Commercial: { baseX: 62, baseY: 22, anchor: 'center' },
-      Organizational: { baseX: 18, baseY: 62, anchor: 'center' },
-      Competitive: { baseX: 62, baseY: 62, anchor: 'center' },
+      Technical: { baseX: 18, baseY: 22, translateX: '-50%' },
+      Commercial: { baseX: 62, baseY: 22, translateX: '-50%' },
+      Organizational: { baseX: 18, baseY: 62, translateX: '-50%' },
+      Competitive: { baseX: 62, baseY: 62, translateX: '-50%' },
     };
 
     const categoryIndex = concepts
@@ -139,7 +139,7 @@ const ChaosToClarity = () => {
       x: base.baseX,
       y: base.baseY + offsetY,
       rotation: 0,
-      anchor: base.anchor,
+      translateX: base.translateX,
     };
   };
 
@@ -152,6 +152,7 @@ const ChaosToClarity = () => {
       x: chaos.x + (clarity.x - chaos.x) * organizationLevel,
       y: chaos.y + (clarity.y - chaos.y) * organizationLevel,
       rotation: chaos.rotation * (1 - organizationLevel),
+      translateX: clarity.translateX,
     };
   };
 
@@ -240,6 +241,8 @@ const ChaosToClarity = () => {
                   animate={{
                     left: `${labelPos.x}%`,
                     top: `${labelPos.y}%`,
+                    x: categoryPos.translateX,
+                    y: '-50%',
                     rotate: organizationLevel > 0.5 ? 0 : (labelPos.rotation || 0),
                     opacity: organizationLevel > 0.3 ? 1 : 0.7,
                   }}
@@ -248,11 +251,6 @@ const ChaosToClarity = () => {
                     stiffness: 80,
                     damping: 25,
                     mass: 0.8,
-                  }}
-                  style={{
-                    transform: categoryPos.anchor === 'right' 
-                      ? 'translate(-100%, -50%)' 
-                      : 'translate(-50%, -50%)',
                   }}
                 >
                   {category}
@@ -273,6 +271,8 @@ const ChaosToClarity = () => {
                       animate={{
                         left: `${pos.x}%`,
                         top: `${pos.y}%`,
+                        x: pos.translateX,
+                        y: '-50%',
                         rotate: pos.rotation,
                         opacity: 0.6 + (organizationLevel * 0.4),
                       }}
@@ -283,9 +283,6 @@ const ChaosToClarity = () => {
                         mass: 0.8,
                       }}
                       style={{
-                        transform: organizedPos.anchor === 'right' 
-                          ? 'translate(-100%, -50%)' 
-                          : 'translate(-50%, -50%)',
                         zIndex: 1,
                       }}
                     >
