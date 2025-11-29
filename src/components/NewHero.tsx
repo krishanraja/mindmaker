@@ -56,9 +56,9 @@ const NewHero = () => {
         <div className="max-w-5xl mx-auto">
           <div className="space-y-6 sm:space-y-8 md:space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white max-w-4xl">
-              Become the next<br className="hidden md:block" /> version of yourself with{" "}
+              AI Agents will be working inside most businesses within six months.{" "}
               <span className="relative inline-block">
-                <span className="relative z-10 text-mint animate-pulse" style={{animationDuration: '2s'}}>AI literacy for leaders</span>
+                <span className="relative z-10 text-mint animate-pulse" style={{animationDuration: '2s'}}>Are you ready to lead a new species of worker?</span>
                 <span className="absolute bottom-0 left-0 w-full h-3 sm:h-4 bg-mint/30 -z-10 animate-expandWidth blur-sm"></span>
               </span>
             </h1>

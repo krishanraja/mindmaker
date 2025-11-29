@@ -153,9 +153,6 @@ const TrustSection = () => {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
             Trusted by leaders who build, not just buy
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Real results from executives who stopped talking about AI and started building with it
-          </p>
         </div>
         
         <Carousel 
