@@ -200,7 +200,7 @@ export const BuilderAssessment = ({ compact = false }: BuilderAssessmentProps) =
                 answerQuestion(currentQuestion.id, option.value);
                 setTimeout(() => nextQuestion(), 300);
               }}
-              className={`w-full p-4 rounded-lg border-2 text-left transition-all text-ink ${
+              className={`w-full p-4 rounded-lg border-2 text-left transition-all text-foreground ${
                 answers[currentQuestion.id] === option.value
                   ? 'border-mint bg-mint/10 font-semibold'
                   : 'border-border hover:border-mint/50 hover:bg-mint/5'
