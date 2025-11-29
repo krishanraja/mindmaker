@@ -34,8 +34,6 @@ const BuilderSprint = () => {
       },
       "offers": {
         "@type": "Offer",
-        "price": "2098",
-        "priceCurrency": "USD",
         "availability": "https://schema.org/InStock"
       }
     }

@@ -28,8 +28,6 @@ const LeadershipLab = () => {
       "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
       "offers": {
         "@type": "Offer",
-        "price": "7000",
-        "priceCurrency": "USD",
         "availability": "https://schema.org/InStock"
       }
     }

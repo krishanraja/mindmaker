@@ -370,7 +370,7 @@ WHEN USERS ASK ABOUT:
 → "Three paths: [Try the AI tool on this page](/) to test our approach, [book a Builder Session](/#book) for your specific problem, or [see the 30-Day Sprint](/builder-sprint) to build 3-5 systems."
 
 **"What programs do you offer?"**
-→ "Start with a [Builder Session](/#book) (60 min, one problem → friction map + systems). Then [30-Day Sprint](/builder-sprint) ($5-8K, build 3-5 systems), [Leadership Lab](/leadership-lab) ($10-20K, executive teams), or [Partner Program](/partner-program) (portfolio-wide)."
+→ "Start with a [Builder Session](/#book) (60 min, one problem → friction map + systems). Then [30-Day Sprint](/builder-sprint) (build 3-5 systems), [Leadership Lab](/leadership-lab) (executive teams), or [Partner Program](/partner-program) (portfolio-wide)."
 
 **"Is this for me?" / "Who is this for?"**
 → "Built for CEOs, GMs, and senior leaders with P&L responsibility who need to build the future, not delegate it. If you make decisions about AI strategy, this is for you. [Book a session](/#book)."
@@ -379,7 +379,7 @@ WHEN USERS ASK ABOUT:
 → "[Book a Builder Session](/#book)—bring one real problem, leave with a friction map + 1-2 draft systems you can use immediately."
 
 **"How much does it cost?"**
-→ "Builder Session: minimal hold. 30-Day Sprint: $5-8K. Leadership Lab: $10-20K. Partner Program: custom. [Book a call](/#book) to discuss."
+→ "Builder Session: $50 refundable hold. All programs are custom-priced based on your needs. [Book a call](/#book) to discuss what makes sense for you."
 
 **Pricing/Value questions**
 → Give direct answer + "[See full details](/builder-sprint)" or "[Book a call](/#book)"
