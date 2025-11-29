@@ -9,6 +9,8 @@ import SimpleCTA from "@/components/SimpleCTA";
 import Footer from "@/components/Footer";
 import { ChatBot } from "@/components/ChatBot";
 import { ParticleBackground } from "@/components/Animations/ParticleBackground";
+import WhitepaperPromo from "@/components/WhitepaperPromo";
+import WhitepaperPopup from "@/components/WhitepaperPopup";
 
 const Index = () => {
   return (
@@ -41,6 +43,9 @@ const Index = () => {
       {/* Before/After Split */}
       <BeforeAfterSplit />
       
+      {/* Whitepaper Lead Magnet */}
+      <WhitepaperPromo />
+      
       {/* Simple CTA */}
       <SimpleCTA />
       
@@ -49,6 +54,9 @@ const Index = () => {
       
       {/* ChatBot */}
       <ChatBot />
+      
+      {/* Whitepaper Popup */}
+      <WhitepaperPopup />
     </main>
   );
 };
