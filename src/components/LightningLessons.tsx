@@ -12,7 +12,7 @@ export const LightningLessons = () => {
       title: "Learn How To Program Your AI Tools",
       url: "https://maven.com/p/1eb66a/learn-how-to-program-your-ai-tools",
       image: "/lesson-program-ai-tools.jpg",
-      duration: "15 min",
+      duration: "45 min",
       cta: "Learn to Program AI",
       bullets: [
         "Master prompt engineering basics",
@@ -24,7 +24,7 @@ export const LightningLessons = () => {
       title: "Build In Public with Gen AI",
       url: "https://maven.com/p/1054a6/build-in-public-with-gen-ai-as-your-co-founder",
       image: "/lesson-build-in-public.jpg",
-      duration: "20 min",
+      duration: "45 min",
       cta: "Start Building in Public",
       bullets: [
         "Use AI as your thinking partner",
@@ -36,7 +36,7 @@ export const LightningLessons = () => {
       title: "Vibe Code Your Way To Income",
       url: "https://maven.com/p/b95f6c/vibe-code-your-way-to-a-new-income-stream",
       image: "/lesson-vibe-code.jpg",
-      duration: "25 min",
+      duration: "45 min",
       cta: "Learn to Vibe Code",
       bullets: [
         "No-code to low-code transition",
@@ -68,10 +68,10 @@ export const LightningLessons = () => {
             {lessons.map((lesson, index) => (
               <div 
                 key={index}
-                className="border border-border rounded-lg overflow-hidden hover:border-mint transition-colors bg-card"
+                className="border border-border rounded-lg overflow-hidden hover:border-mint transition-colors bg-card flex flex-col h-full"
               >
                 {/* Thumbnail */}
-                <div className="relative h-24 overflow-hidden">
+                <div className="relative h-24 overflow-hidden flex-shrink-0">
                   <img 
                     src={lesson.image} 
                     alt={lesson.title}
@@ -87,12 +87,12 @@ export const LightningLessons = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-4 space-y-3">
-                  <h3 className="font-semibold text-base leading-tight">
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="font-semibold text-base leading-tight min-h-[2.5rem] mb-3">
                     {lesson.title}
                   </h3>
                   
-                  <ul className="space-y-1.5 text-sm text-muted-foreground">
+                  <ul className="space-y-1.5 text-sm text-muted-foreground flex-grow mb-3">
                     {lesson.bullets.map((bullet, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <span className="text-mint mt-0.5">•</span>
@@ -104,7 +104,7 @@ export const LightningLessons = () => {
                   <Button 
                     asChild 
                     size="sm"
-                    className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold"
+                    className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold mt-auto"
                   >
                     <a href={lesson.url} target="_blank" rel="noopener noreferrer">
                       {lesson.cta}
