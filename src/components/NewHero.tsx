@@ -56,15 +56,15 @@ const NewHero = () => {
         <div className="max-w-5xl mx-auto">
           <div className="space-y-6 sm:space-y-8 md:space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white max-w-4xl">
-              AI Agents will be working inside most businesses within six months.{" "}
+              Become the next<br className="hidden md:block" /> version of yourself with{" "}
               <span className="relative inline-block">
-                <span className="relative z-10 text-mint animate-pulse" style={{animationDuration: '2s'}}>Are you ready to lead a new species of worker?</span>
+                <span className="relative z-10 text-mint animate-pulse" style={{animationDuration: '2s'}}>AI literacy for leaders</span>
                 <span className="absolute bottom-0 left-0 w-full h-3 sm:h-4 bg-mint/30 -z-10 animate-expandWidth blur-sm"></span>
               </span>
             </h1>
       
             <p className="text-base sm:text-lg md:text-xl lg:text-xl text-white/90 max-w-3xl font-light leading-relaxed">
-              Most leaders feel behind on AI, but don't know what to actually do about it. Level up with a tailored, outcomes-focused accelerator - so you can outlive the unpredictable changes that lie ahead.
+              AI Agents will be working inside most businesses within six months. Are you ready to lead a new species of worker alongside your existing team? Creating a builder-mentality builds your muscle memory and starts your journey to becoming an AI forward leader.
             </p>
               
             {/* Trust Bar */}
