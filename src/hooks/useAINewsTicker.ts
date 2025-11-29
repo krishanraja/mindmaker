@@ -16,26 +16,26 @@ const CACHE_KEY = 'ai_news_cache';
 const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
 
 const FALLBACK_HEADLINES: NewsHeadline[] = [
-  { title: "GPT-5 demonstrates breakthrough in reasoning and planning", source: "OpenAI" },
-  { title: "Gemini 3.0 Pro achieves new benchmark in multimodal AI", source: "Google DeepMind" },
-  { title: "Claude 4 sets new standard for AI safety and accuracy", source: "Anthropic" },
-  { title: "Microsoft Copilot integration drives enterprise productivity gains", source: "Microsoft" },
-  { title: "Meta's Llama 4 challenges proprietary AI models", source: "Meta AI" },
-  { title: "AI adoption surges across Fortune 500 with 80% implementation rate", source: "Industry Report" },
-  { title: "Midjourney V7 revolutionizes creative AI with photorealistic generation", source: "Midjourney" },
-  { title: "Amazon Bedrock expands AI capabilities for enterprises", source: "AWS" },
-  { title: "AI agents automate complex workflows across industries", source: "McKinsey Research" },
-  { title: "Regulatory frameworks evolve as AI deployment accelerates", source: "Policy Update" },
-  { title: "NVIDIA announces next-gen chips for enterprise AI workloads", source: "NVIDIA" },
-  { title: "EU AI Act implementation begins with compliance deadlines set", source: "European Commission" },
-  { title: "AI-powered fraud detection reduces financial losses by 60%", source: "Finance Today" },
-  { title: "Healthcare AI diagnostic accuracy surpasses human specialists", source: "Medical Journal" },
-  { title: "Enterprise AI spending projected to reach $300B by 2026", source: "Gartner" },
-  { title: "AI security vulnerabilities prompt new safety standards", source: "Cybersecurity Report" },
-  { title: "Fortune 500 CEOs cite AI literacy as top strategic priority", source: "Executive Survey" },
-  { title: "AI talent war intensifies with median salaries exceeding $200K", source: "Tech Hiring" },
-  { title: "Major AI acquisitions reshape competitive landscape", source: "M&A Analysis" },
-  { title: "Quantum-AI hybrid systems show promise for drug discovery", source: "Nature Research" }
+  { title: "[HOT TAKE] Most AI pilots fail because they solve vendor problems, not yours", source: "Operator Intel" },
+  { title: "[SIGNAL] EU AI Act compliance deadlines forcing enterprise re-architecture", source: "Policy Watch" },
+  { title: "[OPERATOR] 3 AI workflows that paid back in 30 days - and 5 that never will", source: "Operator Intel" },
+  { title: "[WATCH] AI talent costs falling as supply catches up - hiring window opening", source: "Talent Market" },
+  { title: "[HOT TAKE] The 'AI strategy deck' industry is worth $0 to your P&L", source: "Operator Intel" },
+  { title: "[SIGNAL] OpenAI enterprise pricing signals end of cheap experimentation era", source: "Pricing Analysis" },
+  { title: "[OPERATOR] Why your AI vendor demo worked but production deployment failed", source: "Operator Intel" },
+  { title: "[WATCH] Healthcare AI approval bottleneck creating competitive moats", source: "FDA Watch" },
+  { title: "[HOT TAKE] 90% of 'AI-powered' enterprise software is wrapper marketing", source: "Operator Intel" },
+  { title: "[SIGNAL] Google Cloud AI credits expiring - expect enterprise churn wave", source: "Cloud Intel" },
+  { title: "[OPERATOR] The 4-hour AI build that replaced a $50K SaaS contract", source: "Operator Intel" },
+  { title: "[WATCH] China AI chip workarounds outpacing export controls", source: "Geopolitics" },
+  { title: "[HOT TAKE] AI literacy > AI tools. Most leaders have it backwards", source: "Operator Intel" },
+  { title: "[SIGNAL] Microsoft Copilot adoption stalling in enterprises without AI training", source: "Enterprise Data" },
+  { title: "[OPERATOR] Fine-tuned small models beating GPT-4 for specific business tasks", source: "Operator Intel" },
+  { title: "[WATCH] AI-native startups eating into consulting firm revenue", source: "Market Shift" },
+  { title: "[HOT TAKE] Your AI vendor's roadmap is their strategy, not yours", source: "Operator Intel" },
+  { title: "[SIGNAL] Insurance industry AI claims processing hitting 80%+ automation", source: "Industry Report" },
+  { title: "[OPERATOR] The real cost of 'free' AI tools - data lock-in and switching pain", source: "Operator Intel" },
+  { title: "[WATCH] SEC scrutiny of AI-related earnings claims increasing", source: "Regulatory" }
 ];
 
 export const useAINewsTicker = () => {
