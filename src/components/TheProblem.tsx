@@ -209,7 +209,7 @@ const TheProblem = () => {
             </motion.div>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto">
-              AI Agents will be working inside most businesses within six months. Are you ready to lead a new species of worker alongside your existing team? Creating a builder-mentality builds your muscle memory and starts your journey to becoming an AI forward leader.
+              AI Agents will be working inside most businesses within six months. Are you ready to lead a new species of worker?
             </p>
           </motion.div>
 
