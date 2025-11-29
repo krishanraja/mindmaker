@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 
 interface InitialConsultModalProps {
   open: boolean;
@@ -25,40 +25,27 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     { 
       value: "builder-session", 
       label: "Builder Session", 
-      subtitle: "60 min one-off",
-      price: "$348",
-      originalPrice: "$497",
-      priceId: "price_1SXSnwHGqJqsGEJL2K4m8nXV"
+      subtitle: "60 min strategy session"
     },
     { 
       value: "builder-sprint", 
       label: "30-Day Builder Sprint", 
-      subtitle: "4 weeks intensive",
-      price: "$2,098",
-      originalPrice: "$2,997",
-      priceId: "price_1SXSoFHGqJqsGEJLfHZbf6BP"
+      subtitle: "4 weeks intensive"
     },
     { 
       value: "leadership-lab", 
       label: "AI Leadership Lab", 
-      subtitle: "Team workshop",
-      price: "$7,000",
-      originalPrice: "$10,000",
-      priceId: "price_1SXSofHGqJqsGEJLkxNwgoqd"
+      subtitle: "Team workshop"
     },
     { 
       value: "partner-program", 
       label: "Portfolio Partner Program", 
-      subtitle: "6-12 months",
-      price: "Free consultation",
-      priceId: null
+      subtitle: "6-12 months"
     },
     { 
       value: "not-sure", 
       label: "Not sure yet - help me decide", 
-      subtitle: "Exploration call",
-      price: null,
-      priceId: null
+      subtitle: "Exploration call"
     },
   ];
 
@@ -97,8 +84,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
         body: { 
           name, 
           email, 
-          selectedProgram,
-          priceId: selectedProgramData?.priceId
+          selectedProgram
         }
       });
 
@@ -154,21 +140,9 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
                     htmlFor={program.value} 
                     className="font-normal cursor-pointer flex-1 leading-tight"
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <span className="font-semibold block">{program.label}</span>
-                        <span className="text-xs text-muted-foreground">{program.subtitle}</span>
-                      </div>
-                      {program.price && (
-                        <div className="text-right">
-                          {program.originalPrice && (
-                            <span className="text-xs text-muted-foreground line-through block">{program.originalPrice}</span>
-                          )}
-                          <span className={`text-sm font-bold ${program.originalPrice ? 'text-mint' : ''}`}>
-                            {program.price}
-                          </span>
-                        </div>
-                      )}
+                    <div>
+                      <span className="font-semibold block">{program.label}</span>
+                      <span className="text-xs text-muted-foreground">{program.subtitle}</span>
                     </div>
                   </Label>
                 </div>
@@ -225,7 +199,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
           {/* Submit Button */}
           <Button 
             type="submit" 
-            className="w-full bg-mint text-ink hover:bg-mint/90 font-bold text-lg py-6"
+            className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold text-base py-6"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -236,15 +210,11 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
             ) : (
               <>
                 Reserve My Spot
-                <Sparkles className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}
           </Button>
 
-          {/* Urgency Element */}
-          <p className="text-center text-sm text-muted-foreground">
-            ⚡ <span className="font-semibold text-mint-dark">Holiday Special: 30% off</span> for Individuals & Teams through December
-          </p>
         </form>
       </DialogContent>
     </Dialog>
