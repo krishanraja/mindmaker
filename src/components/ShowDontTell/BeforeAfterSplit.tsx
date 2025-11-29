@@ -37,16 +37,21 @@ const BeforeAfterSplit = () => {
       if (!sectionRef.current) return;
       
       const rect = sectionRef.current.getBoundingClientRect();
-      const viewportCenter = window.innerHeight / 2;
-      const sectionCenter = rect.top + rect.height / 2;
-      const distanceFromCenter = viewportCenter - sectionCenter;
+      const viewportHeight = window.innerHeight;
       
-      // Progress from -1 (above) to 1 (below viewport center)
-      const maxDistance = window.innerHeight / 2 + rect.height / 2;
-      const rawProgress = distanceFromCenter / maxDistance;
+      // Start when section enters viewport, complete when it reaches center
+      const triggerStart = viewportHeight * 0.8; // Start at 80% down viewport
+      const triggerEnd = viewportHeight * 0.3;   // Complete at 30% down viewport
       
-      // Map to 0-1 range, starting transformation slightly before center
-      const progress = Math.max(0, Math.min(1, (rawProgress + 0.3) / 1.3));
+      let progress = 0;
+      
+      if (rect.top < triggerStart && rect.top > triggerEnd) {
+        // Active transformation zone
+        progress = 1 - ((rect.top - triggerEnd) / (triggerStart - triggerEnd));
+      } else if (rect.top <= triggerEnd) {
+        // Fully transformed
+        progress = 1;
+      }
       
       setScrollProgress(progress);
     };
