@@ -28,40 +28,40 @@ const WhitepaperPopup = () => {
 
   return (
     <Dialog open={shouldShowPopup} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-[340px] sm:max-w-lg p-4 sm:p-6 max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center mb-4">
+          <DialogTitle className="text-lg sm:text-2xl font-bold text-center mb-2 sm:mb-4">
             Before you go...
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-3 sm:space-y-6">
           {/* Whitepaper Cover */}
           <div className="flex justify-center">
             <img
               src={whitepaperCover}
               alt="Resolving The AI Literacy Crisis in 2026"
-              className="w-48 h-auto rounded-lg shadow-lg"
+              className="w-32 sm:w-48 h-auto rounded-lg shadow-lg"
             />
           </div>
 
           {/* Content */}
-          <div className="text-center space-y-3">
-            <p className="text-muted-foreground text-sm">
+          <div className="text-center space-y-2 sm:space-y-3">
+            <p className="text-muted-foreground text-xs sm:text-sm">
               This might be worth your time.
             </p>
             
-            <DialogDescription className="text-lg font-semibold text-foreground">
+            <DialogDescription className="text-base sm:text-lg font-semibold text-foreground">
               "Resolving The AI Literacy Crisis in 2026"
             </DialogDescription>
             
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm sm:text-base">
               95% of enterprise AI initiatives fail due to workforce literacy gaps. This report shows you how to fix it.
             </p>
           </div>
 
           {/* Don't Show Again Checkbox */}
-          <div className="flex items-center space-x-2 justify-center pt-2">
+          <div className="flex items-center space-x-2 justify-center pt-1 sm:pt-2">
             <Checkbox
               id="dont-show-again"
               checked={dontShowAgain}
@@ -69,29 +69,29 @@ const WhitepaperPopup = () => {
             />
             <Label
               htmlFor="dont-show-again"
-              className="text-sm text-muted-foreground cursor-pointer"
+              className="text-xs sm:text-sm text-muted-foreground cursor-pointer"
             >
               Don't show this again
             </Label>
           </div>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-1 sm:pt-2">
             <Button
               variant="mint"
-              size="lg"
-              className="flex-1"
+              size="default"
+              className="flex-1 text-sm sm:text-base h-10 sm:h-11"
               onClick={handleReadReport}
             >
               <span className="inline-flex items-center gap-2">
                 Read the Free Report
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4" />
               </span>
             </Button>
             <Button
               variant="outline"
-              size="lg"
-              className="flex-1"
+              size="default"
+              className="flex-1 text-sm sm:text-base h-10 sm:h-11"
               onClick={handleClose}
             >
               Maybe Later
