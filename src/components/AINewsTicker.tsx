@@ -3,18 +3,7 @@ import { useAINewsTicker } from '@/hooks/useAINewsTicker';
 import { Sparkles } from 'lucide-react';
 
 const AINewsTicker = () => {
-  const { headlines, isLoading } = useAINewsTicker();
-
-  if (isLoading) {
-    return (
-      <div className="w-full py-4 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
-      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <Sparkles className="w-4 h-4 animate-pulse" />
-          <span className="italic">Loading latest news in AI...</span>
-        </div>
-      </div>
-    );
-  }
+  const { headlines } = useAINewsTicker();
 
   // Duplicate headlines for seamless loop
   const duplicatedHeadlines = [...headlines, ...headlines, ...headlines];
@@ -41,7 +30,7 @@ const AINewsTicker = () => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: headlines.length * 4,
+              duration: headlines.length * 1.5,
               ease: "linear",
             },
           }}

@@ -18,63 +18,94 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      console.error('OPENAI_API_KEY not configured');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY not configured');
       throw new Error('API key not configured');
     }
 
-    console.log('Fetching AI news from OpenAI...');
+    console.log('Fetching AI news from Lovable AI...');
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Get today's date for context
+    const today = new Date().toLocaleDateString('en-US', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
+
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
-            content: 'You are an AI news curator. Generate realistic, impactful AI news headlines that sound like they could be from today. Focus on major developments from companies like OpenAI, Google (Gemini), Anthropic (Claude), Microsoft, Meta, etc. Make them sound professional and newsworthy. Ensure all information is current and avoid referencing outdated model names or old events.'
+            content: 'You are an AI news curator that generates concise, impactful headlines about recent developments in artificial intelligence. Focus on topics that business executives and strategic leaders care about: enterprise adoption, regulation, competitive positioning, investment trends, and operational impact.'
           },
           {
             role: 'user',
-            content: 'Generate 10-12 major AI news headlines from today that would matter to business leaders. Format as JSON array with "title" and "source" fields. Focus on recent developments and avoid outdated references. Examples: "GPT-5 demonstrates breakthrough reasoning capabilities" (OpenAI), "Gemini 3.0 sets new benchmark in multimodal understanding" (Google DeepMind), "Claude 4 achieves breakthrough in coding and analysis" (Anthropic).'
+            content: `Generate 20 diverse AI news headlines as of ${today}. Cover these business-critical categories:
+
+1. Enterprise AI Adoption (Microsoft, Salesforce, SAP implementations)
+2. AI Regulation & Policy (EU AI Act, US Executive Orders, compliance)
+3. AI in Finance (Trading algorithms, risk management, fraud detection)
+4. AI in Healthcare (Diagnostics, drug discovery, clinical workflows)
+5. Frontier Models (OpenAI GPT-5, Google Gemini, Anthropic Claude, Meta Llama)
+6. AI Infrastructure (NVIDIA, cloud providers, compute trends)
+7. AI Security & Safety (Alignment research, red teaming, vulnerabilities)
+8. AI Productivity Tools (Copilots, workflow automation, enterprise software)
+9. AI Talent & Workforce (Skills gap, hiring trends, upskilling)
+10. AI Investment (Funding rounds, valuations, M&A activity)
+
+Each headline must be:
+- Concise (under 80 characters)
+- Current and relevant to ${today}
+- Business-focused with strategic implications
+- From credible sources
+
+Return ONLY a JSON array with this exact structure:
+[{"title": "headline text", "source": "source name"}]
+
+No additional text, explanations, or markdown. Just the JSON array.`
           }
-        ],
-        temperature: 0.8,
-        response_format: { type: "json_object" }
+        ]
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error:', response.status, errorText);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      console.error('Lovable AI API error:', response.status, errorText);
+      throw new Error(`Lovable AI API error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('OpenAI response received');
+    console.log('Lovable AI response received');
     
     const content = data.choices[0].message.content;
-    const parsedContent = JSON.parse(content);
     
-    // Extract headlines array from various possible formats
+    // Parse the JSON - Gemini returns it directly as array
     let headlines: NewsHeadline[] = [];
-    if (parsedContent.headlines) {
-      headlines = parsedContent.headlines;
-    } else if (Array.isArray(parsedContent)) {
-      headlines = parsedContent;
-    } else if (parsedContent.news) {
-      headlines = parsedContent.news;
+    try {
+      // Try direct parse first
+      headlines = JSON.parse(content);
+    } catch {
+      // If that fails, try extracting from object
+      const parsedContent = JSON.parse(content);
+      if (parsedContent.headlines) {
+        headlines = parsedContent.headlines;
+      } else if (Array.isArray(parsedContent)) {
+        headlines = parsedContent;
+      } else if (parsedContent.news) {
+        headlines = parsedContent.news;
+      }
     }
 
     // Validate and ensure we have proper format
     const validHeadlines = headlines
       .filter(h => h.title && h.source)
-      .slice(0, 12);
+      .slice(0, 20);
 
     if (validHeadlines.length === 0) {
       throw new Error('No valid headlines generated');
@@ -106,7 +137,17 @@ serve(async (req) => {
       { title: "Midjourney V7 revolutionizes creative AI with photorealistic generation", source: "Midjourney" },
       { title: "Amazon Bedrock expands AI capabilities for enterprises", source: "AWS" },
       { title: "AI agents automate complex workflows across industries", source: "McKinsey Research" },
-      { title: "Regulatory frameworks evolve as AI deployment accelerates", source: "Policy Update" }
+      { title: "Regulatory frameworks evolve as AI deployment accelerates", source: "Policy Update" },
+      { title: "NVIDIA announces next-gen chips for enterprise AI workloads", source: "NVIDIA" },
+      { title: "EU AI Act implementation begins with compliance deadlines set", source: "European Commission" },
+      { title: "AI-powered fraud detection reduces financial losses by 60%", source: "Finance Today" },
+      { title: "Healthcare AI diagnostic accuracy surpasses human specialists", source: "Medical Journal" },
+      { title: "Enterprise AI spending projected to reach $300B by 2026", source: "Gartner" },
+      { title: "AI security vulnerabilities prompt new safety standards", source: "Cybersecurity Report" },
+      { title: "Fortune 500 CEOs cite AI literacy as top strategic priority", source: "Executive Survey" },
+      { title: "AI talent war intensifies with median salaries exceeding $200K", source: "Tech Hiring" },
+      { title: "Major AI acquisitions reshape competitive landscape", source: "M&A Analysis" },
+      { title: "Quantum-AI hybrid systems show promise for drug discovery", source: "Nature Research" }
     ];
 
     return new Response(
