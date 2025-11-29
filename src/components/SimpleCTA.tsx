@@ -26,7 +26,7 @@ const SimpleCTA = () => {
           </div>
           
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white dark:text-foreground">
-            Ready to Start Building?
+            Ready to Accelerate AI Decisions?
           </h2>
           
           <p className="text-xl text-white/80 dark:text-foreground/80 leading-relaxed mb-8">
@@ -36,7 +36,7 @@ const SimpleCTA = () => {
           
           <Button 
             size="lg"
-            className="bg-mint text-ink hover:bg-mint/90 font-semibold px-12 py-6 text-lg touch-target group"
+            className="bg-mint text-ink hover:bg-mint/90 font-semibold px-6 sm:px-12 py-6 text-lg touch-target group w-full sm:w-auto"
             onClick={() => setConsultModalOpen(true)}
           >
             Book Your Initial Consult

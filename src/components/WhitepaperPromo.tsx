@@ -6,10 +6,10 @@ const WhitepaperPromo = () => {
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto max-w-5xl">
-        <div className="grid md:grid-cols-2 gap-8 items-center bg-card border-2 border-border rounded-lg p-8 shadow-lg">
+        <div className="grid md:grid-cols-2 gap-8 items-center bg-card border-2 border-border rounded-lg p-4 md:p-8 shadow-lg">
           {/* Cover Image - Left */}
-          <div className="relative">
-            <div className="transform md:rotate-[-3deg] md:hover:rotate-0 transition-transform duration-300">
+          <div className="relative flex justify-center md:block">
+            <div className="transform md:rotate-[-3deg] md:hover:rotate-0 transition-transform duration-300 max-w-[200px] mx-auto md:max-w-none">
               <img
                 src={whitepaperCover}
                 alt="Resolving The AI Literacy Crisis in 2026 Whitepaper Cover"
@@ -19,18 +19,18 @@ const WhitepaperPromo = () => {
           </div>
 
           {/* Content - Right */}
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div className="inline-block">
               <span className="px-3 py-1 bg-mint/20 text-ink rounded-full text-sm font-semibold">
                 Featured Report
               </span>
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
               Resolving The AI Literacy Crisis in 2026
             </h2>
             
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
               Discover the critical insights and frameworks leaders need to bridge the AI knowledge gap in their organizations. Learn why 95% of enterprise AI initiatives fail and how to ensure yours succeeds.
             </p>
 
