@@ -67,18 +67,18 @@ const NewHero = () => {
       <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-mint/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '4s', animationDelay: '1s'}}></div>
       
       {/* Content */}
-      <div className="container-width relative z-10 py-12 sm:py-16 md:py-20">
+      <div className="container-width relative z-10 pt-4 sm:pt-12 md:pt-16 pb-12 sm:pb-16 md:pb-20">
         {/* Logo */}
-        <div className="flex justify-start mb-12 sm:mb-16 md:mb-24 fade-in-up">
+        <div className="hidden sm:flex justify-start mb-6 sm:mb-12 md:mb-20 fade-in-up">
           <img 
             src={mindmakerIconDark} 
             alt="Mindmaker" 
-            className="h-16 sm:h-20 md:h-24 w-auto -ml-3"
+            className="h-16 sm:h-20 md:h-24 w-auto"
           />
         </div>
         
         {/* Hero Content */}
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl">
           <div className="space-y-6 sm:space-y-8 md:space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
             {/* Fixed-height container with invisible spacer */}
             <div className="relative">

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sun, Moon, ChevronDown, ExternalLink } from "lucide-react";
 import { useTheme } from "next-themes";
-import mindmakerFavicon from "/mindmaker-favicon.png";
+import mindmakerIconDark from "@/assets/mindmaker-icon-dark.png";
 import { LightningLessons } from "@/components/LightningLessons";
 
 const Navigation = () => {
@@ -62,7 +62,7 @@ const Navigation = () => {
           <div className="flex items-center">
             <a href="/" className="transition-opacity hover:opacity-80">
               <img 
-                src={mindmakerFavicon} 
+                src={mindmakerIconDark} 
                 alt="Mindmaker" 
                 className="h-8 sm:h-10 w-auto"
               />
