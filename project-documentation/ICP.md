@@ -17,10 +17,10 @@
 **Success Metrics:** 90-day pilot charter, 2+ decisions run through AI, measurable ROI
 
 ### ICP 3: Portfolio Partner
-**Profile:** VC firm (20-100 portfolio cos), advisory firm (10-50 clients)  
+**Profile:** VC firm (20-100 portfolio cos), advisory firm (10-50 clients), consultancy  
 **Decision Makers:** Managing Partner, Operating Partner  
-**Pain Points:** Can't scale 1:1 advisory, need repeatable frameworks  
-**Success Metrics:** Portfolio assessment, 10-20 companies engaged, demonstrated value-add
+**Pain Points:** Wants to help their clients' leaders become AI literate but lacks a repeatable method; can't scale 1:1 advisory  
+**Success Metrics:** 10-20 leaders engaged across portfolio, clear tracking of AI literacy progress, differentiated value-add
 
 ## Anti-ICPs
 ❌ Technical teams ❌ Early-stage founders ❌ Individual contributors ❌ Government/highly regulated

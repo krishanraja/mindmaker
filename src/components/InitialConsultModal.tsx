@@ -40,8 +40,8 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     },
     { 
       value: "for-portfolio", 
-      label: "For Your Business Portfolio", 
-      subtitle: "Multi-company enablement"
+      label: "For Your Client Base or Portfolio", 
+      subtitle: "Help the leaders you serve become AI literate"
     },
     { 
       value: "not-sure", 

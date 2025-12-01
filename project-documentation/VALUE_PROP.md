@@ -52,9 +52,9 @@
 **Proof:** 90-day charter, measurable ROI
 
 ### Portfolio Partners
-**Problem:** Can't scale 1:1 support  
-**Value:** Portfolio assessment, repeatable model  
-**Proof:** 15-20 companies engaged, differentiated value-add
+**Problem:** Want to help the leaders they serve become AI literate, but lack a concrete method to deliver at scale  
+**Value:** Repeatable approach to AI literacy you can bring to your portfolio or client base  
+**Proof:** 10-20 leaders engaged, measurable progress, differentiated positioning
 
 ---
 

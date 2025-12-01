@@ -71,7 +71,7 @@ const FAQ = () => {
     },
     {
       question: "What's the Portfolio Program?",
-      answer: "For VCs, advisors, and consultancies managing portfolios. We create a repeatable way to scan and prioritize your portfolio for AI work, then co-create sprints and labs for your companies. 6-12 month engagement."
+      answer: "For VCs, advisors, and consultancies who want to help the business leaders they serve become AI literate. We give you a repeatable method to assess readiness, then co-create sprints and labs you can deliver across your portfolio or client base. 6-12 month engagement."
     },
     {
       question: "What's The Builder Economy?",

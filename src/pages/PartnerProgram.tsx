@@ -35,11 +35,11 @@ const PartnerProgram = () => {
   const phases = [
     {
       title: "Portfolio Scan",
-      description: "Use the Mindmaker scanner to score 5 to 20 companies across readiness, pressure and appetite. Receive a heatmap and a set of suggested first moves.",
+      description: "Use the Mindmaker scanner to score 5-20 leaders across your portfolio on readiness, pressure and appetite. Receive a heatmap and suggested first moves.",
     },
     {
       title: "First Wave",
-      description: "Choose 3 to 5 companies for initial work. Run AI Literacy-to-Influence for a key leader in each, or an AI Leadership Lab for their exec team.",
+      description: "Choose 3-5 leaders for initial work. Run AI Literacy-to-Influence for a key leader in each portfolio company, or an AI Leadership Lab for their exec team.",
     },
     {
       title: "Program",
@@ -47,7 +47,7 @@ const PartnerProgram = () => {
     },
     {
       title: "Index",
-      description: "Roll out the benchmark and tracking across your portfolio so you can talk about AI maturity with evidence, not hope.",
+      description: "Roll out the benchmark and tracking across your portfolio so you can talk about AI maturity of the leaders you serve with evidence, not hope.",
     },
   ];
 
@@ -78,8 +78,7 @@ const PartnerProgram = () => {
               <span className="text-lg">6-12 months</span>
             </div>
             <p className="text-xl text-foreground leading-relaxed max-w-3xl mx-auto">
-              For VC funds, advisory firms and consultancies that want to be credible on AI 
-              in front of their portfolio or client base without pretending to be a software company.
+              For VCs, advisors and consultancies who want to help the business leaders they serve become AI literate — with a concrete method, not slideware.
             </p>
           </div>
           
@@ -90,9 +89,9 @@ const PartnerProgram = () => {
               <span className="font-semibold">Ideal partner:</span>
             </p>
             <ul className="space-y-2 text-foreground">
-              <li>• Already trusted at board or founder level</li>
-              <li>• Wants to move from slideware about AI to live experiments inside their portfolio</li>
-              <li>• Sees AI literacy as a value creation lever but lacks a concrete method</li>
+              <li>• Already trusted at board or founder level with your clients or portfolio companies</li>
+              <li>• Wants to deliver real AI literacy to the leaders you advise — not just forward articles</li>
+              <li>• Recognises that helping your clients' leaders build AI capability is a differentiated value-add</li>
             </ul>
           </div>
           
@@ -103,10 +102,10 @@ const PartnerProgram = () => {
               In 6 to 12 months you:
             </p>
             <ul className="space-y-3 text-foreground">
-              <li>• Have a repeatable way to scan and prioritise companies for AI work</li>
-              <li>• Co-create sprints and labs that you can bring into your portfolio</li>
-              <li>• Share a simple dashboard that tracks adoption and pilots across companies</li>
-              <li>• Strengthen your own brand as the place that makes AI useful, not noisy</li>
+              <li>• Have a repeatable method to help the leaders you serve become AI literate</li>
+              <li>• Co-create sprints and labs you can deliver across your portfolio or client base</li>
+              <li>• Track which leaders are progressing and where pilots are gaining traction</li>
+              <li>• Become known as the partner that makes AI practical — not another vendor pitch</li>
             </ul>
           </div>
           

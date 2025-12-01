@@ -166,7 +166,7 @@ const ProductLadder = () => {
         {
           name: "Portfolio Program",
           duration: "6-12 months",
-          description: "For VCs, advisors, consultancies. Repeatable way to scan and prioritize your portfolio for AI work. Co-create sprints and labs.",
+          description: "For VCs, advisors, consultancies. Help the business leaders you serve become AI literate with a repeatable method and co-branded delivery.",
           cta: "Learn More",
           link: "/portfolio-program",
           program: "portfolio-program",
