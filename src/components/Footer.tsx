@@ -31,10 +31,10 @@ const Footer = () => {
                 Leadership Lab
               </a>
               <a 
-                href="/partner-program" 
+                href="/portfolio-program" 
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Partners
+                Portfolios
               </a>
               <a 
                 href="https://thebuildereconomy.com/" 

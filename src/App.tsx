@@ -30,7 +30,7 @@ const App = () => (
             <Route path="/builder-session" element={<BuilderSession />} />
             <Route path="/builder-sprint" element={<BuilderSprint />} />
             <Route path="/leadership-lab" element={<LeadershipLab />} />
-            <Route path="/partner-program" element={<PartnerProgram />} />
+            <Route path="/portfolio-program" element={<PartnerProgram />} />
             <Route path="/builder-economy" element={<BuilderEconomy />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />

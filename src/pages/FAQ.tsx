@@ -70,7 +70,7 @@ const FAQ = () => {
       answer: "The Lab is for executive teams of 6-12 people. It's a 2-8 hour intensive where you run 2 real decisions through a new AI-enabled way of working. You leave with a 90-day pilot charter to implement across your team."
     },
     {
-      question: "What's the Portfolio Program for Partners?",
+      question: "What's the Portfolio Program?",
       answer: "For VCs, advisors, and consultancies managing portfolios. We create a repeatable way to scan and prioritize your portfolio for AI work, then co-create sprints and labs for your companies. 6-12 month engagement."
     },
     {

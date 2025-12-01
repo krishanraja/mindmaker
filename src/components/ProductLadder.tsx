@@ -160,7 +160,7 @@ const ProductLadder = () => {
     },
     {
       icon: TrendingUp,
-      label: "PARTNERS",
+      label: "PORTFOLIOS",
       title: "Portfolio-Wide Programs",
       offerings: [
         {
@@ -168,8 +168,8 @@ const ProductLadder = () => {
           duration: "6-12 months",
           description: "For VCs, advisors, consultancies. Repeatable way to scan and prioritize your portfolio for AI work. Co-create sprints and labs.",
           cta: "Learn More",
-          link: "/partner-program",
-          program: "partner-program",
+          link: "/portfolio-program",
+          program: "portfolio-program",
           image: peerComparisonMatrix,
         },
       ],

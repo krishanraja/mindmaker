@@ -17,11 +17,11 @@ interface Module {
   description: string;
   credits: number;
   icon: string;
-  contexts: ("individual" | "team" | "partner")[];
+  contexts: ("individual" | "team" | "portfolio")[];
 }
 
 interface ModuleExplorerProps {
-  context: "individual" | "team" | "partner";
+  context: "individual" | "team" | "portfolio";
 }
 
 const modules: Module[] = [
@@ -34,7 +34,7 @@ const modules: Module[] = [
     description: "Exec Team primer on AI literacy, market shifts, and how media leaders are preparing for 2030", 
     credits: 15, 
     icon: "Users", 
-    contexts: ["team", "partner"] 
+    contexts: ["team", "portfolio"] 
   },
   { 
     id: 2, 
@@ -44,7 +44,7 @@ const modules: Module[] = [
     description: "All Hands keynote on the future of work & principles to thrive", 
     credits: 10, 
     icon: "MessageSquare", 
-    contexts: ["team", "partner"] 
+    contexts: ["team", "portfolio"] 
   },
   { 
     id: 3, 
@@ -54,7 +54,7 @@ const modules: Module[] = [
     description: "Map AI capabilities to your product roadmap or new revenue lines", 
     credits: 25, 
     icon: "Target", 
-    contexts: ["individual", "team", "partner"] 
+    contexts: ["individual", "team", "portfolio"] 
   },
   { 
     id: 4, 
@@ -64,7 +64,7 @@ const modules: Module[] = [
     description: "Workflow redesign jam: spot agent opportunities", 
     credits: 5, 
     icon: "Search", 
-    contexts: ["individual", "team", "partner"] 
+    contexts: ["individual", "team", "portfolio"]
   },
   
   // Intermediate
@@ -76,7 +76,7 @@ const modules: Module[] = [
     description: "Produce & train an internal AI usage playbook", 
     credits: 20, 
     icon: "Settings", 
-    contexts: ["individual", "team", "partner"] 
+    contexts: ["individual", "team", "portfolio"] 
   },
   { 
     id: 6, 
@@ -86,7 +86,7 @@ const modules: Module[] = [
     description: "Deep dive: build a lightweight tool with one team and track KPIs", 
     credits: 20, 
     icon: "Hammer", 
-    contexts: ["individual", "partner"] 
+    contexts: ["individual", "portfolio"] 
   },
   { 
     id: 7, 
@@ -96,7 +96,7 @@ const modules: Module[] = [
     description: "1-1 coaching for power users to scale literacy", 
     credits: 20, 
     icon: "UserPlus", 
-    contexts: ["team", "partner"] 
+    contexts: ["team", "portfolio"] 
   },
   { 
     id: 8, 
@@ -106,7 +106,7 @@ const modules: Module[] = [
     description: "Mini-lessons + scorecards delivered via email/newsletter", 
     credits: 15, 
     icon: "Gamepad2", 
-    contexts: ["team", "partner"] 
+    contexts: ["team", "portfolio"]
   },
   
   // Expert
@@ -118,7 +118,7 @@ const modules: Module[] = [
     description: "Advanced process redesign with AI-first thinking", 
     credits: 25, 
     icon: "Workflow", 
-    contexts: ["individual", "partner"] 
+    contexts: ["individual", "portfolio"] 
   },
   { 
     id: 10, 
@@ -128,7 +128,7 @@ const modules: Module[] = [
     description: "Transform market research using AI", 
     credits: 40, 
     icon: "TrendingUp", 
-    contexts: ["individual", "team", "partner"] 
+    contexts: ["individual", "team", "portfolio"] 
   },
   { 
     id: 11, 
@@ -138,7 +138,7 @@ const modules: Module[] = [
     description: "Build a network of AI champions across the org", 
     credits: 45, 
     icon: "Award", 
-    contexts: ["team", "partner"] 
+    contexts: ["team", "portfolio"] 
   },
   { 
     id: 12, 
@@ -148,7 +148,7 @@ const modules: Module[] = [
     description: "Create systematic AI-driven content workflows", 
     credits: 20, 
     icon: "FileText", 
-    contexts: ["individual", "partner"] 
+    contexts: ["individual", "portfolio"]
   },
 ];
 
