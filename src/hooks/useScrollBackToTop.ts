@@ -1,41 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const POPUP_EXPIRY_DATE = new Date('2026-01-31');
 const STORAGE_KEY = 'whitepaper-popup-dismissed';
+const SESSION_KEY = 'whitepaper-popup-shown-session';
 
 export const useScrollBackToTop = () => {
   const [shouldShowPopup, setShouldShowPopup] = useState(false);
-  const [hasScrolledDown, setHasScrolledDown] = useState(false);
+  const [hasScrolledDeep, setHasScrolledDeep] = useState(false);
+  const hasShownThisSession = useRef(
+    sessionStorage.getItem(SESSION_KEY) === 'true'
+  );
 
   useEffect(() => {
     // Check if popup is expired
-    if (new Date() > POPUP_EXPIRY_DATE) {
-      return;
-    }
-
-    // Check if user has permanently dismissed
-    const isDismissed = localStorage.getItem(STORAGE_KEY) === 'true';
-    if (isDismissed) {
-      return;
-    }
+    if (new Date() > POPUP_EXPIRY_DATE) return;
+    
+    // Check if permanently dismissed
+    if (localStorage.getItem(STORAGE_KEY) === 'true') return;
+    
+    // Check if already shown this session
+    if (hasShownThisSession.current) return;
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
-
-      // User has scrolled down past threshold
-      if (scrollY > 500 && !hasScrolledDown) {
-        setHasScrolledDown(true);
+      const pageHeight = document.documentElement.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      const scrollableHeight = pageHeight - viewportHeight;
+      
+      // User must scroll at least 40% down the page OR past 800px
+      const scrollDepthThreshold = Math.max(scrollableHeight * 0.4, 800);
+      
+      if (scrollY > scrollDepthThreshold && !hasScrolledDeep) {
+        setHasScrolledDeep(true);
       }
 
-      // User scrolled back to top after being down
-      if (scrollY < 100 && hasScrolledDown && !shouldShowPopup) {
+      // Trigger: scrolled deep, now near top, hasn't shown yet
+      if (scrollY < 200 && hasScrolledDeep && !hasShownThisSession.current) {
+        hasShownThisSession.current = true;
+        sessionStorage.setItem(SESSION_KEY, 'true');
         setShouldShowPopup(true);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasScrolledDown, shouldShowPopup]);
+  }, [hasScrolledDeep]);
 
   const dismissPopup = (permanent: boolean = false) => {
     setShouldShowPopup(false);
