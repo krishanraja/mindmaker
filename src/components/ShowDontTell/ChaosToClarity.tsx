@@ -120,12 +120,12 @@ const ChaosToClarity = () => {
       Commercial: { baseX: 95, baseY: 15, translateX: '-100%' },
       Organizational: { baseX: 5, baseY: 58, translateX: '0%' },
       Competitive: { baseX: 95, baseY: 58, translateX: '-100%' },
-    } : {
-      Technical: { baseX: 18, baseY: 22, translateX: '-50%' },
-      Commercial: { baseX: 62, baseY: 22, translateX: '-50%' },
-      Organizational: { baseX: 18, baseY: 62, translateX: '-50%' },
-      Competitive: { baseX: 62, baseY: 62, translateX: '-50%' },
-    };
+  } : {
+    Technical: { baseX: 30, baseY: 22, translateX: '-50%' },
+    Commercial: { baseX: 70, baseY: 22, translateX: '-50%' },
+    Organizational: { baseX: 30, baseY: 62, translateX: '-50%' },
+    Competitive: { baseX: 70, baseY: 62, translateX: '-50%' },
+  };
 
     const categoryIndex = concepts
       .filter(c => c.category === concept.category)
