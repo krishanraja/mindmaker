@@ -126,15 +126,15 @@ const ChaosToClarity = () => {
         // Hysteresis pattern: only change headline phase with buffer zones
         // This prevents rapid switching that causes flashing
         const organizationLevel = 
-          progress < 0.10 ? 0 : 
-          progress > 0.35 ? 1 : 
-          (progress - 0.10) / 0.25;
+          progress < 0.35 ? 0 : 
+          progress > 0.70 ? 1 : 
+          (progress - 0.35) / 0.35;
         
-        if (organizationLevel < 0.25 && headlinePhase !== 'chaos') {
+        if (organizationLevel < 0.1 && headlinePhase !== 'chaos') {
           setHeadlinePhase('chaos');
-        } else if (organizationLevel >= 0.35 && organizationLevel < 0.65 && headlinePhase !== 'organizing') {
+        } else if (organizationLevel >= 0.1 && organizationLevel < 0.85 && headlinePhase !== 'organizing') {
           setHeadlinePhase('organizing');
-        } else if (organizationLevel >= 0.75 && headlinePhase !== 'clarity') {
+        } else if (organizationLevel >= 0.85 && headlinePhase !== 'clarity') {
           setHeadlinePhase('clarity');
         }
       });
@@ -151,11 +151,11 @@ const ChaosToClarity = () => {
     };
   }, [headlinePhase]);
 
-  // Faster animation: 0.10-0.35 instead of 0.15-0.45 (completes 10% earlier)
+  // Extended chaos phase: stay chaotic until 35%, organize 35-70%, complete at 70%
   const organizationLevel = 
-    scrollProgress < 0.10 ? 0 : 
-    scrollProgress > 0.35 ? 1 : 
-    (scrollProgress - 0.10) / 0.25;
+    scrollProgress < 0.35 ? 0 : 
+    scrollProgress > 0.70 ? 1 : 
+    (scrollProgress - 0.35) / 0.35;
 
   // Chaotic random positions
   const getRandomPosition = (id: number) => {
@@ -226,8 +226,9 @@ const ChaosToClarity = () => {
 
   // Dynamic headline based on stable phase state (prevents flashing)
   const getHeadline = () => {
-    if (headlinePhase === 'chaos') return "From chaos and a firehose of info, to...";
-    if (headlinePhase === 'organizing') return "From a firehose of hype...";
+    if (headlinePhase === 'chaos' || headlinePhase === 'organizing') {
+      return "From chaos and a firehose of info, to...";
+    }
     return "To a clear path, charted with real-world expertise.";
   };
 
