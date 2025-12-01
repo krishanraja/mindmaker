@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AINewsTicker from '@/components/AINewsTicker';
 import { useScrollLock } from '@/hooks/useScrollLock';
@@ -100,13 +100,11 @@ const concepts: Concept[] = [
 
 const ChaosToClarity = () => {
   const isMobile = useIsMobile();
-  const [isReady, setIsReady] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
   const isComplete = animationProgress >= 1;
 
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
+  // Don't render until isMobile is determined (not undefined)
+  if (isMobile === undefined) return null;
 
   const handleProgress = useCallback((delta: number) => {
     setAnimationProgress(prev => 
@@ -222,8 +220,6 @@ const ChaosToClarity = () => {
     acc[concept.category].push(concept);
     return acc;
   }, {} as Record<Category, Concept[]>);
-
-  if (!isReady) return null;
 
   return (
     <section
