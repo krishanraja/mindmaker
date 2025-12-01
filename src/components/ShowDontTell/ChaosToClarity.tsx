@@ -167,8 +167,8 @@ const ChaosToClarity = () => {
   // Dynamic headline based on stable phase state (prevents flashing)
   const getHeadline = () => {
     if (headlinePhase === 'chaos') return "From chaos and a firehose of info, to...";
-    if (headlinePhase === 'organizing') return "Organizing your acceleration plan...";
-    return "Your individualized acceleration plan";
+    if (headlinePhase === 'organizing') return "From a firehose of hype...";
+    return "To a clear path, charted with real-world expertise.";
   };
 
   const getCategoryColor = (category: Category, isLabel: boolean = false) => {
