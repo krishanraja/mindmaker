@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useScrollLock } from '@/hooks/useScrollLock';
 
 const transformations = [
@@ -33,13 +33,15 @@ const BeforeAfterSplit = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
   const isComplete = animationProgress >= 1;
 
+  const handleProgress = useCallback((delta: number) => {
+    setAnimationProgress(prev => 
+      Math.max(0, Math.min(1, prev + delta / 3000))
+    );
+  }, []);
+
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0.2,
-    onProgress: (delta) => {
-      setAnimationProgress(prev => 
-        Math.max(0, Math.min(1, prev + delta / 3000))
-      );
-    },
+    onProgress: handleProgress,
     isComplete,
   });
 

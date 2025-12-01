@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AINewsTicker from '@/components/AINewsTicker';
 import { useScrollLock } from '@/hooks/useScrollLock';
@@ -101,13 +101,15 @@ const ChaosToClarity = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
   const isComplete = animationProgress >= 1;
 
+  const handleProgress = useCallback((delta: number) => {
+    setAnimationProgress(prev => 
+      Math.max(0, Math.min(1, prev + delta / 5000))
+    );
+  }, []);
+
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0.3,
-    onProgress: (delta) => {
-      setAnimationProgress(prev => 
-        Math.max(0, Math.min(1, prev + delta / 5000))
-      );
-    },
+    onProgress: handleProgress,
     isComplete,
   });
 

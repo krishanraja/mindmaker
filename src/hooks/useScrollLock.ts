@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, RefObject } from 'react';
 
 interface UseScrollLockOptions {
-  lockThreshold: number;      // Viewport position to engage lock (0-1, e.g., 0.3 = 30% from top)
-  onProgress: (delta: number) => void;  // Callback with scroll delta
-  isComplete: boolean;        // When true, release lock
-  enabled?: boolean;          // Allow disabling
+  lockThreshold: number;
+  onProgress: (delta: number) => void;
+  isComplete: boolean;
+  enabled?: boolean;
 }
 
 interface UseScrollLockReturn {
@@ -15,98 +15,122 @@ interface UseScrollLockReturn {
 export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockReturn => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isLocked, setIsLocked] = useState(false);
+  
+  // Refs to avoid dependency array issues
+  const onProgressRef = useRef(options.onProgress);
   const touchStartYRef = useRef(0);
   const scrollPositionRef = useRef(0);
-
-  const { lockThreshold, onProgress, isComplete, enabled = true } = options;
+  const releaseCooldownRef = useRef(false);
+  const isCompleteRef = useRef(options.isComplete);
+  
+  // Keep refs updated
+  useEffect(() => {
+    onProgressRef.current = options.onProgress;
+  }, [options.onProgress]);
+  
+  useEffect(() => {
+    isCompleteRef.current = options.isComplete;
+  }, [options.isComplete]);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!options.enabled) return;
 
     const handleWheel = (e: WheelEvent) => {
       if (!isLocked) return;
-      
       e.preventDefault();
       e.stopPropagation();
-      
-      // Send scroll delta to animation
-      onProgress(e.deltaY);
+      onProgressRef.current(e.deltaY);
     };
 
     const handleTouchStart = (e: TouchEvent) => {
-      if (!isLocked) return;
       touchStartYRef.current = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!isLocked) return;
-      
       e.preventDefault();
       e.stopPropagation();
-      
       const currentY = e.touches[0].clientY;
-      const delta = touchStartYRef.current - currentY;  // Positive = scroll down
+      const delta = touchStartYRef.current - currentY;
       touchStartYRef.current = currentY;
-      
-      onProgress(delta);
+      onProgressRef.current(delta);
     };
 
     const handleScroll = () => {
+      // Don't check during cooldown
+      if (releaseCooldownRef.current) return;
+      
       const section = sectionRef.current;
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
+      const thresholdY = viewportHeight * options.lockThreshold;
       
-      // Calculate threshold position in pixels
-      const thresholdY = viewportHeight * lockThreshold;
-      
-      // Should lock if section top is within threshold and animation not complete
-      const shouldLock = rect.top <= thresholdY && rect.bottom > 0 && !isComplete;
+      const shouldLock = rect.top <= thresholdY && 
+                         rect.bottom > viewportHeight * 0.5 && 
+                         !isCompleteRef.current;
 
       if (shouldLock && !isLocked) {
-        // Engage lock
         setIsLocked(true);
         scrollPositionRef.current = window.scrollY;
         document.body.style.overflow = 'hidden';
         document.body.style.position = 'fixed';
         document.body.style.top = `-${scrollPositionRef.current}px`;
         document.body.style.width = '100%';
-      } else if ((!shouldLock || isComplete) && isLocked) {
-        // Release lock
-        setIsLocked(false);
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        window.scrollTo(0, scrollPositionRef.current);
       }
     };
-
+    
     // Attach listeners
     window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Initial check
-    handleScroll();
-
     return () => {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('scroll', handleScroll);
-      
-      // Cleanup: ensure body styles are reset
-      if (isLocked) {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-      }
     };
-  }, [isLocked, isComplete, lockThreshold, onProgress, enabled]);
+  }, [isLocked, options.lockThreshold, options.enabled]);
+
+  // Separate effect for release logic
+  useEffect(() => {
+    if (options.isComplete && isLocked) {
+      // Release lock
+      setIsLocked(false);
+      
+      // Set cooldown to prevent immediate re-lock
+      releaseCooldownRef.current = true;
+      
+      // Reset body styles
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      
+      // Restore scroll position after a frame
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollPositionRef.current);
+        
+        // Clear cooldown after scroll restoration settles
+        setTimeout(() => {
+          releaseCooldownRef.current = false;
+        }, 300);
+      });
+    }
+  }, [options.isComplete, isLocked]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, []);
 
   return { sectionRef, isLocked };
 };
