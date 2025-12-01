@@ -137,11 +137,11 @@ const ChaosToClarity = () => {
   // Organized positions: vertical stack on mobile, 2x2 grid on desktop
   const getOrganizedPosition = (concept: Concept, index: number) => {
     const categoryPositions = isMobile ? {
-      // VERTICAL STACK - all centered at 50% with -50% translate
-      Technical: { baseX: 50, baseY: 8, translateX: '-50%' },
-      Commercial: { baseX: 50, baseY: 30, translateX: '-50%' },
-      Organizational: { baseX: 50, baseY: 52, translateX: '-50%' },
-      Competitive: { baseX: 50, baseY: 74, translateX: '-50%' },
+      // VERTICAL STACK - all centered at 50% with -50% translate, tighter spacing
+      Technical: { baseX: 50, baseY: 10, translateX: '-50%' },
+      Commercial: { baseX: 50, baseY: 32, translateX: '-50%' },
+      Organizational: { baseX: 50, baseY: 54, translateX: '-50%' },
+      Competitive: { baseX: 50, baseY: 76, translateX: '-50%' },
     } : {
       Technical: { baseX: 30, baseY: 22, translateX: '-50%' },
       Commercial: { baseX: 70, baseY: 22, translateX: '-50%' },
@@ -160,7 +160,7 @@ const ChaosToClarity = () => {
     }
 
     const base = categoryPositions[concept.category];
-    const offsetY = categoryIndex * (isMobile ? 4.5 : 7);
+    const offsetY = categoryIndex * (isMobile ? 4 : 7);
 
     return {
       x: base.baseX,
@@ -238,7 +238,7 @@ const ChaosToClarity = () => {
   return (
     <section
       ref={sectionRef} 
-      className="section-padding bg-background py-32 relative overflow-hidden min-h-screen flex flex-col justify-center"
+      className="section-padding bg-background py-16 md:py-32 relative overflow-hidden min-h-[600px] md:min-h-screen flex flex-col justify-center"
     >
       <div className="container-width">
         {/* Dynamic Headline */}
@@ -264,7 +264,7 @@ const ChaosToClarity = () => {
         </motion.div>
 
         {/* Concepts Visualization */}
-        <div className="relative h-[550px] md:h-[600px] w-full max-w-4xl mx-auto overflow-hidden px-2 md:px-0">
+        <div className="relative h-[420px] md:h-[600px] w-full max-w-4xl mx-auto overflow-hidden px-2 md:px-0">
           {Object.entries(groupedConcepts).map(([category, categoryPieces]) => {
             const cat = category as Category;
             const categoryPos = getOrganizedPosition(categoryPieces[0], 0);
