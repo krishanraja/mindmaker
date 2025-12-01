@@ -57,26 +57,26 @@ const Navigation = () => {
 
   return (
     <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm pt-safe-top">
-      <div className="container-width">
-        <div className="flex items-center justify-between h-14 sm:h-16">
+      <div className="container-width px-4 sm:px-6">
+        <div className="flex items-center justify-between h-16 sm:h-18 md:h-20">
           {/* Logo */}
           <div className="flex items-center">
             <a href="/" className="transition-opacity hover:opacity-80">
               <img 
                 src={mindmakerLogoDark} 
                 alt="Mindmaker" 
-                className="h-6 sm:h-7 md:h-[22px] w-auto max-w-[140px] sm:max-w-[170px] object-contain dark:hidden"
+                className="h-7 sm:h-8 md:h-[24px] w-auto max-w-[150px] sm:max-w-[180px] object-contain dark:hidden"
               />
               <img 
                 src={mindmakerLogoLight} 
                 alt="Mindmaker" 
-                className="h-6 sm:h-7 md:h-[22px] w-auto max-w-[140px] sm:max-w-[170px] object-contain hidden dark:block"
+                className="h-7 sm:h-8 md:h-[24px] w-auto max-w-[150px] sm:max-w-[180px] object-contain hidden dark:block"
               />
             </a>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <div 
                 key={item.label}
@@ -160,14 +160,14 @@ const Navigation = () => {
             ))}
 
             {/* Lightning Lessons */}
-            <div className="ml-4">
+            <div className="ml-6">
               <LightningLessons />
             </div>
 
             {/* Premium CTA Button */}
             <Button 
               size="sm" 
-              className="ml-4 relative touch-target"
+              className="ml-6 relative touch-target"
               onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
             >
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-mint rounded-full animate-pulse" />
@@ -176,7 +176,7 @@ const Navigation = () => {
           </div>
 
           {/* Theme toggle and mobile menu button */}
-          <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="flex items-center gap-3 ml-6">
             <Button
               variant="ghost"
               size="sm"
