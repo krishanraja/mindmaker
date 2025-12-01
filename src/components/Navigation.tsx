@@ -62,11 +62,16 @@ const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center">
             <a href="/" className="transition-opacity hover:opacity-80">
-            <img 
-              src={theme === "dark" ? mindmakerLogoLight : mindmakerLogoDark} 
-              alt="Mindmaker" 
-              className="h-6 sm:h-7 md:h-7 w-auto max-w-[140px] sm:max-w-[170px] object-contain"
-            />
+              <img 
+                src={mindmakerLogoDark} 
+                alt="Mindmaker" 
+                className="h-6 sm:h-7 md:h-[22px] w-auto max-w-[140px] sm:max-w-[170px] object-contain dark:hidden"
+              />
+              <img 
+                src={mindmakerLogoLight} 
+                alt="Mindmaker" 
+                className="h-6 sm:h-7 md:h-[22px] w-auto max-w-[140px] sm:max-w-[170px] object-contain hidden dark:block"
+              />
             </a>
           </div>
 
