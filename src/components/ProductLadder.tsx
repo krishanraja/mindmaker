@@ -110,7 +110,7 @@ const ProductLadder = () => {
   const navigate = useNavigate();
   const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
-  const [expandedTrack, setExpandedTrack] = useState<number | null>(0);
+  const [expandedTrack, setExpandedTrack] = useState<number | null>(null);
 
   // Auto-open modal when #book hash is present
   useEffect(() => {
