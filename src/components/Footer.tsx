@@ -62,6 +62,12 @@ const Footer = () => {
               >
                 Terms
               </a>
+              <a 
+                href="/contact" 
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Contact
+              </a>
             </div>
           </div>
         </div>

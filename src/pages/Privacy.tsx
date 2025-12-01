@@ -24,7 +24,7 @@ const Privacy = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">1. Information We Collect</h2>
             <p className="mb-4">
-              Fractionl AI ("we," "our," or "us") collects information you provide directly to us, such as when you:
+              Mindmaker LLC ("we," "our," or "us") collects information you provide directly to us, such as when you:
             </p>
             <ul className="list-disc pl-6 mb-4">
               <li>Sign up for our AI literacy programs</li>
@@ -104,9 +104,9 @@ const Privacy = () => {
               If you have any questions about this Privacy Policy or our data practices, please contact us at:
             </p>
             <div className="bg-muted p-4 rounded-lg">
-              <p><strong>Fractionl AI</strong></p>
-              <p>Email: privacy@fractionl.ai</p>
-              <p>Website: https://fractionl.ai</p>
+              <p><strong>Mindmaker LLC</strong></p>
+              <p>Email: privacy@themindmaker.ai</p>
+              <p>Website: https://themindmaker.ai</p>
             </div>
           </section>
         </div>

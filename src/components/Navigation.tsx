@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Menu, X, Sun, Moon, ChevronDown, ExternalLink } from "lucide-react";
 import { useTheme } from "next-themes";
 import mindmakerLogoDark from "@/assets/mindmaker-logo-dark.png";
@@ -15,23 +16,29 @@ const Navigation = () => {
 
   const navItems = [
     { 
-      label: "Individuals", 
+      label: "Executive Advisory", 
       dropdown: [
-        { label: "One-Off", href: "/builder-session" },
-        { label: "Weekly", href: "/builder-session" },
-        { label: "90-Day Sprint", href: "/builder-sprint" },
+        { label: "Individual", href: "/builder-session" },
+        { label: "Team", href: "/leadership-lab" },
+        { label: "Portfolio", href: "/portfolio-program" },
       ]
     },
-    { label: "Teams", href: "/leadership-lab" },
-    { label: "Portfolios", href: "/portfolio-program" },
     { 
-      label: "Content", 
+      label: "Learning & Content", 
       dropdown: [
-        { label: "The Builder Economy", href: "https://thebuildereconomy.com/", external: true, comingSoon: true, allowClick: true },
+        { label: "Lightning Lessons", type: "lessons" },
+        { label: "Podcast", href: "https://content.themindmaker.ai/podcast", external: true },
         { label: "Blog", href: "https://content.themindmaker.ai", external: true },
       ]
     },
-    { label: "FAQ", href: "/faq" },
+    { 
+      label: "About", 
+      dropdown: [
+        { label: "FAQ", href: "/faq" },
+        { label: "Privacy", href: "/privacy" },
+        { label: "Contact", href: "/contact" },
+      ]
+    },
   ];
 
   // Click outside to close dropdown
@@ -95,81 +102,63 @@ const Navigation = () => {
                 }}
                 onKeyDown={handleKeyDown}
               >
-                {item.dropdown ? (
-                  <>
-                    <button 
-                      onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                      className={`text-sm font-semibold transition-colors flex items-center gap-1.5
-                        py-2 px-3 rounded-md ${
-                        openDropdown === item.label 
-                          ? 'text-mint bg-mint/10' 
-                          : 'text-ink dark:text-white hover:text-mint hover:bg-mint/5'
-                      }`}
-                      aria-expanded={openDropdown === item.label}
-                      aria-haspopup="true"
-                    >
-                      {item.label}
-                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${
-                        openDropdown === item.label ? 'rotate-180' : ''
-                      }`} />
-                    </button>
-                    {openDropdown === item.label && (
-                      <div 
-                        className="absolute top-full left-0 mt-1 
-                          bg-white dark:bg-[#0e1a2b] 
-                          border-2 border-border 
-                          rounded-lg shadow-xl 
-                          py-3 min-w-[240px] z-50
-                          animate-in fade-in slide-in-from-top-2 duration-200"
-                        role="menu"
-                        aria-label={`${item.label} menu`}
-                      >
-                        {item.dropdown.map((subItem) => (
-                          <a
-                            key={subItem.label}
-                            href={subItem.href}
-                            target={subItem.external ? "_blank" : undefined}
-                            rel={subItem.external ? "noopener noreferrer" : undefined}
-                            role="menuitem"
-                            className={`flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-md mx-2
-                              transition-colors ${
-                              subItem.comingSoon && !subItem.allowClick
-                                ? 'text-muted-foreground/50 cursor-not-allowed' 
-                                : 'text-ink dark:text-white hover:bg-mint/10 hover:text-ink dark:hover:text-white'
-                            }`}
-                            onClick={(e) => {
-                              if (subItem.comingSoon && !subItem.allowClick) e.preventDefault();
-                            }}
-                          >
-                            <span>{subItem.label}</span>
-                            {subItem.comingSoon && (
-                              <span className="text-xs text-mint font-semibold">Coming Soon</span>
-                            )}
-                            {subItem.external && (
-                              <ExternalLink className="h-3 w-3 ml-2" />
-                            )}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <a
-                    href={item.href}
-                    className="text-sm font-semibold text-ink dark:text-white 
-                      hover:text-mint transition-colors py-2 px-3 rounded-md 
-                      hover:bg-mint/5 flex items-center"
+                <button 
+                  onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                  className={`text-sm font-semibold transition-colors flex items-center gap-1.5
+                    py-2 px-3 rounded-md ${
+                    openDropdown === item.label 
+                      ? 'text-mint bg-mint/10' 
+                      : 'text-ink dark:text-white hover:text-mint hover:bg-mint/5'
+                  }`}
+                  aria-expanded={openDropdown === item.label}
+                  aria-haspopup="true"
+                >
+                  {item.label}
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${
+                    openDropdown === item.label ? 'rotate-180' : ''
+                  }`} />
+                </button>
+                {openDropdown === item.label && (
+                  <div 
+                    className="absolute top-full left-0 mt-1 
+                      bg-white dark:bg-[#0e1a2b] 
+                      border-2 border-border 
+                      rounded-lg shadow-xl 
+                      py-3 min-w-[240px] z-50
+                      animate-in fade-in slide-in-from-top-2 duration-200"
+                    role="menu"
+                    aria-label={`${item.label} menu`}
                   >
-                    {item.label}
-                  </a>
+                    {item.dropdown.map((subItem) => {
+                      if (subItem.type === "lessons") {
+                        return (
+                          <div key={subItem.label} className="px-2">
+                            <LightningLessons />
+                          </div>
+                        );
+                      }
+                      return (
+                        <a
+                          key={subItem.label}
+                          href={subItem.href}
+                          target={subItem.external ? "_blank" : undefined}
+                          rel={subItem.external ? "noopener noreferrer" : undefined}
+                          role="menuitem"
+                          className="flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-md mx-2
+                            text-ink dark:text-white hover:bg-mint/10 hover:text-ink dark:hover:text-white
+                            transition-colors"
+                        >
+                          <span>{subItem.label}</span>
+                          {subItem.external && (
+                            <ExternalLink className="h-3 w-3 ml-2" />
+                          )}
+                        </a>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             ))}
-
-            {/* Lightning Lessons */}
-            <div className="ml-6">
-              <LightningLessons />
-            </div>
 
             {/* Premium CTA Button */}
             <Button 
@@ -206,134 +195,108 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border pb-safe-bottom">
-            <div className="flex flex-col space-y-1">
-              {navItems.map((item, index) => (
-                <div key={item.label}>
-                  {item.dropdown ? (
+          <div className="md:hidden border-t border-border pb-safe-bottom">
+            <ScrollArea className="h-[calc(100vh-5rem)] py-4">
+              <div className="flex flex-col space-y-1">
+                {navItems.map((item, index) => (
+                  <div key={item.label}>
                     <div className="py-2">
                       <div className="text-xs font-bold uppercase tracking-wider 
                         text-muted-foreground mb-3 px-4">{item.label}</div>
                       <div className="flex flex-col space-y-1">
-                        {item.dropdown.map((subItem) => (
-                          <a
-                            key={subItem.label}
-                            href={subItem.href}
-                            target={subItem.external ? "_blank" : undefined}
-                            rel={subItem.external ? "noopener noreferrer" : undefined}
-                            className={`min-h-[44px] flex items-center justify-between px-4 py-3 
-                              text-base font-medium rounded-md transition-colors ${
-                              subItem.comingSoon 
-                                ? 'text-muted-foreground/50 cursor-not-allowed' 
-                                : 'text-ink dark:text-white hover:bg-mint/10'
-                            }`}
-                            onClick={(e) => {
-                              if (subItem.comingSoon && !subItem.allowClick) e.preventDefault();
-                              else setIsOpen(false);
-                            }}
-                          >
-                            <span>{subItem.label}</span>
-                            {subItem.comingSoon && 
-                              <span className="text-xs text-mint font-semibold">Coming Soon</span>}
-                            {subItem.external && 
-                              <ExternalLink className="h-3 w-3" />}
-                          </a>
-                        ))}
+                        {item.dropdown.map((subItem) => {
+                          if (subItem.type === "lessons") {
+                            return (
+                              <div key={subItem.label} className="py-2">
+                                <button 
+                                  onClick={() => setLessonsExpanded(!lessonsExpanded)}
+                                  className="w-full min-h-[44px] flex items-center justify-between px-4 py-3 
+                                    text-base font-medium text-ink dark:text-white 
+                                    hover:bg-mint/10 rounded-md transition-colors"
+                                >
+                                  Lightning Lessons
+                                  <ChevronDown className={`h-4 w-4 transition-transform ${lessonsExpanded ? 'rotate-180' : ''}`} />
+                                </button>
+                                
+                                {lessonsExpanded && (
+                                  <div className="flex flex-col space-y-1 mt-2 ml-4">
+                                    <a 
+                                      href="https://maven.com/p/1eb66a" 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="min-h-[44px] flex items-center justify-between px-4 py-3 
+                                        text-sm font-medium text-ink dark:text-white 
+                                        hover:bg-mint/10 rounded-md transition-colors"
+                                      onClick={() => setIsOpen(false)}
+                                    >
+                                      <span>Learn How To Program Your AI Tools</span>
+                                      <ExternalLink className="h-3 w-3 flex-shrink-0 ml-2" />
+                                    </a>
+                                    <a 
+                                      href="https://maven.com/p/1054a6" 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="min-h-[44px] flex items-center justify-between px-4 py-3 
+                                        text-sm font-medium text-ink dark:text-white 
+                                        hover:bg-mint/10 rounded-md transition-colors"
+                                      onClick={() => setIsOpen(false)}
+                                    >
+                                      <span>Build In Public with Gen AI</span>
+                                      <ExternalLink className="h-3 w-3 flex-shrink-0 ml-2" />
+                                    </a>
+                                    <a 
+                                      href="https://maven.com/p/b95f6c" 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="min-h-[44px] flex items-center justify-between px-4 py-3 
+                                        text-sm font-medium text-ink dark:text-white 
+                                        hover:bg-mint/10 rounded-md transition-colors"
+                                      onClick={() => setIsOpen(false)}
+                                    >
+                                      <span>Vibe Code Your Way To Income</span>
+                                      <ExternalLink className="h-3 w-3 flex-shrink-0 ml-2" />
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+                          return (
+                            <a
+                              key={subItem.label}
+                              href={subItem.href}
+                              target={subItem.external ? "_blank" : undefined}
+                              rel={subItem.external ? "noopener noreferrer" : undefined}
+                              className="min-h-[44px] flex items-center justify-between px-4 py-3 
+                                text-base font-medium text-ink dark:text-white 
+                                hover:bg-mint/10 rounded-md transition-colors"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <span>{subItem.label}</span>
+                              {subItem.external && 
+                                <ExternalLink className="h-3 w-3" />}
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
-                  ) : (
-                    <a
-                      href={item.href}
-                      className="min-h-[44px] flex items-center px-4 py-3 
-                        text-base font-medium text-ink dark:text-white 
-                        hover:bg-mint/10 rounded-md transition-colors"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.label}
-                    </a>
-                  )}
-                  {index < navItems.length - 1 && 
-                    <div className="h-px bg-border my-2" />}
-                </div>
-              ))}
-              
-              {/* Builder Economy in Mobile */}
-              <div className="h-px bg-border my-2" />
-              <a
-                href="/builder-economy"
-                className="min-h-[44px] flex items-center px-4 py-3 
-                  text-base font-medium text-ink dark:text-white 
-                  hover:bg-mint/10 rounded-md transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Builder Economy
-              </a>
-              
-              {/* Free Lightning Lessons - Expandable in Mobile */}
-              <div className="h-px bg-border my-2" />
-              <div className="py-2">
-                <button 
-                  onClick={() => setLessonsExpanded(!lessonsExpanded)}
-                  className="w-full text-xs font-bold uppercase tracking-wider 
-                    text-muted-foreground mb-3 px-4 flex items-center justify-between"
-                >
-                  Free Lightning Lessons
-                  <ChevronDown className={`h-4 w-4 transition-transform ${lessonsExpanded ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {lessonsExpanded && (
-                  <div className="flex flex-col space-y-1">
-                    <a 
-                      href="https://maven.com/p/1eb66a" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="min-h-[44px] flex items-center justify-between px-4 py-3 
-                        text-base font-medium text-ink dark:text-white 
-                        hover:bg-mint/10 rounded-md transition-colors"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <span>Learn How To Program Your AI Tools</span>
-                      <ExternalLink className="h-3 w-3 flex-shrink-0 ml-2" />
-                    </a>
-                    <a 
-                      href="https://maven.com/p/1054a6" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="min-h-[44px] flex items-center justify-between px-4 py-3 
-                        text-base font-medium text-ink dark:text-white 
-                        hover:bg-mint/10 rounded-md transition-colors"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <span>Build In Public with Gen AI</span>
-                      <ExternalLink className="h-3 w-3 flex-shrink-0 ml-2" />
-                    </a>
-                    <a 
-                      href="https://maven.com/p/b95f6c" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="min-h-[44px] flex items-center justify-between px-4 py-3 
-                        text-base font-medium text-ink dark:text-white 
-                        hover:bg-mint/10 rounded-md transition-colors"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <span>Vibe Code Your Way To Income</span>
-                      <ExternalLink className="h-3 w-3 flex-shrink-0 ml-2" />
-                    </a>
+                    {index < navItems.length - 1 && 
+                      <div className="h-px bg-border my-2" />}
                   </div>
-                )}
+                ))}
+                
+                <Button 
+                  size="sm" 
+                  className="w-fit mx-4 mt-4"
+                  onClick={() => {
+                    window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank');
+                    setIsOpen(false);
+                  }}
+                >
+                  Book Session
+                </Button>
               </div>
-              
-              <Button 
-                size="sm" 
-                className="w-fit mx-4 mt-2"
-                onClick={() => {
-                  window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank');
-                  setIsOpen(false);
-                }}
-              >
-                Book Session
-              </Button>
-            </div>
+            </ScrollArea>
           </div>
         )}
       </div>
