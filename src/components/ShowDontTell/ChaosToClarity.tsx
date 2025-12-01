@@ -105,7 +105,7 @@ const ChaosToClarity = () => {
 
   const handleProgress = useCallback((delta: number) => {
     setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / 800))
+      Math.max(0, Math.min(1, prev + delta / 571))  // 1.4x faster (800 / 1.4)
     );
   }, []);
 
@@ -115,19 +115,6 @@ const ChaosToClarity = () => {
     isComplete,
     enabled: true,
   });
-
-  // Show loading skeleton until isMobile is determined
-  if (isMobile === undefined) {
-    return (
-      <section className="section-padding bg-background py-32 relative overflow-hidden min-h-screen flex flex-col justify-center">
-        <div className="container-width">
-          <div className="text-center mb-16">
-            <div className="h-12 bg-muted/20 rounded-lg w-3/4 mx-auto animate-pulse" />
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   // Chaotic random positions
   const getRandomPosition = (id: number) => {
@@ -188,8 +175,9 @@ const ChaosToClarity = () => {
     const chaos = getRandomPosition(concept.id);
     const clarity = getOrganizedPosition(concept, index);
     
-    // Interpolate translateX as numeric value, then convert back
-    const chaosTranslate = 0; // chaos always uses 0%
+    // Parse ACTUAL chaos translateX value (not hardcoded 0)
+    const chaosTranslate = chaos.translateX === '-50%' ? -50 : 
+                           chaos.translateX === '-100%' ? -100 : 0;
     const clarityTranslate = clarity.translateX === '-100%' ? -100 : 
                              clarity.translateX === '-50%' ? -50 : 0;
     const interpolatedTranslate = chaosTranslate + (clarityTranslate - chaosTranslate) * animationProgress;
@@ -230,7 +218,18 @@ const ChaosToClarity = () => {
     return colors[category];
   };
 
-  const groupedConcepts = concepts.reduce((acc, concept) => {
+  // Filter concepts for mobile performance - limit temporary items
+  const visibleConcepts = concepts.filter(c => {
+    if (!c.temporary) return true;
+    // On mobile, reduce temporary items to improve performance
+    if (isMobile) {
+      if (c.id > 110 && c.id < 200) return false; // Skip some technical
+      if (c.id > 206) return false; // Skip some commercial/org/competitive
+    }
+    return true;
+  });
+
+  const groupedConcepts = visibleConcepts.reduce((acc, concept) => {
     if (!acc[concept.category]) acc[concept.category] = [];
     acc[concept.category].push(concept);
     return acc;
@@ -274,6 +273,16 @@ const ChaosToClarity = () => {
               ? { x: categoryPos.x, y: categoryPos.y - 8, rotation: 0 }
               : getRandomPosition(categoryPieces[0].id - 100);
             
+            // Interpolate label translateX properly
+            const labelChaosPos = getRandomPosition(categoryPieces[0].id - 100);
+            const labelClarityPos = { x: categoryPos.x, y: categoryPos.y - 8 };
+            
+            const labelChaosTranslate = labelChaosPos.translateX === '-50%' ? -50 : 0;
+            const labelClarityTranslate = categoryPos.translateX === '-50%' ? -50 : 
+                                          categoryPos.translateX === '-100%' ? -100 : 0;
+            const labelInterpolatedTranslate = labelChaosTranslate + 
+              (labelClarityTranslate - labelChaosTranslate) * Math.min(1, animationProgress * 2);
+            
             return (
               <div key={category}>
                 {/* Category Label */}
@@ -284,7 +293,7 @@ const ChaosToClarity = () => {
                   animate={{
                     left: `${labelPos.x}%`,
                     top: `${labelPos.y}%`,
-                    x: categoryPos.translateX,
+                    x: `${labelInterpolatedTranslate}%`,
                     y: '-50%',
                     rotate: animationProgress > 0.5 ? 0 : (labelPos.rotation || 0),
                     opacity: animationProgress > 0.3 ? 1 : 0.7,

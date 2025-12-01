@@ -35,7 +35,7 @@ const BeforeAfterSplit = () => {
 
   const handleProgress = useCallback((delta: number) => {
     setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / 1200))
+      Math.max(0, Math.min(1, prev + delta / 857))  // 1.4x faster (1200 / 1.4)
     );
   }, []);
 
