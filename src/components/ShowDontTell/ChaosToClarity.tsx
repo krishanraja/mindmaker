@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AINewsTicker from '@/components/AINewsTicker';
 import { useScrollLock } from '@/hooks/useScrollLock';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Category = "Technical" | "Commercial" | "Organizational" | "Competitive";
 
@@ -98,8 +99,14 @@ const concepts: Concept[] = [
 ];
 
 const ChaosToClarity = () => {
+  const isMobile = useIsMobile();
+  const [isReady, setIsReady] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
   const isComplete = animationProgress >= 1;
+
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
 
   const handleProgress = useCallback((delta: number) => {
     setAnimationProgress(prev => 
@@ -130,13 +137,11 @@ const ChaosToClarity = () => {
 
   // Organized 2x2 grid positions
   const getOrganizedPosition = (concept: Concept, index: number) => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    
     const categoryPositions = isMobile ? {
-      Technical: { baseX: 5, baseY: 18, translateX: '0%' },
-      Commercial: { baseX: 95, baseY: 18, translateX: '-100%' },
-      Organizational: { baseX: 5, baseY: 55, translateX: '0%' },
-      Competitive: { baseX: 95, baseY: 55, translateX: '-100%' },
+      Technical: { baseX: 10, baseY: 18, translateX: '0%' },
+      Commercial: { baseX: 90, baseY: 18, translateX: '-100%' },
+      Organizational: { baseX: 10, baseY: 55, translateX: '0%' },
+      Competitive: { baseX: 90, baseY: 55, translateX: '-100%' },
     } : {
       Technical: { baseX: 30, baseY: 22, translateX: '-50%' },
       Commercial: { baseX: 70, baseY: 22, translateX: '-50%' },
@@ -218,8 +223,10 @@ const ChaosToClarity = () => {
     return acc;
   }, {} as Record<Category, Concept[]>);
 
+  if (!isReady) return null;
+
   return (
-    <section 
+    <section
       ref={sectionRef} 
       className="section-padding bg-background py-32 relative overflow-hidden min-h-screen flex flex-col justify-center"
     >
@@ -247,7 +254,7 @@ const ChaosToClarity = () => {
         </motion.div>
 
         {/* Concepts Visualization */}
-        <div className="relative h-[500px] md:h-[600px] max-w-4xl mx-auto overflow-x-hidden">
+        <div className="relative h-[500px] md:h-[600px] w-full max-w-4xl mx-auto overflow-hidden">
           {Object.entries(groupedConcepts).map(([category, categoryPieces]) => {
             const cat = category as Category;
             const categoryPos = getOrganizedPosition(categoryPieces[0], 0);
@@ -294,7 +301,7 @@ const ChaosToClarity = () => {
                   return (
                     <motion.div
                       key={concept.id}
-                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[45vw] overflow-hidden text-ellipsis transition-colors duration-300
+                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[40vw] md:max-w-none overflow-hidden text-ellipsis transition-colors duration-300
                         ${animationProgress > 0.7 
                           ? 'bg-muted/30 border-border text-foreground' 
                           : 'bg-muted/50 border-border text-muted-foreground'}
