@@ -31,16 +31,12 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     { 
       value: "for-you", 
       label: "For You", 
-      subtitle: "Individual leadership development",
-      originalPrice: "$250",
-      currentPrice: "$150",
-      priceNote: "Holiday rate until Jan 1"
+      subtitle: "Individual leadership development"
     },
     { 
       value: "for-team", 
       label: "For Your Leadership Team", 
-      subtitle: "Executive team transformation",
-      currentPrice: "Scope call"
+      subtitle: "Executive team transformation"
     },
     { 
       value: "for-portfolio", 
@@ -87,46 +83,21 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
         // Don't block the booking flow if email fails
       }
       
-      // For partner program, go directly to Calendly
-      if (selectedProgram === 'for-portfolio') {
-        const calendlyUrl = `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}&a1=${encodeURIComponent(selectedProgram)}`;
-        window.open(calendlyUrl, '_blank');
-        onOpenChange(false);
-        toast({
-          title: "Opening Calendly",
-          description: "Booking your consultation...",
-        });
-        return;
-      }
-
-      console.log('Invoking edge function with:', { name, email, selectedProgram });
-      
-      const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
-        body: { 
-          name, 
-          email, 
-          selectedProgram
-        }
+      // Direct to Calendly for all programs (no payment hold for now)
+      const calendlyUrl = `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}&a1=${encodeURIComponent(selectedProgram)}`;
+      window.open(calendlyUrl, '_blank');
+      onOpenChange(false);
+      toast({
+        title: "Opening Calendly",
+        description: "Booking your consultation...",
       });
-
-      console.log('Edge function response:', { data, error });
-
-      if (error) {
-        console.error('Edge function error:', error);
-        throw error;
-      }
-
-      if (data?.url) {
-        console.log('Opening checkout URL:', data.url);
-        window.open(data.url, '_blank');
-        onOpenChange(false);
-        toast({
-          title: "Redirecting to checkout",
-          description: "Opening Stripe checkout in a new tab...",
-        });
-      } else {
-        throw new Error('No checkout URL returned from server');
-      }
+      
+      // Keep Stripe integration code for future use
+      // const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
+      //   body: { name, email, selectedProgram }
+      // });
+      // if (error) throw error;
+      // if (data?.url) window.open(data.url, '_blank');
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast({
@@ -152,33 +123,26 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
                 htmlFor={program.value} 
                 className="font-normal cursor-pointer flex-1 leading-tight"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <span className="font-semibold block">{program.label}</span>
-                    <span className="text-xs text-muted-foreground">{program.subtitle}</span>
-                  </div>
-                  {program.currentPrice && (
-                    <div className="text-right flex-shrink-0">
-                      {program.originalPrice && (
-                        <div className="text-xs text-muted-foreground line-through">
-                          {program.originalPrice}
-                        </div>
-                      )}
-                      <div className="text-sm font-bold text-mint">
-                        {program.currentPrice}
-                      </div>
-                      {program.priceNote && (
-                        <div className="text-[10px] text-muted-foreground">
-                          {program.priceNote}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                <div>
+                  <span className="font-semibold block">{program.label}</span>
+                  <span className="text-xs text-muted-foreground">{program.subtitle}</span>
                 </div>
               </Label>
             </div>
           ))}
         </RadioGroup>
+        
+        {/* Conditional pricing text */}
+        {selectedProgram === 'for-you' && (
+          <p className="text-sm text-muted-foreground pl-7">
+            Single session from $250
+          </p>
+        )}
+        {(selectedProgram === 'for-team' || selectedProgram === 'for-portfolio') && (
+          <p className="text-sm text-muted-foreground pl-7">
+            Final pricing given on scope
+          </p>
+        )}
       </div>
 
       {/* Name, Job Title & Email */}
@@ -218,31 +182,13 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
 
       {/* Value Props */}
       <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border/50">
-        {selectedProgram === 'for-portfolio' ? (
-          <div className="flex items-start gap-2 text-sm">
-            <span className="text-lg">🎯</span>
-            <div>
-              <span className="font-semibold">Portfolio Program</span>
-              <span className="text-muted-foreground"> • Free consultation • Direct booking</span>
-            </div>
+        <div className="flex items-start gap-2 text-sm">
+          <span className="text-lg">🎯</span>
+          <div>
+            <span className="font-semibold">Free consultation</span>
+            <span className="text-muted-foreground"> • 45 minutes to map your outcomes • Zero pressure • Real conversation</span>
           </div>
-        ) : selectedProgram === 'for-team' || selectedProgram === 'not-sure' ? (
-          <div className="flex items-start gap-2 text-sm">
-            <span className="text-lg">📞</span>
-            <div>
-              <span className="font-semibold">Scope call required</span>
-              <span className="text-muted-foreground"> • Free consultation to understand your needs • Custom pricing based on scope</span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-start gap-2 text-sm">
-            <span className="text-lg">🔒</span>
-            <div>
-              <span className="font-semibold">$50 hold</span>
-              <span className="text-muted-foreground"> • Fully refundable if not satisfied • Deducted from any program you choose</span>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Submit Button */}
