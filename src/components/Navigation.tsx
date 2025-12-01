@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sun, Moon, ChevronDown, ExternalLink } from "lucide-react";
 import { useTheme } from "next-themes";
-import mindmakerIconDark from "@/assets/mindmaker-icon-dark.png";
+import mindmakerLogoDark from "@/assets/mindmaker-logo-dark.png";
+import mindmakerLogoLight from "@/assets/mindmaker-logo-light.png";
 import { LightningLessons } from "@/components/LightningLessons";
 
 const Navigation = () => {
@@ -13,15 +14,15 @@ const Navigation = () => {
 
   const navItems = [
     { 
-      label: "For Individuals", 
+      label: "Individuals", 
       dropdown: [
         { label: "Builder Session", href: "/builder-session" },
         { label: "Weekly Updates", href: "/builder-session" },
         { label: "90-Day Program", href: "/builder-sprint" },
       ]
     },
-    { label: "For Teams", href: "/leadership-lab" },
-    { label: "For Partners", href: "/partner-program" },
+    { label: "Teams", href: "/leadership-lab" },
+    { label: "Portfolios", href: "/portfolio-program" },
     { 
       label: "Content", 
       dropdown: [
@@ -57,14 +58,14 @@ const Navigation = () => {
   return (
     <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm pt-safe-top">
       <div className="container-width">
-        <div className="flex items-center justify-between h-14 sm:h-16">
+        <div className="flex items-center justify-between h-20 sm:h-24">
           {/* Logo */}
           <div className="flex items-center">
             <a href="/" className="transition-opacity hover:opacity-80">
               <img 
-                src={mindmakerIconDark} 
+                src={theme === "dark" ? mindmakerLogoLight : mindmakerLogoDark} 
                 alt="Mindmaker" 
-                className="h-8 sm:h-10 w-auto"
+                className="h-16 sm:h-20 w-auto"
               />
             </a>
           </div>

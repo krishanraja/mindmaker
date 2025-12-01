@@ -8,9 +8,9 @@ import { ModuleExplorer } from "@/components/ModuleExplorer";
 
 const PartnerProgram = () => {
   const seoData = {
-    title: "Partner Portfolio Program - AI Enablement for VCs and Advisors",
+    title: "Portfolio Program - AI Enablement for VCs and Advisors",
     description: "6-12 month program for VC funds, advisory firms, and consultancies. Portfolio-wide AI enablement with repeatable methods, co-branded assets, and direct expert access.",
-    canonical: "/partner-program",
+    canonical: "/portfolio-program",
     keywords: "VC AI program, portfolio AI enablement, advisory AI, consultancy AI, investor AI tools, portfolio company AI, VC value creation, AI for advisors",
     jsonLd: {
       "@context": "https://schema.org",
@@ -68,10 +68,10 @@ const PartnerProgram = () => {
           {/* Header */}
           <div className="text-center mb-12">
             <div className="inline-block bg-ink/10 dark:bg-mint/10 text-ink dark:text-foreground px-4 py-2 rounded-full text-sm font-bold mb-6">
-              FOR PARTNERS
+              FOR PORTFOLIOS
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Partner Portfolio Program
+              Portfolio Program
             </h1>
             <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
               <TrendingUp className="h-5 w-5" />
@@ -148,7 +148,7 @@ const PartnerProgram = () => {
           </div>
           
           {/* Module Explorer */}
-          <ModuleExplorer context="partner" />
+          <ModuleExplorer context="portfolio" />
           
           {/* CTA */}
           <Card className="p-8 text-center">
