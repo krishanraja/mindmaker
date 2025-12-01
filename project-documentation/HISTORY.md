@@ -1,6 +1,47 @@
 # History
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-12-01
+
+---
+
+## 2025-12-01: Remove $50 Hold & Lead Intelligence System
+
+**What Changed:**
+- Paused Stripe $50 authorization hold requirement
+- Implemented direct Calendly booking without payment
+- Created `send-lead-email` edge function with:
+  - OpenAI-powered company research (domain → company info + news)
+  - Session data compilation (friction map, portfolio, assessment)
+  - Retry logic with exponential backoff (3 attempts)
+- Updated `InitialConsultModal` with conditional pricing text
+- Added comprehensive diagnostic logging to all edge functions
+
+**Why:**
+- Lower booking friction during validation phase
+- Validate demand without payment barrier
+- Capture rich lead intelligence instead of payment signal
+- Enable rapid iteration without payment complexity
+
+**Lead Intelligence Features:**
+- Email domain → Company name, industry, size, latest news
+- Session engagement: friction map usage, portfolio builder, assessment
+- Try-It widget interactions
+- Pages visited, time on site, scroll depth
+- Suggested scope of work based on context
+
+**Files Modified:**
+- `src/components/InitialConsultModal.tsx`
+- `src/components/ConsultationBooking.tsx`
+- `supabase/functions/send-lead-email/index.ts` (new)
+- `supabase/functions/chat-with-krish/index.ts` (added logging)
+- `supabase/functions/get-market-sentiment/index.ts` (added logging)
+- `supabase/functions/get-ai-news/index.ts` (improved error messages)
+- All backend documentation files
+
+**Stripe Integration Status:**
+- Code kept but commented out
+- Can be re-enabled quickly if needed
+- `create-consultation-hold` function remains but unused
 
 ---
 

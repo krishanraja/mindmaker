@@ -1,10 +1,47 @@
 # Decisions Log
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-12-01
 
 ---
 
 ## Architecture Decisions
+
+### 2025-12-01: Pause Stripe $50 Hold - Direct Calendly Booking
+**Decision:** Remove $50 authorization hold requirement, enable direct Calendly booking  
+**Rationale:**
+- Remove friction in early customer acquisition phase
+- Validate demand without payment barrier
+- Stripe integration remains live but dormant (easy to re-enable)
+- Focus on lead quality via email intelligence instead
+
+**Alternatives Considered:**
+- Keep $50 hold (too much friction for initial validation)
+- Free with no commitment (risk of no-shows, but acceptable for now)
+- Lower hold amount (still friction, not solving core issue)
+
+**Implementation Changes:**
+- `InitialConsultModal`: Add conditional pricing text by program
+- `ConsultationBooking`: Bypass Stripe, direct Calendly redirect
+- `send-lead-email`: New function to capture + enrich lead data
+- Stripe code kept commented out for future re-enablement
+
+**Impact:**
+- Lower booking friction → Expected higher conversion
+- Lead enrichment via company research + session data
+- Stripe integration dormant but ready to reactivate
+- Risk of no-shows acceptable during validation phase
+
+**When to Revisit:**
+- After 50+ bookings to assess no-show rate
+- When demand validated and can justify payment requirement
+- When building client portal with payment integration
+
+**Files Affected:**
+- `src/components/InitialConsultModal.tsx`
+- `src/components/ConsultationBooking.tsx`
+- `supabase/functions/send-lead-email/index.ts` (new)
+
+---
 
 ### 2025-11-25: Single Modal Entry Point for All CTAs
 **Decision:** All CTAs route through `InitialConsultModal` with program selection  

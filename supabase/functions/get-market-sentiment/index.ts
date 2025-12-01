@@ -19,13 +19,17 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const requestId = Math.random().toString(36).substring(7);
+  console.log(`[${requestId}] ===== MARKET SENTIMENT REQUEST START =====`);
+
   try {
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openaiApiKey) {
+      console.error(`[${requestId}] OPENAI_API_KEY not configured`);
       throw new Error('OpenAI API key not configured');
     }
 
-    console.log('Requesting market sentiment from OpenAI...');
+    console.log(`[${requestId}] Requesting market sentiment from OpenAI...`);
 
     const prompt = `Based on current AI and job market trends today (${new Date().toISOString().split('T')[0]}), analyze the sentiment and provide a JSON response with:
 
@@ -105,14 +109,16 @@ Respond ONLY with valid JSON in this exact format:
       };
     }
 
-    console.log('Processed market sentiment:', marketSentiment);
+    console.log(`[${requestId}] Processed market sentiment:`, marketSentiment);
+    console.log(`[${requestId}] ===== MARKET SENTIMENT REQUEST SUCCESS =====`);
 
     return new Response(JSON.stringify(marketSentiment), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
-    console.error('Error in get-market-sentiment function:', error);
+    console.error(`[${requestId}] ===== MARKET SENTIMENT REQUEST ERROR =====`);
+    console.error(`[${requestId}] Error:`, error);
     
     // Return fallback neutral sentiment on error
     const fallbackSentiment = {

@@ -296,8 +296,12 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const requestId = Math.random().toString(36).substring(7);
+  console.log(`[${requestId}] ===== CHAT REQUEST START =====`);
+  
   try {
     const { messages, widgetMode } = await req.json();
+    console.log(`[${requestId}] Widget mode: ${widgetMode}, Messages count: ${messages?.length || 0}`);
     
     if (!messages || !Array.isArray(messages)) {
       throw new Error('Invalid messages format');
@@ -410,8 +414,12 @@ User: "How is this different from training?"
 You: "We don't train—we build. You leave with working systems, not slides. [See the 30-Day Sprint](/builder-sprint) or [try the tool](/) now."`;
 
     // Get access token and call Vertex AI with system instruction
+    console.log(`[${requestId}] Authenticating with Google service account...`);
     const accessToken = await getAccessToken(serviceAccount);
+    console.log(`[${requestId}] Authentication successful, calling Vertex AI RAG...`);
+    
     const assistantMessage = await callVertexAI(messages, accessToken, isTryItWidget, systemPrompt);
+    console.log(`[${requestId}] Vertex AI response received, length: ${assistantMessage.length} chars`);
 
     const response: ChatResponse = {
       message: assistantMessage,
@@ -422,6 +430,7 @@ You: "We don't train—we build. You leave with working systems, not slides. [Se
       },
     };
 
+    console.log(`[${requestId}] ===== CHAT REQUEST SUCCESS =====`);
     return new Response(
       JSON.stringify(response),
       {
@@ -429,7 +438,8 @@ You: "We don't train—we build. You leave with working systems, not slides. [Se
       }
     );
   } catch (error) {
-    console.error('Error in chat-with-krish function:', error);
+    console.error(`[${requestId}] ===== CHAT REQUEST ERROR =====`);
+    console.error(`[${requestId}] Error:`, error);
     
     // Always return a usable response, never break the UI
     const errorResponse: ChatResponse = {

@@ -211,26 +211,66 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
       </ul>
     `;
 
-    const emailResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'MindMaker Leads <onboarding@resend.dev>',
-        to: ['krish@themindmaker.ai'],
-        subject: `🎯 Lead: ${name} from ${companyResearch.companyName} - ${programLabels[selectedProgram]}`,
-        html: emailHtml,
-      }),
-    });
+    // Send email with retry logic
+    let emailSent = false;
+    let lastError: Error | null = null;
+    const maxRetries = 3;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`Email send attempt ${attempt}/${maxRetries}`);
+        
+        const emailResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'MindMaker Leads <onboarding@resend.dev>',
+            to: ['krish@themindmaker.ai'],
+            subject: `🎯 Lead: ${name} from ${companyResearch.companyName} - ${programLabels[selectedProgram]}`,
+            html: emailHtml,
+          }),
+        });
 
-    if (!emailResponse.ok) {
-      const errorText = await emailResponse.text();
-      console.error('Email send failed:', errorText);
+        if (!emailResponse.ok) {
+          const errorText = await emailResponse.text();
+          lastError = new Error(`Resend API error (${emailResponse.status}): ${errorText}`);
+          console.error(`Email send attempt ${attempt} failed:`, lastError.message);
+          
+          // Exponential backoff: 1s, 2s, 4s
+          if (attempt < maxRetries) {
+            const backoffMs = Math.pow(2, attempt - 1) * 1000;
+            console.log(`Retrying in ${backoffMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, backoffMs));
+            continue;
+          }
+          
+          throw lastError;
+        }
+
+        const emailData = await emailResponse.json();
+        console.log("Email sent successfully:", emailData);
+        emailSent = true;
+        break;
+        
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        console.error(`Email attempt ${attempt} error:`, lastError);
+        
+        if (attempt < maxRetries) {
+          const backoffMs = Math.pow(2, attempt - 1) * 1000;
+          console.log(`Network error, retrying in ${backoffMs}ms...`);
+          await new Promise(resolve => setTimeout(resolve, backoffMs));
+        }
+      }
     }
-
-    console.log("Email sent successfully");
+    
+    if (!emailSent) {
+      console.error("CRITICAL: Email failed after all retry attempts");
+      throw new Error(`Email delivery failed after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`);
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
