@@ -193,21 +193,6 @@ const TheProblem = () => {
               Lead from the front.
             </h2>
             
-            {/* Disclaimer */}
-            <motion.div 
-              className="mb-6 max-w-3xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={isVisible ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-mint/10 border border-mint/30 rounded-lg">
-                <Sparkles className="w-3.5 h-3.5 text-mint-dark flex-shrink-0" />
-                <span className="text-muted-foreground text-[0.7rem]">
-                  <strong className="text-foreground">Sample tools for exploration.</strong> Actual tool recommendations and strategies are delivered through our Sprint services.
-                </span>
-              </div>
-            </motion.div>
-            
             <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto">
               AI Agents will be working inside most businesses within six months. Are you ready to lead a new species of worker?
             </p>
