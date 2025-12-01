@@ -66,10 +66,9 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
 
       const rect = section.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const thresholdY = viewportHeight * options.lockThreshold;
       
-      const shouldLock = rect.top <= thresholdY && 
-                         rect.bottom > viewportHeight * 0.5 && 
+      const shouldLock = rect.top <= 0 && 
+                         rect.bottom > viewportHeight * 0.3 && 
                          !isCompleteRef.current;
 
       if (shouldLock && !isLocked) {

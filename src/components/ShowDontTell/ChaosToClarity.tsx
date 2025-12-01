@@ -103,12 +103,12 @@ const ChaosToClarity = () => {
 
   const handleProgress = useCallback((delta: number) => {
     setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / 1800))
+      Math.max(0, Math.min(1, prev + delta / 800))
     );
   }, []);
 
   const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: 0.5,
+    lockThreshold: 0,
     onProgress: handleProgress,
     isComplete,
     enabled: true,
@@ -124,6 +124,7 @@ const ChaosToClarity = () => {
       x: 10 + randX * 80,
       y: 10 + randY * 80,
       rotation: (randX - 0.5) * 30,
+      translateX: '0%',
     };
   };
 
@@ -132,10 +133,10 @@ const ChaosToClarity = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     
     const categoryPositions = isMobile ? {
-      Technical: { baseX: 10, baseY: 15, translateX: '0%' },
-      Commercial: { baseX: 90, baseY: 15, translateX: '-100%' },
-      Organizational: { baseX: 10, baseY: 58, translateX: '0%' },
-      Competitive: { baseX: 90, baseY: 58, translateX: '-100%' },
+      Technical: { baseX: 15, baseY: 18, translateX: '0%' },
+      Commercial: { baseX: 85, baseY: 18, translateX: '-100%' },
+      Organizational: { baseX: 15, baseY: 55, translateX: '0%' },
+      Competitive: { baseX: 85, baseY: 55, translateX: '-100%' },
     } : {
       Technical: { baseX: 30, baseY: 22, translateX: '-50%' },
       Commercial: { baseX: 70, baseY: 22, translateX: '-50%' },
@@ -143,12 +144,18 @@ const ChaosToClarity = () => {
       Competitive: { baseX: 70, baseY: 62, translateX: '-50%' },
     };
 
-    const categoryIndex = concepts
-      .filter(c => c.category === concept.category)
-      .findIndex(c => c.id === concept.id);
+    // For position calculation, only count permanent items
+    const permanentConcepts = concepts.filter(c => !c.temporary);
+    const categoryItems = permanentConcepts.filter(c => c.category === concept.category);
+    const categoryIndex = categoryItems.findIndex(c => c.id === concept.id);
+    
+    // If temporary, return random position (they fade out)
+    if (concept.temporary) {
+      return getRandomPosition(concept.id);
+    }
 
     const base = categoryPositions[concept.category];
-    const offsetY = categoryIndex * (isMobile ? 8 : 7);
+    const offsetY = categoryIndex * (isMobile ? 6.5 : 7);
 
     return {
       x: base.baseX,

@@ -35,12 +35,12 @@ const BeforeAfterSplit = () => {
 
   const handleProgress = useCallback((delta: number) => {
     setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / 3000))
+      Math.max(0, Math.min(1, prev + delta / 1200))
     );
   }, []);
 
   const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: 0.2,
+    lockThreshold: 0,
     onProgress: handleProgress,
     isComplete,
     enabled: true,
