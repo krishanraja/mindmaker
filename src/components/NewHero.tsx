@@ -1,10 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import mindmakerIconDark from "@/assets/mindmaker-icon-dark.png";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
+import { motion, AnimatePresence } from "framer-motion";
 
 const NewHero = () => {
   const [consultModalOpen, setConsultModalOpen] = useState(false);
+
+  const heroVariants = [
+    "Become the next version of yourself with",
+    "Lead the next chapter of your business with",
+    "Build the skills your future demands today with",
+    "Strengthen your judgment for what comes next with",
+    "Step into the role your company will need with",
+    "Shape a sharper path for your team's future with",
+    "Prepare yourself for every decisive moment with",
+    "Guide your organisation with clearer thinking through",
+    "Stay ahead of every shift in your industry with",
+    "Upgrade the decisions that define your success with",
+    "Lead with confidence in a changing world through",
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % heroVariants.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [heroVariants.length]);
 
   return (
     <section id="hero" className="min-h-screen flex items-center justify-center bg-ink text-white relative overflow-hidden pt-safe-area-top">
@@ -56,7 +81,19 @@ const NewHero = () => {
         <div className="max-w-5xl mx-auto">
           <div className="space-y-6 sm:space-y-8 md:space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white max-w-4xl">
-              Become the next<br className="hidden md:block" /> version of yourself with{" "}
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={currentIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-block"
+                >
+                  {heroVariants[currentIndex]}
+                </motion.span>
+              </AnimatePresence>
+              {" "}
               <span className="relative inline-block">
                 <span className="relative z-10 text-mint animate-pulse" style={{animationDuration: '2s'}}>AI literacy for leaders</span>
                 <span className="absolute bottom-0 left-0 w-full h-3 sm:h-4 bg-mint/30 -z-10 animate-expandWidth blur-sm"></span>
