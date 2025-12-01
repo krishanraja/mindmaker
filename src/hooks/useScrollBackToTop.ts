@@ -10,6 +10,7 @@ export const useScrollBackToTop = () => {
   const hasShownThisSession = useRef(
     sessionStorage.getItem(SESSION_KEY) === 'true'
   );
+  const scrollLockCooldownRef = useRef(false);
 
   useEffect(() => {
     // Check if popup is expired
@@ -22,6 +23,13 @@ export const useScrollBackToTop = () => {
     if (hasShownThisSession.current) return;
 
     const handleScroll = () => {
+      // Don't trigger during scroll lock cooldown
+      if (scrollLockCooldownRef.current) return;
+      
+      // Check if body has scroll lock styles (position: fixed means scroll is locked)
+      const isScrollLocked = document.body.style.position === 'fixed';
+      if (isScrollLocked) return;
+      
       const scrollY = window.scrollY;
       const pageHeight = document.documentElement.scrollHeight;
       const viewportHeight = window.innerHeight;
@@ -42,8 +50,30 @@ export const useScrollBackToTop = () => {
       }
     };
 
+    // Monitor for scroll lock releases to set cooldown
+    const observer = new MutationObserver(() => {
+      const wasLocked = scrollLockCooldownRef.current;
+      const isLocked = document.body.style.position === 'fixed';
+      
+      // If transitioning from locked to unlocked, set cooldown
+      if (!isLocked && document.body.style.overflow === '') {
+        scrollLockCooldownRef.current = true;
+        setTimeout(() => {
+          scrollLockCooldownRef.current = false;
+        }, 1000); // 1 second cooldown after scroll lock releases
+      }
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, [hasScrolledDeep]);
 
   const dismissPopup = (permanent: boolean = false) => {
