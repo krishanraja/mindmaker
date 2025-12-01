@@ -32,18 +32,32 @@ const BeforeAfterSplit = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  // Map raw scroll progress to animation progress with reading zones
+  const getAnimationProgress = (rawProgress: number): number => {
+    // Phase 1: 0% → 35% scroll = 0% animation (Before reading zone)
+    if (rawProgress < 0.35) return 0;
+    
+    // Phase 2: 35% → 75% scroll = 0% → 100% animation (Wipe happens here)
+    if (rawProgress < 0.75) {
+      return (rawProgress - 0.35) / 0.40; // 40% of scroll for the wipe
+    }
+    
+    // Phase 3: 75% → 100% scroll = 100% animation (After reading zone)
+    return 1;
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (!sectionRef.current) return;
       
       const rect = sectionRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const sectionHeight = rect.height;
       
-      // Animation spans from when section enters viewport until it's scrolled 40% through
-      // This gives the user much more time to watch the transformation
-      const enterPoint = viewportHeight; // Section top enters at bottom of viewport
-      const exitPoint = -sectionHeight * 0.4; // Complete when 40% of section has scrolled past top
+      // Calculate when section is vertically centered in viewport
+      // Progress starts when top of section reaches 80% down the viewport
+      // Progress ends when top of section reaches 20% up from viewport top
+      const enterPoint = viewportHeight * 0.8; // Section enters at 80% from top
+      const exitPoint = viewportHeight * 0.2;  // Animation complete at 20% from top
       
       let progress = 0;
       
@@ -60,6 +74,8 @@ const BeforeAfterSplit = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const animationProgress = getAnimationProgress(scrollProgress);
 
   return (
     <section 
@@ -83,11 +99,13 @@ const BeforeAfterSplit = () => {
             <div className="h-1 w-20 bg-muted rounded-full overflow-hidden">
               <motion.div 
                 className="h-full bg-mint rounded-full"
-                style={{ width: `${scrollProgress * 100}%` }}
+                style={{ width: `${animationProgress * 100}%` }}
               />
             </div>
             <span className="text-xs text-muted-foreground">
-              {scrollProgress < 0.5 ? '↓ Keep scrolling' : 'Almost there...'}
+              {animationProgress === 0 ? '↓ Read, then scroll' : 
+               animationProgress < 1 ? 'Transforming...' : 
+               '✓ Complete'}
             </span>
           </div>
         )}
@@ -109,7 +127,7 @@ const BeforeAfterSplit = () => {
             {/* Items */}
             <div className="space-y-4">
               {transformations.map((item, index) => {
-                const itemProgress = getItemProgress(index, scrollProgress);
+                const itemProgress = getItemProgress(index, animationProgress);
                 return (
                   <motion.div 
                     key={`after-${index}`}
@@ -146,7 +164,7 @@ const BeforeAfterSplit = () => {
           <motion.div
             className="absolute inset-0 bg-card"
             style={{
-              clipPath: `inset(0 0 0 ${scrollProgress * 100}%)`,
+              clipPath: `inset(0 0 0 ${animationProgress * 100}%)`,
             }}
             transition={{ type: "tween", ease: "easeOut", duration: 0.1 }}
           >
@@ -189,11 +207,11 @@ const BeforeAfterSplit = () => {
           </motion.div>
 
           {/* Mint glow line at sweep edge */}
-          {scrollProgress > 0.05 && scrollProgress < 0.95 && (
+          {animationProgress > 0.05 && animationProgress < 0.95 && (
             <motion.div
               className="absolute top-0 bottom-0 w-1 pointer-events-none"
               style={{
-                left: `${scrollProgress * 100}%`,
+                left: `${animationProgress * 100}%`,
                 background: 'linear-gradient(to right, transparent, hsl(var(--mint)), transparent)',
                 boxShadow: '0 0 20px 2px hsl(var(--mint) / 0.5)',
               }}
@@ -204,7 +222,7 @@ const BeforeAfterSplit = () => {
         </div>
 
         {/* Completion message */}
-        {scrollProgress > 0.85 && (
+        {animationProgress > 0.85 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -221,11 +239,10 @@ const BeforeAfterSplit = () => {
 };
 
 // Calculate progress for each item with stagger
-const getItemProgress = (index: number, scrollProgress: number) => {
-  const itemStart = 0.15 + (index * 0.12);
-  const itemDuration = 0.15;
-  const itemEnd = itemStart + itemDuration;
-  return Math.max(0, Math.min(1, (scrollProgress - itemStart) / itemDuration));
+const getItemProgress = (index: number, animationProgress: number) => {
+  const itemStart = index * 0.15;
+  const itemDuration = 0.20;
+  return Math.max(0, Math.min(1, (animationProgress - itemStart) / itemDuration));
 };
 
 export default BeforeAfterSplit;

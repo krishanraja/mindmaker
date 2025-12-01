@@ -66,9 +66,9 @@ const ChaosToClarity = () => {
         // Hysteresis pattern: only change headline phase with buffer zones
         // This prevents rapid switching that causes flashing
         const organizationLevel = 
-          progress < 0.15 ? 0 : 
-          progress > 0.45 ? 1 : 
-          (progress - 0.15) / 0.30;
+          progress < 0.10 ? 0 : 
+          progress > 0.35 ? 1 : 
+          (progress - 0.10) / 0.25;
         
         if (organizationLevel < 0.25 && headlinePhase !== 'chaos') {
           setHeadlinePhase('chaos');
@@ -91,11 +91,11 @@ const ChaosToClarity = () => {
     };
   }, [headlinePhase]);
 
-  // Faster animation: 0.15-0.45 instead of 0.2-0.8 (completes 5% earlier)
+  // Faster animation: 0.10-0.35 instead of 0.15-0.45 (completes 10% earlier)
   const organizationLevel = 
-    scrollProgress < 0.15 ? 0 : 
-    scrollProgress > 0.45 ? 1 : 
-    (scrollProgress - 0.15) / 0.30;
+    scrollProgress < 0.10 ? 0 : 
+    scrollProgress > 0.35 ? 1 : 
+    (scrollProgress - 0.10) / 0.25;
 
   // Chaotic random positions
   const getRandomPosition = (id: number) => {
