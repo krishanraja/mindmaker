@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import AINewsTicker from '@/components/AINewsTicker';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { mapRange, easeInOutCubic, lerp, smoothStep } from '@/utils/animationEasing';
 
 type Category = "Technical" | "Commercial" | "Organizational" | "Competitive";
 
@@ -197,15 +198,25 @@ const ChaosToClarity = () => {
     return `${month} ${year}`;
   };
 
+  // Unified animation timeline helpers
+  const getHeadlineProgress = () => mapRange(animationProgress, 0.7, 0.9);
+  const getLabelProgress = () => mapRange(animationProgress, 0.4, 0.6);
+  const getColorProgress = () => mapRange(animationProgress, 0.6, 0.8);
+  const getTemporaryFadeProgress = () => mapRange(animationProgress, 0.2, 0.6);
+  const getNewsTickerProgress = () => mapRange(animationProgress, 0.75, 0.9);
+
   const getHeadline = () => {
-    if (animationProgress < 0.85) {
-      return "From chaos and a firehose of info, to...";
-    }
-    return "To a clear path, charted with real-world expertise.";
+    const headlineProgress = getHeadlineProgress();
+    return headlineProgress < 0.5
+      ? "From chaos and a firehose of info, to..."
+      : "To a clear path, charted with real-world expertise.";
   };
 
   const getCategoryColor = (category: Category, isLabel: boolean = false) => {
-    if (animationProgress < 0.7) {
+    const colorProgress = getColorProgress();
+    
+    // Smoothly transition colors instead of hard threshold
+    if (colorProgress < 0.3) {
       return isLabel ? "text-foreground" : "text-muted-foreground";
     }
     
@@ -249,17 +260,17 @@ const ChaosToClarity = () => {
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {getHeadline()}
-            {animationProgress > 0.7 && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                className="text-base md:text-lg text-foreground/70 mt-4 leading-relaxed"
-              >
-                This is the critical missing piece before you deploy a six-figure consultant, and improves your confidence and decision making<br />
-                - ready for when you embark on a full AI strategy or transformation.
-              </motion.p>
-            )}
+            <motion.p
+              animate={{ 
+                opacity: smoothStep(0.65, 0.8, animationProgress),
+                y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8))
+              }}
+              transition={{ duration: 0.3 }}
+              className="text-base md:text-lg text-foreground/70 mt-4 leading-relaxed"
+            >
+              This is the critical missing piece before you deploy a six-figure consultant, and improves your confidence and decision making<br />
+              - ready for when you embark on a full AI strategy or transformation.
+            </motion.p>
           </h2>
         </motion.div>
 
@@ -283,20 +294,23 @@ const ChaosToClarity = () => {
             const labelInterpolatedTranslate = labelChaosTranslate + 
               (labelClarityTranslate - labelChaosTranslate) * Math.min(1, animationProgress * 2);
             
+            const labelProgress = getLabelProgress();
+            const labelScale = lerp(1, 1.05, smoothStep(0.6, 0.8, animationProgress));
+            const labelOpacity = lerp(0.7, 1, smoothStep(0.2, 0.5, animationProgress));
+            
             return (
               <div key={category}>
                 {/* Category Label */}
                 <motion.div
-                  className={`absolute text-xs md:text-sm font-bold uppercase tracking-wider whitespace-nowrap transition-all duration-300 ${
-                    animationProgress > 0.7 ? 'scale-105' : ''
-                  } ${getCategoryColor(cat, true)}`}
+                  className={`absolute text-xs md:text-sm font-bold uppercase tracking-wider whitespace-nowrap ${getCategoryColor(cat, true)}`}
                   animate={{
                     left: `${labelPos.x}%`,
                     top: `${labelPos.y}%`,
                     x: `${labelInterpolatedTranslate}%`,
                     y: '-50%',
-                    rotate: animationProgress > 0.5 ? 0 : (labelPos.rotation || 0),
-                    opacity: animationProgress > 0.3 ? 1 : 0.7,
+                    rotate: labelPos.rotation * (1 - easeInOutCubic(labelProgress)),
+                    opacity: labelOpacity,
+                    scale: labelScale,
                   }}
                   transition={{
                     type: "spring",
@@ -312,17 +326,25 @@ const ChaosToClarity = () => {
                 {categoryPieces.map((concept, index) => {
                   const pos = getPosition(concept, index);
                   
+                  // Unified opacity calculation with smooth fading
+                  const fadeProgress = getTemporaryFadeProgress();
                   const temporaryOpacity = concept.temporary 
-                    ? Math.max(0, 1 - ((animationProgress - 0.3) * 1.5))
-                    : 0.6 + (animationProgress * 0.4);
+                    ? lerp(1, 0, fadeProgress)
+                    : lerp(0.6, 1, animationProgress);
                   
-                  if (concept.temporary && animationProgress > 0.75) return null;
+                  // Hide when fully faded instead of hard cutoff
+                  if (concept.temporary && fadeProgress >= 0.95) return null;
+                  
+                  // Smooth scale transition for temporary items
+                  const itemScale = concept.temporary 
+                    ? lerp(1, 0.7, fadeProgress)
+                    : 1;
                   
                   return (
                     <motion.div
                       key={concept.id}
-                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[40vw] md:max-w-none overflow-hidden text-ellipsis transition-colors duration-300
-                        ${animationProgress > 0.7 
+                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[40vw] md:max-w-none overflow-hidden text-ellipsis
+                        ${smoothStep(0.6, 0.8, animationProgress) > 0.5
                           ? 'bg-muted/30 border-border text-foreground' 
                           : 'bg-muted/50 border-border text-muted-foreground'}
                         ${concept.temporary ? 'text-xs bg-muted/70 border-border/50' : ''}`}
@@ -333,7 +355,7 @@ const ChaosToClarity = () => {
                         y: '-50%',
                         rotate: pos.rotation,
                         opacity: temporaryOpacity,
-                        scale: concept.temporary ? (1 - animationProgress * 0.3) : 1,
+                        scale: itemScale,
                       }}
                       transition={{
                         type: "spring",
@@ -355,19 +377,19 @@ const ChaosToClarity = () => {
         </div>
 
         {/* News Ticker */}
-        {animationProgress > 0.8 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mt-16"
-          >
-            <p className="text-base md:text-lg text-center text-foreground/90 mb-6 leading-relaxed max-w-4xl mx-auto">
-              Tailored to your role, industry, competitive set and current AI updates from {getCurrentMonthYear()}.
-            </p>
-            <AINewsTicker />
-          </motion.div>
-        )}
+        <motion.div
+          animate={{ 
+            opacity: smoothStep(0.75, 0.9, animationProgress),
+            y: lerp(20, 0, mapRange(animationProgress, 0.75, 0.9))
+          }}
+          transition={{ duration: 0.4 }}
+          className="mt-16"
+        >
+          <p className="text-base md:text-lg text-center text-foreground/90 mb-6 leading-relaxed max-w-4xl mx-auto">
+            Tailored to your role, industry, competitive set and current AI updates from {getCurrentMonthYear()}.
+          </p>
+          <AINewsTicker />
+        </motion.div>
 
         {/* Scroll Lock Indicator */}
         {isLocked && animationProgress < 1 && (
