@@ -76,7 +76,7 @@ const AINewsTicker = () => {
     <div className="relative w-full py-6 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 overflow-hidden">
       {/* Header */}
       <div className="text-center mb-4">
-        <p className="text-sm text-foreground/80 italic">Today's latest news in AI</p>
+        <p className="text-sm text-foreground/80 italic">AI shifts shaping 2026 and beyond</p>
       </div>
       
       {/* Fade edges */}
@@ -95,7 +95,7 @@ const AINewsTicker = () => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: headlines.length * 4,
+              duration: headlines.length * 2.67,
               ease: "linear",
             },
           }}

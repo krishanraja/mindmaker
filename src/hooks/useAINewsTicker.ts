@@ -17,26 +17,26 @@ const CACHE_KEY = 'ai_news_cache';
 const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
 
 const FALLBACK_HEADLINES: NewsHeadline[] = [
-  { title: "[HOT TAKE] Most AI pilots fail because they solve vendor problems, not yours", source: "Operator Intel" },
-  { title: "[SIGNAL] EU AI Act compliance deadlines forcing enterprise re-architecture", source: "Policy Watch" },
-  { title: "[OPERATOR] 3 AI workflows that paid back in 30 days - and 5 that never will", source: "Operator Intel" },
-  { title: "[WATCH] AI talent costs falling as supply catches up - hiring window opening", source: "Talent Market" },
-  { title: "[HOT TAKE] The 'AI strategy deck' industry is worth $0 to your P&L", source: "Operator Intel" },
-  { title: "[SIGNAL] OpenAI enterprise pricing signals end of cheap experimentation era", source: "Pricing Analysis" },
-  { title: "[OPERATOR] Why your AI vendor demo worked but production deployment failed", source: "Operator Intel" },
-  { title: "[WATCH] Healthcare AI approval bottleneck creating competitive moats", source: "FDA Watch" },
-  { title: "[HOT TAKE] 90% of 'AI-powered' enterprise software is wrapper marketing", source: "Operator Intel" },
-  { title: "[SIGNAL] Google Cloud AI credits expiring - expect enterprise churn wave", source: "Cloud Intel" },
-  { title: "[OPERATOR] The 4-hour AI build that replaced a $50K SaaS contract", source: "Operator Intel" },
-  { title: "[WATCH] China AI chip workarounds outpacing export controls", source: "Geopolitics" },
-  { title: "[HOT TAKE] AI literacy > AI tools. Most leaders have it backwards", source: "Operator Intel" },
-  { title: "[SIGNAL] Microsoft Copilot adoption stalling in enterprises without AI training", source: "Enterprise Data" },
-  { title: "[OPERATOR] Fine-tuned small models beating GPT-4 for specific business tasks", source: "Operator Intel" },
-  { title: "[WATCH] AI-native startups eating into consulting firm revenue", source: "Market Shift" },
-  { title: "[HOT TAKE] Your AI vendor's roadmap is their strategy, not yours", source: "Operator Intel" },
-  { title: "[SIGNAL] Insurance industry AI claims processing hitting 80%+ automation", source: "Industry Report" },
-  { title: "[OPERATOR] The real cost of 'free' AI tools - data lock-in and switching pain", source: "Operator Intel" },
-  { title: "[WATCH] SEC scrutiny of AI-related earnings claims increasing", source: "Regulatory" }
+  { title: "Claude 4 beats SDRs at cold email writing", source: "Model Report" },
+  { title: "Prompt engineer salaries down 40% as tools simplify", source: "Workforce Watch" },
+  { title: "Vibe-coded CRM replaces Salesforce at 50-person co", source: "Builder Daily" },
+  { title: "GPT-5 passes bar exam, 12K paralegals at risk", source: "The Shift" },
+  { title: "New job: AI Output Editor. 50K openings by 2026", source: "Workforce Watch" },
+  { title: "Gemini 3 Pro generates production React in one shot", source: "Model Report" },
+  { title: "3-person team ships $2M ARR product using only AI", source: "Builder Daily" },
+  { title: "Customer support teams shrink 60% industry-wide", source: "The Shift" },
+  { title: "Cursor + Claude saves devs 20hrs/week", source: "Operator Intel" },
+  { title: "AI Ops Manager: fastest growing role in tech 2026", source: "Workforce Watch" },
+  { title: "Bookkeepers face 80% job loss by end of 2026", source: "The Shift" },
+  { title: "Lovable hits 100K apps built, avg time: 4 hours", source: "Builder Daily" },
+  { title: "Mistral Large 3 beats GPT-4 on coding benchmarks", source: "Model Report" },
+  { title: "Marketing teams now 2 people + AI, not 12", source: "The Shift" },
+  { title: "Best hack: voice memos to action items via AI", source: "Operator Intel" },
+  { title: "Junior dev hiring down 35% at Fortune 500", source: "Workforce Watch" },
+  { title: "No-code founder builds $500K business in 6 months", source: "Builder Daily" },
+  { title: "Data entry roles: 90% automated by Q2 2026", source: "The Shift" },
+  { title: "Claude Artifacts now rival Figma for quick mockups", source: "Model Report" },
+  { title: "AI fluency now required for 40% of job postings", source: "Workforce Watch" }
 ];
 
 // Safe cache loading with validation
