@@ -58,15 +58,15 @@ const Navigation = () => {
   return (
     <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm pt-safe-top">
       <div className="container-width">
-        <div className="flex items-center justify-between h-20 sm:h-24">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <div className="flex items-center">
             <a href="/" className="transition-opacity hover:opacity-80">
-              <img 
-                src={theme === "dark" ? mindmakerLogoLight : mindmakerLogoDark} 
-                alt="Mindmaker" 
-                className="h-16 sm:h-20 w-auto"
-              />
+            <img 
+              src={theme === "dark" ? mindmakerLogoLight : mindmakerLogoDark} 
+              alt="Mindmaker" 
+              className="h-8 sm:h-10 md:h-12 w-auto max-w-[200px] sm:max-w-[280px] object-contain"
+            />
             </a>
           </div>
 
