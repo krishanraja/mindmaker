@@ -33,19 +33,21 @@ export const ConsultationBooking = ({ variant = 'default', preselectedProgram }:
     setIsLoading(true);
 
     try {
-      // Call edge function to create Stripe Checkout session
-      const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
-        body: { name, email, selectedProgram: preselectedProgram || 'not-specified' }
+      // Direct to Calendly (no payment hold for now)
+      const calendlyUrl = `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}&a1=${encodeURIComponent(preselectedProgram || 'not-specified')}`;
+      window.open(calendlyUrl, '_blank');
+      toast({
+        title: "Opening Calendly",
+        description: "Booking your consultation...",
       });
-
-      if (error) throw error;
-
-      if (data?.url) {
-        // Redirect to Stripe Checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL returned');
-      }
+      
+      // Keep Stripe integration code for future use
+      // const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
+      //   body: { name, email, selectedProgram: preselectedProgram || 'not-specified' }
+      // });
+      // if (error) throw error;
+      // if (data?.url) window.location.href = data.url;
+      
     } catch (error: any) {
       console.error('Error:', error);
       toast({
@@ -53,6 +55,7 @@ export const ConsultationBooking = ({ variant = 'default', preselectedProgram }:
         description: error.message || "Failed to create booking. Please try again.",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -85,12 +88,9 @@ export const ConsultationBooking = ({ variant = 'default', preselectedProgram }:
           className="w-full bg-ink text-white hover:bg-ink/90 font-semibold"
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Book Free Consultation ($50 hold)"}
+          {isLoading ? "Processing..." : "Book Free Consultation"}
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
-        <p className="text-xs text-muted-foreground text-center">
-          $50 refundable hold • Deducted from final service price
-        </p>
       </form>
     );
   }
@@ -136,17 +136,10 @@ export const ConsultationBooking = ({ variant = 'default', preselectedProgram }:
 
         <div className="bg-muted/50 rounded-lg p-4 space-y-3 border border-border/50">
           <div className="flex items-start gap-2 text-sm">
-            <span className="text-lg">🔒</span>
+            <span className="text-lg">🎯</span>
             <div>
-              <span className="font-semibold">$50 hold</span>
-              <span className="text-muted-foreground"> • Fully refundable if not satisfied • Deducted from any program you choose</span>
-            </div>
-          </div>
-          <div className="flex items-start gap-2 text-sm">
-            <span className="text-lg">⚡</span>
-            <div>
-              <span className="font-semibold text-foreground">Holiday rates available</span>
-              <span className="text-muted-foreground"> through December</span>
+              <span className="font-semibold">Free consultation</span>
+              <span className="text-muted-foreground"> • No commitments • Direct conversation</span>
             </div>
           </div>
         </div>
