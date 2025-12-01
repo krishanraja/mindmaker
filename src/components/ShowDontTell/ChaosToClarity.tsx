@@ -103,12 +103,12 @@ const ChaosToClarity = () => {
 
   const handleProgress = useCallback((delta: number) => {
     setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / 5000))
+      Math.max(0, Math.min(1, prev + delta / 1800))
     );
   }, []);
 
   const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: 0.3,
+    lockThreshold: 0.5,
     onProgress: handleProgress,
     isComplete,
     enabled: true,
@@ -132,10 +132,10 @@ const ChaosToClarity = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     
     const categoryPositions = isMobile ? {
-      Technical: { baseX: 5, baseY: 15, translateX: '0%' },
-      Commercial: { baseX: 95, baseY: 15, translateX: '-100%' },
-      Organizational: { baseX: 5, baseY: 58, translateX: '0%' },
-      Competitive: { baseX: 95, baseY: 58, translateX: '-100%' },
+      Technical: { baseX: 10, baseY: 15, translateX: '0%' },
+      Commercial: { baseX: 90, baseY: 15, translateX: '-100%' },
+      Organizational: { baseX: 10, baseY: 58, translateX: '0%' },
+      Competitive: { baseX: 90, baseY: 58, translateX: '-100%' },
     } : {
       Technical: { baseX: 30, baseY: 22, translateX: '-50%' },
       Commercial: { baseX: 70, baseY: 22, translateX: '-50%' },
