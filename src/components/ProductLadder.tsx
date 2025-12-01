@@ -2,13 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { User, Users, TrendingUp, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import peerComparisonMatrix from "@/assets/peer-comparison-matrix.png";
 import battleTestStrategy from "@/assets/battle-test-strategy.png";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 
-const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void }) => {
+const JourneySlider = ({ onBookClick, navigate }: { onBookClick: (program: string) => void; navigate: (path: string) => void }) => {
   const [journeyStage, setJourneyStage] = useState([0]);
   
   const offerings = [
@@ -26,6 +27,7 @@ const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void
       duration: "4 weeks async",
       description: "Weekly recommendations and async access to Krish. Stay current on what matters for your context. Build at your own pace.",
       cta: "Learn More",
+      link: "/builder-session",
       program: "builder-session",
       intensity: "Steady Build",
     },
@@ -34,6 +36,7 @@ const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void
       duration: "90 days",
       description: "For senior leaders. Build working AI-enabled systems around your actual week. Leave with a Builder Dossier and implementation plan.",
       cta: "Learn More",
+      link: "/builder-sprint",
       program: "builder-sprint",
       intensity: "Deep Dive",
     },
@@ -87,7 +90,13 @@ const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void
           size="lg"
           variant="mint"
           className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
-          onClick={() => onBookClick(currentOffering.program)}
+          onClick={() => {
+            if ('link' in currentOffering && currentOffering.link) {
+              navigate(currentOffering.link);
+            } else {
+              onBookClick(currentOffering.program);
+            }
+          }}
         >
           {currentOffering.cta}
         </Button>
@@ -98,6 +107,7 @@ const JourneySlider = ({ onBookClick }: { onBookClick: (program: string) => void
 
 const ProductLadder = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
   const [expandedTrack, setExpandedTrack] = useState<number | null>(0);
@@ -142,6 +152,7 @@ const ProductLadder = () => {
           duration: "2-8 hours",
           description: "For 6-12 executives. Run two real decisions through a new AI-enabled way of working. Leave with a 90-day pilot charter.",
           cta: "Learn More",
+          link: "/leadership-lab",
           program: "leadership-lab",
           image: battleTestStrategy,
         },
@@ -157,6 +168,7 @@ const ProductLadder = () => {
           duration: "6-12 months",
           description: "For VCs, advisors, consultancies. Repeatable way to scan and prioritize your portfolio for AI work. Co-create sprints and labs.",
           cta: "Learn More",
+          link: "/partner-program",
           program: "partner-program",
           image: peerComparisonMatrix,
         },
@@ -216,7 +228,7 @@ const ProductLadder = () => {
                   
                   <CollapsibleContent className="pt-4">
                     {track.useSlider ? (
-                      <JourneySlider onBookClick={handleBookClick} />
+                      <JourneySlider onBookClick={handleBookClick} navigate={navigate} />
                     ) : (
                       <div className="h-full flex flex-col">
                         {track.offerings?.map((offering, offeringIndex) => (
@@ -252,7 +264,13 @@ const ProductLadder = () => {
                               size="lg"
                               variant="default"
                               className="w-full touch-target mt-auto"
-                              onClick={() => handleBookClick(offering.program)}
+                              onClick={() => {
+                                if ('link' in offering && offering.link) {
+                                  navigate(offering.link);
+                                } else {
+                                  handleBookClick(offering.program);
+                                }
+                              }}
                             >
                               {offering.cta}
                             </Button>
@@ -289,7 +307,7 @@ const ProductLadder = () => {
 
                   {/* Track Content */}
                   {track.useSlider ? (
-                    <JourneySlider onBookClick={handleBookClick} />
+                    <JourneySlider onBookClick={handleBookClick} navigate={navigate} />
                   ) : (
                     <div className="h-full flex flex-col">
                       {track.offerings?.map((offering, offeringIndex) => (
@@ -325,7 +343,13 @@ const ProductLadder = () => {
                             size="lg"
                             variant="default"
                             className="w-full touch-target mt-auto"
-                            onClick={() => handleBookClick(offering.program)}
+                            onClick={() => {
+                              if ('link' in offering && offering.link) {
+                                navigate(offering.link);
+                              } else {
+                                handleBookClick(offering.program);
+                              }
+                            }}
                           >
                             {offering.cta}
                           </Button>
