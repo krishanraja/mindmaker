@@ -117,8 +117,8 @@ const ChaosToClarity = () => {
   // Chaotic random positions
   const getRandomPosition = (id: number) => {
     const seed = id * 123.456;
-    const randX = (Math.sin(seed) * 10000) % 1;
-    const randY = (Math.cos(seed * 1.5) * 10000) % 1;
+    const randX = Math.abs((Math.sin(seed) * 10000) % 100) / 100;
+    const randY = Math.abs((Math.cos(seed * 1.5) * 10000) % 100) / 100;
     
     return {
       x: 10 + randX * 80,
@@ -133,10 +133,10 @@ const ChaosToClarity = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     
     const categoryPositions = isMobile ? {
-      Technical: { baseX: 15, baseY: 18, translateX: '0%' },
-      Commercial: { baseX: 85, baseY: 18, translateX: '-100%' },
-      Organizational: { baseX: 15, baseY: 55, translateX: '0%' },
-      Competitive: { baseX: 85, baseY: 55, translateX: '-100%' },
+      Technical: { baseX: 5, baseY: 18, translateX: '0%' },
+      Commercial: { baseX: 95, baseY: 18, translateX: '-100%' },
+      Organizational: { baseX: 5, baseY: 55, translateX: '0%' },
+      Competitive: { baseX: 95, baseY: 55, translateX: '-100%' },
     } : {
       Technical: { baseX: 30, baseY: 22, translateX: '-50%' },
       Commercial: { baseX: 70, baseY: 22, translateX: '-50%' },
@@ -170,11 +170,17 @@ const ChaosToClarity = () => {
     const chaos = getRandomPosition(concept.id);
     const clarity = getOrganizedPosition(concept, index);
     
+    // Interpolate translateX as numeric value, then convert back
+    const chaosTranslate = 0; // chaos always uses 0%
+    const clarityTranslate = clarity.translateX === '-100%' ? -100 : 
+                             clarity.translateX === '-50%' ? -50 : 0;
+    const interpolatedTranslate = chaosTranslate + (clarityTranslate - chaosTranslate) * animationProgress;
+    
     return {
       x: chaos.x + (clarity.x - chaos.x) * animationProgress,
       y: chaos.y + (clarity.y - chaos.y) * animationProgress,
       rotation: chaos.rotation * (1 - animationProgress),
-      translateX: clarity.translateX,
+      translateX: `${interpolatedTranslate}%`,
     };
   };
 
@@ -241,7 +247,7 @@ const ChaosToClarity = () => {
         </motion.div>
 
         {/* Concepts Visualization */}
-        <div className="relative h-[500px] md:h-[600px] max-w-4xl mx-auto">
+        <div className="relative h-[500px] md:h-[600px] max-w-4xl mx-auto overflow-x-hidden">
           {Object.entries(groupedConcepts).map(([category, categoryPieces]) => {
             const cat = category as Category;
             const categoryPos = getOrganizedPosition(categoryPieces[0], 0);
@@ -288,7 +294,7 @@ const ChaosToClarity = () => {
                   return (
                     <motion.div
                       key={concept.id}
-                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap transition-colors duration-300
+                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[45vw] overflow-hidden text-ellipsis transition-colors duration-300
                         ${animationProgress > 0.7 
                           ? 'bg-muted/30 border-border text-foreground' 
                           : 'bg-muted/50 border-border text-muted-foreground'}
