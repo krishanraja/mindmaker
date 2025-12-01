@@ -323,13 +323,13 @@ const ChaosToClarity = () => {
                   const pos = getPosition(concept, index);
                   const organizedPos = getOrganizedPosition(concept, index);
                   
-                  // Calculate opacity for temporary items - fade out early in animation
+                  // Calculate opacity for temporary items - keep visible longer, fade gently
                   const temporaryOpacity = concept.temporary 
-                    ? Math.max(0, 1 - (organizationLevel * 2.5)) // Fades out faster
+                    ? Math.max(0, 1 - ((organizationLevel - 0.3) * 1.5)) // Don't start fading until 30%, then fade gently
                     : 0.6 + (organizationLevel * 0.4);
                   
-                  // Hide temporary items completely after organizationLevel > 0.4
-                  if (concept.temporary && organizationLevel > 0.4) return null;
+                  // Hide temporary items completely after organizationLevel > 0.75
+                  if (concept.temporary && organizationLevel > 0.75) return null;
                   
                   return (
                     <motion.div
