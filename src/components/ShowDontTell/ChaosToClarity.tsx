@@ -111,6 +111,7 @@ const ChaosToClarity = () => {
     lockThreshold: 0.3,
     onProgress: handleProgress,
     isComplete,
+    enabled: true,
   });
 
   // Chaotic random positions

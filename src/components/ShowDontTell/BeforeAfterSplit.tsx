@@ -43,6 +43,7 @@ const BeforeAfterSplit = () => {
     lockThreshold: 0.2,
     onProgress: handleProgress,
     isComplete,
+    enabled: true,
   });
 
   // Calculate progress for each item with stagger

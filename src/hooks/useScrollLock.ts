@@ -33,7 +33,8 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
   }, [options.isComplete]);
 
   useEffect(() => {
-    if (!options.enabled) return;
+    const enabled = options.enabled ?? true;
+    if (!enabled) return;
 
     const handleWheel = (e: WheelEvent) => {
       if (!isLocked) return;
