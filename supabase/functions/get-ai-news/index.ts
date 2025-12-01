@@ -20,11 +20,12 @@ serve(async (req) => {
   try {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
-      console.error('LOVABLE_API_KEY not configured');
-      throw new Error('API key not configured');
+      console.error('CRITICAL: LOVABLE_API_KEY not configured - AI news feed will show fallback headlines only');
+      console.error('To fix: This secret should be auto-provisioned with Lovable Cloud. Check Settings -> Cloud -> Status');
+      throw new Error('LOVABLE_API_KEY not configured - AI features unavailable');
     }
 
-    console.log('Fetching AI news from Lovable AI...');
+    console.log('Fetching AI news from Lovable AI Gateway...');
 
     // Get today's date for context
     const today = new Date().toLocaleDateString('en-US', { 

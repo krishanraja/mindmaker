@@ -1,6 +1,6 @@
 # Features
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-12-01
 
 ---
 
@@ -9,18 +9,25 @@
 ### 1. Initial Consult (Entry Point)
 **Status:** ✅ Live  
 **Duration:** 45 minutes  
-**Price:** $50 refundable hold
+**Price:** Variable by program selection
 
 **Purpose:** Understand user context, demonstrate AI-enabled building, recommend appropriate program
 
-**Booking Flow:**
+**Booking Flow (Current - As of 2025-12-01):**
+1. User clicks CTA → Modal opens
+2. Select program interest + enter name/email/job title
+3. Lead email sent with enriched data (company research, session engagement)
+4. Direct Calendly redirect for time booking
+5. **$50 hold paused** - direct booking without payment
+
+**Booking Flow (Previous - Paused):**
 1. User clicks CTA → Modal opens
 2. Select program interest + enter name/email
 3. Stripe Checkout ($50 authorization hold)
 4. Calendly redirect for time booking
 5. Hold captured if user proceeds, refunded if not
 
-**Implementation:** `InitialConsultModal`, `create-consultation-hold` edge function
+**Implementation:** `InitialConsultModal`, `send-lead-email` edge function (was `create-consultation-hold`)
 
 ---
 
@@ -107,16 +114,21 @@
 
 ### Booking System
 - `InitialConsultModal` with program selection
-- Stripe integration (authorization holds)
+- Lead capture with session data context
+- Company research enrichment (OpenAI)
+- Email delivery with retry logic (Resend)
+- Stripe integration (authorization holds) - **Currently paused**
 - Calendly integration (pre-filled data)
-- Email confirmations
+- Conditional pricing display (per program)
 
 ### AI Chatbot
 - Floating button (bottom right)
 - Slide-out panel
-- AI-powered responses (OpenAI)
-- Context-aware
+- AI-powered responses (Vertex AI RAG with Gemini 2.5 Flash)
+- Custom RAG corpus (business-specific knowledge)
+- Context-aware with conversation history
 - Persistent across navigation
+- Anti-fragile error handling (graceful fallbacks)
 
 ### Supporting Pages
 - `/builder-session` - Session details
@@ -131,17 +143,20 @@
 ## Technical Features
 
 ### Payment Processing
-**Status:** ✅ Live (Stripe)
-- Authorization holds ($50)
-- Manual capture on purchase
-- Metadata tracking (customer info, program)
+**Status:** ⚠️ Paused (Stripe integration exists but bypassed)
+- Authorization holds ($50) - **Currently disabled**
+- Manual capture on purchase - **N/A**
+- Metadata tracking (customer info, program) - **N/A**
+- **Current flow:** Direct Calendly booking without payment hold
 
 ### Edge Functions
 **Status:** ✅ Live (Supabase/Deno)
-- `create-consultation-hold` - Checkout creation
-- `chat-with-krish` - AI chatbot
-- `get-ai-news` - News ticker
-- All functions: CORS enabled, public access
+- `chat-with-krish` - AI chatbot (Vertex AI RAG + Gemini 2.5 Flash)
+- `get-ai-news` - News ticker (Lovable AI Gateway + Gemini 2.5 Flash)
+- `get-market-sentiment` - Market analysis (OpenAI GPT-4o-mini)
+- `send-lead-email` - Lead capture + company research (OpenAI + Resend)
+- `create-consultation-hold` - Stripe checkout (**Paused, kept for future use**)
+- All functions: CORS enabled, public access, comprehensive logging
 
 ### Authentication
 **Status:** ❌ Not implemented

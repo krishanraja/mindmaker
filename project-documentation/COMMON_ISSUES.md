@@ -1,10 +1,50 @@
 # Common Issues
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-12-01
 
 ---
 
 ## Edge Function Issues
+
+### Issue: LOVABLE_API_KEY Not Configured
+**Symptom:** AI news ticker shows only fallback headlines, never real-time news  
+**Cause:** `LOVABLE_API_KEY` secret not provisioned or Lovable Cloud not fully enabled  
+**Solution:**
+1. Verify Lovable Cloud is enabled: Settings → Cloud → Status
+2. Check if `LOVABLE_API_KEY` exists: Settings → Cloud → Secrets
+3. If missing, try disabling and re-enabling Lovable Cloud
+4. Contact support@lovable.dev if auto-provisioning fails
+
+**Logs to Check:**
+```
+"CRITICAL: LOVABLE_API_KEY not configured"
+"AI features unavailable"
+```
+
+**Prevention:** Always verify all auto-provisioned secrets exist after enabling Lovable Cloud
+
+---
+
+### Issue: Email Send Failures (Resend)
+**Symptom:** Leads not receiving confirmation, no email in inbox  
+**Cause:** Resend API failure, rate limiting, or domain not verified  
+**Solution:**
+1. Check Resend dashboard for delivery status
+2. Verify sending domain is verified (not using onboarding@resend.dev)
+3. Check edge function logs for retry attempts
+4. Look for "CRITICAL: Email failed after all retry attempts"
+
+**Implementation Details:**
+- send-lead-email has 3 retry attempts with exponential backoff (1s, 2s, 4s)
+- Logs each attempt and final failure
+- Throws error on complete failure (doesn't fail silently)
+
+**Prevention:** 
+- Use verified domain, not test domain
+- Monitor Resend API quota
+- Check logs for systematic failures
+
+---
 
 ### Issue: Edge Function Not Found (404)
 **Symptom:** `Failed to send request to Edge Function`  

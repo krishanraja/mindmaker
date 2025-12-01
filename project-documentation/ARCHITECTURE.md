@@ -1,6 +1,6 @@
 # Architecture
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-12-01
 
 ---
 
@@ -21,10 +21,12 @@
 - Deno std@0.190.0
 
 **Third-Party Services:**
-- Stripe (payments)
+- Stripe (payments) - **Paused: $50 hold bypassed, direct Calendly booking**
 - Calendly (scheduling)
 - Vertex AI RAG (chatbot with custom business knowledge)
-- OpenAI API (news ticker)
+- Lovable AI Gateway (news ticker via Gemini 2.5 Flash)
+- OpenAI API (market sentiment, company research in lead emails)
+- Resend (email delivery)
 
 **Hosting & Deployment:**
 - Lovable Cloud (auto-deploy)
@@ -67,10 +69,11 @@ mindmaker/
 │   └── main.tsx             # Entry point
 ├── supabase/
 │   ├── functions/           # Edge functions
-│   │   ├── create-consultation-hold/
+│   │   ├── create-consultation-hold/ (paused)
 │   │   ├── chat-with-krish/
 │   │   ├── get-ai-news/
-│   │   └── get-market-sentiment/
+│   │   ├── get-market-sentiment/
+│   │   └── send-lead-email/
 │   └── config.toml          # Supabase config
 ├── public/                  # Static assets
 ├── project-documentation/   # This documentation
@@ -84,36 +87,41 @@ mindmaker/
 ## Data Flow
 
 ### Booking Flow (Critical Path)
+**Status:** Stripe hold paused as of 2025-12-01 - Direct Calendly booking
+
 ```
 1. User clicks CTA
    └─> InitialConsultModal opens (React state)
 
 2. User fills form + selects program
    └─> Form submission (React event)
+   └─> Session data captured via SessionDataContext
 
 3. Frontend calls edge function
-   └─> supabase.functions.invoke('create-consultation-hold', {
-         body: { name, email, selectedProgram }
+   └─> supabase.functions.invoke('send-lead-email', {
+         body: { name, email, jobTitle, selectedProgram, sessionData }
        })
 
-4. Edge function creates Stripe session
-   └─> stripe.checkout.sessions.create({
-         mode: 'payment',
-         payment_intent_data: { capture_method: 'manual' },
-         success_url: calendly_url_with_params
-       })
+4. Edge function enriches lead data
+   └─> OpenAI research: domain → company info + latest news
+   └─> Compiles engagement data (friction map, portfolio, assessment)
 
-5. User redirected to Stripe Checkout
-   └─> Stripe handles payment (authorization hold)
+5. Edge function sends email (with retry)
+   └─> Resend API with exponential backoff (3 attempts)
+   └─> Email to krish@themindmaker.ai with full lead intelligence
 
-6. On success → Redirect to Calendly
+6. User redirected to Calendly
    └─> URL pre-filled with: name, email, program
+   └─> Direct booking, no payment hold
 
 7. User books time on Calendly
    └─> Calendly sends confirmation email
 
-8. Hold captured when user proceeds with program
-   └─> Manual capture via Stripe dashboard
+**Previously (Stripe hold flow, paused):**
+- Step 3 called create-consultation-hold
+- Created $50 authorization hold via Stripe
+- Redirected to Calendly after payment
+- Manual capture when user proceeded
 ```
 
 ### Chatbot Flow
@@ -152,7 +160,7 @@ mindmaker/
 ### Configuration
 `supabase/config.toml`:
 ```toml
-project_id = "ksyuwacuigshvcyptlhe"
+project_id = "smvwbbilnsprexeuplex"
 
 [functions.create-consultation-hold]
 verify_jwt = false
@@ -161,6 +169,12 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.get-ai-news]
+verify_jwt = false
+
+[functions.get-market-sentiment]
+verify_jwt = false
+
+[functions.send-lead-email]
 verify_jwt = false
 ```
 
@@ -256,17 +270,78 @@ serve(async (req) => {
 - All other errors → Fallback message with CTAs
 
 #### `get-ai-news`
-**Purpose:** Fetches AI-related news for ticker using OpenAI
+**Purpose:** Fetches AI-related news for ticker using Lovable AI Gateway
 
-**Secrets Required:** `OPENAI_API_KEY`
+**Secrets Required:** `LOVABLE_API_KEY` (auto-provisioned with Lovable Cloud)
+
+**Request Format:** None (GET request)
+
+**Response Format:**
+```typescript
+{
+  headlines: Array<{ title: string; source: string; }>;
+  timestamp: string;
+  fallback?: boolean;
+}
+```
+
+**AI Configuration:**
+- Model: `google/gemini-2.5-flash` via Lovable AI Gateway
+- Generates 20 AI intelligence briefings with operator perspective
+- Categories: SIGNAL, HOT TAKE, OPERATOR INTEL, WATCH LIST
+- Falls back to static headlines on error
 
 #### `get-market-sentiment`
 **Purpose:** Analyzes market sentiment using OpenAI
 
 **Secrets Required:** `OPENAI_API_KEY`
 
-#### `create-consultation-hold`
+**Request Format:** None (GET request)
+
+**Response Format:**
+```typescript
+{
+  aiAnxietyMultiplier: number; // 0.7-1.5
+  trainingInterestMultiplier: number; // 0.8-1.4
+  newsContext: string;
+  timestamp: number;
+}
+```
+
+#### `send-lead-email`
+**Purpose:** Captures lead data, enriches with company research, sends detailed email
+
+**Secrets Required:** `RESEND_API_KEY`, `OPENAI_API_KEY` (optional for research)
+
+**Request Format:**
+```typescript
+{
+  name: string;
+  email: string;
+  jobTitle: string;
+  selectedProgram: string;
+  sessionData: {
+    frictionMap?: object;
+    portfolioBuilder?: object;
+    assessment?: object;
+    tryItWidget?: object;
+    pagesVisited: string[];
+    timeOnSite: number;
+    scrollDepth: number;
+  };
+}
+```
+
+**Features:**
+- OpenAI-powered company research (domain → company info + news)
+- Session engagement compilation (friction map, portfolio, assessment)
+- Retry logic with exponential backoff (3 attempts, 1s/2s/4s delays)
+- Comprehensive lead intelligence email to krish@themindmaker.ai
+
+#### `create-consultation-hold` (PAUSED)
 **Purpose:** Creates Stripe authorization hold for consultations
+
+**Status:** Currently bypassed - direct Calendly booking without payment
 
 **Secrets Required:** `STRIPE_SECRET_KEY`
 
@@ -389,10 +464,13 @@ try {
 ### Environment Variables
 **Secrets stored in Lovable Cloud:**
 - `STRIPE_SECRET_KEY` (Stripe API key)
-- `GOOGLE_SERVICE_ACCOUNT_KEY` (Google service account JSON for Vertex AI)
-- `OPENAI_API_KEY` (OpenAI API key for news ticker)
+- `GOOGLE_SERVICE_ACCOUNT_KEY` (Google service account JSON for Vertex AI RAG)
+- `OPENAI_API_KEY` (OpenAI API key for market sentiment, company research)
+- `LOVABLE_API_KEY` (Lovable AI Gateway key - auto-provisioned)
+- `RESEND_API_KEY` (Resend email delivery API key)
 - `SUPABASE_URL` (auto-configured)
-- `SUPABASE_ANON_KEY` (auto-configured)
+- `SUPABASE_ANON_KEY` (auto-configured - deprecated, use SUPABASE_PUBLISHABLE_KEY)
+- `SUPABASE_PUBLISHABLE_KEY` (auto-configured)
 - `SUPABASE_SERVICE_ROLE_KEY` (auto-configured)
 
 **Access Pattern:**
