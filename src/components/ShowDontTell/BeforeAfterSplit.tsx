@@ -29,45 +29,36 @@ const transformations = [
 ];
 
 const BeforeAfterSplit = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Map raw scroll progress to animation progress with reading zones
+  // Map raw scroll progress to animation progress with three phases
   const getAnimationProgress = (rawProgress: number): number => {
-    // Phase 1: 0% → 35% scroll = 0% animation (Before reading zone)
-    if (rawProgress < 0.35) return 0;
+    // Phase 1: 0% → 25% scroll = 0% animation (Section enters, user reads "Before")
+    if (rawProgress < 0.25) return 0;
     
-    // Phase 2: 35% → 75% scroll = 0% → 100% animation (Wipe happens here)
-    if (rawProgress < 0.75) {
-      return (rawProgress - 0.35) / 0.40; // 40% of scroll for the wipe
+    // Phase 2: 25% → 65% scroll = 0% → 100% animation (Wipe moves 1:1 with scroll)
+    if (rawProgress < 0.65) {
+      return (rawProgress - 0.25) / 0.40; // 40% of scroll for the wipe
     }
     
-    // Phase 3: 75% → 100% scroll = 100% animation (After reading zone)
+    // Phase 3: 65% → 100% scroll = 100% animation (Dwell zone - "After" stays visible)
     return 1;
   };
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!sectionRef.current) return;
+      if (!wrapperRef.current) return;
       
-      const rect = sectionRef.current.getBoundingClientRect();
+      const wrapperRect = wrapperRef.current.getBoundingClientRect();
+      const wrapperHeight = wrapperRef.current.offsetHeight;
       const viewportHeight = window.innerHeight;
       
-      // Calculate when section is vertically centered in viewport
-      // Progress starts when top of section reaches 80% down the viewport
-      // Progress ends when top of section reaches 20% up from viewport top
-      const enterPoint = viewportHeight * 0.8; // Section enters at 80% from top
-      const exitPoint = viewportHeight * 0.2;  // Animation complete at 20% from top
+      // Calculate raw progress: how far through the wrapper has the user scrolled?
+      // 0 when wrapper top is at viewport bottom, 1 when wrapper bottom exits viewport top
+      const rawProgress = (viewportHeight - wrapperRect.top) / (wrapperHeight + viewportHeight);
       
-      let progress = 0;
-      
-      if (rect.top < enterPoint && rect.top > exitPoint) {
-        progress = (enterPoint - rect.top) / (enterPoint - exitPoint);
-      } else if (rect.top <= exitPoint) {
-        progress = 1;
-      }
-      
-      setScrollProgress(Math.max(0, Math.min(1, progress)));
+      setScrollProgress(Math.max(0, Math.min(1, rawProgress)));
     };
 
     handleScroll();
@@ -78,10 +69,20 @@ const BeforeAfterSplit = () => {
   const animationProgress = getAnimationProgress(scrollProgress);
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="py-16 md:py-24 px-4 bg-muted/30"
+    <div 
+      ref={wrapperRef}
+      className="relative bg-muted/30"
+      style={{ height: '200vh' }}
     >
+      <section 
+        className="sticky px-4 py-16 md:py-24"
+        style={{ 
+          top: '10vh',
+          height: '80vh',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
@@ -103,8 +104,8 @@ const BeforeAfterSplit = () => {
               />
             </div>
             <span className="text-xs text-muted-foreground">
-              {animationProgress === 0 ? '↓ Read, then scroll' : 
-               animationProgress < 1 ? 'Transforming...' : 
+              {animationProgress === 0 ? '↓ Scroll to transform' : 
+               animationProgress < 1 ? 'Scroll to reveal...' : 
                '✓ Complete'}
             </span>
           </div>
@@ -235,6 +236,7 @@ const BeforeAfterSplit = () => {
         )}
       </div>
     </section>
+    </div>
   );
 };
 
