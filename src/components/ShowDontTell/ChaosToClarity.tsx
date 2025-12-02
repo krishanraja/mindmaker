@@ -1,9 +1,13 @@
-import { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import AINewsTicker from '@/components/AINewsTicker';
-import { useScrollLock } from '@/hooks/useScrollLock';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { mapRange, easeInOutCubic, lerp, smoothStep } from '@/utils/animationEasing';
+import { useState, useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useMotionValueEvent,
+  MotionValue,
+} from "framer-motion";
+import AINewsTicker from "@/components/AINewsTicker";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { mapRange, easeInOutCubic, lerp, smoothStep } from "@/utils/animationEasing";
 
 type Category = "Technical" | "Commercial" | "Organizational" | "Competitive";
 
@@ -20,25 +24,25 @@ const concepts: Concept[] = [
   { id: 2, label: "Tokens", category: "Technical" },
   { id: 3, label: "RAG", category: "Technical" },
   { id: 4, label: "Prompt engineering", category: "Technical" },
-  
+
   // Commercial (4 permanent)
   { id: 5, label: "Vendor overpromises", category: "Commercial" },
   { id: 6, label: "ROI fog", category: "Commercial" },
   { id: 7, label: "Pilot purgatory", category: "Commercial" },
   { id: 8, label: "Integration debt", category: "Commercial" },
-  
+
   // Organizational (4 permanent)
   { id: 9, label: "Misaligned teams", category: "Organizational" },
   { id: 10, label: "Rogue AI experiments", category: "Organizational" },
   { id: 11, label: "Change fatigue", category: "Organizational" },
   { id: 12, label: "Shadow IT", category: "Organizational" },
-  
+
   // Competitive (4 permanent)
   { id: 13, label: "Competitor noise", category: "Competitive" },
   { id: 14, label: "Board pressure", category: "Competitive" },
   { id: 15, label: "Fear of betting wrong", category: "Competitive" },
   { id: 16, label: "Rapid obsolescence", category: "Competitive" },
-  
+
   // TEMPORARY - Technical hype words
   { id: 101, label: "Neural networks", category: "Technical", temporary: true },
   { id: 102, label: "Deep learning", category: "Technical", temporary: true },
@@ -55,7 +59,7 @@ const concepts: Concept[] = [
   { id: 113, label: "Few-shot learning", category: "Technical", temporary: true },
   { id: 114, label: "Zero-shot learning", category: "Technical", temporary: true },
   { id: 115, label: "Reinforcement learning", category: "Technical", temporary: true },
-  
+
   // TEMPORARY - Commercial hype words
   { id: 201, label: "AI-first transformation", category: "Commercial", temporary: true },
   { id: 202, label: "Digital disruption", category: "Commercial", temporary: true },
@@ -69,7 +73,7 @@ const concepts: Concept[] = [
   { id: 210, label: "Vendor lock-in", category: "Commercial", temporary: true },
   { id: 211, label: "AI hype cycle", category: "Commercial", temporary: true },
   { id: 212, label: "Consultant theatre", category: "Commercial", temporary: true },
-  
+
   // TEMPORARY - Organizational hype words
   { id: 301, label: "AI governance", category: "Organizational", temporary: true },
   { id: 302, label: "Responsible AI", category: "Organizational", temporary: true },
@@ -82,7 +86,7 @@ const concepts: Concept[] = [
   { id: 309, label: "Agile AI teams", category: "Organizational", temporary: true },
   { id: 310, label: "Data mesh", category: "Organizational", temporary: true },
   { id: 311, label: "Federated learning", category: "Organizational", temporary: true },
-  
+
   // TEMPORARY - Competitive hype words
   { id: 401, label: "AGI coming soon", category: "Competitive", temporary: true },
   { id: 402, label: "Quantum AI", category: "Competitive", temporary: true },
@@ -99,234 +103,314 @@ const concepts: Concept[] = [
   { id: 413, label: "AI pipelines", category: "Competitive", temporary: true },
 ];
 
+const CHAOS_HEADLINE = "From chaos and a firehose of info, to...";
+const CLARITY_HEADLINE = "To a clear path, charted with real-world expertise.";
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
+const getCurrentMonthYear = () => {
+  const date = new Date();
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const year = date.getFullYear();
+  return `${month} ${year}`;
+};
+
+// ---------- POSITION HELPERS ----------
+
+// Chaotic random positions – pure function, seeded by id
+const getRandomPosition = (id: number, isMobile: boolean) => {
+  const seed = id * 123.456;
+  const randX = Math.abs((Math.sin(seed) * 10000) % 100) / 100;
+  const randY = Math.abs((Math.cos(seed * 1.5) * 10000) % 100) / 100;
+
+  const xMin = isMobile ? 20 : 5;
+  const xRange = isMobile ? 60 : 90;
+
+  const yMin = 30;
+  const yRange = 40;
+
+  return {
+    x: xMin + randX * xRange,
+    y: yMin + randY * yRange,
+    rotation: (randX - 0.5) * 50,
+    translateX: isMobile ? "-50%" : "0%",
+  };
+};
+
+// Organized positions – vertical stack on mobile, 2x2 grid on desktop
+const getOrganizedPosition = (
+  concept: Concept,
+  index: number,
+  isMobile: boolean
+) => {
+  const categoryPositions = isMobile
+    ? {
+        // VERTICAL STACK - all centered at 50%
+        Technical: { baseX: 50, baseY: 12, translateX: "-50%" },
+        Commercial: { baseX: 50, baseY: 35, translateX: "-50%" },
+        Organizational: { baseX: 50, baseY: 58, translateX: "-50%" },
+        Competitive: { baseX: 50, baseY: 81, translateX: "-50%" },
+      }
+    : {
+        Technical: { baseX: 30, baseY: 22, translateX: "-50%" },
+        Commercial: { baseX: 70, baseY: 22, translateX: "-50%" },
+        Organizational: { baseX: 30, baseY: 62, translateX: "-50%" },
+        Competitive: { baseX: 70, baseY: 62, translateX: "-50%" },
+      };
+
+  // Temporary items stay chaotic so they can fade out
+  if (concept.temporary) {
+    return getRandomPosition(concept.id, isMobile);
+  }
+
+  const permanentConcepts = concepts.filter((c) => !c.temporary);
+  const categoryItems = permanentConcepts.filter(
+    (c) => c.category === concept.category
+  );
+  const categoryIndex = categoryItems.findIndex((c) => c.id === concept.id);
+
+  const base = categoryPositions[concept.category];
+  const offsetY = categoryIndex * (isMobile ? 5 : 7);
+
+  return {
+    x: base.baseX,
+    y: base.baseY + offsetY,
+    rotation: 0,
+    translateX: base.translateX,
+  };
+};
+
+// Interpolation between chaos and clarity
+const getInterpolatedPosition = (
+  concept: Concept,
+  index: number,
+  isMobile: boolean,
+  progress: number
+) => {
+  const chaos = getRandomPosition(concept.id, isMobile);
+  const clarity = getOrganizedPosition(concept, index, isMobile);
+
+  const chaosTranslate =
+    chaos.translateX === "-50%" ? -50 : chaos.translateX === "-100%" ? -100 : 0;
+  const clarityTranslate =
+    clarity.translateX === "-50%"
+      ? -50
+      : clarity.translateX === "-100%"
+      ? -100
+      : 0;
+
+  const interpolatedTranslate =
+    chaosTranslate + (clarityTranslate - chaosTranslate) * progress;
+
+  return {
+    x: chaos.x + (clarity.x - chaos.x) * progress,
+    y: chaos.y + (clarity.y - chaos.y) * progress,
+    rotation: chaos.rotation * (1 - progress),
+    translateX: `${interpolatedTranslate}%`,
+  };
+};
+
+const getCategoryColor = (category: Category, colorProgress: number, isLabel = false) => {
+  if (colorProgress < 0.3) {
+    return isLabel ? "text-foreground" : "text-muted-foreground";
+  }
+
+  const colors: Record<Category, string> = {
+    Technical: "text-foreground",
+    Commercial: "text-amber-700 dark:text-amber-400",
+    Organizational: "text-red-700 dark:text-red-400",
+    Competitive: "text-purple-700 dark:text-purple-400",
+  };
+
+  return colors[category];
+};
+
+// ---------- MAIN COMPONENT ----------
+
 const ChaosToClarity = () => {
   const isMobile = useIsMobile();
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [animationProgress, setAnimationProgress] = useState(0);
-  const isComplete = animationProgress >= 1;
 
-  const handleProgress = useCallback((delta: number) => {
-    setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / 571))  // 1.4x faster (800 / 1.4)
-    );
-  }, []);
+  // Scroll-driven timeline (0 → 1 as you pass through the section)
+  const { scrollYProgress }: { scrollYProgress: MotionValue<number> } =
+    useScroll({
+      target: sectionRef,
+      offset: ["start end", "end start"],
+    });
 
-  const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: isMobile ? -50 : 0,  // Trigger 50px earlier on mobile
-    onProgress: handleProgress,
-    isComplete,
-    enabled: true,
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setAnimationProgress(clamp01(latest));
   });
 
-  // Chaotic random positions - MORE CONGESTION
-  const getRandomPosition = (id: number) => {
-    const seed = id * 123.456;
-    const randX = Math.abs((Math.sin(seed) * 10000) % 100) / 100;
-    const randY = Math.abs((Math.cos(seed * 1.5) * 10000) % 100) / 100;
-    
-    // Create visible congestion by clustering items more in center
-    // But keep safe from clipping with wider X range on mobile
-    const xMin = isMobile ? 20 : 5;
-    const xRange = isMobile ? 60 : 90;
-    
-    // Cluster vertically in center third for initial pile-up effect
-    const yMin = 30;
-    const yRange = 40;
-    
-    return {
-      x: xMin + randX * xRange,
-      y: yMin + randY * yRange,
-      rotation: (randX - 0.5) * 50,  // More rotation for chaos
-      translateX: isMobile ? '-50%' : '0%',
-    };
-  };
+  // Derived timelines
+  const headlineProgress = clamp01(mapRange(animationProgress, 0.7, 0.9));
+  const labelProgress = clamp01(mapRange(animationProgress, 0.4, 0.6));
+  const colorProgress = clamp01(mapRange(animationProgress, 0.6, 0.8));
+  const temporaryFadeProgress = clamp01(mapRange(animationProgress, 0.2, 0.6));
+  const newsTickerProgress = clamp01(mapRange(animationProgress, 0.75, 0.9));
 
-  // Organized positions: vertical stack on mobile, 2x2 grid on desktop
-  const getOrganizedPosition = (concept: Concept, index: number) => {
-    const categoryPositions = isMobile ? {
-      // VERTICAL STACK - all centered at 50%, better spacing for mobile
-      Technical: { baseX: 50, baseY: 12, translateX: '-50%' },
-      Commercial: { baseX: 50, baseY: 35, translateX: '-50%' },
-      Organizational: { baseX: 50, baseY: 58, translateX: '-50%' },
-      Competitive: { baseX: 50, baseY: 81, translateX: '-50%' },
-    } : {
-      Technical: { baseX: 30, baseY: 22, translateX: '-50%' },
-      Commercial: { baseX: 70, baseY: 22, translateX: '-50%' },
-      Organizational: { baseX: 30, baseY: 62, translateX: '-50%' },
-      Competitive: { baseX: 70, baseY: 62, translateX: '-50%' },
-    };
-
-    // For position calculation, only count permanent items
-    const permanentConcepts = concepts.filter(c => !c.temporary);
-    const categoryItems = permanentConcepts.filter(c => c.category === concept.category);
-    const categoryIndex = categoryItems.findIndex(c => c.id === concept.id);
-    
-    // If temporary, return random position (they fade out)
-    if (concept.temporary) {
-      return getRandomPosition(concept.id);
-    }
-
-    const base = categoryPositions[concept.category];
-    const offsetY = categoryIndex * (isMobile ? 5 : 7);
-
-    return {
-      x: base.baseX,
-      y: base.baseY + offsetY,
-      rotation: 0,
-      translateX: base.translateX,
-    };
-  };
-
-  // Interpolate between chaos and clarity
-  const getPosition = (concept: Concept, index: number) => {
-    const chaos = getRandomPosition(concept.id);
-    const clarity = getOrganizedPosition(concept, index);
-    
-    // Parse ACTUAL chaos translateX value (not hardcoded 0)
-    const chaosTranslate = chaos.translateX === '-50%' ? -50 : 
-                           chaos.translateX === '-100%' ? -100 : 0;
-    const clarityTranslate = clarity.translateX === '-100%' ? -100 : 
-                             clarity.translateX === '-50%' ? -50 : 0;
-    const interpolatedTranslate = chaosTranslate + (clarityTranslate - chaosTranslate) * animationProgress;
-    
-    return {
-      x: chaos.x + (clarity.x - chaos.x) * animationProgress,
-      y: chaos.y + (clarity.y - chaos.y) * animationProgress,
-      rotation: chaos.rotation * (1 - animationProgress),
-      translateX: `${interpolatedTranslate}%`,
-    };
-  };
-
-  const getCurrentMonthYear = () => {
-    const date = new Date();
-    const month = date.toLocaleString('en-US', { month: 'long' });
-    const year = date.getFullYear();
-    return `${month} ${year}`;
-  };
-
-  // Unified animation timeline helpers
-  const getHeadlineProgress = () => mapRange(animationProgress, 0.7, 0.9);
-  const getLabelProgress = () => mapRange(animationProgress, 0.4, 0.6);
-  const getColorProgress = () => mapRange(animationProgress, 0.6, 0.8);
-  const getTemporaryFadeProgress = () => mapRange(animationProgress, 0.2, 0.6);
-  const getNewsTickerProgress = () => mapRange(animationProgress, 0.75, 0.9);
-
-  const getHeadline = () => {
-    const headlineProgress = getHeadlineProgress();
-    return headlineProgress < 0.5
-      ? "From chaos and a firehose of info, to..."
-      : "To a clear path, charted with real-world expertise.";
-  };
-
-  const getCategoryColor = (category: Category, isLabel: boolean = false) => {
-    const colorProgress = getColorProgress();
-    
-    // Smoothly transition colors instead of hard threshold
-    if (colorProgress < 0.3) {
-      return isLabel ? "text-foreground" : "text-muted-foreground";
-    }
-    
-    const colors = {
-      Technical: "text-foreground",
-      Commercial: "text-amber-700 dark:text-amber-400",
-      Organizational: "text-red-700 dark:text-red-400",
-      Competitive: "text-purple-700 dark:text-purple-400",
-    };
-    return colors[category];
-  };
-
-  // Filter concepts for mobile performance - limit temporary items
-  const visibleConcepts = concepts.filter(c => {
+  // Filter concepts for mobile performance
+  const visibleConcepts = concepts.filter((c) => {
     if (!c.temporary) return true;
-    // On mobile, reduce temporary items to improve performance
-    if (isMobile) {
-      if (c.id > 110 && c.id < 200) return false; // Skip some technical
-      if (c.id > 206) return false; // Skip some commercial/org/competitive
-    }
+    if (!isMobile) return true;
+
+    // Trim some temporary noise on mobile
+    if (c.id > 110 && c.id < 200) return false;
+    if (c.id > 206) return false;
     return true;
   });
 
-  const groupedConcepts = visibleConcepts.reduce((acc, concept) => {
-    if (!acc[concept.category]) acc[concept.category] = [];
-    acc[concept.category].push(concept);
-    return acc;
-  }, {} as Record<Category, Concept[]>);
+  const groupedConcepts = visibleConcepts.reduce(
+    (acc, concept) => {
+      if (!acc[concept.category]) acc[concept.category] = [];
+      acc[concept.category].push(concept);
+      return acc;
+    },
+    {} as Record<Category, Concept[]>
+  );
+
+  const headlineChaosOpacity = lerp(
+    1,
+    0,
+    smoothStep(0.5, 0.8, headlineProgress)
+  );
+  const headlineClarityOpacity = lerp(
+    0,
+    1,
+    smoothStep(0.5, 0.8, headlineProgress)
+  );
+
+  const showScrollHint =
+    animationProgress > 0.02 && animationProgress < 0.4;
 
   return (
     <section
-      ref={sectionRef} 
-      className="w-full bg-background py-16 md:py-32 relative overflow-hidden min-h-[600px] md:min-h-screen flex flex-col justify-center"
+      ref={sectionRef}
+      className="w-full bg-background relative overflow-hidden"
     >
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-6">
-        {/* Dynamic Headline */}
-        <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {getHeadline()}
-          {/* Desktop - full paragraph */}
-          <motion.p
-            animate={{ 
-              opacity: smoothStep(0.65, 0.8, animationProgress),
-              y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8))
-            }}
-            transition={{ duration: 0.3 }}
-            className="hidden md:block text-base md:text-lg text-foreground/70 mt-4 leading-relaxed"
-          >
-            This is the critical missing piece before you deploy a six-figure consultant, and improves your confidence and decision making<br />
-            - ready for when you embark on a full AI strategy or transformation.
-          </motion.p>
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-32">
+        {/* Sticky header block – keeps heading stable as you scroll */}
+        <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40 pt-4 pb-6 md:pt-6 md:pb-8">
+          <div className="text-center">
+            <div className="relative h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem]">
+              {/* Chaos headline */}
+              <motion.h2
+                className="absolute inset-0 flex items-center justify-center text-2xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance"
+                style={{ opacity: headlineChaosOpacity }}
+              >
+                {CHAOS_HEADLINE}
+              </motion.h2>
 
-          {/* Mobile - shorter version */}
-          <motion.p
-            animate={{ 
-              opacity: smoothStep(0.65, 0.8, animationProgress),
-              y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8))
-            }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden text-sm text-foreground/70 mt-3 leading-relaxed"
-          >
-            The critical clarity step before deploying expensive consultants.
-          </motion.p>
-          </h2>
-        </motion.div>
+              {/* Clarity headline */}
+              <motion.h2
+                className="absolute inset-0 flex items-center justify-center text-2xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance"
+                style={{ opacity: headlineClarityOpacity }}
+              >
+                {CLARITY_HEADLINE}
+              </motion.h2>
+            </div>
 
-        {/* Concepts Visualization */}
-        <div className="relative h-[500px] md:h-[600px] w-full max-w-[min(calc(100vw-2rem),56rem)] mx-auto overflow-hidden">
+            {/* Desktop paragraph */}
+            <motion.p
+              animate={{
+                opacity: smoothStep(0.65, 0.8, animationProgress),
+                y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8)),
+              }}
+              transition={{ duration: 0.3 }}
+              className="hidden md:block text-base md:text-lg text-foreground/70 mt-4 leading-relaxed"
+            >
+              This is the critical missing piece before you deploy a six-figure
+              consultant, and improves your confidence and decision making
+              <br />
+              ready for when you embark on a full AI strategy or transformation.
+            </motion.p>
+
+            {/* Mobile paragraph */}
+            <motion.p
+              animate={{
+                opacity: smoothStep(0.65, 0.8, animationProgress),
+                y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8)),
+              }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden text-sm text-foreground/70 mt-3 leading-relaxed"
+            >
+              The critical clarity step before deploying expensive consultants.
+            </motion.p>
+          </div>
+        </div>
+
+        {/* Main animation canvas */}
+        <div className="relative h-[520px] md:h-[620px] w-full max-w-[min(calc(100vw-2rem),56rem)] mx-auto mt-10 md:mt-16 overflow-hidden">
           {Object.entries(groupedConcepts).map(([category, categoryPieces]) => {
             const cat = category as Category;
-            const categoryPos = getOrganizedPosition(categoryPieces[0], 0);
-            
-            const labelPos = animationProgress > 0.5 
-              ? { x: categoryPos.x, y: categoryPos.y - 8, rotation: 0 }
-              : getRandomPosition(categoryPieces[0].id - 100);
-            
-            // Interpolate label translateX properly
-            const labelChaosPos = getRandomPosition(categoryPieces[0].id - 100);
-            const labelClarityPos = { x: categoryPos.x, y: categoryPos.y - 8 };
-            
-            const labelChaosTranslate = labelChaosPos.translateX === '-50%' ? -50 : 0;
-            const labelClarityTranslate = categoryPos.translateX === '-50%' ? -50 : 
-                                          categoryPos.translateX === '-100%' ? -100 : 0;
-            const labelInterpolatedTranslate = labelChaosTranslate + 
-              (labelClarityTranslate - labelChaosTranslate) * Math.min(1, animationProgress * 2);
-            
-            const labelProgress = getLabelProgress();
-            const labelScale = lerp(1, 1.05, smoothStep(0.6, 0.8, animationProgress));
-            const labelOpacity = lerp(0.7, 1, smoothStep(0.2, 0.5, animationProgress));
-            
+
+            const categoryPos = getOrganizedPosition(
+              categoryPieces[0],
+              0,
+              isMobile
+            );
+
+            // Label positions: start chaotic, converge to category position
+            const labelChaosPos = getRandomPosition(
+              categoryPieces[0].id - 100,
+              isMobile
+            );
+            const labelClarityPos = {
+              x: categoryPos.x,
+              y: categoryPos.y - 8,
+            };
+
+            const labelChaosTranslate =
+              labelChaosPos.translateX === "-50%" ? -50 : 0;
+            const labelClarityTranslate =
+              categoryPos.translateX === "-50%"
+                ? -50
+                : categoryPos.translateX === "-100%"
+                ? -100
+                : 0;
+
+            const labelInterpolatedTranslate =
+              labelChaosTranslate +
+              (labelClarityTranslate - labelChaosTranslate) *
+                Math.min(1, animationProgress * 2);
+
+            const labelEase = easeInOutCubic(labelProgress);
+            const labelX =
+              labelChaosPos.x +
+              (labelClarityPos.x - labelChaosPos.x) * labelEase;
+            const labelY =
+              labelChaosPos.y +
+              (labelClarityPos.y - labelChaosPos.y) * labelEase;
+
+            const labelScale = lerp(
+              1,
+              1.05,
+              smoothStep(0.6, 0.8, animationProgress)
+            );
+            const labelOpacity = lerp(
+              0.7,
+              1,
+              smoothStep(0.2, 0.5, animationProgress)
+            );
+
+            const labelColor = getCategoryColor(
+              cat,
+              colorProgress,
+              true
+            );
+
             return (
               <div key={category}>
-                {/* Category Label */}
+                {/* Category label */}
                 <motion.div
-                  className={`absolute text-xs md:text-sm font-bold uppercase tracking-wider whitespace-nowrap ${getCategoryColor(cat, true)}`}
+                  className={`absolute text-xs md:text-sm font-bold uppercase tracking-wider whitespace-nowrap ${labelColor}`}
                   animate={{
-                    left: `${labelPos.x}%`,
-                    top: `${labelPos.y}%`,
+                    left: `${labelX}%`,
+                    top: `${labelY}%`,
                     x: `${labelInterpolatedTranslate}%`,
-                    y: '-50%',
-                    rotate: labelPos.rotation * (1 - easeInOutCubic(labelProgress)),
+                    y: "-50%",
+                    rotate: labelChaosPos.rotation * (1 - labelEase),
                     opacity: labelOpacity,
                     scale: labelScale,
                   }}
@@ -339,38 +423,47 @@ const ChaosToClarity = () => {
                 >
                   {category}
                 </motion.div>
-                
-                {/* Category Concepts */}
+
+                {/* Category concepts */}
                 {categoryPieces.map((concept, index) => {
-                  const pos = getPosition(concept, index);
-                  
-                  // Unified opacity calculation with smooth fading
-                  const fadeProgress = getTemporaryFadeProgress();
-                  const temporaryOpacity = concept.temporary 
+                  const pos = getInterpolatedPosition(
+                    concept,
+                    index,
+                    isMobile,
+                    animationProgress
+                  );
+
+                  const fadeProgress = temporaryFadeProgress;
+                  const temporaryOpacity = concept.temporary
                     ? lerp(1, 0, fadeProgress)
                     : lerp(0.6, 1, animationProgress);
-                  
-                  // Hide when fully faded instead of hard cutoff
-                  if (concept.temporary && fadeProgress >= 0.95) return null;
-                  
-                  // Smooth scale transition for temporary items
-                  const itemScale = concept.temporary 
+
+                  if (concept.temporary && fadeProgress >= 0.98) return null;
+
+                  const itemScale = concept.temporary
                     ? lerp(1, 0.7, fadeProgress)
                     : 1;
-                  
+
+                  const baseColorActive =
+                    smoothStep(0.6, 0.8, animationProgress) > 0.5;
+
+                  const chipColorClass = baseColorActive
+                    ? "bg-muted/30 border-border text-foreground"
+                    : "bg-muted/50 border-border text-muted-foreground";
+
+                  const extraTemporaryClass = concept.temporary
+                    ? "text-xs bg-muted/70 border-border/50"
+                    : "";
+
                   return (
                     <motion.div
                       key={concept.id}
-                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[35vw] md:max-w-none overflow-hidden text-ellipsis
-                        ${smoothStep(0.6, 0.8, animationProgress) > 0.5
-                          ? 'bg-muted/30 border-border text-foreground' 
-                          : 'bg-muted/50 border-border text-muted-foreground'}
-                        ${concept.temporary ? 'text-xs bg-muted/70 border-border/50' : ''}`}
+                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[35vw] md:max-w-none overflow-hidden text-ellipsis ${chipColorClass} ${extraTemporaryClass}`}
                       animate={{
                         left: `${pos.x}%`,
                         top: `${pos.y}%`,
                         x: pos.translateX,
-                        y: '-50%',
+                        y: "-50%",
                         rotate: pos.rotation,
                         opacity: temporaryOpacity,
                         scale: itemScale,
@@ -394,31 +487,33 @@ const ChaosToClarity = () => {
           })}
         </div>
 
-        {/* News Ticker */}
+        {/* News ticker */}
         <motion.div
-          animate={{ 
-            opacity: smoothStep(0.75, 0.9, animationProgress),
-            y: lerp(20, 0, mapRange(animationProgress, 0.75, 0.9))
+          animate={{
+            opacity: smoothStep(0.0, 1.0, newsTickerProgress),
+            y: lerp(30, 0, newsTickerProgress),
           }}
           transition={{ duration: 0.4 }}
-          className="mt-16"
+          className="mt-16 pb-24 md:pb-32"
         >
           <p className="text-base md:text-lg text-center text-foreground/90 mb-6 leading-relaxed max-w-4xl mx-auto">
-            Tailored to your role, industry, competitive set and current AI updates from {getCurrentMonthYear()}.
+            Tailored to your role, industry, competitive set and current AI
+            updates from {getCurrentMonthYear()}.
           </p>
           <AINewsTicker />
         </motion.div>
 
-        {/* Scroll Lock Indicator */}
-        {isLocked && animationProgress < 1 && (
+        {/* Subtle scroll hint – purely decorative */}
+        {showScrollHint && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+            animate={{ opacity: 0.8, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
           >
             <div className="bg-background/90 px-4 py-2 rounded-full border shadow-lg backdrop-blur-sm">
               <span className="text-xs text-muted-foreground">
-                ↓ Keep scrolling ({Math.round(animationProgress * 100)}%)
+                Scroll to move from chaos to clarity
               </span>
             </div>
           </motion.div>
