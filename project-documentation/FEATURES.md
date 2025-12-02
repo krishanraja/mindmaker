@@ -107,10 +107,14 @@
 - Hero with particle animation
 - Problem statement (chaos to clarity)
 - Interactive command center demo
-- Product ladder (3 tracks)
+- Product ladder (3 tracks) with smooth scroll-to-top navigation
 - Trust section with proof points
 - Before/After comparison
 - Final CTA with founder photo
+
+**Navigation Behavior:**
+- "Learn More" buttons: Navigate to program pages with smooth scroll to top
+- "Book Session" buttons: Open booking modal without navigation
 
 ### Booking System
 - `InitialConsultModal` with program selection

@@ -1,4 +1,23 @@
-# AI MINDMAKER BRAND TRANSFORMATION CHANGELOG
+# AI MINDMAKER CHANGELOG
+
+**Last Updated:** 2025-12-02
+
+---
+
+## Recent Updates (2025-12-02)
+
+### Navigation UX Enhancements
+- **src/components/ProductLadder.tsx**:
+  - Added scroll-to-top behavior for "Learn More" buttons
+  - Implemented smooth scroll transitions (`behavior: 'smooth'`)
+  - Applied to JourneySlider (lines 93-99), mobile offerings (lines 267-273), desktop offerings (lines 346-352)
+  - Preserved modal behavior for "Book Session" buttons
+
+**Impact:** Users navigating to program pages via "Learn More" now smoothly land at the top of the destination page, creating a more polished and professional experience.
+
+---
+
+## Brand Transformation (2025-11-24)
 
 ## Files Modified
 

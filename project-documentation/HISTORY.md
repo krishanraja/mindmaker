@@ -1,6 +1,34 @@
 # History
 
-**Last Updated:** 2025-12-01
+**Last Updated:** 2025-12-02
+
+---
+
+## 2025-12-02: Navigation UX Improvements
+
+**What Changed:**
+- Added scroll-to-top behavior for "Learn More" navigation buttons
+- Implemented smooth scrolling for polished page transitions
+- Preserved modal behavior for "Book Session" buttons
+
+**Why:**
+- Improve user experience when navigating between program pages
+- Ensure users always see the top of destination pages
+- Create polished, professional page transitions
+- Reduce user confusion from mid-page landings
+
+**Implementation Details:**
+- Added `window.scrollTo({ top: 0, behavior: 'smooth' })` before navigation
+- Applied to JourneySlider, mobile offerings, and desktop offerings in ProductLadder
+- Conditional logic ensures "Book Session" modal behavior remains unchanged
+
+**Files Modified:**
+- `src/components/ProductLadder.tsx`
+
+**User Impact:**
+- "Learn More" buttons now smoothly scroll to top before navigation
+- "Book Session" button behavior unchanged (opens modal)
+- Consistent navigation experience across mobile and desktop
 
 ---
 
