@@ -103,6 +103,12 @@ html {
   overflow-x: hidden;
 }
 
+/* Scroll lock utility for smooth animation hijacking */
+html.scroll-locked {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* EDITORIAL TYPOGRAPHY */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;

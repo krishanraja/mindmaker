@@ -33,16 +33,21 @@ const BeforeAfterSplit = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
   const isComplete = animationProgress >= 1;
 
-  const handleProgress = useCallback((delta: number) => {
+  const PROGRESS_DIVISOR = 700; // Tune for scroll feel (higher = slower animation)
+  
+  const handleProgress = useCallback((delta: number, direction: 'up' | 'down') => {
     setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / 857))  // 1.4x faster (1200 / 1.4)
+      Math.max(0, Math.min(1, prev + delta / PROGRESS_DIVISOR))
     );
   }, []);
+
+  const canReverseExit = animationProgress <= 0;
 
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0,
     onProgress: handleProgress,
-    isComplete,
+    isComplete: isComplete || canReverseExit,
+    canReverseExit: true,
     enabled: true,
   });
 
@@ -89,7 +94,7 @@ const BeforeAfterSplit = () => {
         {/* Two-layer card with horizontal wipe */}
         <div className="relative editorial-card overflow-hidden">
           {/* AFTER layer (bottom) - always visible */}
-          <div className="space-y-6">
+          <div className="space-y-6 p-6">
             {/* Header */}
             <div className="border-l-4 pl-4" style={{ borderColor: 'hsl(var(--mint))' }}>
               <h3 className="text-xl font-bold text-foreground mb-2">
