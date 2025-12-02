@@ -238,12 +238,11 @@ const ChaosToClarity = () => {
   };
 
   const isComplete = animationProgress >= 1;
-  const canReverseExit = animationProgress <= 0;
 
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0,
     onProgress: handleProgress,
-    isComplete: isComplete || canReverseExit,
+    isComplete: isComplete,
     canReverseExit: true,
     enabled: true,
   });
