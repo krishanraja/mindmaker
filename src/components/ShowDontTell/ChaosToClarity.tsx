@@ -260,17 +260,30 @@ const ChaosToClarity = () => {
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {getHeadline()}
-            <motion.p
-              animate={{ 
-                opacity: smoothStep(0.65, 0.8, animationProgress),
-                y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8))
-              }}
-              transition={{ duration: 0.3 }}
-              className="text-base md:text-lg text-foreground/70 mt-4 leading-relaxed"
-            >
-              This is the critical missing piece before you deploy a six-figure consultant, and improves your confidence and decision making<br />
-              - ready for when you embark on a full AI strategy or transformation.
-            </motion.p>
+          {/* Desktop - full paragraph */}
+          <motion.p
+            animate={{ 
+              opacity: smoothStep(0.65, 0.8, animationProgress),
+              y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8))
+            }}
+            transition={{ duration: 0.3 }}
+            className="hidden md:block text-base md:text-lg text-foreground/70 mt-4 leading-relaxed"
+          >
+            This is the critical missing piece before you deploy a six-figure consultant, and improves your confidence and decision making<br />
+            - ready for when you embark on a full AI strategy or transformation.
+          </motion.p>
+
+          {/* Mobile - shorter version */}
+          <motion.p
+            animate={{ 
+              opacity: smoothStep(0.65, 0.8, animationProgress),
+              y: lerp(20, 0, mapRange(animationProgress, 0.65, 0.8))
+            }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden text-sm text-foreground/70 mt-3 leading-relaxed"
+          >
+            The critical clarity step before deploying expensive consultants.
+          </motion.p>
           </h2>
         </motion.div>
 
