@@ -2,8 +2,9 @@ import { useState, useEffect, useRef, RefObject } from 'react';
 
 interface UseScrollLockOptions {
   lockThreshold: number;
-  onProgress: (delta: number) => void;
+  onProgress: (delta: number, direction: 'up' | 'down') => void;
   isComplete: boolean;
+  canReverseExit?: boolean;
   enabled?: boolean;
 }
 
@@ -22,6 +23,7 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
   const scrollPositionRef = useRef(0);
   const releaseCooldownRef = useRef(false);
   const isCompleteRef = useRef(options.isComplete);
+  const canReverseExitRef = useRef(options.canReverseExit ?? false);
   
   // Keep refs updated
   useEffect(() => {
@@ -33,6 +35,10 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
   }, [options.isComplete]);
 
   useEffect(() => {
+    canReverseExitRef.current = options.canReverseExit ?? false;
+  }, [options.canReverseExit]);
+
+  useEffect(() => {
     const enabled = options.enabled ?? true;
     if (!enabled) return;
 
@@ -40,7 +46,8 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       if (!isLocked) return;
       e.preventDefault();
       e.stopPropagation();
-      onProgressRef.current(e.deltaY);
+      const direction = e.deltaY > 0 ? 'down' : 'up';
+      onProgressRef.current(e.deltaY, direction);
     };
 
     const handleTouchStart = (e: TouchEvent) => {
@@ -54,7 +61,8 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       const currentY = e.touches[0].clientY;
       const delta = touchStartYRef.current - currentY;
       touchStartYRef.current = currentY;
-      onProgressRef.current(delta);
+      const direction = delta > 0 ? 'down' : 'up';
+      onProgressRef.current(delta, direction);
     };
 
     const handleScroll = () => {
@@ -67,17 +75,16 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       const rect = section.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       
-      const shouldLock = rect.top <= -60 && 
+      // Lock when header reaches top (rect.top <= 0) instead of -60
+      const shouldLock = rect.top <= 0 && 
                          rect.bottom > viewportHeight * 0.3 && 
                          !isCompleteRef.current;
 
       if (shouldLock && !isLocked) {
         setIsLocked(true);
         scrollPositionRef.current = window.scrollY;
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollPositionRef.current}px`;
-        document.body.style.width = '100%';
+        // Use html scroll-lock instead of body position:fixed for smoother transition
+        document.documentElement.classList.add('scroll-locked');
       }
     };
     
@@ -104,11 +111,8 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       // Set cooldown to prevent immediate re-lock
       releaseCooldownRef.current = true;
       
-      // Reset body styles
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      // Remove scroll lock class
+      document.documentElement.classList.remove('scroll-locked');
       
       // Restore scroll position after a frame
       requestAnimationFrame(() => {
@@ -125,10 +129,7 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      document.documentElement.classList.remove('scroll-locked');
     };
   }, []);
 

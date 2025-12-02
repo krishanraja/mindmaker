@@ -1,13 +1,9 @@
-import { useState, useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useMotionValueEvent,
-  MotionValue,
-} from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import AINewsTicker from "@/components/AINewsTicker";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { mapRange, easeInOutCubic, lerp, smoothStep } from "@/utils/animationEasing";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type Category = "Technical" | "Commercial" | "Organizational" | "Competitive";
 
@@ -123,8 +119,8 @@ const getRandomPosition = (id: number, isMobile: boolean) => {
   const randX = Math.abs((Math.sin(seed) * 10000) % 100) / 100;
   const randY = Math.abs((Math.cos(seed * 1.5) * 10000) % 100) / 100;
 
-  const xMin = isMobile ? 20 : 5;
-  const xRange = isMobile ? 60 : 90;
+  const xMin = isMobile ? 35 : 5;
+  const xRange = isMobile ? 30 : 90;
 
   const yMin = 30;
   const yRange = 40;
@@ -229,18 +225,27 @@ const getCategoryColor = (category: Category, colorProgress: number, isLabel = f
 
 const ChaosToClarity = () => {
   const isMobile = useIsMobile();
-  const sectionRef = useRef<HTMLElement | null>(null);
   const [animationProgress, setAnimationProgress] = useState(0);
 
-  // Scroll-driven timeline (0 → 1 as you pass through the section)
-  const { scrollYProgress }: { scrollYProgress: MotionValue<number> } =
-    useScroll({
-      target: sectionRef,
-      offset: ["start end", "end start"],
+  // Scroll lock configuration
+  const PROGRESS_DIVISOR = 700; // Tune for scroll feel (higher = slower animation)
+  
+  const handleProgress = (delta: number, direction: 'up' | 'down') => {
+    setAnimationProgress((prev) => {
+      const change = delta / PROGRESS_DIVISOR;
+      return clamp01(prev + change);
     });
+  };
 
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    setAnimationProgress(clamp01(latest));
+  const isComplete = animationProgress >= 1;
+  const canReverseExit = animationProgress <= 0;
+
+  const { sectionRef, isLocked } = useScrollLock({
+    lockThreshold: 0,
+    onProgress: handleProgress,
+    isComplete: isComplete || canReverseExit,
+    canReverseExit: true,
+    enabled: true,
   });
 
   // Derived timelines
@@ -281,13 +286,12 @@ const ChaosToClarity = () => {
     smoothStep(0.5, 0.8, headlineProgress)
   );
 
-  const showScrollHint =
-    animationProgress > 0.02 && animationProgress < 0.4;
+  const showScrollHint = isLocked && animationProgress < 0.4;
 
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-background relative overflow-hidden"
+      className="w-full bg-background relative overflow-hidden min-h-screen"
     >
       <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-32">
         {/* Sticky header block – keeps heading stable as you scroll */}
@@ -341,7 +345,7 @@ const ChaosToClarity = () => {
         </div>
 
         {/* Main animation canvas */}
-        <div className="relative h-[520px] md:h-[620px] w-full max-w-[min(calc(100vw-2rem),56rem)] mx-auto mt-10 md:mt-16 overflow-hidden">
+        <div className="relative h-[500px] md:h-[600px] w-full max-w-[min(calc(100vw-2rem),56rem)] mx-auto mt-10 md:mt-16 overflow-hidden">
           {Object.entries(groupedConcepts).map(([category, categoryPieces]) => {
             const cat = category as Category;
 
@@ -444,21 +448,19 @@ const ChaosToClarity = () => {
                     ? lerp(1, 0.7, fadeProgress)
                     : 1;
 
-                  const baseColorActive =
-                    smoothStep(0.6, 0.8, animationProgress) > 0.5;
-
-                  const chipColorClass = baseColorActive
-                    ? "bg-muted/30 border-border text-foreground"
-                    : "bg-muted/50 border-border text-muted-foreground";
-
-                  const extraTemporaryClass = concept.temporary
-                    ? "text-xs bg-muted/70 border-border/50"
-                    : "";
+                  const itemColor = getCategoryColor(
+                    cat,
+                    colorProgress,
+                    false
+                  );
 
                   return (
                     <motion.div
                       key={concept.id}
-                      className={`absolute px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border whitespace-nowrap max-w-[35vw] md:max-w-none overflow-hidden text-ellipsis ${chipColorClass} ${extraTemporaryClass}`}
+                      className={`absolute text-xs md:text-sm px-2 md:px-3 py-1 md:py-1.5 rounded-md bg-muted/50 border border-border/30 whitespace-nowrap ${itemColor}`}
+                      style={{
+                        maxWidth: isMobile ? "35vw" : "auto",
+                      }}
                       animate={{
                         left: `${pos.x}%`,
                         top: `${pos.y}%`,
@@ -470,12 +472,9 @@ const ChaosToClarity = () => {
                       }}
                       transition={{
                         type: "spring",
-                        stiffness: 80,
-                        damping: 25,
-                        mass: 0.8,
-                      }}
-                      style={{
-                        zIndex: concept.temporary ? 0 : 1,
+                        stiffness: 60,
+                        damping: 20,
+                        mass: 0.5,
                       }}
                     >
                       {concept.label}
@@ -487,35 +486,45 @@ const ChaosToClarity = () => {
           })}
         </div>
 
-        {/* News ticker */}
+        {/* AI News Ticker */}
         <motion.div
+          className="mt-12 md:mt-20"
           animate={{
-            opacity: smoothStep(0.0, 1.0, newsTickerProgress),
+            opacity: newsTickerProgress,
             y: lerp(30, 0, newsTickerProgress),
           }}
-          transition={{ duration: 0.4 }}
-          className="mt-16 pb-24 md:pb-32"
+          transition={{ duration: 0.5 }}
         >
-          <p className="text-base md:text-lg text-center text-foreground/90 mb-6 leading-relaxed max-w-4xl mx-auto">
-            Tailored to your role, industry, competitive set and current AI
-            updates from {getCurrentMonthYear()}.
-          </p>
+          <div className="text-center mb-4 md:mb-6">
+            <p className="text-sm md:text-base font-medium text-muted-foreground">
+              {getCurrentMonthYear()} - Latest Business AI Headlines
+            </p>
+          </div>
           <AINewsTicker />
         </motion.div>
 
-        {/* Subtle scroll hint – purely decorative */}
+        {/* Scroll hint */}
         {showScrollHint && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 0.8, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            exit={{ opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 text-sm text-muted-foreground flex items-center gap-2"
           >
-            <div className="bg-background/90 px-4 py-2 rounded-full border shadow-lg backdrop-blur-sm">
-              <span className="text-xs text-muted-foreground">
-                Scroll to move from chaos to clarity
-              </span>
-            </div>
+            <span>Scroll to organize</span>
+            <svg
+              className="w-4 h-4 animate-bounce"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
           </motion.div>
         )}
       </div>
