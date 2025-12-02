@@ -228,7 +228,7 @@ const ChaosToClarity = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
 
   // Scroll lock configuration
-  const PROGRESS_DIVISOR = 700; // Tune for scroll feel (higher = slower animation)
+  const PROGRESS_DIVISOR = isMobile ? 400 : 700; // Faster on mobile for better UX
   
   const handleProgress = (delta: number, direction: 'up' | 'down') => {
     setAnimationProgress((prev) => {
@@ -241,6 +241,7 @@ const ChaosToClarity = () => {
 
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0,
+    headerOffset: 60,
     onProgress: handleProgress,
     isComplete: isComplete,
     canReverseExit: true,
@@ -294,7 +295,7 @@ const ChaosToClarity = () => {
     >
       <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-32">
         {/* Sticky header block – keeps heading stable as you scroll */}
-        <div className="sticky top-6 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40 pt-4 pb-6 md:pt-6 md:pb-8">
+        <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40 pt-4 pb-6 md:pt-6 md:pb-8">
           <div className="text-center">
             <div className="relative h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem]">
               {/* Chaos headline */}

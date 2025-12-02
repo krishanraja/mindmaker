@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, RefObject } from 'react';
 
 interface UseScrollLockOptions {
   lockThreshold: number;
+  headerOffset?: number;
   onProgress: (delta: number, direction: 'up' | 'down') => void;
   isComplete: boolean;
   canReverseExit?: boolean;
@@ -74,16 +75,20 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
 
       const rect = section.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
+      const headerOffset = options.headerOffset ?? 60;
       
-      // Lock when header reaches top (rect.top <= 0) instead of -60
-      const shouldLock = rect.top <= 0 && 
+      // Lock when section is approaching viewport top with headerOffset breathing room
+      const shouldLock = rect.top <= headerOffset && 
                          rect.bottom > viewportHeight * 0.3 && 
                          !isCompleteRef.current;
 
       if (shouldLock && !isLocked) {
         setIsLocked(true);
-        scrollPositionRef.current = window.scrollY;
-        // Use html scroll-lock instead of body position:fixed for smoother transition
+        // Calculate ideal scroll position where header has breathing room
+        const idealScrollY = window.scrollY + rect.top - headerOffset;
+        scrollPositionRef.current = idealScrollY;
+        // Snap to ideal position immediately for bulletproof positioning
+        window.scrollTo(0, idealScrollY);
         document.documentElement.classList.add('scroll-locked');
       }
     };

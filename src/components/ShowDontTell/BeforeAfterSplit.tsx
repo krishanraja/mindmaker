@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useCallback } from 'react';
 import { useScrollLock } from '@/hooks/useScrollLock';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const transformations = [
   { 
@@ -31,9 +32,10 @@ const transformations = [
 
 const BeforeAfterSplit = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
+  const isMobile = useIsMobile();
   const isComplete = animationProgress >= 1;
 
-  const PROGRESS_DIVISOR = 700; // Tune for scroll feel (higher = slower animation)
+  const PROGRESS_DIVISOR = isMobile ? 400 : 700; // Faster on mobile for better UX
   
   const handleProgress = useCallback((delta: number, direction: 'up' | 'down') => {
     setAnimationProgress(prev => 
@@ -43,6 +45,7 @@ const BeforeAfterSplit = () => {
 
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0,
+    headerOffset: 80,
     onProgress: handleProgress,
     isComplete: isComplete,
     canReverseExit: true,
@@ -59,7 +62,7 @@ const BeforeAfterSplit = () => {
   return (
     <section 
       ref={sectionRef}
-      className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-16 md:py-24"
+      className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-12 md:py-24"
     >
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
