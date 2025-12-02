@@ -166,7 +166,7 @@ const getOrganizedPosition = (
   const categoryIndex = categoryItems.findIndex((c) => c.id === concept.id);
 
   const base = categoryPositions[concept.category];
-  const offsetY = categoryIndex * (isMobile ? 5 : 7);
+  const offsetY = categoryIndex * (isMobile ? 4 : 7);
 
   return {
     x: base.baseX,
@@ -294,7 +294,7 @@ const ChaosToClarity = () => {
     >
       <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-32">
         {/* Sticky header block – keeps heading stable as you scroll */}
-        <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40 pt-4 pb-6 md:pt-6 md:pb-8">
+        <div className="sticky top-6 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40 pt-4 pb-6 md:pt-6 md:pb-8">
           <div className="text-center">
             <div className="relative h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem]">
               {/* Chaos headline */}
@@ -361,7 +361,7 @@ const ChaosToClarity = () => {
             );
             const labelClarityPos = {
               x: categoryPos.x,
-              y: categoryPos.y - 8,
+              y: categoryPos.y - 6,
             };
 
             const labelChaosTranslate =
