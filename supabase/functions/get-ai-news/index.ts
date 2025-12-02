@@ -12,65 +12,70 @@ interface NewsHeadline {
 }
 
 interface Provider {
-  name: 'lovable' | 'openai' | 'fallback';
+  name: 'newsapi' | 'lovable' | 'openai' | 'fallback';
   key?: string;
-  endpoint?: string;
-  model?: string;
 }
 
-// Provider cascade: Lovable AI → OpenAI → Fallback
+// Provider cascade: NewsAPI → Lovable AI → OpenAI → Static Fallback
 const getProvider = (): Provider => {
+  const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
   const LOVABLE_KEY = Deno.env.get('LOVABLE_API_KEY');
   const OPENAI_KEY = Deno.env.get('OPENAI_API_KEY');
   
+  if (NEWSAPI_KEY) {
+    console.log('✅ Using NewsAPI.org (Plan A - Real News)');
+    return { name: 'newsapi', key: NEWSAPI_KEY };
+  }
+  
   if (LOVABLE_KEY) {
-    console.log('✅ Using LOVABLE AI (Plan A)');
-    return {
-      name: 'lovable',
-      key: LOVABLE_KEY,
-      endpoint: 'https://ai.gateway.lovable.dev/v1/chat/completions',
-      model: 'google/gemini-2.5-flash'
-    };
+    console.log('⚠️ NewsAPI unavailable, using LOVABLE AI (Plan B)');
+    return { name: 'lovable', key: LOVABLE_KEY };
   }
   
   if (OPENAI_KEY) {
-    console.log('⚠️ LOVABLE_API_KEY missing, using OPENAI (Plan B)');
-    return {
-      name: 'openai',
-      key: OPENAI_KEY,
-      endpoint: 'https://api.openai.com/v1/chat/completions',
-      model: 'gpt-4o-mini'
-    };
+    console.log('⚠️ NewsAPI & Lovable unavailable, using OPENAI (Plan C)');
+    return { name: 'openai', key: OPENAI_KEY };
   }
   
-  console.error('❌ No API keys available, returning fallback (Plan C)');
+  console.error('❌ No API keys available, returning static fallback (Plan D)');
   return { name: 'fallback' };
 };
 
-const SYSTEM_PROMPT = `You are a sharp AI industry analyst writing punchy headlines for builders, operators, and forward-thinking executives. Your audience: people who build with AI, not just read about it.
+const AI_SYSTEM_PROMPT = `You are a business news analyst for C-level executives. Generate REAL, CREDIBLE news headlines about AI's impact on business TODAY.
 
-Generate 20 headlines about AI's impact on work, business, and building - focused on 2026 and beyond.
+CRITICAL RULES:
+1. Headlines must sound like ACTUAL news from CURRENT business press
+2. Be HYPER-SPECIFIC: Name real companies, sectors, concrete numbers when possible
+3. Focus on BUSINESS IMPACT: strategy, operations, competition, workforce, ROI
+4. Keep headlines CONCISE: 8-12 words maximum
+5. Vary sources: WSJ, FT, Bloomberg, McKinsey, BCG, HBR, Gartner, MIT Tech Review
+6. Mix sentiment: opportunities AND challenges/warnings
+7. NO FLUFF - every headline must deliver concrete information
+8. NO future tense - use present tense only
+9. NO generic AI hype - be specific about what's actually happening
 
-Required mix (aim for 3-4 of each):
-- **Model Watch**: New model capabilities, benchmark results, what X model is now good at
-- **Workforce Shift**: Jobs emerging, roles disappearing, how teams are adapting
-- **Productivity**: Time-saving hacks, automation wins, workflow breakthroughs
-- **Vibe Coding**: No-code/low-code wins, business apps built in hours, AI-assisted development
-- **Rising Players**: AI startups gaining traction, new tools worth watching
-- **Labor Displacement**: What got automated this month, roles under pressure
+TOPICS TO COVER (pick 5-7 from these):
+- Major companies announcing AI strategy shifts or investments
+- Specific industries being disrupted with concrete examples
+- C-suite roles evolving (CDO, CTO, CAIO emergence)
+- Workforce transformation with real data (roles eliminated/created)
+- AI regulation impacting business decisions
+- Competitive advantage case studies with metrics
+- ROI/productivity data from AI adoption
+- Failed AI implementations and lessons learned
+- Talent war for AI skills with salary data
 
-Style rules:
-- MAX 50 characters per headline (punchy, scannable)
-- Present tense, active voice
-- NO buzzwords: "revolutionary", "game-changing", "transform"
-- NO brackets like [SIGNAL] or [HOT TAKE]
-- Specific > vague: "GPT-5 beats lawyers at contract review" not "AI improves legal work"
+FORMAT: Return ONLY a valid JSON array:
+[{"title": "headline text here", "source": "Source Name"}]
 
-Sources to use: Operator Intel, AI Insider, The Shift, Model Report, Builder Daily, Workforce Watch
+QUALITY EXAMPLES:
+"JPMorgan deploys AI to automate 50% of code review" - Bloomberg
+"UK mandates AI impact assessments for 1000+ employee firms" - Financial Times
+"Manufacturing sees 23% productivity gain from AI adoption" - McKinsey
+"Goldman Sachs cuts 1,800 junior analyst roles after AI rollout" - WSJ
+"Walmart's AI supply chain saves $2B annually" - Harvard Business Review`;
 
-Format: JSON array [{"title": "headline max 50 chars", "source": "Source Name"}]`;
-
-// Safe content extraction
+// Extract content from AI responses
 const extractContent = (data: any): string | null => {
   try {
     return data?.choices?.[0]?.message?.content || null;
@@ -79,9 +84,8 @@ const extractContent = (data: any): string | null => {
   }
 };
 
-// Safe JSON parsing with multiple strategies
+// Parse JSON from AI responses
 const parseHeadlines = (content: string): NewsHeadline[] => {
-  // Strategy 1: Direct parse
   try {
     const parsed = JSON.parse(content);
     if (Array.isArray(parsed)) return parsed;
@@ -89,7 +93,7 @@ const parseHeadlines = (content: string): NewsHeadline[] => {
     if (parsed.news) return parsed.news;
   } catch {}
   
-  // Strategy 2: Extract JSON from markdown code blocks
+  // Extract JSON from markdown code blocks
   const match = content.match(/\[[\s\S]*?\]/);
   if (match) {
     try { 
@@ -100,7 +104,7 @@ const parseHeadlines = (content: string): NewsHeadline[] => {
   return [];
 };
 
-// Validate headlines
+// Validate headlines quality
 const validateHeadlines = (headlines: any[]): NewsHeadline[] => {
   return headlines
     .filter(h => 
@@ -110,31 +114,123 @@ const validateHeadlines = (headlines: any[]): NewsHeadline[] => {
       typeof h.source === 'string' && 
       h.source.length > 0
     )
-    .slice(0, 20);
+    .slice(0, 10);
 };
 
-const FALLBACK_HEADLINES: NewsHeadline[] = [
-  { title: "Claude 4 beats SDRs at cold email writing", source: "Model Report" },
-  { title: "Prompt engineer salaries down 40% as tools simplify", source: "Workforce Watch" },
-  { title: "Vibe-coded CRM replaces Salesforce at 50-person co", source: "Builder Daily" },
-  { title: "GPT-5 passes bar exam, 12K paralegals at risk", source: "The Shift" },
-  { title: "New job: AI Output Editor. 50K openings by 2026", source: "Workforce Watch" },
-  { title: "Gemini 3 Pro generates production React in one shot", source: "Model Report" },
-  { title: "3-person team ships $2M ARR product using only AI", source: "Builder Daily" },
-  { title: "Customer support teams shrink 60% industry-wide", source: "The Shift" },
-  { title: "Cursor + Claude saves devs 20hrs/week", source: "Operator Intel" },
-  { title: "AI Ops Manager: fastest growing role in tech 2026", source: "Workforce Watch" },
-  { title: "Bookkeepers face 80% job loss by end of 2026", source: "The Shift" },
-  { title: "Lovable hits 100K apps built, avg time: 4 hours", source: "Builder Daily" },
-  { title: "Mistral Large 3 beats GPT-4 on coding benchmarks", source: "Model Report" },
-  { title: "Marketing teams now 2 people + AI, not 12", source: "The Shift" },
-  { title: "Best hack: voice memos to action items via AI", source: "Operator Intel" },
-  { title: "Junior dev hiring down 35% at Fortune 500", source: "Workforce Watch" },
-  { title: "No-code founder builds $500K business in 6 months", source: "Builder Daily" },
-  { title: "Data entry roles: 90% automated by Q2 2026", source: "The Shift" },
-  { title: "Claude Artifacts now rival Figma for quick mockups", source: "Model Report" },
-  { title: "AI fluency now required for 40% of job postings", source: "Workforce Watch" }
+const STATIC_FALLBACK: NewsHeadline[] = [
+  { title: "Microsoft reports 30% productivity gain from AI assistants", source: "Bloomberg" },
+  { title: "Financial services automate 40% of compliance tasks", source: "Financial Times" },
+  { title: "AI-driven supply chains reduce costs by $50B annually", source: "McKinsey" },
+  { title: "Healthcare AI misdiagnosis rates prompt FDA review", source: "WSJ" },
+  { title: "Fortune 500 CEOs prioritize AI literacy in 2025", source: "Harvard Business Review" },
+  { title: "Retail chains deploy AI to optimize inventory management", source: "Gartner" },
+  { title: "AI ethics officers become standard C-suite role", source: "MIT Tech Review" },
+  { title: "Manufacturing adopts AI predictive maintenance at scale", source: "BCG" },
+  { title: "Legal sector sees 25% of junior roles automated", source: "Financial Times" },
+  { title: "Enterprise AI spending reaches $200B in 2024", source: "Gartner" }
 ];
+
+// Fetch from NewsAPI.org
+const fetchNewsAPI = async (apiKey: string): Promise<NewsHeadline[]> => {
+  console.log('Fetching real news from NewsAPI.org...');
+  
+  const queries = [
+    'artificial intelligence business',
+    'AI enterprise adoption',
+    'AI workplace transformation'
+  ];
+  
+  const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+  
+  const url = `https://newsapi.org/v2/everything?` + new URLSearchParams({
+    q: randomQuery,
+    language: 'en',
+    sortBy: 'relevancy',
+    pageSize: '10',
+    apiKey: apiKey,
+    domains: 'wsj.com,ft.com,bloomberg.com,hbr.org,technologyreview.com'
+  });
+  
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error(`NewsAPI error: ${response.status}`);
+  }
+  
+  const data = await response.json();
+  
+  if (!data.articles || data.articles.length === 0) {
+    throw new Error('No articles returned from NewsAPI');
+  }
+  
+  const headlines: NewsHeadline[] = data.articles
+    .filter((article: any) => article.title && article.source?.name)
+    .map((article: any) => ({
+      title: article.title.split(' - ')[0].trim(), // Remove source suffix if present
+      source: article.source.name
+    }))
+    .slice(0, 8);
+  
+  console.log(`✅ Retrieved ${headlines.length} real news headlines`);
+  return headlines;
+};
+
+// Fetch from AI providers (Lovable or OpenAI)
+const fetchAIHeadlines = async (provider: 'lovable' | 'openai', apiKey: string): Promise<NewsHeadline[]> => {
+  console.log(`Generating AI headlines via ${provider}...`);
+  
+  const config = provider === 'lovable' 
+    ? {
+        endpoint: 'https://ai.gateway.lovable.dev/v1/chat/completions',
+        model: 'google/gemini-2.5-flash'
+      }
+    : {
+        endpoint: 'https://api.openai.com/v1/chat/completions',
+        model: 'gpt-4o-mini'
+      };
+  
+  const response = await fetch(config.endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: config.model,
+      messages: [
+        { role: 'system', content: AI_SYSTEM_PROMPT },
+        { 
+          role: 'user', 
+          content: `Generate 6 credible AI business news headlines for ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}. Focus on concrete business impact with specific companies or data points where possible.` 
+        }
+      ],
+      temperature: 0.3,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`${provider} API error:`, response.status, errorText);
+    throw new Error(`${provider} API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = extractContent(data);
+  
+  if (!content) {
+    throw new Error('No content in AI response');
+  }
+
+  const headlines = parseHeadlines(content);
+  const validHeadlines = validateHeadlines(headlines);
+
+  if (validHeadlines.length === 0) {
+    throw new Error('No valid headlines generated');
+  }
+
+  console.log(`✅ Generated ${validHeadlines.length} headlines via ${provider}`);
+  return validHeadlines;
+};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -143,72 +239,106 @@ serve(async (req) => {
 
   try {
     const provider = getProvider();
+    let headlines: NewsHeadline[] = [];
+    let providerUsed = provider.name;
+    let isFallback = false;
     
-    // Plan C: Return fallback immediately if no API keys
-    if (provider.name === 'fallback') {
-      console.log('📋 Returning fallback headlines (no API keys configured)');
-      return new Response(
-        JSON.stringify({
-          headlines: FALLBACK_HEADLINES,
-          timestamp: new Date().toISOString(),
-          provider: 'fallback',
-          fallback: true,
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
+    // Plan A: NewsAPI
+    if (provider.name === 'newsapi') {
+      try {
+        headlines = await fetchNewsAPI(provider.key!);
+      } catch (error) {
+        console.error('NewsAPI failed, attempting fallback:', error);
+        
+        // Fallback to Lovable AI
+        const lovableKey = Deno.env.get('LOVABLE_API_KEY');
+        if (lovableKey) {
+          console.log('⚠️ Falling back to Lovable AI (Plan B)');
+          try {
+            headlines = await fetchAIHeadlines('lovable', lovableKey);
+            providerUsed = 'lovable';
+          } catch (lovableError) {
+            console.error('Lovable AI also failed:', lovableError);
+            
+            // Fallback to OpenAI
+            const openaiKey = Deno.env.get('OPENAI_API_KEY');
+            if (openaiKey) {
+              console.log('⚠️ Falling back to OpenAI (Plan C)');
+              try {
+                headlines = await fetchAIHeadlines('openai', openaiKey);
+                providerUsed = 'openai';
+              } catch (openaiError) {
+                console.error('OpenAI also failed, using static fallback:', openaiError);
+                headlines = STATIC_FALLBACK;
+                providerUsed = 'fallback';
+                isFallback = true;
+              }
+            } else {
+              headlines = STATIC_FALLBACK;
+              providerUsed = 'fallback';
+              isFallback = true;
+            }
+          }
+        } else {
+          headlines = STATIC_FALLBACK;
+          providerUsed = 'fallback';
+          isFallback = true;
         }
-      );
+      }
     }
-
-    console.log(`Generating AI news briefing via ${provider.name}...`);
-
-    const response = await fetch(provider.endpoint!, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${provider.key}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: provider.model,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: 'Generate 20 AI business news headlines.' }
-        ],
-        temperature: 0.8,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`${provider.name} API error:`, response.status, errorText);
-      throw new Error(`${provider.name} API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const content = extractContent(data);
     
-    if (!content) {
-      throw new Error('No content in AI response');
+    // Plan B: Lovable AI
+    else if (provider.name === 'lovable') {
+      try {
+        headlines = await fetchAIHeadlines('lovable', provider.key!);
+      } catch (error) {
+        console.error('Lovable AI failed, attempting fallback:', error);
+        
+        const openaiKey = Deno.env.get('OPENAI_API_KEY');
+        if (openaiKey) {
+          console.log('⚠️ Falling back to OpenAI (Plan C)');
+          try {
+            headlines = await fetchAIHeadlines('openai', openaiKey);
+            providerUsed = 'openai';
+          } catch (openaiError) {
+            console.error('OpenAI also failed, using static fallback:', openaiError);
+            headlines = STATIC_FALLBACK;
+            providerUsed = 'fallback';
+            isFallback = true;
+          }
+        } else {
+          headlines = STATIC_FALLBACK;
+          providerUsed = 'fallback';
+          isFallback = true;
+        }
+      }
     }
-
-    console.log('AI response received, parsing headlines...');
     
-    const headlines = parseHeadlines(content);
-    const validHeadlines = validateHeadlines(headlines);
-
-    if (validHeadlines.length === 0) {
-      throw new Error('No valid headlines generated');
+    // Plan C: OpenAI
+    else if (provider.name === 'openai') {
+      try {
+        headlines = await fetchAIHeadlines('openai', provider.key!);
+      } catch (error) {
+        console.error('OpenAI failed, using static fallback:', error);
+        headlines = STATIC_FALLBACK;
+        providerUsed = 'fallback';
+        isFallback = true;
+      }
     }
-
-    console.log(`✅ Generated ${validHeadlines.length} headlines via ${provider.name}`);
+    
+    // Plan D: Static fallback
+    else {
+      console.log('📋 Using static fallback headlines (no API keys configured)');
+      headlines = STATIC_FALLBACK;
+      isFallback = true;
+    }
 
     return new Response(
       JSON.stringify({
-        headlines: validHeadlines,
+        headlines,
         timestamp: new Date().toISOString(),
-        provider: provider.name,
-        fallback: false,
+        provider: providerUsed,
+        fallback: isFallback,
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -217,11 +347,11 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error generating AI news:', error);
+    console.error('Fatal error, returning static fallback:', error);
     
     return new Response(
       JSON.stringify({
-        headlines: FALLBACK_HEADLINES,
+        headlines: STATIC_FALLBACK,
         timestamp: new Date().toISOString(),
         provider: 'fallback',
         fallback: true,
