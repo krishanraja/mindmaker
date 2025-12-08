@@ -109,6 +109,49 @@ html.scroll-locked {
   overscroll-behavior: none;
 }
 
+/* GPU Performance Hints for Scroll Animations */
+html.scroll-locked .scroll-animation-container {
+  will-change: clip-path;
+  contain: layout style;
+}
+
+html.scroll-locked .before-layer-wipe {
+  will-change: clip-path;
+  backface-visibility: hidden;
+}
+
+html.scroll-locked .wipe-glow-line {
+  will-change: left, opacity;
+}
+
+/* Chaos to Clarity GPU hints */
+.chaos-clarity-container {
+  contain: layout;
+}
+
+html.scroll-locked .chaos-concept {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+html.scroll-locked .chaos-label {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+html.scroll-locked .chaos-headline,
+html.scroll-locked .clarity-headline {
+  will-change: opacity;
+}
+
+html.scroll-locked .chaos-paragraph {
+  will-change: opacity, transform;
+}
+
+html.scroll-locked .chaos-ticker {
+  will-change: opacity, transform;
+}
+
 /* EDITORIAL TYPOGRAPHY */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;

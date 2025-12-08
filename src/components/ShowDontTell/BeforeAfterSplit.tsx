@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -31,17 +30,57 @@ const transformations = [
 ];
 
 const BeforeAfterSplit = () => {
-  const [animationProgress, setAnimationProgress] = useState(0);
   const isMobile = useIsMobile();
-  const isComplete = animationProgress >= 1;
-
-  const PROGRESS_DIVISOR = isMobile ? 400 : 700; // Faster on mobile for better UX
   
-  const handleProgress = useCallback((delta: number, direction: 'up' | 'down') => {
-    setAnimationProgress(prev => 
-      Math.max(0, Math.min(1, prev + delta / PROGRESS_DIVISOR))
-    );
-  }, []);
+  // Use refs for continuous animation, state only for discrete UI changes
+  const progressRef = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rafIdRef = useRef<number | null>(null);
+  const accumulatedDeltaRef = useRef(0);
+  
+  // State only for discrete UI updates (progress indicator text, completion)
+  const [displayProgress, setDisplayProgress] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+  
+  const PROGRESS_DIVISOR = isMobile ? 400 : 700;
+  
+  // Batch updates via RAF for smooth GPU animation
+  const scheduleUpdate = useCallback(() => {
+    if (rafIdRef.current !== null) return;
+    
+    rafIdRef.current = requestAnimationFrame(() => {
+      const delta = accumulatedDeltaRef.current;
+      accumulatedDeltaRef.current = 0;
+      rafIdRef.current = null;
+      
+      const newProgress = Math.max(0, Math.min(1, progressRef.current + delta / PROGRESS_DIVISOR));
+      progressRef.current = newProgress;
+      
+      // Update CSS variable for GPU-accelerated clipPath
+      if (containerRef.current) {
+        containerRef.current.style.setProperty('--wipe-progress', `${newProgress * 100}%`);
+      }
+      
+      // Only update React state for discrete UI changes (every 10%)
+      const displayBucket = Math.floor(newProgress * 10);
+      const currentBucket = Math.floor(displayProgress * 10);
+      if (displayBucket !== currentBucket || newProgress >= 1) {
+        setDisplayProgress(newProgress);
+      }
+      
+      // Check completion
+      if (newProgress >= 1 && !isComplete) {
+        setIsComplete(true);
+      } else if (newProgress < 1 && isComplete) {
+        setIsComplete(false);
+      }
+    });
+  }, [PROGRESS_DIVISOR, displayProgress, isComplete]);
+  
+  const handleProgress = useCallback((delta: number, _direction: 'up' | 'down') => {
+    accumulatedDeltaRef.current += delta;
+    scheduleUpdate();
+  }, [scheduleUpdate]);
 
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0,
@@ -51,13 +90,22 @@ const BeforeAfterSplit = () => {
     canReverseExit: true,
     enabled: true,
   });
+  
+  // Cleanup RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
+  }, []);
 
-  // Calculate progress for each item with stagger
-  const getItemProgress = (index: number) => {
-    const itemStart = index * 0.15;
-    const itemDuration = 0.20;
-    return Math.max(0, Math.min(1, (animationProgress - itemStart) / itemDuration));
-  };
+  // Initialize CSS variable
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.style.setProperty('--wipe-progress', '0%');
+    }
+  }, []);
 
   return (
     <section 
@@ -75,25 +123,29 @@ const BeforeAfterSplit = () => {
           </p>
         </div>
 
-        {/* Progress indicator */}
-        {isLocked && animationProgress < 1 && (
+        {/* Progress indicator - uses displayProgress for discrete updates */}
+        {isLocked && displayProgress < 1 && (
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="h-1 w-20 bg-muted rounded-full overflow-hidden">
-              <motion.div 
-                className="h-full bg-mint rounded-full"
-                style={{ width: `${animationProgress * 100}%` }}
+              <div 
+                className="h-full bg-mint rounded-full transition-[width] duration-100"
+                style={{ width: `${displayProgress * 100}%` }}
               />
             </div>
             <span className="text-xs text-muted-foreground">
-              {animationProgress === 0 ? '↓ Scroll to transform' : 
-               animationProgress < 1 ? 'Keep scrolling...' : 
+              {displayProgress === 0 ? '↓ Scroll to transform' : 
+               displayProgress < 1 ? 'Keep scrolling...' : 
                '✓ Complete'}
             </span>
           </div>
         )}
 
-        {/* Two-layer card with horizontal wipe */}
-        <div className="relative editorial-card overflow-hidden">
+        {/* Two-layer card with CSS variable-driven horizontal wipe */}
+        <div 
+          ref={containerRef}
+          className="relative editorial-card overflow-hidden scroll-animation-container"
+          style={{ '--wipe-progress': '0%' } as React.CSSProperties}
+        >
           {/* AFTER layer (bottom) - always visible */}
           <div className="space-y-4 md:space-y-6 p-4 md:p-6">
             {/* Header */}
@@ -106,29 +158,22 @@ const BeforeAfterSplit = () => {
               </p>
             </div>
             
-            {/* Items */}
+            {/* Items - no scale animation, pure static */}
             <div className="space-y-3 md:space-y-4">
-              {transformations.map((item, index) => {
-                const itemProgress = getItemProgress(index);
-                return (
-                  <motion.div 
-                    key={`after-${index}`}
-                    className="flex items-start gap-3"
-                    animate={{
-                      scale: itemProgress > 0.3 && itemProgress < 0.7 ? 1.03 : 1,
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div 
-                      className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
-                      style={{ backgroundColor: 'hsl(var(--mint))' }}
-                    />
-                    <p className="text-sm text-foreground font-medium flex-1">
-                      {item.after}
-                    </p>
-                  </motion.div>
-                );
-              })}
+              {transformations.map((item, index) => (
+                <div 
+                  key={`after-${index}`}
+                  className="flex items-start gap-3"
+                >
+                  <div 
+                    className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
+                    style={{ backgroundColor: 'hsl(var(--mint))' }}
+                  />
+                  <p className="text-sm text-foreground font-medium flex-1">
+                    {item.after}
+                  </p>
+                </div>
+              ))}
             </div>
             
             {/* Quote */}
@@ -142,13 +187,12 @@ const BeforeAfterSplit = () => {
             </div>
           </div>
 
-          {/* BEFORE layer (top) - clips away with scroll */}
-          <motion.div
-            className="absolute inset-0 bg-card"
+          {/* BEFORE layer (top) - clips away via CSS variable */}
+          <div
+            className="absolute inset-0 bg-card before-layer-wipe"
             style={{
-              clipPath: `inset(0 0 0 ${animationProgress * 100}%)`,
+              clipPath: `inset(0 0 0 var(--wipe-progress, 0%))`,
             }}
-            transition={{ type: "tween", ease: "easeOut", duration: 0.1 }}
           >
             <div className="space-y-4 md:space-y-6 p-4 md:p-6">
               {/* Header */}
@@ -186,49 +230,42 @@ const BeforeAfterSplit = () => {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Mint glow line at wipe edge */}
-          {animationProgress > 0.05 && animationProgress < 0.95 && (
-            <motion.div
-              className="absolute top-0 bottom-0 w-1 pointer-events-none"
-              style={{
-                left: `${animationProgress * 100}%`,
-                background: 'linear-gradient(to right, transparent, hsl(var(--mint)), transparent)',
-                boxShadow: '0 0 20px 2px hsl(var(--mint) / 0.5)',
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            />
-          )}
+          {/* Mint glow line at wipe edge - CSS driven */}
+          <div
+            className="absolute top-0 bottom-0 w-1 pointer-events-none wipe-glow-line"
+            style={{
+              left: 'var(--wipe-progress, 0%)',
+              background: 'linear-gradient(to right, transparent, hsl(var(--mint)), transparent)',
+              boxShadow: '0 0 20px 2px hsl(var(--mint) / 0.5)',
+              opacity: 'var(--glow-opacity, 0)',
+            }}
+          />
         </div>
 
         {/* Completion message */}
-        {animationProgress > 0.85 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mt-8"
+        {displayProgress > 0.85 && (
+          <div
+            className="text-center mt-8 animate-fade-in"
           >
             <p className="text-sm text-muted-foreground">
               This isn't theory. It's what happens when you work with a practitioner who's been in your seat.
             </p>
-          </motion.div>
+          </div>
         )}
 
         {/* Scroll Lock Indicator */}
-        {isLocked && animationProgress < 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+        {isLocked && displayProgress < 1 && (
+          <div
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in"
           >
             <div className="bg-background/90 px-4 py-2 rounded-full border shadow-lg backdrop-blur-sm">
               <span className="text-xs text-muted-foreground">
-                ↓ Keep scrolling ({Math.round(animationProgress * 100)}%)
+                ↓ Keep scrolling ({Math.round(displayProgress * 100)}%)
               </span>
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </section>
