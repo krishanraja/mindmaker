@@ -18,15 +18,16 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
   const sectionRef = useRef<HTMLElement>(null);
   const [isLocked, setIsLocked] = useState(false);
   
-  // Refs to avoid dependency array issues
+  // Refs to avoid dependency array issues and reduce re-renders
   const onProgressRef = useRef(options.onProgress);
   const touchStartYRef = useRef(0);
   const scrollPositionRef = useRef(0);
   const releaseCooldownRef = useRef(false);
   const isCompleteRef = useRef(options.isComplete);
   const canReverseExitRef = useRef(options.canReverseExit ?? false);
+  const lastScrollCheckRef = useRef(0);
   
-  // Keep refs updated
+  // Keep refs updated (these don't cause re-renders)
   useEffect(() => {
     onProgressRef.current = options.onProgress;
   }, [options.onProgress]);
@@ -43,6 +44,7 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
     const enabled = options.enabled ?? true;
     if (!enabled) return;
 
+    // Throttled wheel handler - batches via onProgress which already uses RAF
     const handleWheel = (e: WheelEvent) => {
       if (!isLocked) return;
       e.preventDefault();
@@ -66,7 +68,12 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       onProgressRef.current(delta, direction);
     };
 
+    // Throttled scroll check - only check every 16ms (60fps)
     const handleScroll = () => {
+      const now = performance.now();
+      if (now - lastScrollCheckRef.current < 16) return;
+      lastScrollCheckRef.current = now;
+      
       // Don't check during cooldown
       if (releaseCooldownRef.current) return;
       
@@ -93,7 +100,7 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       }
     };
     
-    // Attach listeners
+    // Attach listeners with appropriate passive flags
     window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -105,7 +112,7 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [isLocked, options.lockThreshold, options.enabled]);
+  }, [isLocked, options.lockThreshold, options.enabled, options.headerOffset]);
 
   // Separate effect for release logic
   useEffect(() => {
