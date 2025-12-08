@@ -36,12 +36,10 @@ const BuilderEconomyConnection = () => {
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
           {formats.map((format, index) => {
             const IconComponent = format.icon;
-            return (
-              <div 
-                key={index}
-                className="minimal-card text-center fade-in-up"
-                style={{animationDelay: `${index * 0.1}s`}}
-              >
+            const isPodcast = format.title === "Podcast";
+            
+            const cardContent = (
+              <>
                 <div className="w-12 h-12 bg-mint/10 rounded-md flex items-center justify-center mx-auto mb-4">
                   <IconComponent className="h-6 w-6 text-mint" />
                 </div>
@@ -53,6 +51,31 @@ const BuilderEconomyConnection = () => {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {format.description}
                 </p>
+              </>
+            );
+            
+            if (isPodcast) {
+              return (
+                <a
+                  key={index}
+                  href="https://www.thebuildereconomy.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="minimal-card text-center fade-in-up hover:border-mint/50 transition-colors cursor-pointer"
+                  style={{animationDelay: `${index * 0.1}s`}}
+                >
+                  {cardContent}
+                </a>
+              );
+            }
+            
+            return (
+              <div 
+                key={index}
+                className="minimal-card text-center fade-in-up"
+                style={{animationDelay: `${index * 0.1}s`}}
+              >
+                {cardContent}
               </div>
             );
           })}
