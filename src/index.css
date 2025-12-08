@@ -187,6 +187,36 @@ a:hover {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
+  /* Premium hover lift - desktop only, calm 600ms ease */
+  .hover-lift {
+    transition: transform 600ms ease, box-shadow 600ms ease;
+  }
+  
+  @media (min-width: 48rem) {
+    .hover-lift:hover {
+      transform: scale(1.02) translateY(-2px);
+    }
+  }
+  
+  /* Carousel image scale - desktop only */
+  .carousel-image-hover {
+    transition: transform 600ms ease;
+  }
+  
+  @media (min-width: 48rem) {
+    .carousel-image-hover:hover {
+      transform: scale(1.05);
+    }
+  }
+  
+  /* Disable heavy hover transforms on mobile/touch */
+  @media (max-width: 47.9375rem) {
+    .hover-lift:hover,
+    .carousel-image-hover:hover {
+      transform: none;
+    }
+  }
+
   /* INKED PAPER CARD SYSTEM */
   
   /* Default Content Cards - Subtle mint tint + ink border */
@@ -195,12 +225,15 @@ a:hover {
     border: 2px solid hsl(var(--ink) / 0.15);
     border-radius: 4px;
     padding: 24px;
-    transition: all 0.3s ease;
+    transition: border-color 600ms ease, box-shadow 600ms ease, transform 600ms ease;
   }
 
-  .editorial-card:hover {
-    border-color: hsl(var(--mint) / 0.5);
-    box-shadow: 0 4px 16px -4px hsl(var(--mint) / 0.15);
+  @media (min-width: 48rem) {
+    .editorial-card:hover {
+      border-color: hsl(var(--mint) / 0.5);
+      box-shadow: 0 4px 16px -4px hsl(var(--mint) / 0.15);
+      transform: scale(1.02) translateY(-2px);
+    }
   }
 
   .dark .editorial-card {
@@ -209,9 +242,12 @@ a:hover {
     box-shadow: 0 2px 12px -2px hsl(var(--mint) / 0.1);
   }
 
-  .dark .editorial-card:hover {
-    border-color: hsl(var(--mint) / 0.5);
-    box-shadow: 0 8px 24px -4px hsl(var(--mint) / 0.2);
+  @media (min-width: 48rem) {
+    .dark .editorial-card:hover {
+      border-color: hsl(var(--mint) / 0.5);
+      box-shadow: 0 8px 24px -4px hsl(var(--mint) / 0.2);
+      transform: scale(1.02) translateY(-2px);
+    }
   }
 
   /* Minimal Cards - Clean and simple */
@@ -220,13 +256,15 @@ a:hover {
     border: 2px solid hsl(var(--ink) / 0.15);
     border-radius: 4px;
     padding: 24px;
-    transition: all 0.3s ease;
+    transition: border-color 600ms ease, box-shadow 600ms ease, transform 600ms ease;
   }
 
-  .minimal-card:hover {
-    border-color: hsl(var(--mint) / 0.5);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px -8px hsl(var(--mint) / 0.15);
+  @media (min-width: 48rem) {
+    .minimal-card:hover {
+      border-color: hsl(var(--mint) / 0.5);
+      transform: scale(1.02) translateY(-2px);
+      box-shadow: 0 8px 24px -8px hsl(var(--mint) / 0.15);
+    }
   }
 
   .dark .minimal-card {
@@ -234,9 +272,12 @@ a:hover {
     border-color: hsl(var(--mint) / 0.2);
   }
 
-  .dark .minimal-card:hover {
-    border-color: hsl(var(--mint) / 0.5);
-    box-shadow: 0 12px 32px -8px hsl(var(--mint) / 0.25);
+  @media (min-width: 48rem) {
+    .dark .minimal-card:hover {
+      border-color: hsl(var(--mint) / 0.5);
+      transform: scale(1.02) translateY(-2px);
+      box-shadow: 0 12px 32px -8px hsl(var(--mint) / 0.25);
+    }
   }
 
   /* Accent Cards - Ink left border + mint top line */
@@ -247,7 +288,7 @@ a:hover {
     border-radius: 4px;
     padding: 24px;
     position: relative;
-    transition: all 0.3s ease;
+    transition: border-color 600ms ease, box-shadow 600ms ease, transform 600ms ease;
   }
 
   .accent-card::before {
@@ -260,9 +301,12 @@ a:hover {
     background: hsl(var(--mint));
   }
 
-  .accent-card:hover {
-    border-left-color: hsl(var(--mint));
-    box-shadow: 0 4px 16px -4px hsl(var(--ink) / 0.15);
+  @media (min-width: 48rem) {
+    .accent-card:hover {
+      border-left-color: hsl(var(--mint));
+      box-shadow: 0 4px 16px -4px hsl(var(--ink) / 0.15);
+      transform: scale(1.02) translateY(-2px);
+    }
   }
 
   .dark .accent-card {
@@ -271,8 +315,11 @@ a:hover {
     border-color: hsl(var(--border));
   }
 
-  .dark .accent-card:hover {
-    box-shadow: 0 8px 24px -4px hsl(var(--mint) / 0.2);
+  @media (min-width: 48rem) {
+    .dark .accent-card:hover {
+      box-shadow: 0 8px 24px -4px hsl(var(--mint) / 0.2);
+      transform: scale(1.02) translateY(-2px);
+    }
   }
 
   /* Premium Cards - Featured with strong mint presence */
@@ -282,13 +329,15 @@ a:hover {
     border-radius: 4px;
     padding: 24px;
     position: relative;
-    transition: all 0.3s ease;
+    transition: border-color 600ms ease, box-shadow 600ms ease, transform 600ms ease;
   }
 
-  .premium-card:hover {
-    border-color: hsl(var(--mint) / 0.7);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px -8px hsl(var(--mint) / 0.3);
+  @media (min-width: 48rem) {
+    .premium-card:hover {
+      border-color: hsl(var(--mint) / 0.7);
+      transform: scale(1.02) translateY(-2px);
+      box-shadow: 0 12px 32px -8px hsl(var(--mint) / 0.3);
+    }
   }
 
   .dark .premium-card {
@@ -297,9 +346,12 @@ a:hover {
     box-shadow: 0 4px 20px -4px hsl(var(--mint) / 0.15);
   }
 
-  .dark .premium-card:hover {
-    border-color: hsl(var(--mint));
-    box-shadow: 0 16px 40px -8px hsl(var(--mint) / 0.3);
+  @media (min-width: 48rem) {
+    .dark .premium-card:hover {
+      border-color: hsl(var(--mint));
+      transform: scale(1.02) translateY(-2px);
+      box-shadow: 0 16px 40px -8px hsl(var(--mint) / 0.3);
+    }
   }
 
   /* Editorial Rules - Section dividers */

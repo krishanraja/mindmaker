@@ -10,7 +10,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: any }) => {
   const isLongQuote = testimonial.quote.length > 180;
 
   return (
-    <div className="minimal-card bg-background h-full flex flex-col min-h-[280px]">
+    <div className="minimal-card hover-lift bg-background h-full flex flex-col min-h-[280px]">
       <Quote className="h-6 w-6 text-mint mb-4 flex-shrink-0" />
       
       <div className="flex-grow">

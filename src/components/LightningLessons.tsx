@@ -68,7 +68,7 @@ export const LightningLessons = () => {
             {lessons.map((lesson, index) => (
               <div 
                 key={index}
-                className="border border-border rounded-lg overflow-hidden hover:border-mint transition-colors bg-card flex flex-col h-full"
+                className="border border-border rounded-lg overflow-hidden hover:border-mint bg-card flex flex-col h-full hover-lift"
               >
                 {/* Thumbnail */}
                 <div className="relative h-24 overflow-hidden flex-shrink-0">

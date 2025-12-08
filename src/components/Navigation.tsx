@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import mindmakerLogoDark from "@/assets/mindmaker-logo-dark.png";
 import mindmakerLogoLight from "@/assets/mindmaker-logo-light.png";
 import { LightningLessons } from "@/components/LightningLessons";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +15,9 @@ const Navigation = () => {
   const [lessonsExpanded, setLessonsExpanded] = useState(false);
   const [nestedExpanded, setNestedExpanded] = useState<{ [key: string]: boolean }>({});
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  
+  // Hide header on scroll down, reveal on scroll up
+  const { isHidden } = useScrollDirection({ disabled: isOpen });
 
   const navItems = [
     { 
@@ -72,7 +76,10 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm pt-safe-top">
+    <nav 
+      className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm pt-safe-top transition-transform duration-200 ease-out"
+      style={{ transform: isHidden ? 'translateY(-100%)' : 'translateY(0)' }}
+    >
       <div className="container-width px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 sm:h-18 md:h-20">
           {/* Logo */}
