@@ -1,5 +1,23 @@
+/**
+ * @file get-ai-news Edge Function
+ * @description Fetches AI business news headlines with multi-provider fallback cascade:
+ *              NewsAPI.org → Lovable AI → OpenAI → Static Fallback
+ * @dependencies NewsAPI.org, Lovable AI Gateway, OpenAI API
+ * @secrets NEWSAPI_KEY (primary), LOVABLE_API_KEY (fallback), OPENAI_API_KEY (fallback)
+ * 
+ * Request: GET (no body required)
+ * 
+ * Response:
+ *   { headlines: NewsHeadline[], timestamp: string, provider: string, fallback: boolean }
+ * 
+ * Error Handling:
+ *   - Always returns 200 with static fallback on complete failure
+ *   - Cascades through providers on individual failures
+ */
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createLogger, extractRequestContext } from '../_shared/logger.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

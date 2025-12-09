@@ -1,5 +1,26 @@
+/**
+ * @file send-lead-email Edge Function
+ * @description Processes lead submissions with AI-powered company research and sends
+ *              enriched lead notification emails via Resend with retry logic.
+ * @dependencies Resend API, OpenAI API
+ * @secrets RESEND_API_KEY, OPENAI_API_KEY
+ * 
+ * Request:
+ *   POST { name, email, jobTitle, selectedProgram, sessionData }
+ * 
+ * Response:
+ *   { success: true } or { error: string }
+ * 
+ * Features:
+ *   - Company research via OpenAI (skipped for personal email domains)
+ *   - Structured function calling for reliable output
+ *   - Exponential backoff retry (3 attempts)
+ *   - Session engagement data included in email
+ */
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { createLogger, extractRequestContext } from '../_shared/logger.ts';
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const openAIApiKey = Deno.env.get("OPENAI_API_KEY");

@@ -1,7 +1,25 @@
+/**
+ * @file useScrollDirection Hook
+ * @description Tracks scroll direction using requestAnimationFrame for performance.
+ *              Returns isHidden boolean for header hide/reveal behavior.
+ * @dependencies None (standalone hook)
+ * @returns { isHidden: boolean }
+ * 
+ * Usage:
+ *   const { isHidden } = useScrollDirection({ threshold: 10 });
+ *   // Apply transform: translateY(${isHidden ? '-100%' : '0'}) to header
+ * 
+ * Options:
+ *   - threshold: Minimum scroll distance to trigger direction change (default: 10px)
+ *   - disabled: Disable scroll tracking (e.g., when mobile menu is open)
+ */
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface UseScrollDirectionOptions {
+  /** Minimum scroll distance to trigger direction change (default: 10px) */
   threshold?: number;
+  /** Disable scroll tracking (e.g., when mobile menu is open) */
   disabled?: boolean;
 }
 

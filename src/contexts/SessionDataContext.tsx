@@ -1,4 +1,26 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+/**
+ * @file SessionDataContext
+ * @description Manages user session state including engagement tracking, tool usage,
+ *              and behavioral data. Provides context for all interactive components.
+ * @dependencies React
+ * @returns SessionDataProvider component and useSessionData hook
+ * 
+ * Data tracked:
+ * - Friction Map results
+ * - Portfolio Builder selections
+ * - Assessment answers and profile
+ * - Try It Widget interactions
+ * - Pages visited, time on site, scroll depth
+ */
+
+import React, { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
+
+/**
+ * Generates a unique session ID for tracking
+ */
+const generateSessionId = (): string => {
+  return `sess_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 9)}`;
+};
 
 interface FrictionMapData {
   problem: string;
@@ -25,6 +47,8 @@ interface TryItData {
 }
 
 export interface SessionData {
+  sessionId: string;
+  startedAt: Date;
   frictionMap?: FrictionMapData;
   portfolioBuilder?: PortfolioData;
   assessment?: AssessmentData;
@@ -36,6 +60,7 @@ export interface SessionData {
 
 interface SessionDataContextType {
   sessionData: SessionData;
+  sessionId: string;
   setFrictionMap: (data: FrictionMapData) => void;
   setPortfolioBuilder: (data: PortfolioData) => void;
   setAssessment: (data: AssessmentData) => void;
@@ -47,11 +72,16 @@ interface SessionDataContextType {
 const SessionDataContext = createContext<SessionDataContextType | undefined>(undefined);
 
 export const SessionDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [sessionData, setSessionData] = useState<SessionData>({
+  // Generate stable session ID on mount
+  const [sessionId] = useState(() => generateSessionId());
+  
+  const [sessionData, setSessionData] = useState<SessionData>(() => ({
+    sessionId,
+    startedAt: new Date(),
     pagesVisited: [],
     timeOnSite: 0,
     scrollDepth: 0,
-  });
+  }));
 
   // Track time on site
   useEffect(() => {
@@ -126,6 +156,7 @@ export const SessionDataProvider: React.FC<{ children: React.ReactNode }> = ({ c
   return (
     <SessionDataContext.Provider value={{
       sessionData,
+      sessionId,
       setFrictionMap,
       setPortfolioBuilder,
       setAssessment,

@@ -1,5 +1,25 @@
+/**
+ * @file chat-with-krish Edge Function
+ * @description AI chatbot powered by Vertex AI with RAG (Retrieval Augmented Generation)
+ *              using the Mindmaker methodology corpus. Supports both main chat and Try It Widget modes.
+ * @dependencies Google Cloud Service Account, Vertex AI API
+ * @secrets GOOGLE_SERVICE_ACCOUNT_KEY
+ * 
+ * Request:
+ *   POST { messages: Array<{role: string, content: string}>, widgetMode?: 'tryit' | undefined }
+ * 
+ * Response:
+ *   { message: string, metadata: { model: string, cached: boolean, fallback: boolean } }
+ * 
+ * Error Handling:
+ *   - Always returns 200 with fallback message on error (anti-fragile design)
+ *   - Caches access tokens for 50 minutes
+ *   - Comprehensive RAG diagnostic logging
+ */
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createLogger, extractRequestContext } from '../_shared/logger.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -296,12 +316,14 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const requestId = Math.random().toString(36).substring(7);
-  console.log(`[${requestId}] ===== CHAT REQUEST START =====`);
+  const { requestId, sessionId } = extractRequestContext(req);
+  const logger = createLogger('chat-with-krish', requestId, sessionId);
+  
+  logger.info('Chat request started');
   
   try {
     const { messages, widgetMode } = await req.json();
-    console.log(`[${requestId}] Widget mode: ${widgetMode}, Messages count: ${messages?.length || 0}`);
+    logger.info('Request parsed', { widgetMode, messageCount: messages?.length || 0 });
     
     if (!messages || !Array.isArray(messages)) {
       throw new Error('Invalid messages format');
@@ -414,12 +436,12 @@ User: "How is this different from training?"
 You: "We don't train—we build. You leave with working systems, not slides. [See the 30-Day Sprint](/builder-sprint) or [try the tool](/) now."`;
 
     // Get access token and call Vertex AI with system instruction
-    console.log(`[${requestId}] Authenticating with Google service account...`);
+    logger.info('Authenticating with Google service account');
     const accessToken = await getAccessToken(serviceAccount);
-    console.log(`[${requestId}] Authentication successful, calling Vertex AI RAG...`);
+    logger.info('Authentication successful, calling Vertex AI RAG');
     
     const assistantMessage = await callVertexAI(messages, accessToken, isTryItWidget, systemPrompt);
-    console.log(`[${requestId}] Vertex AI response received, length: ${assistantMessage.length} chars`);
+    logger.info('Vertex AI response received', { responseLength: assistantMessage.length });
 
     const response: ChatResponse = {
       message: assistantMessage,
@@ -430,7 +452,7 @@ You: "We don't train—we build. You leave with working systems, not slides. [Se
       },
     };
 
-    console.log(`[${requestId}] ===== CHAT REQUEST SUCCESS =====`);
+    logger.info('Chat request completed successfully');
     return new Response(
       JSON.stringify(response),
       {
@@ -438,8 +460,7 @@ You: "We don't train—we build. You leave with working systems, not slides. [Se
       }
     );
   } catch (error) {
-    console.error(`[${requestId}] ===== CHAT REQUEST ERROR =====`);
-    console.error(`[${requestId}] Error:`, error);
+    logger.error('Chat request failed', { error: error instanceof Error ? error.message : String(error) });
     
     // Always return a usable response, never break the UI
     const errorResponse: ChatResponse = {
