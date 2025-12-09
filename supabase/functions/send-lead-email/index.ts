@@ -20,6 +20,7 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { createLogger, extractRequestContext } from '../_shared/logger.ts';
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
@@ -30,38 +31,61 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface SessionData {
-  frictionMap?: {
-    problem: string;
-    timeSaved: number;
-    toolRecommendations: string[];
-    generatedAt: string;
-  };
-  portfolioBuilder?: {
-    selectedTasks: { name: string; hours: number; savings: number }[];
-    totalTimeSaved: number;
-    totalCostSavings: number;
-  };
-  assessment?: {
-    profileType: string;
-    profileDescription: string;
-    recommendedProduct: string;
-  };
-  tryItWidget?: {
-    challenges: { input: string; response: string; timestamp: string }[];
-  };
-  pagesVisited: string[];
-  timeOnSite: number;
-  scrollDepth: number;
-}
+// HTML escape helper to prevent XSS in email content
+const escapeHtml = (str: string): string => {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
 
-interface LeadRequest {
-  name: string;
-  email: string;
-  jobTitle: string;
-  selectedProgram: string;
-  sessionData: SessionData;
-}
+// Input validation schemas
+const sessionDataSchema = z.object({
+  frictionMap: z.object({
+    problem: z.string().max(1000),
+    timeSaved: z.number(),
+    toolRecommendations: z.array(z.string()),
+    generatedAt: z.string(),
+  }).optional(),
+  portfolioBuilder: z.object({
+    selectedTasks: z.array(z.object({
+      name: z.string(),
+      hours: z.number(),
+      savings: z.number(),
+    })),
+    totalTimeSaved: z.number(),
+    totalCostSavings: z.number(),
+  }).optional(),
+  assessment: z.object({
+    profileType: z.string(),
+    profileDescription: z.string(),
+    recommendedProduct: z.string(),
+  }).optional(),
+  tryItWidget: z.object({
+    challenges: z.array(z.object({
+      input: z.string(),
+      response: z.string(),
+      timestamp: z.string(),
+    })),
+  }).optional(),
+  pagesVisited: z.array(z.string()).default([]),
+  timeOnSite: z.number().default(0),
+  scrollDepth: z.number().default(0),
+});
+
+const leadRequestSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Name too long"),
+  email: z.string().email("Invalid email format").max(255, "Email too long"),
+  jobTitle: z.string().max(100, "Job title too long").default(""),
+  selectedProgram: z.string().max(50).default("not-sure"),
+  sessionData: sessionDataSchema.default({
+    pagesVisited: [],
+    timeOnSite: 0,
+    scrollDepth: 0,
+  }),
+});
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
@@ -69,7 +93,19 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, jobTitle, selectedProgram, sessionData }: LeadRequest = await req.json();
+    const body = await req.json();
+    
+    // Validate input
+    const parseResult = leadRequestSchema.safeParse(body);
+    if (!parseResult.success) {
+      console.error("Validation failed:", parseResult.error.flatten());
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: parseResult.error.flatten().fieldErrors }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+    
+    const { name, email, jobTitle, selectedProgram, sessionData } = parseResult.data;
     console.log("Processing lead:", { name, email, jobTitle });
 
     // Extract domain from email
@@ -154,21 +190,21 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
       
       <h2>Lead Details</h2>
       <ul>
-        <li><strong>Name:</strong> ${name}</li>
-        <li><strong>Job Title:</strong> ${jobTitle}</li>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Interest:</strong> ${programLabels[selectedProgram] || selectedProgram}</li>
+        <li><strong>Name:</strong> ${escapeHtml(name)}</li>
+        <li><strong>Job Title:</strong> ${escapeHtml(jobTitle)}</li>
+        <li><strong>Email:</strong> ${escapeHtml(email)}</li>
+        <li><strong>Interest:</strong> ${escapeHtml(programLabels[selectedProgram] || selectedProgram)}</li>
       </ul>
 
       <h2>🔍 Company Research</h2>
       <ul>
-        <li><strong>Company:</strong> ${companyResearch.companyName}</li>
-        <li><strong>Domain:</strong> ${domain}</li>
-        <li><strong>Industry:</strong> ${companyResearch.industry}</li>
-        <li><strong>Size:</strong> ${companyResearch.companySize}</li>
-        <li><strong>Recent News:</strong> ${companyResearch.latestNews}</li>
-        <li><strong>Suggested Scope:</strong> ${companyResearch.suggestedScope}</li>
-        <li><strong>Confidence:</strong> ${companyResearch.confidence}</li>
+        <li><strong>Company:</strong> ${escapeHtml(companyResearch.companyName)}</li>
+        <li><strong>Domain:</strong> ${escapeHtml(domain)}</li>
+        <li><strong>Industry:</strong> ${escapeHtml(companyResearch.industry)}</li>
+        <li><strong>Size:</strong> ${escapeHtml(companyResearch.companySize)}</li>
+        <li><strong>Recent News:</strong> ${escapeHtml(companyResearch.latestNews)}</li>
+        <li><strong>Suggested Scope:</strong> ${escapeHtml(companyResearch.suggestedScope)}</li>
+        <li><strong>Confidence:</strong> ${escapeHtml(companyResearch.confidence)}</li>
       </ul>
     `;
 
@@ -177,16 +213,16 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
       emailHtml += `
         <h2>🗺️ Friction Map (Used)</h2>
         <ul>
-          <li><strong>Problem:</strong> "${sessionData.frictionMap.problem}"</li>
+          <li><strong>Problem:</strong> "${escapeHtml(sessionData.frictionMap.problem)}"</li>
           <li><strong>Estimated Time Savings:</strong> ${sessionData.frictionMap.timeSaved}h/week</li>
-          <li><strong>Tools Recommended:</strong> ${sessionData.frictionMap.toolRecommendations.join(", ")}</li>
+          <li><strong>Tools Recommended:</strong> ${sessionData.frictionMap.toolRecommendations.map(t => escapeHtml(t)).join(", ")}</li>
         </ul>
       `;
     }
 
     if (sessionData.portfolioBuilder && sessionData.portfolioBuilder.selectedTasks.length > 0) {
       const tasks = sessionData.portfolioBuilder.selectedTasks.map(t => 
-        `${t.name} (${t.hours}h/week)`
+        `${escapeHtml(t.name)} (${t.hours}h/week)`
       ).join(", ");
       emailHtml += `
         <h2>📊 Portfolio Builder (Used)</h2>
@@ -202,9 +238,9 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
       emailHtml += `
         <h2>✅ Assessment (Completed)</h2>
         <ul>
-          <li><strong>Profile Type:</strong> ${sessionData.assessment.profileType}</li>
-          <li><strong>Description:</strong> ${sessionData.assessment.profileDescription}</li>
-          <li><strong>Recommended Product:</strong> ${sessionData.assessment.recommendedProduct}</li>
+          <li><strong>Profile Type:</strong> ${escapeHtml(sessionData.assessment.profileType)}</li>
+          <li><strong>Description:</strong> ${escapeHtml(sessionData.assessment.profileDescription)}</li>
+          <li><strong>Recommended Product:</strong> ${escapeHtml(sessionData.assessment.recommendedProduct)}</li>
         </ul>
       `;
     }
@@ -214,8 +250,8 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
       emailHtml += `
         <h2>💡 Try It Widget (Used ${sessionData.tryItWidget.challenges.length}x)</h2>
         <ul>
-          <li><strong>Most Recent Challenge:</strong> "${lastChallenge.input}"</li>
-          <li><strong>Response:</strong> "${lastChallenge.response.substring(0, 150)}..."</li>
+          <li><strong>Most Recent Challenge:</strong> "${escapeHtml(lastChallenge.input)}"</li>
+          <li><strong>Response:</strong> "${escapeHtml(lastChallenge.response.substring(0, 150))}..."</li>
         </ul>
       `;
     }

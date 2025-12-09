@@ -1,10 +1,19 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from 'https://esm.sh/stripe@18.5.0';
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+const consultationHoldSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Name too long"),
+  email: z.string().email("Invalid email format").max(255, "Email too long"),
+  selectedProgram: z.string().max(100).optional(),
+  priceId: z.string().max(100).optional(),
+});
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -27,9 +36,19 @@ serve(async (req) => {
     });
 
     const body = await req.json();
-    console.log('Request body:', { ...body, email: '***' });
     
-    const { name, email, selectedProgram, priceId } = body;
+    // Validate input
+    const parseResult = consultationHoldSchema.safeParse(body);
+    if (!parseResult.success) {
+      console.error("Validation failed:", parseResult.error.flatten());
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: parseResult.error.flatten().fieldErrors }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+    
+    const { name, email, selectedProgram, priceId } = parseResult.data;
+    console.log('Request validated:', { name: '***', email: '***', selectedProgram });
 
     // Create a Checkout session for the consultation hold
     const session = await stripe.checkout.sessions.create({
@@ -84,11 +103,12 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error creating checkout session:', error);
     const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+    // Log stack trace server-side only, don't expose to client
+    if (error instanceof Error && error.stack) {
+      console.error('Stack trace:', error.stack);
+    }
     return new Response(
-      JSON.stringify({ 
-        error: errorMessage,
-        details: error instanceof Error ? error.stack : undefined
-      }),
+      JSON.stringify({ error: errorMessage }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,

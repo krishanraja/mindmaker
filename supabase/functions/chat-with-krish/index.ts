@@ -19,12 +19,24 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { createLogger, extractRequestContext } from '../_shared/logger.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+const messageSchema = z.object({
+  role: z.enum(['user', 'assistant', 'system']),
+  content: z.string().min(1).max(10000),
+});
+
+const chatRequestSchema = z.object({
+  messages: z.array(messageSchema).min(1).max(50),
+  widgetMode: z.enum(['tryit']).optional(),
+});
 
 // Predictable response shape
 interface ChatResponse {
@@ -322,15 +334,21 @@ serve(async (req) => {
   logger.info('Chat request started');
   
   try {
-    const { messages, widgetMode } = await req.json();
-    logger.info('Request parsed', { widgetMode, messageCount: messages?.length || 0 });
+    const body = await req.json();
     
-    if (!messages || !Array.isArray(messages)) {
-      throw new Error('Invalid messages format');
+    // Validate input
+    const parseResult = chatRequestSchema.safeParse(body);
+    if (!parseResult.success) {
+      logger.warn('Validation failed', { errors: parseResult.error.flatten() });
+      return new Response(
+        JSON.stringify({ error: 'Invalid input', details: parseResult.error.flatten().fieldErrors }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
     }
     
+    const { messages, widgetMode } = parseResult.data;
     const isTryItWidget = widgetMode === 'tryit';
-    console.log('Widget mode:', widgetMode, 'isTryItWidget:', isTryItWidget);
+    logger.info('Request validated', { widgetMode, messageCount: messages.length, isTryItWidget });
 
     // Get service account credentials
     const serviceAccountJson = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_KEY');
