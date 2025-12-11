@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { useScrollTrigger } from "@/hooks/useScrollTrigger";
 import { BuilderAssessment } from "@/components/Interactive/BuilderAssessment";
@@ -47,9 +48,9 @@ const InteractiveCard = ({ icon, title, subtitle, description, onClick, delay = 
           {description}
         </p>
         <div className="mt-auto">
-          <button className="w-full py-2 px-4 bg-mint/10 hover:bg-mint/20 text-ink rounded-lg text-sm font-semibold transition-colors">
+          <Button variant="mint" className="w-full">
             Open Tool →
-          </button>
+          </Button>
         </div>
       </div>
     </motion.div>
