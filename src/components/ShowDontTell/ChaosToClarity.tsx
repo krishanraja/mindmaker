@@ -371,8 +371,8 @@ const ChaosToClarity = () => {
   }, [scheduleUpdate]);
 
   const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: 0,
-    headerOffset: 60,
+    lockThreshold: 0, // Start hijack immediately when section reaches trigger point
+    headerOffset: 80, // Minimal breathing room - just a glimmer of space above title
     onProgress: handleProgress,
     isComplete: uiState.isComplete,
     canReverseExit: true,
@@ -404,13 +404,15 @@ const ChaosToClarity = () => {
         ref={containerRef}
         className="w-full max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-32 chaos-clarity-container"
       >
-        {/* Sticky header block */}
-        <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40 pt-4 pb-6 md:pt-6 md:pb-8">
+        {/* FIX (d): Changed to opaque background to prevent nav bleedthrough */}
+        {/* FIX (c): Fixed height container prevents layout shift */}
+        <div className="sticky top-0 z-20 bg-background border-b border-border/40 pt-4 pb-6 md:pt-6 md:pb-8">
           <div className="text-center">
-            <div className="relative h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem]">
+            {/* FIX (c): Increased fixed height to accommodate longest headline without wrapping */}
+            <div className="relative h-[4rem] md:h-[5.5rem] lg:h-[6.5rem]">
               {/* Chaos headline */}
               <h2
-                className="absolute inset-0 flex items-center justify-center text-2xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance chaos-headline"
+                className="absolute inset-0 flex items-center justify-center text-2xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance chaos-headline px-4"
                 style={{ opacity: 'var(--chaos-headline-opacity, 1)' }}
               >
                 {CHAOS_HEADLINE}
@@ -418,7 +420,7 @@ const ChaosToClarity = () => {
 
               {/* Clarity headline */}
               <h2
-                className="absolute inset-0 flex items-center justify-center text-2xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance clarity-headline"
+                className="absolute inset-0 flex items-center justify-center text-2xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance clarity-headline px-4"
                 style={{ opacity: 'var(--clarity-headline-opacity, 0)' }}
               >
                 {CLARITY_HEADLINE}
