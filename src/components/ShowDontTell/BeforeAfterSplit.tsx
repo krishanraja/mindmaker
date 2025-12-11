@@ -83,7 +83,7 @@ const BeforeAfterSplit = () => {
   }, [scheduleUpdate]);
 
   const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: 0,
+    lockThreshold: isMobile ? 0.3 : 0,
     headerOffset: 80,
     onProgress: handleProgress,
     isComplete: isComplete,
