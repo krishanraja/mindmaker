@@ -24,8 +24,11 @@ const generateSessionId = (): string => {
 
 interface FrictionMapData {
   problem: string;
-  timeSaved: number;
-  toolRecommendations: string[];
+  currentState: string;
+  aiEnabledState: string;
+  timeSaved: string;
+  toolRecommendations: { name: string; description: string; useCase: string }[];
+  masterPrompts: { title: string; prompt: string }[];
   generatedAt: Date;
 }
 
