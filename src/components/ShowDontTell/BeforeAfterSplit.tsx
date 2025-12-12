@@ -125,7 +125,7 @@ const BeforeAfterSplit = () => {
 
         {/* Progress indicator - uses displayProgress for discrete updates */}
         {isLocked && displayProgress < 1 && (
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-1 w-20 bg-muted rounded-full overflow-hidden">
               <div 
                 className="h-full bg-mint rounded-full transition-[width] duration-100"
@@ -137,6 +137,21 @@ const BeforeAfterSplit = () => {
                displayProgress < 1 ? 'Keep scrolling...' : 
                '✓ Complete'}
             </span>
+            {displayProgress > 0.3 && (
+              <button
+                onClick={() => {
+                  progressRef.current = 1;
+                  setDisplayProgress(1);
+                  setIsComplete(true);
+                  if (containerRef.current) {
+                    containerRef.current.style.setProperty('--wipe-progress', '100%');
+                  }
+                }}
+                className="text-xs text-mint hover:text-mint-dark underline underline-offset-2 transition-colors"
+              >
+                Skip →
+              </button>
+            )}
           </div>
         )}
 
@@ -260,10 +275,25 @@ const BeforeAfterSplit = () => {
           <div
             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in"
           >
-            <div className="bg-background/90 px-4 py-2 rounded-full border shadow-lg backdrop-blur-sm">
+            <div className="bg-background/90 px-4 py-2 rounded-full border shadow-lg backdrop-blur-sm flex items-center gap-3">
               <span className="text-xs text-muted-foreground">
                 ↓ Keep scrolling ({Math.round(displayProgress * 100)}%)
               </span>
+              {displayProgress > 0.3 && (
+                <button
+                  onClick={() => {
+                    progressRef.current = 1;
+                    setDisplayProgress(1);
+                    setIsComplete(true);
+                    if (containerRef.current) {
+                      containerRef.current.style.setProperty('--wipe-progress', '100%');
+                    }
+                  }}
+                  className="text-xs text-mint hover:text-mint-dark underline underline-offset-2 transition-colors"
+                >
+                  Skip →
+                </button>
+              )}
             </div>
           </div>
         )}

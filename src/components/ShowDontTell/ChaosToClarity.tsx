@@ -519,25 +519,54 @@ const ChaosToClarity = () => {
           <AINewsTicker />
         </div>
 
-        {/* Scroll hint */}
-        {isLocked && uiState.showScrollHint && (
+        {/* Scroll hint with skip button */}
+        {isLocked && (
           <div
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 text-sm text-muted-foreground flex items-center gap-2 animate-fade-in"
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 animate-fade-in"
           >
-            <span>Scroll to organize</span>
-            <svg
-              className="w-4 h-4 animate-bounce"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
+            <div className="bg-background/90 px-4 py-2 rounded-full border shadow-lg backdrop-blur-sm flex items-center gap-3">
+              {uiState.showScrollHint ? (
+                <>
+                  <span className="text-sm text-muted-foreground">Scroll to organize</span>
+                  <svg
+                    className="w-4 h-4 animate-bounce text-muted-foreground"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
+                  </svg>
+                </>
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  Keep scrolling...
+                </span>
+              )}
+              {!uiState.showScrollHint && (
+                <button
+                  onClick={() => {
+                    progressRef.current = 1;
+                    if (containerRef.current) {
+                      updateAnimationState(1);
+                    }
+                    setUiState({
+                      showClarity: true,
+                      showTicker: true,
+                      showScrollHint: false,
+                      isComplete: true,
+                    });
+                  }}
+                  className="text-xs text-mint hover:text-mint-dark underline underline-offset-2 transition-colors"
+                >
+                  Skip →
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>

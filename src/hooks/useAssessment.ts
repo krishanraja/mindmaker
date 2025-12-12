@@ -58,14 +58,6 @@ export const useAssessment = () => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
   }, []);
 
-  const nextQuestion = useCallback(() => {
-    if (currentStep < QUESTIONS.length - 1) {
-      setCurrentStep(prev => prev + 1);
-    } else {
-      generateProfile();
-    }
-  }, [currentStep, answers]);
-
   const generateProfile = useCallback(() => {
     // Calculate total score
     let totalScore = 0;
@@ -120,6 +112,14 @@ export const useAssessment = () => {
 
     setProfile(generatedProfile);
   }, [answers]);
+
+  const nextQuestion = useCallback(() => {
+    if (currentStep < QUESTIONS.length - 1) {
+      setCurrentStep(prev => prev + 1);
+    } else {
+      generateProfile();
+    }
+  }, [currentStep, generateProfile]);
 
   const reset = useCallback(() => {
     setCurrentStep(0);

@@ -4,10 +4,21 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const TestimonialCard = ({ testimonial }: { testimonial: any }) => {
+interface TestimonialCardProps {
+  testimonial: any;
+  onExpandChange?: (expanded: boolean) => void;
+}
+
+const TestimonialCard = ({ testimonial, onExpandChange }: TestimonialCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const IconComponent = testimonial.icon;
   const isLongQuote = testimonial.quote.length > 180;
+
+  const handleToggle = () => {
+    const newExpanded = !isExpanded;
+    setIsExpanded(newExpanded);
+    onExpandChange?.(newExpanded);
+  };
 
   return (
     <div className="minimal-card hover-lift bg-background h-full flex flex-col min-h-[280px]">
@@ -27,7 +38,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: any }) => {
         
         {isLongQuote && (
           <button 
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={handleToggle}
             className="text-mint text-xs mt-2 hover:underline focus:outline-none"
           >
             {isExpanded ? "Show less" : "Read more..."}
@@ -175,16 +186,11 @@ const TrustSection = () => {
                 <div 
                   className="fade-in-up"
                   style={{animationDelay: `${index * 0.1}s`}}
-                  onClick={(e) => {
-                    // Track if any card is expanded by checking for "Show less" text
-                    const target = e.target as HTMLElement;
-                    if (target.textContent?.includes("Show less") || target.textContent?.includes("Read more")) {
-                      // Toggle expansion state for auto-play pause
-                      setIsAnyExpanded(prev => !prev);
-                    }
-                  }}
                 >
-                  <TestimonialCard testimonial={testimonial} />
+                  <TestimonialCard 
+                    testimonial={testimonial} 
+                    onExpandChange={(expanded) => setIsAnyExpanded(expanded)}
+                  />
                 </div>
               </CarouselItem>
             ))}

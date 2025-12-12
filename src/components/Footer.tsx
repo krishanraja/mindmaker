@@ -22,7 +22,7 @@ const Footer = () => {
                 href="/builder-sprint" 
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                30-Day Sprint
+                AI Literacy-to-Influence
               </a>
               <a 
                 href="/leadership-lab" 

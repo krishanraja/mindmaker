@@ -21,7 +21,7 @@ const WhitepaperPromo = () => {
           {/* Content - Right */}
           <div className="space-y-3 md:space-y-4">
             <div className="inline-block">
-              <span className="px-3 py-1 bg-mint/20 text-ink rounded-full text-sm font-semibold">
+              <span className="px-3 py-1 bg-ink text-white dark:bg-white dark:text-ink rounded-full text-sm font-semibold">
                 Featured Report
               </span>
             </div>

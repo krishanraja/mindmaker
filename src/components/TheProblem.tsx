@@ -105,9 +105,9 @@ const TheProblem = () => {
 
   const renderDialogContent = () => {
     const aiDisclaimer = (
-      <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-        <p className="text-xs text-red-900 dark:text-red-200">
-          <strong>AI-Powered Sample:</strong> This tool uses AI trained on decades of proprietary data, decision-making frameworks, and cognitive research. However, this is an AI response for exploration purposes. Consultation with Krish is the next step for personalized guidance.
+      <div className="mb-4 p-3 bg-muted border border-border rounded-lg">
+        <p className="text-xs text-muted-foreground">
+          <strong className="text-foreground">AI-Powered Sample:</strong> This tool uses AI trained on proprietary data and frameworks. Results are for exploration—book a session with Krish for personalized guidance.
         </p>
       </div>
     );
