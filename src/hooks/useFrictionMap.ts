@@ -75,7 +75,7 @@ export const useFrictionMap = () => {
             { role: 'system', content: FRICTION_MAP_PROMPT },
             { role: 'user', content: `Analyze this workflow challenge and provide AI implementation recommendations:\n\n"${problem}"` }
           ],
-          widgetMode: true,
+          widgetMode: 'tryit',
         },
       });
 
