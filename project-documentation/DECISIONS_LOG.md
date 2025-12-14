@@ -1,10 +1,55 @@
 # Decisions Log
 
-**Last Updated:** 2025-12-01
+**Last Updated:** 2025-12-14
 
 ---
 
 ## Architecture Decisions
+
+### 2025-12-14: AI Leadership Benchmark - Self-Serve Diagnostic Lead Gen
+**Decision:** Create `/leaders` page with 6-question AI readiness diagnostic  
+**Rationale:**
+- Self-serve lead qualification reduces friction vs booking calls
+- Provides immediate value (score, insights, prompts) before asking for contact
+- Captures qualified leads through optional unlock form
+- Builds email list with engaged prospects
+
+**UX Decisions:**
+- No toasts - all feedback inline (reduces mobile friction)
+- Progress bars never regress (avoids user anxiety)
+- Everything fits in viewport on mobile (no scrolling during inputs)
+- Use `100dvh` for proper mobile browser chrome handling
+- Collapsible unlock form (reduces perceived commitment)
+
+**Technical Implementation:**
+- `useLeadershipInsights.ts` hook manages all state and logic
+- `LeadershipInsights.tsx` page with 6 diagnostic phases
+- `send-leadership-insights-email` edge function for dual email delivery
+- Client-side score calculation (no AI API calls for results)
+- Framer Motion for smooth phase transitions
+
+**Alternatives Considered:**
+- Full AI-generated results (unnecessary API costs, latency)
+- Mandatory unlock form (friction reduces completions)
+- Toast notifications for status (poor mobile UX)
+- Traditional contact form gate (no value before ask)
+
+**Impact:**
+- New lead generation channel with low friction
+- Higher quality leads (self-qualified via assessment)
+- Email list building with engaged audience
+- Professional UX without distracting feedback patterns
+
+**Files Created:**
+- `src/pages/LeadershipInsights.tsx`
+- `src/hooks/useLeadershipInsights.ts`
+- `supabase/functions/send-leadership-insights-email/index.ts`
+
+**Routes Added:**
+- `/leaders` (primary)
+- `/leadership-insights` (alias)
+
+---
 
 ### 2025-12-01: Pause Stripe $50 Hold - Direct Calendly Booking
 **Decision:** Remove $50 authorization hold requirement, enable direct Calendly booking  

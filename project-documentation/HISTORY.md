@@ -1,6 +1,48 @@
 # History
 
-**Last Updated:** 2025-12-02
+**Last Updated:** 2025-12-14
+
+---
+
+## 2025-12-14: AI Leadership Benchmark Diagnostic
+
+**What Changed:**
+- Created new `/leaders` and `/leadership-insights` routes
+- Built comprehensive AI Leadership Benchmark diagnostic flow
+- 6 Likert-scale questions covering Leadership Growth, Strategic Vision, Implementation
+- Optional personalization with 5 additional questions
+- Smooth generating animation with progress that never regresses
+- Results page with free value (score, tier, strengths, insights) before unlock
+- Collapsible unlock form with Resend email integration
+- Removed Toaster components from App.tsx (no toast notifications in Leadership flow)
+
+**UX Improvements:**
+- No toasts - all feedback is inline for cleaner mobile experience
+- Progress bars use easing and never move backward
+- Everything fits in mobile viewport using `100dvh` (no scrolling during inputs)
+- Collapsible unlock form reduces friction and perceived commitment
+- More free value shown before asking for contact info
+
+**Technical Details:**
+- `useLeadershipInsights.ts` hook manages all diagnostic state and logic
+- `LeadershipInsights.tsx` page with AnimatePresence for smooth phase transitions
+- `send-leadership-insights-email` edge function sends dual emails:
+  - User receives full results with prompt templates and action plan
+  - Krish receives lead notification with all diagnostic data
+- Client-side score calculation (no AI API latency)
+- Tier classification: AI-Emerging, AI-Developing, AI-Proficient, AI-Advanced, AI-Leader
+
+**Files Created:**
+- `src/pages/LeadershipInsights.tsx`
+- `src/hooks/useLeadershipInsights.ts`
+- `supabase/functions/send-leadership-insights-email/index.ts`
+
+**Files Modified:**
+- `src/App.tsx` (removed Toaster imports, added routes)
+- `supabase/config.toml` (added new edge function config)
+
+**Documentation Updated:**
+- `FEATURES.md`, `ARCHITECTURE.md`, `DECISIONS_LOG.md`, `HISTORY.md`
 
 ---
 

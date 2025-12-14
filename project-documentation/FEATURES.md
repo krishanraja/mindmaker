@@ -1,6 +1,6 @@
 # Features
 
-**Last Updated:** 2025-12-13
+**Last Updated:** 2025-12-14
 
 ---
 
@@ -101,6 +101,48 @@
 
 ---
 
+### 6. AI Leadership Benchmark (Lead Generation)
+**Status:** ✅ Live  
+**Duration:** 10 minutes  
+**Price:** Free
+
+**Purpose:** Self-serve diagnostic that helps leaders understand their AI readiness and generates qualified leads
+
+**User Flow:**
+1. User lands on `/leaders` or `/leadership-insights`
+2. Intro screen explaining value proposition
+3. 6-question benchmark (Likert scale 1-5) covering:
+   - Leadership Growth (industry understanding, tool usage)
+   - Strategic Vision (roadmap clarity, vendor evaluation)
+   - Implementation (workflow adoption, transformation readiness)
+4. Optional: Quick personalization (5 additional questions for tailored prompts)
+5. Generating phase with smooth progress animation
+6. Results page with:
+   - Score out of 100 with tier classification
+   - Percentile ranking vs 500+ executives
+   - Strengths and growth areas (free)
+   - Strategic insights (free preview)
+   - Prompt Coach CTA
+   - Collapsible form to unlock full results via email
+
+**Tiers:**
+- AI-Leader (80-100)
+- AI-Advanced (65-79)
+- AI-Proficient (50-64)
+- AI-Developing (35-49)
+- AI-Emerging (0-34)
+
+**UX Principles:**
+- No toasts - all feedback is inline
+- Progress bars never regress
+- Everything fits in mobile viewport (no scrolling during inputs)
+- Uses `100dvh` for proper mobile browser chrome handling
+- Collapsible unlock form reduces friction
+
+**Implementation:** `LeadershipInsights.tsx`, `useLeadershipInsights.ts`, `send-leadership-insights-email` edge function
+
+---
+
 ## Website Features
 
 ### Landing Page (/)
@@ -140,7 +182,8 @@
 - `/leadership-lab` - Lab details
 - `/partner-program` - Partnership details
 - `/builder-economy` - Thought leadership
-- `/faq`, `/privacy`, `/terms`
+- `/leaders` or `/leadership-insights` - AI Leadership Benchmark diagnostic
+- `/faq`, `/privacy`, `/terms`, `/contact`
 
 ---
 
@@ -159,6 +202,8 @@
 - `get-ai-news` - News ticker (Lovable AI Gateway + Gemini 2.5 Flash)
 - `get-market-sentiment` - Market analysis (OpenAI GPT-4o-mini)
 - `send-lead-email` - Lead capture + company research (OpenAI + Resend)
+- `send-contact-email` - Contact form submissions (Resend)
+- `send-leadership-insights-email` - Leadership Benchmark results + lead notification (Resend)
 - `create-consultation-hold` - Stripe checkout (**Paused, kept for future use**)
 - All functions: CORS enabled, public access, comprehensive logging
 

@@ -1,6 +1,6 @@
 # Architecture
 
-**Last Updated:** 2025-12-13
+**Last Updated:** 2025-12-14
 
 ---
 
@@ -73,7 +73,9 @@ mindmaker/
 │   │   ├── chat-with-krish/
 │   │   ├── get-ai-news/
 │   │   ├── get-market-sentiment/
-│   │   └── send-lead-email/
+│   │   ├── send-lead-email/
+│   │   ├── send-contact-email/
+│   │   └── send-leadership-insights-email/
 │   └── config.toml          # Supabase config
 ├── public/                  # Static assets
 ├── project-documentation/   # This documentation
@@ -122,6 +124,36 @@ mindmaker/
 - Created $50 authorization hold via Stripe
 - Redirected to Calendly after payment
 - Manual capture when user proceeded
+```
+
+### Leadership Insights Flow
+```
+1. User navigates to /leaders
+   └─> LeadershipInsights page renders
+
+2. Intro → Start Diagnostic
+   └─> Phase changes to 'questions'
+
+3. User answers 6 Likert-scale questions
+   └─> Auto-advance on selection
+   └─> Progress bar animates forward (never regresses)
+
+4. After Q6 → Personalization Prompt
+   └─> Option to personalize (5 more questions) or skip
+
+5. Generation phase begins
+   └─> Smooth progress animation (easing, 5s duration)
+   └─> Results calculated client-side from answers
+
+6. Results displayed
+   └─> Score, tier, percentile (free)
+   └─> Strengths, growth areas, strategic insights (free)
+   └─> Collapsible form to unlock full results
+
+7. User submits unlock form
+   └─> supabase.functions.invoke('send-leadership-insights-email', {...})
+   └─> Resend: User receives full results email
+   └─> Resend: Krish receives lead notification
 ```
 
 ### Chatbot Flow
@@ -175,6 +207,12 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-lead-email]
+verify_jwt = false
+
+[functions.send-contact-email]
+verify_jwt = false
+
+[functions.send-leadership-insights-email]
 verify_jwt = false
 ```
 
@@ -337,6 +375,57 @@ serve(async (req) => {
 - Session engagement compilation (friction map, portfolio, assessment)
 - Retry logic with exponential backoff (3 attempts, 1s/2s/4s delays)
 - Comprehensive lead intelligence email to krish@themindmaker.ai
+
+#### `send-contact-email`
+**Purpose:** Sends contact form submissions
+
+**Secrets Required:** `RESEND_API_KEY`
+
+**Request Format:**
+```typescript
+{
+  name: string;
+  email: string;
+  message: string;
+}
+```
+
+**Features:**
+- Input validation with Zod
+- HTML escaping for XSS prevention
+- Email to krish@themindmaker.ai
+
+#### `send-leadership-insights-email`
+**Purpose:** Sends AI Leadership Benchmark results to users and lead notification to Krish
+
+**Secrets Required:** `RESEND_API_KEY`
+
+**Request Format:**
+```typescript
+{
+  name: string;
+  email: string;
+  department?: string;
+  aiFocus?: string;
+  results?: {
+    score: number;
+    tier: string;
+    percentile: number;
+    strengths: string[];
+    growthAreas: string[];
+    strategicInsights: string[];
+    promptTemplates: string[];
+    actionPlan: string[];
+  };
+}
+```
+
+**Features:**
+- Dual email delivery (user results + Krish notification)
+- Personalized AI prompt templates in user email
+- 90-day action plan based on tier
+- Input validation with Zod
+- HTML escaping for XSS prevention
 
 #### `create-consultation-hold` (PAUSED)
 **Purpose:** Creates Stripe authorization hold for consultations
