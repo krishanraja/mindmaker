@@ -124,12 +124,7 @@ export const PortfolioBuilder = ({ compact = false }: PortfolioBuilderProps) => 
             </Button>
             <Button 
               className="flex-1 bg-mint text-ink hover:bg-mint/90"
-              onClick={() => {
-                // #region agent log
-                fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:BuildPortfolio:click',message:'Build Portfolio button clicked, navigating to /builder-sprint',data:{targetUrl:'/builder-sprint'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-                // #endregion
-                window.location.href = '/builder-sprint';
-              }}
+              onClick={() => window.location.href = '/builder-sprint'}
             >
               Build This Portfolio →
             </Button>

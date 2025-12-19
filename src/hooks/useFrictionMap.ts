@@ -91,10 +91,6 @@ export const useFrictionMap = () => {
     setError(null);
 
     try {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFrictionMap.ts:generateFrictionMap:entry',message:'Friction map generation started',data:{problem,promptLength:FRICTION_MAP_PROMPT.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1,H2'})}).catch(()=>{});
-      // #endregion
-
       const { data, error: functionError } = await supabase.functions.invoke('chat-with-krish', {
         body: {
           messages: [
@@ -105,10 +101,6 @@ export const useFrictionMap = () => {
         },
       });
 
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFrictionMap.ts:generateFrictionMap:after-invoke',message:'Supabase function response received',data:{hasData:!!data,hasError:!!functionError,errorMsg:functionError?.message,responsePreview:data?.message?.substring(0,500),fullMessage:data?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1,H2'})}).catch(()=>{});
-      // #endregion
-
       if (functionError) throw functionError;
 
       const responseText = data?.message || '';
@@ -118,16 +110,10 @@ export const useFrictionMap = () => {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           parsedResponse = JSON.parse(jsonMatch[0]);
-          // #region agent log
-          fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFrictionMap.ts:generateFrictionMap:parsed',message:'Successfully parsed JSON response',data:{toolCount:parsedResponse.toolRecommendations?.length,promptCount:parsedResponse.masterPrompts?.length,timeSaved:parsedResponse.timeSaved,hasPlaceholders:JSON.stringify(parsedResponse).includes('[')},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-          // #endregion
         } else {
           throw new Error('No JSON found in response');
         }
       } catch (parseError) {
-        // #region agent log
-        fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFrictionMap.ts:generateFrictionMap:parse-error',message:'Failed to parse JSON, using fallback',data:{error:String(parseError),responseText:responseText?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-        // #endregion
         console.error('Failed to parse AI response:', parseError, responseText);
         parsedResponse = generateFallbackResponse(problem);
       }

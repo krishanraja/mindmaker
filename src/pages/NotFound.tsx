@@ -1,16 +1,9 @@
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
-
-  // #region agent log
-  useEffect(() => {
-    fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'NotFound.tsx:mount',message:'404 page rendered - route not found',data:{pathname:location.pathname,search:location.search,referrer:document.referrer,fullUrl:window.location.href},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-  }, [location]);
-  // #endregion
 
   // Log 404 for analytics/monitoring (remove console.error for production)
   // TODO: Replace with proper logging service in production

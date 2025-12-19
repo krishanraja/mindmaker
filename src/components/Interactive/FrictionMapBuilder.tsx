@@ -191,12 +191,7 @@ export const FrictionMapBuilder = ({ compact = false }: FrictionMapBuilderProps)
             </Button>
             <Button 
               className="flex-1 bg-mint text-ink hover:bg-mint/90"
-              onClick={() => {
-                // #region agent log
-                fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'FrictionMapBuilder.tsx:Build4More:click',message:'Build 4 More button clicked, navigating to /builder-session',data:{targetUrl:'/builder-session'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-                // #endregion
-                window.location.href = '/builder-session';
-              }}
+              onClick={() => window.location.href = '/builder-session'}
             >
               Build 4 More Like This →
             </Button>

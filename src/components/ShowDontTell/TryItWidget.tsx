@@ -22,10 +22,6 @@ const TryItWidget = () => {
     setResponse('');
 
     try {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TryItWidget.tsx:handleSubmit:entry',message:'TryIt widget submission started',data:{inputLength:input.length,inputPreview:input.substring(0,100)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-      // #endregion
-
       const { data, error } = await supabase.functions.invoke('chat-with-krish', {
         body: {
           messages: [
@@ -37,10 +33,6 @@ const TryItWidget = () => {
           widgetMode: 'tryit'
         }
       });
-
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'TryItWidget.tsx:handleSubmit:response',message:'TryIt widget response received',data:{hasData:!!data,hasError:!!error,responseLength:data?.message?.length,responsePreview:data?.message?.substring(0,200),metadata:data?.metadata},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-      // #endregion
 
       if (error) throw error;
 

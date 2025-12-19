@@ -67,10 +67,6 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     try {
       const selectedProgramData = programs.find(p => p.value === selectedProgram);
       
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'InitialConsultModal.tsx:handleSubmit:before-lead-email',message:'Attempting to send lead email',data:{name,email,jobTitle,selectedProgram,hasSessionData:!!sessionData,sessionDataKeys:Object.keys(sessionData||{})},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-      // #endregion
-      
       // Send enriched lead email
       const { data: emailData, error: emailError } = await supabase.functions.invoke('send-lead-email', {
         body: {
@@ -81,10 +77,6 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
           sessionData
         }
       });
-
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'InitialConsultModal.tsx:handleSubmit:after-lead-email',message:'Lead email function response',data:{hasEmailData:!!emailData,hasEmailError:!!emailError,emailErrorMsg:emailError?.message,emailData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-      // #endregion
 
       if (emailError) {
         console.error('Email error:', emailError);
