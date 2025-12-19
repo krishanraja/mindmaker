@@ -101,20 +101,43 @@ export const useFrictionMap = () => {
         },
       });
 
-      if (functionError) throw functionError;
+      if (functionError) throw new Error(functionError.message || 'API error');
 
       const responseText = data?.message || '';
       
       let parsedResponse;
       try {
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          parsedResponse = JSON.parse(jsonMatch[0]);
+        // Try multiple JSON extraction strategies
+        let parsed: any = null;
+        
+        // Strategy 1: Direct JSON parse (if response is pure JSON)
+        try {
+          parsed = JSON.parse(responseText.trim());
+        } catch {
+          // Strategy 2: Extract JSON object from markdown or mixed content
+          const jsonMatch = responseText.match(/\{[\s\S]*?\}(?=[^}]*$)/);
+          if (jsonMatch) {
+            try {
+              parsed = JSON.parse(jsonMatch[0]);
+            } catch {
+              // Strategy 3: More aggressive extraction - find outermost braces
+              const start = responseText.indexOf('{');
+              const end = responseText.lastIndexOf('}');
+              if (start !== -1 && end > start) {
+                parsed = JSON.parse(responseText.slice(start, end + 1));
+              }
+            }
+          }
+        }
+        
+        // Validate required fields
+        if (parsed && (parsed.currentState || parsed.aiEnabledState || parsed.toolRecommendations)) {
+          parsedResponse = parsed;
         } else {
-          throw new Error('No JSON found in response');
+          throw new Error('Invalid response structure');
         }
       } catch (parseError) {
-        console.error('Failed to parse AI response:', parseError, responseText);
+        console.error('Failed to parse AI response:', parseError, responseText.substring(0, 500));
         parsedResponse = generateFallbackResponse(problem);
       }
 

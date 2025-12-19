@@ -68,7 +68,7 @@ ${tasksSummary}
 Total time savings potential: ${portfolioData.totalTimeSaved}h/week
 Total value: $${portfolioData.totalCostSavings.toLocaleString()}/month
 
-Return a JSON array with exactly 3 prompts:
+Return ONLY a valid JSON array (no markdown, no explanation) with exactly 3 prompts:
 [
   {
     "title": "A specific, action-oriented title (e.g., 'Weekly Report Synthesizer')",
@@ -84,18 +84,57 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
         }
       });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message || 'API error');
 
       const responseText = data?.message || '';
-      const jsonMatch = responseText.match(/\[[\s\S]*\]/);
       
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        setMasterPrompts(parsed);
-      } else {
-        // Fallback to static prompts
-        setMasterPrompts(generateFallbackPrompts(portfolioData.tasks));
+      // Try multiple JSON extraction strategies for arrays
+      let parsed: any = null;
+      
+      // Strategy 1: Direct JSON parse (if response is pure JSON array)
+      try {
+        const trimmed = responseText.trim();
+        if (trimmed.startsWith('[')) {
+          parsed = JSON.parse(trimmed);
+        }
+      } catch {
+        // Strategy 2: Extract JSON array from markdown or mixed content
+        const jsonMatch = responseText.match(/\[[\s\S]*?\](?=[^\]]*$)/);
+        if (jsonMatch) {
+          try {
+            parsed = JSON.parse(jsonMatch[0]);
+          } catch {
+            // Strategy 3: More aggressive extraction - find outermost brackets
+            const start = responseText.indexOf('[');
+            const end = responseText.lastIndexOf(']');
+            if (start !== -1 && end > start) {
+              try {
+                parsed = JSON.parse(responseText.slice(start, end + 1));
+              } catch {
+                // Give up on parsing
+              }
+            }
+          }
+        }
       }
+      
+      // Validate the parsed array has valid prompt objects
+      if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].title && parsed[0].prompt) {
+        // Ensure all prompts have required fields
+        const validatedPrompts = parsed.map((p: any) => ({
+          title: p.title || 'AI Prompt',
+          framework: p.framework || 'Mindmaker Methodology',
+          prompt: p.prompt || ''
+        })).filter((p: MasterPrompt) => p.prompt.length > 0);
+        
+        if (validatedPrompts.length > 0) {
+          setMasterPrompts(validatedPrompts);
+          return;
+        }
+      }
+      
+      // Fallback to static prompts if parsing failed
+      setMasterPrompts(generateFallbackPrompts(portfolioData.tasks));
     } catch (err) {
       console.error('AI prompt generation failed:', err);
       setMasterPrompts(generateFallbackPrompts(portfolioData.tasks));

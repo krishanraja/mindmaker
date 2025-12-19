@@ -36,9 +36,14 @@ export const TryItWidget = ({ compact = false }: TryItWidgetProps) => {
         }
       });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message || 'API error');
 
-      setResponse(data?.message || 'Unable to generate response. Please try again.');
+      const message = data?.message;
+      if (!message || message.trim() === '') {
+        throw new Error('Empty response received');
+      }
+
+      setResponse(message);
     } catch (error: any) {
       console.error('Error:', error);
       if (error.message?.includes('429')) {
@@ -48,6 +53,8 @@ export const TryItWidget = ({ compact = false }: TryItWidgetProps) => {
       } else {
         toast.error('Failed to get response. Please try again.');
       }
+      // Set a helpful fallback response
+      setResponse("I'm having trouble connecting right now. Here's what I'd suggest:\n\n**For your AI decision**, consider applying first-principles thinking: What's the fundamental problem you're actually trying to solve? Strip away assumptions and start from the core need.\n\n[Book a Builder Session](/#book) to work through this together in 60 minutes.");
     } finally {
       setIsLoading(false);
     }

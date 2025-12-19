@@ -91,7 +91,7 @@ export const useAssessment = () => {
 
 ${answerSummary}
 
-Return a JSON object with this exact structure:
+Return ONLY a valid JSON object (no markdown, no explanation) with this exact structure:
 {
   "type": "A creative 2-3 word profile title (e.g., 'Strategic Visionary', 'Pragmatic Builder', 'Innovation Catalyst')",
   "description": "A personalized 2-sentence description of their AI journey stage and potential",
@@ -109,26 +109,53 @@ Apply the Mindmaker Five Cognitive Frameworks to analyze their responses. Be spe
         }
       });
 
-      if (apiError) throw apiError;
+      if (apiError) throw new Error(apiError.message || 'API error');
 
-      // Parse the AI response
+      // Parse the AI response with robust extraction
       const responseText = data?.message || '';
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
+      // Try multiple JSON extraction strategies
+      let parsed: any = null;
+      
+      // Strategy 1: Direct JSON parse (if response is pure JSON)
+      try {
+        parsed = JSON.parse(responseText.trim());
+      } catch {
+        // Strategy 2: Extract JSON object from markdown or mixed content
+        const jsonMatch = responseText.match(/\{[\s\S]*?\}(?=[^}]*$)/);
+        if (jsonMatch) {
+          try {
+            parsed = JSON.parse(jsonMatch[0]);
+          } catch {
+            // Strategy 3: More aggressive extraction - find outermost braces
+            const start = responseText.indexOf('{');
+            const end = responseText.lastIndexOf('}');
+            if (start !== -1 && end > start) {
+              try {
+                parsed = JSON.parse(responseText.slice(start, end + 1));
+              } catch {
+                // Give up on parsing
+              }
+            }
+          }
+        }
+      }
+      
+      // Validate the parsed object has required fields
+      if (parsed && parsed.type && (parsed.strengths || parsed.nextSteps)) {
         setProfile({
           type: parsed.type || 'AI Builder',
-          description: parsed.description || "You're on a unique AI journey.",
-          strengths: parsed.strengths || ['Curiosity', 'Leadership drive', 'Growth mindset'],
-          nextSteps: parsed.nextSteps || ['Book a Builder Session to map your first AI system'],
+          description: parsed.description || "You're on a unique AI journey with significant potential.",
+          strengths: Array.isArray(parsed.strengths) ? parsed.strengths : ['Strategic thinking', 'Leadership drive', 'Growth mindset'],
+          nextSteps: Array.isArray(parsed.nextSteps) ? parsed.nextSteps : ['Book a Builder Session to map your first AI system'],
           recommendedProduct: parsed.recommendedProduct || 'Builder Session',
           productLink: parsed.productLink || '/builder-session',
           frameworkUsed: parsed.frameworkUsed,
         });
         return;
       }
-      throw new Error('Could not parse AI response');
+      
+      throw new Error('Invalid AI response structure');
     } catch (err) {
       console.error('AI profile generation failed:', err);
       // Fallback to score-based profile
