@@ -94,20 +94,27 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
 
       const rect = section.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const headerOffset = options.headerOffset ?? 60;
       const lockThreshold = options.lockThreshold ?? 0;
       
-      // Lock when section reaches lockThreshold distance from top with headerOffset breathing room
-      const shouldLock = rect.top <= (headerOffset + lockThreshold) && 
+      // Use section's rect.top directly - trigger after section has scrolled PAST the viewport top
+      // lockThreshold controls how far past (negative = section top above viewport)
+      // Default: -30 means section top must be 30px above viewport before locking
+      const triggerPoint = -(30 + lockThreshold);
+      
+      const shouldLock = rect.top <= triggerPoint && 
                          rect.bottom > viewportHeight * 0.3 && 
                          !isCompleteRef.current;
+      
+      // After lock, snap so section top is just barely above viewport (minimal overshoot)
+      const snapOffset = -10; // Section top will be 10px above viewport (slightly past)
 
       if (shouldLock && !isLocked) {
+        // Snap to position where section top is at snapOffset (slightly above viewport)
+        const idealScrollY = window.scrollY + rect.top - snapOffset;
+        
         setIsLocked(true);
-        // Calculate ideal scroll position where header has breathing room
-        const idealScrollY = window.scrollY + rect.top - headerOffset;
         scrollPositionRef.current = idealScrollY;
-        // Snap to ideal position immediately for bulletproof positioning
+        // Snap so section top is just past viewport top
         window.scrollTo(0, idealScrollY);
         document.documentElement.classList.add('scroll-locked');
       }
