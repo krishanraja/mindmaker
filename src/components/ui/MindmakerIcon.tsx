@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-// TODO: Replace with actual Mindmaker-icon.png when provided
-import mindmakerIcon from "@/assets/mindmaker-icon-light.png";
+import mindmakerIcon from "@/assets/Mindmaker-icon.png";
 
 interface MindmakerIconProps {
   size?: number;
