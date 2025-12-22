@@ -46,6 +46,10 @@ export interface VertexResponse {
  * Generate RS256-signed JWT for Google service account
  */
 async function generateJWT(serviceAccount: any): Promise<string> {
+  // #region agent log
+  console.log(`[DEBUG_C] generateJWT called: client_email=${serviceAccount.client_email}, hypothesisId=C`);
+  // #endregion
+  
   const header = {
     alg: 'RS256',
     typ: 'JWT',
@@ -76,18 +80,44 @@ async function generateJWT(serviceAccount: any): Promise<string> {
     .replace(/\s/g, '')
     .trim();
 
-  const binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
+  // #region agent log
+  console.log(`[DEBUG_C] PEM processing: originalLength=${privateKey?.length || 0}, pemContentsLength=${pemContents?.length || 0}, startsWithDash=${privateKey?.startsWith('-----')}, hypothesisId=C`);
+  // #endregion
 
-  const cryptoKey = await crypto.subtle.importKey(
-    'pkcs8',
-    binaryDer,
-    {
-      name: 'RSASSA-PKCS1-v1_5',
-      hash: 'SHA-256',
-    },
-    false,
-    ['sign']
-  );
+  let binaryDer;
+  try {
+    binaryDer = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
+    // #region agent log
+    console.log(`[DEBUG_C] Base64 decode SUCCESS: binaryDerLength=${binaryDer.length}, hypothesisId=C`);
+    // #endregion
+  } catch (e) {
+    // #region agent log
+    console.log(`[DEBUG_C] Base64 decode FAILED: error=${e instanceof Error ? e.message : String(e)}, pemContentsFirst50=${pemContents?.substring(0, 50)}, hypothesisId=C`);
+    // #endregion
+    throw e;
+  }
+
+  let cryptoKey;
+  try {
+    cryptoKey = await crypto.subtle.importKey(
+      'pkcs8',
+      binaryDer,
+      {
+        name: 'RSASSA-PKCS1-v1_5',
+        hash: 'SHA-256',
+      },
+      false,
+      ['sign']
+    );
+    // #region agent log
+    console.log(`[DEBUG_C] Crypto key import SUCCESS, hypothesisId=C`);
+    // #endregion
+  } catch (e) {
+    // #region agent log
+    console.log(`[DEBUG_C] Crypto key import FAILED: error=${e instanceof Error ? e.message : String(e)}, hypothesisId=C`);
+    // #endregion
+    throw e;
+  }
 
   const signature = await crypto.subtle.sign(
     'RSASSA-PKCS1-v1_5',
@@ -100,6 +130,10 @@ async function generateJWT(serviceAccount: any): Promise<string> {
     .replace(/\+/g, '-')
     .replace(/\//g, '_');
 
+  // #region agent log
+  console.log(`[DEBUG_C] JWT generated successfully: tokenLength=${unsignedToken.length + 1 + encodedSignature.length}, hypothesisId=C`);
+  // #endregion
+
   return `${unsignedToken}.${encodedSignature}`;
 }
 
@@ -109,13 +143,35 @@ async function generateJWT(serviceAccount: any): Promise<string> {
 export async function getAccessToken(serviceAccount: any, forceRefresh = false): Promise<string> {
   // Check cache first (unless force refresh)
   if (!forceRefresh && cachedToken && cachedToken.expiresAt > Date.now()) {
+    // #region agent log
+    console.log(`[DEBUG_D] Using cached token: expiresIn=${Math.round((cachedToken.expiresAt - Date.now()) / 1000)}s, hypothesisId=D`);
+    // #endregion
     console.log('[VertexClient] Using cached access token');
     return cachedToken.token;
   }
 
+  // #region agent log
+  console.log(`[DEBUG_D] Generating new access token: forceRefresh=${forceRefresh}, hypothesisId=D`);
+  // #endregion
   console.log('[VertexClient] Generating new access token');
-  const jwt = await generateJWT(serviceAccount);
+  
+  let jwt;
+  try {
+    jwt = await generateJWT(serviceAccount);
+    // #region agent log
+    console.log(`[DEBUG_D] JWT generated: length=${jwt.length}, hypothesisId=D`);
+    // #endregion
+  } catch (e) {
+    // #region agent log
+    console.log(`[DEBUG_D] JWT generation FAILED: error=${e instanceof Error ? e.message : String(e)}, hypothesisId=D`);
+    // #endregion
+    throw e;
+  }
 
+  // #region agent log
+  console.log(`[DEBUG_D] Calling Google OAuth token endpoint, hypothesisId=D`);
+  // #endregion
+  
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: {
@@ -129,11 +185,18 @@ export async function getAccessToken(serviceAccount: any, forceRefresh = false):
 
   if (!response.ok) {
     const errorText = await response.text();
+    // #region agent log
+    console.log(`[DEBUG_D] Token exchange FAILED: status=${response.status}, error=${errorText.substring(0, 500)}, hypothesisId=D`);
+    // #endregion
     console.error('[VertexClient] Token exchange failed:', response.status, errorText);
     throw new Error(`Token exchange failed: ${response.status}`);
   }
 
   const data = await response.json();
+  // #region agent log
+  console.log(`[DEBUG_D] Token exchange SUCCESS: hasAccessToken=${!!data.access_token}, tokenType=${data.token_type}, expiresIn=${data.expires_in}, hypothesisId=D`);
+  // #endregion
+  
   cachedToken = {
     token: data.access_token,
     expiresAt: Date.now() + TOKEN_CACHE_DURATION,
@@ -290,18 +353,36 @@ export async function callVertexAI(
 
       const data = await response.json();
 
+      // #region agent log
+      console.log(`[DEBUG_E] Response received: hasCandidates=${!!data?.candidates}, candidateCount=${data?.candidates?.length || 0}, hypothesisId=E`);
+      // #endregion
+
       // Extract content
       const candidate = data?.candidates?.[0];
       const content = candidate?.content?.parts?.[0]?.text;
 
+      // #region agent log
+      console.log(`[DEBUG_E] Content extraction: hasCandidate=${!!candidate}, hasContent=${!!candidate?.content}, hasParts=${!!candidate?.content?.parts}, partsCount=${candidate?.content?.parts?.length || 0}, textLength=${content?.length || 0}, hypothesisId=E`);
+      // #endregion
+
       if (!content || typeof content !== 'string' || content.trim() === '') {
+        // #region agent log
+        console.log(`[DEBUG_E] EMPTY RESPONSE: finishReason=${candidate?.finishReason}, blockReason=${data?.promptFeedback?.blockReason}, safetyRatings=${JSON.stringify(candidate?.safetyRatings || [])}, hypothesisId=E`);
+        // #endregion
         throw new Error('Empty response from Vertex AI');
       }
 
       // Log RAG metadata if present
       if (candidate?.groundingMetadata) {
+        // #region agent log
+        console.log(`[DEBUG_E] RAG grounding: chunksCount=${candidate.groundingMetadata.groundingChunks?.length || 0}, hasSupport=${!!candidate.groundingMetadata.groundingSupports}, hypothesisId=E`);
+        // #endregion
         console.log('[VertexClient] RAG grounding active, chunks retrieved:', 
           candidate.groundingMetadata.groundingChunks?.length || 0);
+      } else {
+        // #region agent log
+        console.log(`[DEBUG_E] NO RAG grounding metadata in response, hypothesisId=E`);
+        // #endregion
       }
 
       return {

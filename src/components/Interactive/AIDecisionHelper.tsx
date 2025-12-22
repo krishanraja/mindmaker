@@ -24,6 +24,9 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
     e.preventDefault();
     if (!input.trim()) return;
 
+    // #region agent log
+    fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AIDecisionHelper.tsx:23',message:'AI Decision Helper submit',data:{inputLength:input.length,inputPreview:input.substring(0,50)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
     setIsLoading(true);
     setResponse('');
 

@@ -107,6 +107,7 @@ Examples of Krish's voice:
 
 /**
  * Try It Widget system prompt (deep, multi-layered analysis)
+ * VERSION: 2025-01-XX Enhanced (50X improvement)
  */
 const TRYIT_SYSTEM_PROMPT = `You are Krish, founder of Mindmaker. A senior leader (CEO, COO, CPO, GM) has an AI decision challenge. Your job is to provide expert-level strategic counsel that demonstrates deep understanding of their specific situation.
 
@@ -339,6 +340,9 @@ serve(async (req) => {
 
     // Select system prompt based on mode
     const systemPrompt = isTryItWidget ? TRYIT_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
+    // #region agent log
+    console.log(`[DEBUG_B] System prompt selected: isTryItWidget=${isTryItWidget}, promptLength=${systemPrompt.length}, hasEnhancedContent=${systemPrompt.includes('Multi-Layered') || systemPrompt.includes('multi-layered')}, hasAnalysisProcess=${systemPrompt.includes('ANALYSIS PROCESS')}, hypothesisId=B`);
+    // #endregion
 
     // Create robust Vertex client and call
     const vertexClient = createMindmakerVertexClient();

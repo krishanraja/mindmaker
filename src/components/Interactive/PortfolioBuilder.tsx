@@ -25,6 +25,9 @@ interface MasterPrompt {
 }
 
 export const PortfolioBuilder = ({ compact = false, onClose }: PortfolioBuilderProps) => {
+  // #region agent log
+  fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:27',message:'PortfolioBuilder component mounted',data:{compact,hasOnClose:!!onClose,buildTime:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  // #endregion
   const { tasks, toggleTask, updateTaskHours, getPortfolioData } = usePortfolio();
   const [showResults, setShowResults] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -60,13 +63,11 @@ export const PortfolioBuilder = ({ compact = false, onClose }: PortfolioBuilderP
       `- ${t.name}: ${t.hoursPerWeek}h/week currently, could save ${t.potentialSavings}h/week. Suggested tools: ${t.aiTools.join(', ')}`
     ).join('\n');
 
+    // #region agent log
+    fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:53',message:'handleGenerate called - BEFORE API call',data:{tasksCount:portfolioData.tasks.length,totalTimeSaved:portfolioData.totalTimeSaved,promptLength:0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
     try {
-      const { data, error } = await supabase.functions.invoke('chat-with-krish', {
-        body: {
-          messages: [
-            {
-              role: 'user',
-              content: `You are creating a personalized AI portfolio for a senior leader. Analyze their selected tasks and generate 3 interconnected, expert-level master prompts that work together as a system.
+      const promptContent = `You are creating a personalized AI portfolio for a senior leader. Analyze their selected tasks and generate 3 interconnected, expert-level master prompts that work together as a system.
 
 LEADER'S TASK PORTFOLIO:
 ${tasksSummary}
@@ -143,12 +144,24 @@ Your prompts should make the leader think:
 
 If your prompts are generic templates, they're not good enough. If they don't reference their specific tasks, rewrite them. If they don't show interconnection, redesign them.
 
-Return ONLY valid JSON array, no markdown or explanation.`
+Return ONLY valid JSON array, no markdown or explanation.`;
+      // #region agent log
+      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:69',message:'Portfolio prompt content created',data:{promptLength:promptContent.length,hasEnhancedContent:promptContent.includes('Pattern Recognition'),hasSynergyAnalysis:promptContent.includes('Task Synergy'),first100:promptContent.substring(0,100)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      const { data, error } = await supabase.functions.invoke('chat-with-krish', {
+        body: {
+          messages: [
+            {
+              role: 'user',
+              content: promptContent
             }
           ],
           widgetMode: 'tryit'
         }
       });
+      // #region agent log
+      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:152',message:'Edge function response received',data:{hasData:!!data,hasError:!!error,responseLength:data?.message?.length || 0,first200:data?.message?.substring(0,200) || '',isEnhanced:data?.message?.includes('interconnected') || false},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
 
       if (error) throw new Error(error.message || 'API error');
 
