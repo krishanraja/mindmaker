@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useAINewsTicker } from '@/hooks/useAINewsTicker';
-import { Sparkles } from 'lucide-react';
 import { useState, useRef } from 'react';
+import { MindmakerIcon } from '@/components/ui/MindmakerIcon';
 
 const AINewsTicker = () => {
   const { headlines } = useAINewsTicker();
@@ -112,7 +112,7 @@ const AINewsTicker = () => {
               key={`${headline.title}-${index}`}
               className="flex items-center gap-4 text-sm md:text-base group select-none"
             >
-              <Sparkles className="w-4 h-4 text-primary flex-shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+              <MindmakerIcon size={16} className="text-primary flex-shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
               <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
                 {headline.title}
               </span>

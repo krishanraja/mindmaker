@@ -6,10 +6,11 @@ import { BuilderAssessment } from "@/components/Interactive/BuilderAssessment";
 import { FrictionMapBuilder } from "@/components/Interactive/FrictionMapBuilder";
 import { TryItWidget } from "@/components/Interactive/AIDecisionHelper";
 import { PortfolioBuilder } from "@/components/Interactive/PortfolioBuilder";
-import { User, Lightbulb, Map, TrendingUp, Sparkles } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { User, Lightbulb, Map, TrendingUp, X } from "lucide-react";
+import { Dialog, DialogWizardContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type DialogType = 'quiz' | 'decision' | 'friction' | 'portfolio' | null;
 
@@ -63,6 +64,7 @@ const TheProblem = () => {
   const [dialogType, setDialogType] = useState<DialogType>(null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -103,70 +105,26 @@ const TheProblem = () => {
     }
   ];
 
-  const renderDialogContent = () => {
-    const aiDisclaimer = (
-      <div className="mb-4 p-3 bg-gradient-to-r from-mint/10 to-ink/5 border border-mint/20 rounded-lg">
-        <div className="flex items-start gap-2">
-          <Sparkles className="w-4 h-4 text-mint shrink-0 mt-0.5" />
-          <div>
-            <p className="text-xs text-foreground font-medium">Powered by Mindmaker Methodology</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Using the Five Cognitive Frameworks: A/B Framing, Dialectical Reasoning, Mental Contrasting, Reflective Equilibrium, and First-Principles Thinking.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+  const getDialogTitle = () => {
+    switch (dialogType) {
+      case 'quiz': return 'Builder Profile Quiz';
+      case 'decision': return 'AI Decision Helper';
+      case 'friction': return 'Friction Map Builder';
+      case 'portfolio': return 'Model out your starting points';
+      default: return '';
+    }
+  };
 
+  const renderDialogContent = () => {
     switch (dialogType) {
       case 'quiz':
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle>Builder Profile Quiz</DialogTitle>
-            </DialogHeader>
-            {aiDisclaimer}
-            <div className="mt-4">
-              <BuilderAssessment compact={false} />
-            </div>
-          </>
-        );
+        return <BuilderAssessment compact={false} onClose={() => setDialogType(null)} />;
       case 'decision':
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle>AI Decision Helper</DialogTitle>
-            </DialogHeader>
-            {aiDisclaimer}
-            <div className="mt-4">
-              <TryItWidget compact={false} />
-            </div>
-          </>
-        );
+        return <TryItWidget compact={false} onClose={() => setDialogType(null)} />;
       case 'friction':
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle>Friction Map Builder</DialogTitle>
-            </DialogHeader>
-            {aiDisclaimer}
-            <div className="mt-4">
-              <FrictionMapBuilder compact={false} />
-            </div>
-          </>
-        );
+        return <FrictionMapBuilder compact={false} onClose={() => setDialogType(null)} />;
       case 'portfolio':
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle>Model out your starting points</DialogTitle>
-            </DialogHeader>
-            {aiDisclaimer}
-            <div className="mt-4">
-              <PortfolioBuilder compact={false} />
-            </div>
-          </>
-        );
+        return <PortfolioBuilder compact={false} onClose={() => setDialogType(null)} />;
       default:
         return null;
     }
@@ -266,9 +224,20 @@ const TheProblem = () => {
 
       {/* Dialog for Interactive Components */}
       <Dialog open={dialogType !== null} onOpenChange={() => setDialogType(null)}>
-        <DialogContent className="sm:max-w-2xl">
-          {renderDialogContent()}
-        </DialogContent>
+        <DialogWizardContent className="sm:max-w-2xl" hideCloseButton={isMobile}>
+          {/* Mobile: Header with close button integrated into tool */}
+          {!isMobile && (
+            <div className="p-6 pb-0">
+              <h2 className="text-xl font-bold">{getDialogTitle()}</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Powered by Mindmaker Methodology
+              </p>
+            </div>
+          )}
+          <div className="flex-1 overflow-hidden sm:p-6 sm:pt-4">
+            {renderDialogContent()}
+          </div>
+        </DialogWizardContent>
       </Dialog>
     </section>
   );

@@ -45,6 +45,22 @@ const Footer = () => {
                 Builder Economy
               </a>
               <a 
+                href="https://content.themindmaker.ai" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Blog
+              </a>
+              <a 
+                href="https://content.themindmaker.ai/podcast" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Podcast
+              </a>
+              <a 
                 href="/faq" 
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >

@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { MarkdownResponse } from '@/components/ui/markdown-response';
 import { useSessionData } from '@/contexts/SessionDataContext';
+import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 
 const TryItWidget = () => {
   const [input, setInput] = useState('');
@@ -65,7 +66,7 @@ const TryItWidget = () => {
             className="text-center mb-8"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-mint/10 border border-mint/20 mb-6">
-              <Sparkles className="w-4 h-4 text-mint-dark" />
+              <MindmakerIcon size={16} />
               <span className="text-sm font-semibold text-mint-dark">Try It Now</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -120,10 +121,7 @@ const TryItWidget = () => {
                   transition={{ duration: 0.4 }}
                   className="mt-6 pt-6 border-t border-mint/20"
                 >
-                  <div className="flex items-center gap-2 text-xs text-mint-dark mb-3">
-                    <Sparkles className="h-3 w-3" />
-                    <span>Mindmaker Framework Applied</span>
-                  </div>
+                  <MindmakerBadge text="Mindmaker Framework Applied" className="mb-3" />
                   <MarkdownResponse 
                     content={response} 
                     className="text-sm text-muted-foreground leading-relaxed"

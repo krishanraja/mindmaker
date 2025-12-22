@@ -2,19 +2,23 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { MarkdownResponse } from '@/components/ui/markdown-response';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 
 interface TryItWidgetProps {
   compact?: boolean;
+  onClose?: () => void;
 }
 
-export const TryItWidget = ({ compact = false }: TryItWidgetProps) => {
+export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
   const [input, setInput] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +57,6 @@ export const TryItWidget = ({ compact = false }: TryItWidgetProps) => {
       } else {
         toast.error('Failed to get response. Please try again.');
       }
-      // Set a helpful fallback response
       setResponse("I'm having trouble connecting right now. Here's what I'd suggest:\n\n**For your AI decision**, consider applying first-principles thinking: What's the fundamental problem you're actually trying to solve? Strip away assumptions and start from the core need.\n\n[Book a Builder Session](/#book) to work through this together in 60 minutes.");
     } finally {
       setIsLoading(false);
@@ -98,10 +101,7 @@ export const TryItWidget = ({ compact = false }: TryItWidgetProps) => {
               transition={{ duration: 0.4 }}
               className="pt-4 border-t border-border"
             >
-              <div className="flex items-center gap-2 text-xs text-mint-dark mb-3">
-                <Sparkles className="h-3 w-3" />
-                <span>Mindmaker Framework Applied</span>
-              </div>
+              <MindmakerBadge text="Mindmaker Framework Applied" className="mb-3" />
               <MarkdownResponse 
                 content={response} 
                 className="text-xs text-muted-foreground leading-relaxed max-h-[300px] overflow-y-auto"
@@ -113,108 +113,187 @@ export const TryItWidget = ({ compact = false }: TryItWidgetProps) => {
     );
   }
 
-  // Full-size version (original)
-  return (
-    <section className="section-padding bg-background">
-      <div className="container-width">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-mint/10 border border-mint/20 mb-6">
-              <Sparkles className="w-4 h-4 text-mint" />
-              <span className="text-sm font-semibold text-mint">Try It Now</span>
+  // Mobile full-screen wizard layout
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-3">
+            <MindmakerIcon size={24} />
+            <div>
+              <h2 className="font-semibold">AI Decision Helper</h2>
+              <p className="text-xs text-muted-foreground">Powered by Mindmaker</p>
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Stuck on an AI Decision?
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Describe your challenge. Get instant clarity.
-            </p>
-          </motion.div>
+          </div>
+          {onClose && (
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="accent-card"
-          >
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Example: Should we build or buy our AI chatbot? We have limited engineering resources but need something in production within 3 months..."
-                  className="min-h-[120px] resize-none text-base"
-                  disabled={isLoading}
-                />
-              </div>
-              
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
-                disabled={isLoading || !input.trim()}
+        {/* Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col items-center justify-center p-8 text-center"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Organizing your thinking...
-                  </>
-                ) : (
-                  'Get Instant Clarity'
-                )}
-              </Button>
-            </form>
-
-            <AnimatePresence>
-              {response && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="mt-6 pt-6 border-t border-mint/20"
-                >
-                  <div className="flex items-center gap-2 text-xs text-mint-dark mb-3">
-                    <Sparkles className="h-3 w-3" />
-                    <span>Mindmaker Framework Applied</span>
-                  </div>
+                <MindmakerIcon size={48} animated />
+                <h3 className="text-lg font-bold mt-4 mb-2">Thinking...</h3>
+                <p className="text-sm text-muted-foreground">
+                  Applying cognitive frameworks to your decision
+                </p>
+              </motion.div>
+            ) : response ? (
+              <motion.div
+                key="response"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col"
+              >
+                {/* Response content */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  <MindmakerBadge text="Mindmaker Framework Applied" className="mb-4" />
                   <MarkdownResponse 
                     content={response} 
-                    className="text-sm text-muted-foreground leading-relaxed"
+                    className="text-sm leading-relaxed"
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="p-4 border-t space-y-3">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => {
+                      setResponse('');
+                      setInput('');
+                    }}
+                  >
+                    Ask Another Question
+                  </Button>
+                  <Button
+                    className="w-full bg-ink text-white hover:bg-ink/90"
+                    onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                  >
+                    Book a Builder Session
+                  </Button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="input"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col p-4"
+              >
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold mb-2">Stuck on an AI Decision?</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Describe your challenge. Get instant clarity.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
+                  <Textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Example: Should we build or buy our AI chatbot? We have limited engineering resources but need something in production within 3 months..."
+                    className="flex-1 min-h-[150px] resize-none text-base"
+                    disabled={isLoading}
                   />
                   
-                  {/* CTA - Sticky on mobile */}
-                  <div className="mt-6 pt-6 border-t border-border sm:relative fixed bottom-0 left-0 right-0 bg-background p-4 sm:p-0 z-10 sm:z-auto">
-                    <p className="text-xs text-muted-foreground text-center mb-4">
-                      Want deeper analysis for your specific situation?
-                    </p>
-                    <Button
-                      size="lg"
-                      className="w-full bg-ink text-white hover:bg-ink/90"
-                      onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
-                    >
-                      Book a Builder Session
-                    </Button>
-                  </div>
-                  {/* Spacer for fixed CTA on mobile */}
-                  <div className="h-28 sm:hidden" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          <p className="text-xs text-muted-foreground text-center mt-4">
-            This is a taste of the Mindmaker approach: turning chaos into actionable clarity.
-          </p>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full mt-4 bg-mint text-ink hover:bg-mint/90 font-bold"
+                    disabled={isLoading || !input.trim()}
+                  >
+                    Get Instant Clarity
+                  </Button>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </section>
+    );
+  }
+
+  // Desktop layout
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-2xl font-bold mb-2">Stuck on an AI Decision?</h3>
+        <p className="text-muted-foreground">
+          Describe your challenge. Get instant clarity.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Example: Should we build or buy our AI chatbot? We have limited engineering resources but need something in production within 3 months..."
+          className="min-h-[120px] resize-none text-base"
+          disabled={isLoading}
+        />
+        
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
+          disabled={isLoading || !input.trim()}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Organizing your thinking...
+            </>
+          ) : (
+            'Get Instant Clarity'
+          )}
+        </Button>
+      </form>
+
+      <AnimatePresence>
+        {response && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.4 }}
+            className="pt-6 border-t border-mint/20"
+          >
+            <MindmakerBadge text="Mindmaker Framework Applied" className="mb-3" />
+            <MarkdownResponse 
+              content={response} 
+              className="text-sm text-muted-foreground leading-relaxed"
+            />
+            
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-xs text-muted-foreground text-center mb-4">
+                Want deeper analysis for your specific situation?
+              </p>
+              <Button
+                size="lg"
+                className="w-full bg-ink text-white hover:bg-ink/90"
+                onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+              >
+                Book a Builder Session
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };

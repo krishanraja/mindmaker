@@ -4,14 +4,18 @@ import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePortfolio } from '@/hooks/usePortfolio';
-import { TrendingUp, Download, ArrowRight, Loader2, Sparkles, Copy, Check } from 'lucide-react';
+import { TrendingUp, Download, ArrowRight, Copy, Check, X } from 'lucide-react';
 import { useSessionData } from '@/contexts/SessionDataContext';
 import { generatePortfolioPDF } from '@/utils/pdfGenerator';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 
 interface PortfolioBuilderProps {
   compact?: boolean;
+  onClose?: () => void;
 }
 
 interface MasterPrompt {
@@ -20,14 +24,16 @@ interface MasterPrompt {
   framework?: string;
 }
 
-export const PortfolioBuilder = ({ compact = false }: PortfolioBuilderProps) => {
+export const PortfolioBuilder = ({ compact = false, onClose }: PortfolioBuilderProps) => {
   const { tasks, toggleTask, updateTaskHours, getPortfolioData } = usePortfolio();
   const [showResults, setShowResults] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [masterPrompts, setMasterPrompts] = useState<MasterPrompt[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [resultTab, setResultTab] = useState<'overview' | 'prompts' | 'systems'>('overview');
   const portfolioData = getPortfolioData();
   const { setPortfolioBuilder } = useSessionData();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (showResults) {
@@ -50,7 +56,6 @@ export const PortfolioBuilder = ({ compact = false }: PortfolioBuilderProps) => 
     setIsGenerating(true);
     setShowResults(true);
     
-    // Build context for AI
     const tasksSummary = portfolioData.tasks.map(t => 
       `- ${t.name}: ${t.hoursPerWeek}h/week currently, could save ${t.potentialSavings}h/week. Suggested tools: ${t.aiTools.join(', ')}`
     ).join('\n');
@@ -88,39 +93,31 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
 
       const responseText = data?.message || '';
       
-      // Try multiple JSON extraction strategies for arrays
       let parsed: any = null;
       
-      // Strategy 1: Direct JSON parse (if response is pure JSON array)
       try {
         const trimmed = responseText.trim();
         if (trimmed.startsWith('[')) {
           parsed = JSON.parse(trimmed);
         }
       } catch {
-        // Strategy 2: Extract JSON array from markdown or mixed content
         const jsonMatch = responseText.match(/\[[\s\S]*?\](?=[^\]]*$)/);
         if (jsonMatch) {
           try {
             parsed = JSON.parse(jsonMatch[0]);
           } catch {
-            // Strategy 3: More aggressive extraction - find outermost brackets
             const start = responseText.indexOf('[');
             const end = responseText.lastIndexOf(']');
             if (start !== -1 && end > start) {
               try {
                 parsed = JSON.parse(responseText.slice(start, end + 1));
-              } catch {
-                // Give up on parsing
-              }
+              } catch {}
             }
           }
         }
       }
       
-      // Validate the parsed array has valid prompt objects
       if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].title && parsed[0].prompt) {
-        // Ensure all prompts have required fields
         const validatedPrompts = parsed.map((p: any) => ({
           title: p.title || 'AI Prompt',
           framework: p.framework || 'Mindmaker Methodology',
@@ -133,7 +130,6 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
         }
       }
       
-      // Fallback to static prompts if parsing failed
       setMasterPrompts(generateFallbackPrompts(portfolioData.tasks));
     } catch (err) {
       console.error('AI prompt generation failed:', err);
@@ -158,6 +154,308 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
     });
   };
 
+  // Compact mode remains unchanged
+  if (compact) {
+    if (showResults) {
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="text-center p-3 bg-mint/10 rounded-lg">
+              <div className="text-lg font-bold text-mint-dark">{portfolioData.totalTimeSaved}h</div>
+              <div className="text-[10px] text-muted-foreground">Saved/week</div>
+            </div>
+            <div className="text-center p-3 bg-gold/10 rounded-lg">
+              <div className="text-lg font-bold text-gold">${(portfolioData.totalCostSavings / 1000).toFixed(0)}K</div>
+              <div className="text-[10px] text-muted-foreground">Value/month</div>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" className="w-full" onClick={() => setShowResults(false)}>
+            Edit Selection
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-3">
+        {tasks.slice(0, 3).map(task => (
+          <div key={task.id} className="flex items-center gap-2">
+            <Checkbox
+              id={task.id}
+              checked={task.selected}
+              onCheckedChange={() => toggleTask(task.id)}
+            />
+            <label htmlFor={task.id} className="text-xs cursor-pointer truncate">
+              {task.name}
+            </label>
+          </div>
+        ))}
+        <Button
+          size="sm"
+          className="w-full bg-mint text-ink hover:bg-mint/90"
+          disabled={portfolioData.tasks.length === 0}
+          onClick={handleGenerate}
+        >
+          Generate Portfolio
+        </Button>
+      </div>
+    );
+  }
+
+  // Mobile full-screen wizard layout
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-3">
+            <MindmakerIcon size={24} />
+            <div>
+              <h2 className="font-semibold">Model out your starting points</h2>
+              <p className="text-xs text-muted-foreground">Powered by Mindmaker</p>
+            </div>
+          </div>
+          {onClose && (
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <AnimatePresence mode="wait">
+            {isGenerating ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col items-center justify-center p-8 text-center"
+              >
+                <MindmakerIcon size={48} animated />
+                <h3 className="text-lg font-bold mt-4 mb-2">Generating Your Portfolio</h3>
+                <p className="text-sm text-muted-foreground">
+                  Creating personalized prompts using Mindmaker methodology...
+                </p>
+              </motion.div>
+            ) : showResults ? (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col"
+              >
+                {/* Tab Navigation */}
+                <div className="flex border-b">
+                  {(['overview', 'prompts', 'systems'] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setResultTab(tab)}
+                      className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                        resultTab === tab
+                          ? 'text-mint border-b-2 border-mint'
+                          : 'text-muted-foreground'
+                      }`}
+                    >
+                      {tab === 'overview' ? 'Overview' : tab === 'prompts' ? 'Prompts' : 'Systems'}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab Content */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  <AnimatePresence mode="wait">
+                    {resultTab === 'overview' && (
+                      <motion.div
+                        key="overview-tab"
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="space-y-4"
+                      >
+                        <MindmakerBadge text="Your AI Portfolio" />
+                        
+                        <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/50">
+                          <div className="text-center">
+                            <div className="text-3xl font-bold text-mint-dark">{portfolioData.totalTimeSaved}h</div>
+                            <div className="text-xs text-muted-foreground">Saved per week</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-3xl font-bold text-gold">${(portfolioData.totalCostSavings / 1000).toFixed(0)}K</div>
+                            <div className="text-xs text-muted-foreground">Value per month</div>
+                          </div>
+                        </div>
+
+                        <div className="p-4 rounded-lg bg-ink/5 border">
+                          <TrendingUp className="h-6 w-6 text-mint mb-2" />
+                          <p className="text-sm">
+                            Based on your selected tasks, you could transform <strong>{portfolioData.totalTimeSaved} hours</strong> of 
+                            weekly work into AI-accelerated systems.
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                    {resultTab === 'prompts' && (
+                      <motion.div
+                        key="prompts-tab"
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="space-y-4"
+                      >
+                        {masterPrompts.map((prompt, i) => (
+                          <div key={i} className="p-4 rounded-lg bg-muted/50 border">
+                            <div className="flex items-start justify-between mb-2">
+                              <div>
+                                <div className="font-semibold text-sm">{prompt.title}</div>
+                                {prompt.framework && (
+                                  <div className="text-xs text-mint-dark flex items-center gap-1 mt-1">
+                                    <MindmakerIcon size={12} />
+                                    {prompt.framework}
+                                  </div>
+                                )}
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleCopyPrompt(prompt.prompt, i)}
+                                className="shrink-0"
+                              >
+                                {copiedIndex === i ? (
+                                  <Check className="h-4 w-4 text-success" />
+                                ) : (
+                                  <Copy className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground whitespace-pre-wrap bg-background p-3 rounded border max-h-32 overflow-y-auto">
+                              {prompt.prompt}
+                            </p>
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                    {resultTab === 'systems' && (
+                      <motion.div
+                        key="systems-tab"
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="space-y-3"
+                      >
+                        {portfolioData.tasks.map(task => (
+                          <div key={task.id} className="p-4 rounded-lg bg-muted/50 border">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="font-semibold text-sm">{task.name}</div>
+                              <div className="text-right">
+                                <div className="text-lg font-bold text-mint-dark">{task.potentialSavings}h</div>
+                                <div className="text-[10px] text-muted-foreground">saved/wk</div>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {task.aiTools.map((tool, i) => (
+                                <span key={i} className="px-2 py-0.5 bg-mint/10 text-mint-dark rounded-full text-xs">
+                                  {tool}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Actions */}
+                <div className="p-4 border-t space-y-2">
+                  <Button onClick={handleDownload} variant="outline" className="w-full">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </Button>
+                  <Button
+                    className="w-full bg-mint text-ink hover:bg-mint/90"
+                    onClick={() => window.location.href = '/builder-sprint'}
+                  >
+                    Build This Portfolio →
+                  </Button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="input"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col"
+              >
+                <div className="text-center p-4">
+                  <h3 className="text-xl font-bold mb-2">Select Your Tasks</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Choose tasks and adjust hours to see your AI transformation potential
+                  </p>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {tasks.map(task => (
+                    <div key={task.id} className="p-4 rounded-xl border bg-muted/30">
+                      <div className="flex items-start gap-3">
+                        <Checkbox
+                          id={task.id}
+                          checked={task.selected}
+                          onCheckedChange={() => toggleTask(task.id)}
+                          className="mt-1"
+                        />
+                        <label htmlFor={task.id} className="flex-1 cursor-pointer">
+                          <div className="font-semibold text-sm">{task.name}</div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {task.aiTools.slice(0, 2).join(', ')}
+                          </div>
+                        </label>
+                      </div>
+
+                      {task.selected && (
+                        <div className="mt-4 ml-7 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                          <label className="text-xs text-muted-foreground">
+                            Hours/week: <span className="font-bold text-foreground">{task.hoursPerWeek}h</span>
+                          </label>
+                          <Slider
+                            value={[task.hoursPerWeek]}
+                            onValueChange={([value]) => updateTaskHours(task.id, value)}
+                            min={1}
+                            max={20}
+                            step={1}
+                          />
+                          <div className="text-xs text-mint-dark font-semibold">
+                            → Could save {task.potentialSavings}h/week
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="p-4 border-t">
+                  <Button
+                    onClick={handleGenerate}
+                    size="lg"
+                    className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
+                    disabled={portfolioData.tasks.length === 0}
+                  >
+                    Generate Portfolio
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop layout
   if (showResults) {
     return (
       <Card className="p-6 sm:p-8 bg-gradient-to-br from-mint/5 to-ink/5 border-2 border-mint">
@@ -172,7 +470,6 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
         </div>
 
         <div className="space-y-6">
-          {/* Total Impact - Moved to top for visibility */}
           <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-background">
             <div className="text-center">
               <div className="text-3xl font-bold text-mint-dark">{portfolioData.totalTimeSaved}h</div>
@@ -184,16 +481,15 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
             </div>
           </div>
 
-          {/* AI-Generated Master Prompts */}
           <div>
             <div className="text-xs font-bold text-muted-foreground mb-3 flex items-center gap-2">
-              <Sparkles className="h-3 w-3 text-mint" />
+              <MindmakerIcon size={12} />
               YOUR PERSONALIZED PROMPTS
             </div>
             {isGenerating ? (
               <div className="p-6 rounded-lg bg-background border flex flex-col items-center justify-center">
-                <Loader2 className="h-8 w-8 text-mint animate-spin mb-3" />
-                <p className="text-sm text-muted-foreground text-center">
+                <MindmakerIcon size={32} animated />
+                <p className="text-sm text-muted-foreground text-center mt-3">
                   Generating personalized prompts using Mindmaker methodology...
                 </p>
               </div>
@@ -206,7 +502,7 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
                         <div className="font-semibold text-sm">{prompt.title}</div>
                         {prompt.framework && (
                           <div className="text-xs text-mint-dark flex items-center gap-1 mt-1">
-                            <Sparkles className="h-3 w-3" />
+                            <MindmakerIcon size={12} />
                             {prompt.framework}
                           </div>
                         )}
@@ -233,7 +529,6 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
             ) : null}
           </div>
 
-          {/* Tasks - Collapsible on mobile */}
           <details className="group">
             <summary className="text-xs font-bold text-muted-foreground mb-3 cursor-pointer list-none flex items-center gap-2">
               YOUR AI SYSTEMS
@@ -265,8 +560,7 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
             </div>
           </details>
 
-          {/* Actions - Sticky on mobile */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t sm:relative fixed bottom-0 left-0 right-0 bg-background p-4 sm:p-0 sm:bg-transparent z-10 sm:z-auto">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
             <Button onClick={handleDownload} variant="outline" className="flex-1">
               <Download className="h-4 w-4 mr-2" />
               Download PDF
@@ -278,8 +572,6 @@ Apply the Mindmaker Five Cognitive Frameworks. Make prompts specific to their wo
               Build This Portfolio →
             </Button>
           </div>
-          {/* Spacer for fixed CTA on mobile */}
-          <div className="h-24 sm:hidden" />
         </div>
       </Card>
     );
@@ -359,6 +651,7 @@ function generateFallbackPrompts(tasks: Array<{ name: string; aiTools: string[] 
     if (taskLower.includes('email') || taskLower.includes('communication')) {
       prompts.push({
         title: `Executive Communication Drafter`,
+        framework: 'A/B Framing',
         prompt: `I need to draft a professional communication to my team about an important update. The key message is our strategic priority shift for this quarter. Write a clear, confident message that:
 1. Opens with the key decision/update (don't bury the lead)
 2. Explains the reasoning in 2-3 sentences
@@ -370,6 +663,7 @@ Keep it under 200 words, professional but warm tone. Make it something I can sen
     } else if (taskLower.includes('report') || taskLower.includes('data')) {
       prompts.push({
         title: `Weekly Performance Analysis`,
+        framework: 'First-Principles Thinking',
         prompt: `I'm sharing our key metrics for this week. Analyze this data and give me:
 1. The 3 most important trends I should know about
 2. Any anomalies or red flags that need immediate attention
@@ -381,6 +675,7 @@ Format this for a busy executive who has 2 minutes to review. Use bullet points,
     } else if (taskLower.includes('meeting') || taskLower.includes('notes')) {
       prompts.push({
         title: `Meeting Summary Generator`,
+        framework: 'Reflective Equilibrium',
         prompt: `Here are my raw notes from today's leadership meeting. Transform these into a shareable summary with:
 1. Executive summary (3 sentences max - what does the reader NEED to know?)
 2. Decisions made (what was decided and by whom)
@@ -393,6 +688,7 @@ Format this so I can paste it directly into Slack or email to the team.`
     } else if (taskLower.includes('strategic') || taskLower.includes('planning') || taskLower.includes('analysis')) {
       prompts.push({
         title: `Strategic Analysis Framework`,
+        framework: 'Dialectical Reasoning',
         prompt: `I'm working through a strategic decision and want to apply structured thinking. Help me analyze this using the dialectical method:
 
 1. THESIS: What's the strongest case FOR this direction?
@@ -406,6 +702,7 @@ Be direct, challenge my thinking, and give me a clear recommendation with reason
     } else if (taskLower.includes('research') || taskLower.includes('market') || taskLower.includes('competitive')) {
       prompts.push({
         title: `Competitive Intelligence Brief`,
+        framework: 'Mental Contrasting',
         prompt: `I need a quick competitive intelligence brief on our market. Research and provide:
 1. Key moves by our top 3 competitors in the last 90 days
 2. Emerging trends that could affect our positioning
@@ -417,6 +714,7 @@ Keep it to one page, cite sources where possible, and end with 2-3 specific reco
     } else {
       prompts.push({
         title: `${task.name} Accelerator`,
+        framework: 'First-Principles Thinking',
         prompt: `I'm a senior leader working on ${task.name.toLowerCase()}. I need to move faster on this without sacrificing quality.
 
 Help me by:
@@ -430,10 +728,10 @@ Be direct and practical—I want to implement this today, not someday.`
     }
   });
 
-  // Add strategic decision prompt if we have less than 2
   if (prompts.length < 2) {
     prompts.push({
       title: 'First-Principles Decision Framework',
+      framework: 'First-Principles Thinking',
       prompt: `I'm facing a strategic decision and want to think through it rigorously. Apply first-principles thinking:
 
 1. What's the fundamental problem I'm actually trying to solve? (Strip away the symptoms)
