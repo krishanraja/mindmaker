@@ -1,104 +1,40 @@
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import mindmakerIconLight from "@/assets/mindmaker-icon-light.png";
+import mindmakerIconDark from "@/assets/mindmaker-icon-dark.png";
 
 interface MindmakerIconProps {
   size?: number;
   className?: string;
   animated?: boolean;
-  variant?: "default" | "light" | "dark";
 }
 
 /**
- * Mindmaker brand icon - the distinctive two-block building icon
- * Used instead of generic Sparkles icons throughout the app
+ * Mindmaker brand icon - uses the real PNG assets
+ * Automatically switches between light/dark variants based on theme
  */
 export const MindmakerIcon = ({
   size = 24,
   className,
   animated = false,
-  variant = "default",
 }: MindmakerIconProps) => {
-  // Color based on variant
-  const getColors = () => {
-    switch (variant) {
-      case "light":
-        return {
-          primary: "#00D4AA", // mint
-          secondary: "#00B894", // darker mint
-        };
-      case "dark":
-        return {
-          primary: "#1a365d", // dark blue
-          secondary: "#00D4AA", // mint accent
-        };
-      default:
-        return {
-          primary: "currentColor",
-          secondary: "currentColor",
-        };
-    }
-  };
-
-  const colors = getColors();
+  const { resolvedTheme } = useTheme();
+  
+  // Use light icon on dark backgrounds, dark icon on light backgrounds
+  const iconSrc = resolvedTheme === "dark" ? mindmakerIconLight : mindmakerIconDark;
 
   return (
-    <svg
+    <img
+      src={iconSrc}
+      alt="Mindmaker"
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
       className={cn(
-        "shrink-0",
+        "shrink-0 object-contain",
         animated && "animate-pulse",
         className
       )}
-      aria-label="Mindmaker"
-    >
-      {/* Gradient definitions */}
-      <defs>
-        <linearGradient id="mindmaker-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#1a365d" />
-          <stop offset="100%" stopColor="#00D4AA" />
-        </linearGradient>
-        <linearGradient id="mindmaker-mint-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#00D4AA" />
-          <stop offset="100%" stopColor="#00B894" />
-        </linearGradient>
-      </defs>
-
-      {/* Small block (top left) - trapezoid */}
-      <path
-        d="M3 10L5 6H8L10 10H3Z"
-        fill="url(#mindmaker-gradient)"
-        className={cn(animated && "origin-center")}
-      />
-
-      {/* Large block (top right) - trapezoid */}
-      <path
-        d="M12 10L15 3H20L22 10H12Z"
-        fill="url(#mindmaker-gradient)"
-      />
-
-      {/* Left square (bottom left) */}
-      <rect
-        x="3"
-        y="11"
-        width="8"
-        height="9"
-        rx="0.5"
-        fill="url(#mindmaker-gradient)"
-      />
-
-      {/* Right square (bottom right) */}
-      <rect
-        x="12"
-        y="11"
-        width="10"
-        height="9"
-        rx="0.5"
-        fill="url(#mindmaker-mint-gradient)"
-      />
-    </svg>
+    />
   );
 };
 
@@ -146,4 +82,3 @@ export const MindmakerBadge = ({
     </div>
   );
 };
-

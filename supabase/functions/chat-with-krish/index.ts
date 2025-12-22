@@ -223,7 +223,7 @@ serve(async (req) => {
     logger.info('Request validated', { widgetMode, messageCount: messages.length, isTryItWidget });
 
     // Get service account credentials
-    const serviceAccountJson = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_KEY');
+    const serviceAccountJson = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
     
     if (!serviceAccountJson) {
       console.error('GOOGLE_SERVICE_ACCOUNT_KEY not configured');

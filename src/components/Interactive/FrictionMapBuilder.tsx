@@ -112,7 +112,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
   // Mobile full-screen wizard layout
   if (isMobile) {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full min-h-0 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
@@ -130,7 +130,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
           <AnimatePresence mode="wait">
             {isGenerating ? (
               <motion.div
