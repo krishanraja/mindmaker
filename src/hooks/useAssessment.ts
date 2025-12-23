@@ -348,6 +348,15 @@ Return ONLY valid JSON:
       }
 
       // Ultimate fallback: Score-based but with better messaging
+      // Helper to get label from answer value
+      const getAnswerLabel = (questionId: string, defaultValue: string): string => {
+        const answerValue = answers[questionId];
+        if (!answerValue) return defaultValue;
+        const question = QUESTIONS.find(q => q.id === questionId);
+        const option = question?.options.find(o => o.value === answerValue);
+        return option?.label || defaultValue;
+      };
+      
       let fallbackProfile: BuilderProfile;
       
       if (totalScore <= 4) {
@@ -355,9 +364,9 @@ Return ONLY valid JSON:
           type: 'Experimentation Catalyst',
           description: `Based on your answers, you're exploring AI's potential but need a structured entry point. Your score of ${totalScore}/9 suggests you're at the beginning of your AI journey.`,
           strengths: [
-            `Your approach (${answers.approach?.label || 'exploring'}) shows you're thinking critically about AI adoption`,
-            `Your recognition of challenges (${answers.frustration?.label || 'implementation'}) indicates you're past the hype phase`,
-            'You understand AI's importance for leadership effectiveness'
+            `Your approach (${getAnswerLabel('approach', 'exploring')}) shows you're thinking critically about AI adoption`,
+            `Your recognition of challenges (${getAnswerLabel('frustration', 'implementation')}) indicates you're past the hype phase`,
+            "You understand AI's importance for leadership effectiveness"
           ],
           nextSteps: [
             'Within 2 weeks: Book a Builder Session to map your first AI system around a real workflow',
@@ -372,8 +381,8 @@ Return ONLY valid JSON:
           type: 'Systematization Builder',
           description: `Your score of ${totalScore}/9 indicates you're actively experimenting and ready to systematize. Your answers show you've moved past basics and need structure.`,
           strengths: [
-            `Your approach (${answers.approach?.label || 'experimenting'}) demonstrates hands-on experience`,
-            `Your goal (${answers.goal?.label || 'scaling'}) shows strategic thinking`,
+            `Your approach (${getAnswerLabel('approach', 'experimenting')}) demonstrates hands-on experience`,
+            `Your goal (${getAnswerLabel('goal', 'scaling')}) shows strategic thinking`,
             'You understand the gap between pilots and production systems'
           ],
           nextSteps: [
@@ -389,8 +398,8 @@ Return ONLY valid JSON:
           type: 'Transformation Architect',
           description: `Your score of ${totalScore}/9 shows you're thinking at scale. Your answers indicate you're ready to transform how your organization works with AI.`,
           strengths: [
-            `Your goal (${answers.goal?.label || 'transformation'}) demonstrates strategic vision`,
-            `Your approach (${answers.approach?.label || 'building'}) shows implementation experience`,
+            `Your goal (${getAnswerLabel('goal', 'transformation')}) demonstrates strategic vision`,
+            `Your approach (${getAnswerLabel('approach', 'building')}) shows implementation experience`,
             'You have the leadership mandate to drive organization-wide change'
           ],
           nextSteps: [
