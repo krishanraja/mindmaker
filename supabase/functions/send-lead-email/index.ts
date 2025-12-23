@@ -284,9 +284,7 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            // NOTE: For production, verify themindmaker.ai domain in Resend dashboard
-            // Then change to: 'Mindmaker Leads <leads@themindmaker.ai>'
-            from: 'Mindmaker Leads <onboarding@resend.dev>',
+            from: 'Mindmaker Leads <leads@themindmaker.ai>',
             to: ['krish@themindmaker.ai'],
             reply_to: email, // Allow replying directly to the lead
             subject: `🎯 Lead: ${name} from ${companyResearch.companyName} - ${programLabels[selectedProgram]}`,

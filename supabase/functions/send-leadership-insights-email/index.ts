@@ -154,7 +154,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "MindMaker Leads <onboarding@resend.dev>",
+        from: "MindMaker Leads <leads@themindmaker.ai>",
         to: ["krish@themindmaker.ai"],
         subject: `New AI Leadership Benchmark: ${name} (${results?.tier || 'Unknown'})`,
         html: `

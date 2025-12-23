@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { MarkdownResponse } from '@/components/ui/markdown-response';
 import { useSessionData } from '@/contexts/SessionDataContext';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
+import { openCalendlyPopup } from '@/utils/calendly';
 
 const TryItWidget = () => {
   const [input, setInput] = useState('');
@@ -135,7 +136,7 @@ const TryItWidget = () => {
                     <Button
                       size="lg"
                       className="w-full bg-ink text-white hover:bg-ink/90"
-                      onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                      onClick={() => openCalendlyPopup({ source: 'other' })}
                     >
                       Book a Builder Session
                     </Button>

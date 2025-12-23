@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { openCalendlyPopup } from "@/utils/calendly";
+import { sendLeadEmail } from "@/utils/emailNotification";
 
 interface ConsultationBookingProps {
   variant?: 'default' | 'compact';
@@ -32,9 +34,24 @@ export const ConsultationBooking = ({ variant = 'default', preselectedProgram }:
     setIsLoading(true);
 
     try {
-      // Direct to Calendly (no payment hold for now)
-      const calendlyUrl = `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}&a1=${encodeURIComponent(preselectedProgram || 'not-specified')}`;
-      window.open(calendlyUrl, '_blank');
+      // Send email notification (don't block if it fails)
+      await sendLeadEmail({
+        name,
+        email,
+        source: 'consultation-booking',
+        additionalData: {
+          preselectedProgram: preselectedProgram || 'not-specified',
+        },
+      });
+
+      // Open Calendly popup
+      openCalendlyPopup({
+        name,
+        email,
+        source: 'consultation-booking',
+        preselectedProgram: preselectedProgram || 'not-specified',
+      });
+
       toast({
         title: "Opening Calendly",
         description: "Booking your consultation...",

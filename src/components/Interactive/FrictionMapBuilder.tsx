@@ -9,6 +9,7 @@ import { generateFrictionMapPDF } from '@/utils/pdfGenerator';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
+import { openCalendlyPopup } from '@/utils/calendly';
 
 interface FrictionMapBuilderProps {
   compact?: boolean;
@@ -265,7 +266,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                   </Button>
                   <Button
                     className="w-full bg-mint text-ink hover:bg-mint/90"
-                    onClick={() => window.location.href = '/builder-session'}
+                    onClick={() => openCalendlyPopup({ source: 'friction-map' })}
                   >
                     Build 4 More Like This →
                   </Button>
@@ -412,7 +413,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
           </Button>
           <Button 
             className="flex-1 bg-mint text-ink hover:bg-mint/90"
-            onClick={() => window.location.href = '/builder-session'}
+            onClick={() => openCalendlyPopup({ source: 'friction-map' })}
           >
             Build 4 More Like This →
           </Button>

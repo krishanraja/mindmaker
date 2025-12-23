@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { MarkdownResponse } from '@/components/ui/markdown-response';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
+import { openCalendlyPopup } from '@/utils/calendly';
 
 interface TryItWidgetProps {
   compact?: boolean;
@@ -196,7 +197,7 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
                   </Button>
                   <Button
                     className="w-full bg-ink text-white hover:bg-ink/90"
-                    onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                    onClick={() => openCalendlyPopup({ source: 'ai-decision-helper' })}
                   >
                     Book a Builder Session
                   </Button>
@@ -327,7 +328,7 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
             <Button
               size="lg"
               className="w-full bg-ink text-white hover:bg-ink/90"
-              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+              onClick={() => openCalendlyPopup({ source: 'ai-decision-helper' })}
             >
               Book a Builder Session
             </Button>

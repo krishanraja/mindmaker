@@ -66,7 +66,7 @@ export const ChatPanel = ({ onClose }: ChatPanelProps) => {
   const chatContent = (
     <>
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-border bg-card/50">
+      <div className="flex items-center gap-3 p-4 border-b border-border bg-card">
         <Avatar className="h-10 w-10">
           <AvatarImage src={krishHeadshot} alt="Krish" />
           <AvatarFallback>K</AvatarFallback>
@@ -141,7 +141,7 @@ export const ChatPanel = ({ onClose }: ChatPanelProps) => {
       )}
 
       {/* Input */}
-      <div className="p-4 border-t border-border bg-card/50 pb-safe-bottom">
+      <div className="p-4 border-t border-border bg-card pb-safe-bottom">
         <div className="flex gap-2">
           <Input
             ref={inputRef}

@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowRight } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSessionData } from "@/contexts/SessionDataContext";
+import { openCalendlyPopup } from "@/utils/calendly";
 
 interface InitialConsultModalProps {
   open: boolean;
@@ -83,9 +84,13 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
         // Don't block the booking flow if email fails
       }
       
-      // Direct to Calendly for all programs (no payment hold for now)
-      const calendlyUrl = `https://calendly.com/krish-raja/mindmaker-meeting?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&prefill_email=${encodeURIComponent(email)}&prefill_name=${encodeURIComponent(name)}&a1=${encodeURIComponent(selectedProgram)}`;
-      window.open(calendlyUrl, '_blank');
+      // Open Calendly popup
+      openCalendlyPopup({
+        name,
+        email,
+        source: 'initial-consult',
+        preselectedProgram: selectedProgram,
+      });
       onOpenChange(false);
       toast({
         title: "Opening Calendly",

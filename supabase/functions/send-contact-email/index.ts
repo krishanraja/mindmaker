@@ -57,7 +57,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Mindmaker Contact <onboarding@resend.dev>",
+        from: "Mindmaker Contact <contact@themindmaker.ai>",
         to: ["krish@themindmaker.ai"],
         subject: `Contact Form: ${name}`,
         html: `

@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
+import { openCalendlyPopup } from '@/utils/calendly';
 
 interface PortfolioBuilderProps {
   compact?: boolean;
@@ -454,7 +455,7 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                   </Button>
                   <Button
                     className="w-full bg-mint text-ink hover:bg-mint/90"
-                    onClick={() => window.location.href = '/builder-sprint'}
+                    onClick={() => openCalendlyPopup({ source: 'portfolio-builder' })}
                   >
                     Build This Portfolio →
                   </Button>
@@ -652,7 +653,7 @@ Return ONLY valid JSON array, no markdown or explanation.`;
           </Button>
           <Button 
             className="flex-1 bg-mint text-ink hover:bg-mint/90"
-            onClick={() => window.location.href = '/builder-sprint'}
+            onClick={() => openCalendlyPopup({ source: 'portfolio-builder' })}
           >
             Build This Portfolio →
           </Button>

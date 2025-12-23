@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon } from '@/components/ui/MindmakerIcon';
+import { openCalendlyPopup } from '@/utils/calendly';
 
 interface BuilderAssessmentProps {
   compact?: boolean;
@@ -277,7 +278,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                   <Button
                     size="lg"
                     className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
-                    onClick={() => window.location.href = profile.productLink}
+                    onClick={() => openCalendlyPopup({ source: 'builder-assessment', preselectedProgram: profile.recommendedProduct })}
                   >
                     Learn More
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -402,7 +403,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
           <Button
             size="lg"
             className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
-            onClick={() => window.location.href = profile.productLink}
+            onClick={() => openCalendlyPopup({ source: 'builder-assessment', preselectedProgram: profile.recommendedProduct })}
           >
             Learn More
             <ArrowRight className="h-4 w-4 ml-2" />
