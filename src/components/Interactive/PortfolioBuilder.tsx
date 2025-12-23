@@ -344,7 +344,7 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                 </div>
 
                 {/* Tab Content */}
-                <div className="flex-1 overflow-y-auto p-4 min-h-0">
+                <div className="flex-1 overflow-y-auto p-4 min-h-0 pb-[140px]">
                   <AnimatePresence mode="wait">
                     {resultTab === 'overview' && (
                       <motion.div
@@ -352,24 +352,24 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                         initial={{ opacity: 0, x: 10 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10 }}
-                        className="space-y-4"
+                        className="space-y-3"
                       >
                         <MindmakerBadge text="Your AI Portfolio" />
                         
-                        <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/50">
+                        <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-muted/50">
                           <div className="text-center">
-                            <div className="text-3xl font-bold text-mint-dark">{portfolioData.totalTimeSaved}h</div>
-                            <div className="text-xs text-muted-foreground">Saved per week</div>
+                            <div className="text-2xl font-bold text-mint-dark">{portfolioData.totalTimeSaved}h</div>
+                            <div className="text-xs text-muted-foreground">Saved/week</div>
                           </div>
                           <div className="text-center">
-                            <div className="text-3xl font-bold text-gold">${(portfolioData.totalCostSavings / 1000).toFixed(0)}K</div>
-                            <div className="text-xs text-muted-foreground">Value per month</div>
+                            <div className="text-2xl font-bold text-gold">${(portfolioData.totalCostSavings / 1000).toFixed(0)}K</div>
+                            <div className="text-xs text-muted-foreground">Value/month</div>
                           </div>
                         </div>
 
-                        <div className="p-4 rounded-lg bg-ink/5 border">
-                          <TrendingUp className="h-6 w-6 text-mint mb-2" />
-                          <p className="text-sm">
+                        <div className="p-3 rounded-lg bg-ink/5 border">
+                          <TrendingUp className="h-5 w-5 text-mint mb-1.5" />
+                          <p className="text-xs leading-relaxed">
                             Based on your selected tasks, you could transform <strong>{portfolioData.totalTimeSaved} hours</strong> of 
                             weekly work into AI-accelerated systems.
                           </p>
@@ -382,10 +382,10 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                         initial={{ opacity: 0, x: 10 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10 }}
-                        className="space-y-4"
+                        className="space-y-3"
                       >
                         {masterPrompts.map((prompt, i) => (
-                          <div key={i} className="p-4 rounded-lg bg-muted/50 border">
+                          <div key={i} className="p-3 rounded-lg bg-muted/50 border">
                             <div className="flex items-start justify-between mb-2">
                               <div>
                                 <div className="font-semibold text-sm">{prompt.title}</div>
@@ -400,7 +400,7 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleCopyPrompt(prompt.prompt, i)}
-                                className="shrink-0"
+                                className="shrink-0 min-w-[44px] min-h-[44px]"
                               >
                                 {copiedIndex === i ? (
                                   <Check className="h-4 w-4 text-success" />
@@ -409,7 +409,9 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                                 )}
                               </Button>
                             </div>
-                            <p className="text-xs text-muted-foreground whitespace-pre-wrap bg-background p-3 rounded border max-h-32 overflow-y-auto">
+                            <p className="text-xs text-muted-foreground whitespace-pre-wrap bg-background p-3 rounded border max-h-[150px] overflow-y-auto" style={{
+                              WebkitOverflowScrolling: 'touch'
+                            }}>
                               {prompt.prompt}
                             </p>
                           </div>
@@ -422,18 +424,18 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                         initial={{ opacity: 0, x: 10 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10 }}
-                        className="space-y-3"
+                        className="space-y-2"
                       >
                         {portfolioData.tasks.map(task => (
-                          <div key={task.id} className="p-4 rounded-lg bg-muted/50 border">
-                            <div className="flex items-start justify-between mb-2">
+                          <div key={task.id} className="p-3 rounded-lg bg-muted/50 border">
+                            <div className="flex items-start justify-between mb-1.5">
                               <div className="font-semibold text-sm">{task.name}</div>
                               <div className="text-right">
-                                <div className="text-lg font-bold text-mint-dark">{task.potentialSavings}h</div>
+                                <div className="text-base font-bold text-mint-dark">{task.potentialSavings}h</div>
                                 <div className="text-[10px] text-muted-foreground">saved/wk</div>
                               </div>
                             </div>
-                            <div className="flex flex-wrap gap-1 mt-2">
+                            <div className="flex flex-wrap gap-1 mt-1.5">
                               {task.aiTools.map((tool, i) => (
                                 <span key={i} className="px-2 py-0.5 bg-mint/10 text-mint-dark rounded-full text-xs">
                                   {tool}
@@ -447,14 +449,17 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                   </AnimatePresence>
                 </div>
 
-                {/* Actions - Fixed at bottom */}
-                <div className="p-4 border-t space-y-2 shrink-0 bg-background pb-safe-bottom">
+                {/* Actions - Sticky CTA */}
+                <div className="sticky bottom-0 left-0 right-0 p-4 pt-3 border-t bg-background space-y-2 z-10 shrink-0" style={{
+                  background: 'linear-gradient(to top, hsl(var(--background)) 0%, hsl(var(--background)) 80%, transparent 100%)',
+                  paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))'
+                }}>
                   <Button onClick={handleDownload} variant="outline" className="w-full">
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF
                   </Button>
                   <Button
-                    className="w-full bg-mint text-ink hover:bg-mint/90"
+                    className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
                     onClick={() => openCalendlyPopup({ source: 'portfolio-builder' })}
                   >
                     Build This Portfolio →
