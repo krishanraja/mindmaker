@@ -21,25 +21,30 @@ export const MindmakerIcon = ({
   // #endregion
   
   if (animated) {
+    // For animated version, make icon smaller so ring can go around it
+    const iconSize = Math.max(16, size * 0.6); // Icon is 60% of requested size
+    const ringSize = size; // Ring is full requested size
+    
     return (
-      <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: size, height: size }}>
+      <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: ringSize, height: ringSize }}>
+        {/* Circular loading ring - goes around the icon */}
+        <div
+          className="absolute rounded-full border-2 border-mint border-t-transparent animate-spin"
+          style={{
+            width: ringSize,
+            height: ringSize,
+            top: 0,
+            left: 0,
+          }}
+        />
+        {/* Icon centered inside the ring */}
         <img
           src={mindmakerIcon}
           alt="Mindmaker"
-          width={size}
-          height={size}
-          className="shrink-0 object-contain animate-pulse"
+          width={iconSize}
+          height={iconSize}
+          className="shrink-0 object-contain animate-pulse relative z-10"
           style={{ aspectRatio: 'auto' }}
-        />
-        {/* Circular loading ring */}
-        <div
-          className="absolute inset-0 rounded-full border-2 border-mint border-t-transparent animate-spin"
-          style={{
-            width: size + 8,
-            height: size + 8,
-            top: -4,
-            left: -4,
-          }}
         />
       </div>
     );

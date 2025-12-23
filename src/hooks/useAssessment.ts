@@ -91,10 +91,21 @@ export const useAssessment = () => {
           messages: [
             {
               role: 'user',
-              content: `You are analyzing a senior leader's AI readiness assessment. Your job is to create a deeply personalized, insightful profile that demonstrates expert-level understanding of their specific situation.
+              content: `You are analyzing a senior leader's AI readiness assessment using Mindmaker's advanced cognitive frameworks and critical thinking methodologies. Your job is to create a deeply personalized, insightful profile that demonstrates expert-level understanding of their specific situation.
 
 ASSESSMENT RESPONSES:
 ${answerSummary}
+
+## MINDPOWER: COGNITIVE FRAMEWORKS & TRAINING MATERIAL
+
+You have access to Mindmaker's comprehensive training material on:
+- **Five Cognitive Frameworks**: A/B Framing, Dialectical Reasoning, Mental Contrasting (WOOP), Reflective Equilibrium, First-Principles Thinking
+- **Chain-of-Thought Reasoning**: Advanced reasoning techniques for complex problem-solving
+- **Critical Thinking in AI Era**: Understanding LLM limitations, verification practices, and maintaining cognitive independence
+- **Multi-Dimensional Reasoning**: Dialectical systems, perspective matrices, temporal analysis
+- **Executive Decision-Making**: Behavioral economics, decision theory, organizational psychology
+
+Use these frameworks to create a profile that shows sophisticated understanding, not just pattern matching.
 
 ## DEEP ANALYSIS PROCESS (Follow this systematically):
 
@@ -112,35 +123,40 @@ ${answerSummary}
 - Their specific answer combination creates a unique profile (e.g., "Experimentation + Implementation challenge + Team of 10-50" = "You're a scaling leader who's past the demo phase but needs systems")
 - What makes THIS person different from others with similar answers? Find the nuance.
 
-### Step 4: Apply Mindmaker Framework (Choose ONE that best fits)
-- **First-Principles Thinking**: If they're questioning fundamentals, stuck on assumptions, or need to rebuild from basics
-- **Mental Contrasting (WOOP)**: If they have clear goals but obstacles are blocking them
-- **Dialectical Reasoning**: If they're torn between options (build vs buy, speed vs quality, etc.)
-- **A/B Framing**: If they're stuck in binary thinking or need perspective shift
-- **Reflective Equilibrium**: If values/org culture alignment is the core challenge
+### Step 4: Apply Mindmaker Framework (Choose ONE that best fits, explain WHY)
+- **First-Principles Thinking**: If they're questioning fundamentals, stuck on assumptions, or need to rebuild from basics. Use Five Whys technique to identify their core challenge.
+- **Mental Contrasting (WOOP)**: If they have clear goals but obstacles are blocking them. Structure as: Wish → Outcome (ideal success) → Obstacle (real barriers) → Plan (mitigation).
+- **Dialectical Reasoning**: If they're torn between options or need opposing perspectives. Present thesis (strongest case FOR) and antithesis (strongest case AGAINST), then synthesis.
+- **A/B Framing**: If they're stuck in binary thinking or need perspective shift. Reframe their situation positively AND negatively to expose bias.
+- **Reflective Equilibrium**: If values/org culture alignment is the core challenge. Map their decisions against stated principles, identify tensions, find coherence.
 
-### Step 5: Create Specific Strengths (NOT Generic)
+**CRITICAL**: Don't just name the framework - EXPLAIN how it applies to their specific answer combination. Show you understand WHY this framework fits their situation.
+
+### Step 5: Create Specific Strengths (NOT Generic) - Use Critical Thinking Insights
 BAD: "Open mindset" (anyone could have this)
-GOOD: "Your recognition of overwhelm suggests you've moved past the 'AI is magic' phase—you're seeing the complexity, which is actually a strength because it means you're thinking critically, not just following hype."
+GOOD: "Your recognition of overwhelm suggests you've moved past the 'AI is magic' phase—you're seeing the complexity, which is actually a strength because it means you're thinking critically, not just following hype. This aligns with research showing that leaders who recognize AI limitations (rather than accepting outputs uncritically) make better decisions."
 
 Each strength must:
-- Reference their specific answer combination
-- Explain WHY it's a strength (not just what it is)
-- Show you understand their unique position
+- Reference their specific answer combination with exact language from their responses
+- Explain WHY it's a strength using cognitive framework insights (e.g., "This shows first-principles thinking because..." or "This demonstrates dialectical awareness because...")
+- Connect to training material insights about critical thinking, decision-making, or AI literacy
+- Show you understand their unique position in the AI adoption journey
 
-### Step 6: Craft Actionable Next Steps
+### Step 6: Craft Actionable Next Steps - Apply Mental Contrasting & First-Principles
 Each step must:
-- Reference their specific answers (e.g., "You mentioned weekly reports take 5 hours - let's start there")
+- Reference their specific answers with exact language (e.g., "You mentioned weekly reports take 5 hours - let's start there")
 - Include timeline (e.g., "Within 2 weeks")
-- Explain expected outcome
-- Build on previous steps logically
+- Explain expected outcome using framework language (e.g., "This applies mental contrasting by identifying the obstacle (X) and creating a plan to overcome it")
+- Build on previous steps logically (show progression)
+- Reference training material insights where relevant (e.g., "This uses chain-of-thought reasoning to break down your workflow into steps")
+- Show how steps connect to their journey stage (exploring → experimenting → building → scaling)
 
 ## OUTPUT FORMAT (Return ONLY valid JSON, no markdown):
 
 {
   "type": "A creative 2-3 word title that captures their UNIQUE position based on their answer combination. Must be specific, not generic. Examples: 'Experimentation Catalyst' (if experimenting + need structure), 'Systematization Builder' (if building + need systems), 'Transformation Architect' (if scaling + need strategy)",
   "description": "2-3 sentences that: (1) Acknowledge their EXACT journey stage from answers, (2) Identify the KEY insight/pattern you noticed (reference specific answers), (3) Frame their potential in concrete terms. MUST reference their actual responses, not generic statements.",
-  "frameworkUsed": "The specific framework name AND a 1-sentence explanation of why it fits their situation",
+  "frameworkUsed": "The specific framework name AND a 2-3 sentence explanation of: (1) Why this framework fits their specific answer combination, (2) How it reveals insights about their situation, (3) What cognitive pattern it addresses. Example: 'Mental Contrasting (WOOP) - Your answers show clear goals (team transformation) but obstacles (scaling challenges). WOOP helps you balance your optimistic vision with realistic barriers, which is exactly what you need to move from pilot to production.'",
   "strengths": [
     "Strength 1: Specific to their answer combination, with context explaining WHY it's a strength. Reference their actual words/choices. Example: 'Your selection of 'experimenting' combined with 'implementation challenge' shows you've moved past the 'AI is magic' phase—you're testing real workflows, which is a strength because it means you're thinking critically about fit, not just following hype.'",
     "Strength 2: Another specific insight that shows deep understanding of their unique position",
@@ -159,9 +175,12 @@ Each step must:
 Before finalizing, ask:
 - [ ] Does the description reference their specific answers, not generic statements?
 - [ ] Are strengths specific enough that only THIS person (with their answer combination) would get them?
-- [ ] Do next steps reference their actual words/choices?
+- [ ] Do strengths demonstrate understanding of cognitive frameworks and critical thinking principles?
+- [ ] Do next steps reference their actual words/choices AND show framework application?
+- [ ] Is the framework explanation sophisticated enough that a CEO would think "This person really understands both my situation AND how to think about it"?
 - [ ] Would a CEO read this and think "This person really understands my situation"?
 - [ ] Is it clear this was written for THEM, not a template?
+- [ ] Does the profile demonstrate expert-level knowledge of AI literacy, decision-making frameworks, and critical thinking?
 
 CRITICAL: This profile should feel like it was written by someone who spent 30 minutes understanding their specific situation. A CEO reading this should think "This is exactly where I am and exactly what I need."`
             }

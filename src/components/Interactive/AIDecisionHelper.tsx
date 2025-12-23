@@ -155,7 +155,7 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
                 exit={{ opacity: 0 }}
                 className="flex-1 flex flex-col items-center justify-center p-8 text-center"
               >
-                <MindmakerIcon size={48} animated />
+                <MindmakerIcon size={64} animated />
                 <h3 className="text-lg font-bold mt-4 mb-2">Thinking...</h3>
                 <p className="text-sm text-muted-foreground">
                   Applying cognitive frameworks to your decision

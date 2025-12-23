@@ -171,7 +171,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                 className="flex-1 flex flex-col items-center justify-center p-8 text-center"
               >
                 <div className="relative mb-6">
-                  <MindmakerIcon size={48} animated />
+                  <MindmakerIcon size={64} animated />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Analyzing Your Responses</h3>
                 <p className="text-muted-foreground text-sm max-w-sm">
@@ -322,7 +322,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
       <Card className="p-6 sm:p-8 bg-gradient-to-br from-mint/10 to-ink/10 border-2 border-mint/50">
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <div className="relative mb-6">
-            <MindmakerIcon size={48} animated />
+            <MindmakerIcon size={64} animated />
           </div>
           <h3 className="text-xl font-bold mb-2">Analyzing Your Responses</h3>
           <p className="text-muted-foreground text-sm max-w-sm">
