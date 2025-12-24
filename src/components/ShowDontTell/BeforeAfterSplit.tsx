@@ -91,7 +91,7 @@ const BeforeAfterSplit = () => {
     canReverseExit: true,
     enabled: true,
     titleRef: titleRef, // Use title position to trigger scroll hijack
-    titleOffset: 30, // Trigger when title is 30px from top
+    titleOffset: 100, // Trigger when title is 100px from top (less whitespace above)
   });
   
   // Cleanup RAF on unmount
@@ -113,12 +113,12 @@ const BeforeAfterSplit = () => {
   return (
     <section 
       ref={sectionRef}
-      className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-12 md:py-24"
+      className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8 md:py-16"
     >
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
-        <div className="text-center mb-4 md:mb-8" ref={titleRef}>
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">
+        <div className="text-center mb-4 md:mb-6" ref={titleRef}>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2">
             The Transformation
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -128,7 +128,7 @@ const BeforeAfterSplit = () => {
 
         {/* Progress indicator - uses displayProgress for discrete updates */}
         {isLocked && displayProgress < 1 && (
-          <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-1 w-20 bg-muted rounded-full overflow-hidden">
               <div 
                 className="h-full bg-mint rounded-full transition-[width] duration-100"
@@ -265,7 +265,7 @@ const BeforeAfterSplit = () => {
         {/* Completion message */}
         {displayProgress > 0.85 && (
           <div
-            className="text-center mt-8 animate-fade-in"
+            className="text-center mt-6 animate-fade-in"
           >
             <p className="text-sm text-muted-foreground">
               This isn't theory. It's what happens when you work with a practitioner who's been in your seat.
