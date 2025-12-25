@@ -475,3 +475,184 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }
+
+/* VOICE INPUT ANIMATIONS */
+@layer components {
+  /* Voice listening pulse animation */
+  .voice-pulse {
+    animation: voice-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes voice-pulse {
+    0%, 100% { 
+      transform: scale(1); 
+      opacity: 0.8; 
+    }
+    50% { 
+      transform: scale(1.4); 
+      opacity: 0; 
+    }
+  }
+
+  /* Voice button glow effect */
+  .voice-glow {
+    box-shadow: 0 0 20px hsl(var(--mint) / 0.4),
+                0 0 40px hsl(var(--mint) / 0.2),
+                0 0 60px hsl(var(--mint) / 0.1);
+  }
+
+  /* Audio wave visualizer bars */
+  .voice-wave-bar {
+    animation: wave-bar 0.5s ease-in-out infinite;
+  }
+
+  @keyframes wave-bar {
+    0%, 100% { 
+      height: 4px; 
+    }
+    50% { 
+      height: 16px; 
+    }
+  }
+
+  /* Staggered delays for wave bars */
+  .voice-wave-bar:nth-child(1) { animation-delay: 0ms; }
+  .voice-wave-bar:nth-child(2) { animation-delay: 100ms; }
+  .voice-wave-bar:nth-child(3) { animation-delay: 200ms; }
+  .voice-wave-bar:nth-child(4) { animation-delay: 300ms; }
+  .voice-wave-bar:nth-child(5) { animation-delay: 400ms; }
+
+  /* Voice recording indicator */
+  .voice-recording-dot {
+    animation: recording-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes recording-pulse {
+    0%, 100% { 
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% { 
+      opacity: 0.5;
+      transform: scale(1.1);
+    }
+  }
+
+  /* Voice transcript fade in */
+  .voice-transcript-appear {
+    animation: transcript-appear 0.3s ease-out forwards;
+  }
+
+  @keyframes transcript-appear {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Voice button ripple effect */
+  .voice-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .voice-ripple::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, hsl(var(--mint) / 0.3) 0%, transparent 70%);
+    opacity: 0;
+    animation: ripple-expand 0.6s ease-out;
+  }
+
+  @keyframes ripple-expand {
+    from {
+      transform: scale(0);
+      opacity: 1;
+    }
+    to {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  /* Voice-enabled card indicator shimmer */
+  .voice-badge-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .voice-badge-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--mint) / 0.2),
+      transparent
+    );
+    animation: badge-shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes badge-shimmer {
+    0% { left: -100%; }
+    50%, 100% { left: 100%; }
+  }
+
+  /* Mobile voice-first prompt styles */
+  .voice-first-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+  }
+
+  /* Voice button hover/active states */
+  .voice-button-active {
+    background: linear-gradient(135deg, hsl(var(--mint)), hsl(var(--mint) / 0.8));
+    box-shadow: 
+      0 4px 15px hsl(var(--mint) / 0.4),
+      0 0 30px hsl(var(--mint) / 0.2),
+      inset 0 1px 0 hsl(var(--mint) / 0.5);
+  }
+
+  .voice-button-idle {
+    background: hsl(var(--ink) / 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .voice-button-idle:hover {
+    background: hsl(var(--mint) / 0.15);
+    transform: scale(1.05);
+  }
+
+  /* Premium card voice enhancement */
+  .premium-card-voice {
+    position: relative;
+  }
+
+  .premium-card-voice::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(
+      circle at 100% 0%,
+      hsl(var(--mint) / 0.15) 0%,
+      transparent 70%
+    );
+    border-radius: 0 4px 0 0;
+    pointer-events: none;
+  }
+}

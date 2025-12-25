@@ -10,6 +10,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 import { openCalendlyPopup } from '@/utils/calendly';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
+import { VoiceInputButton, InlineVoiceButton } from '@/components/ui/VoiceInputButton';
 
 interface FrictionMapBuilderProps {
   compact?: boolean;
@@ -18,10 +20,29 @@ interface FrictionMapBuilderProps {
 
 export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuilderProps) => {
   const [problem, setProblem] = useState('');
+  const [showTextInput, setShowTextInput] = useState(false);
   const { frictionMap, isGenerating, error, generateFrictionMap, clearFrictionMap } = useFrictionMap();
   const { setFrictionMap } = useSessionData();
   const isMobile = useIsMobile();
   const [resultTab, setResultTab] = useState<'overview' | 'tools' | 'prompts'>('overview');
+
+  const {
+    isListening,
+    transcript,
+    interimTranscript,
+    isSupported: voiceSupported,
+    error: voiceError,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useVoiceInput({
+    silenceTimeout: 2500,
+    onTranscript: (text, isFinal) => {
+      if (isFinal) {
+        setProblem(prev => prev + text);
+      }
+    },
+  });
 
   useEffect(() => {
     if (frictionMap) {
@@ -29,9 +50,10 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
     }
   }, [frictionMap, setFrictionMap]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (problem.trim()) {
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (problem.trim() && problem.trim().length >= 10) {
+      resetTranscript();
       await generateFrictionMap(problem.trim());
     }
   };
@@ -39,6 +61,18 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
   const handleDownload = () => {
     if (!frictionMap) return;
     generateFrictionMapPDF(frictionMap);
+  };
+
+  const handleVoiceStart = () => {
+    resetTranscript();
+    startListening();
+  };
+
+  const handleReset = () => {
+    clearFrictionMap();
+    setProblem('');
+    setShowTextInput(false);
+    resetTranscript();
   };
 
   // Compact mode - Results view
@@ -71,7 +105,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
           size="sm"
           variant="outline"
           className="w-full"
-          onClick={clearFrictionMap}
+          onClick={handleReset}
         >
           Build Another
         </Button>
@@ -83,19 +117,32 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
   if (compact) {
     return (
       <form onSubmit={handleSubmit} className="space-y-3">
-        <Input
-          value={problem}
-          onChange={(e) => setProblem(e.target.value)}
-          placeholder="e.g., Weekly reports take 5 hours"
-          className="text-sm"
-          disabled={isGenerating}
-        />
+        <div className="relative">
+          <Input
+            value={problem + (isListening ? interimTranscript : '')}
+            onChange={(e) => setProblem(e.target.value)}
+            placeholder="e.g., Weekly reports take 5 hours"
+            className="text-sm pr-12"
+            disabled={isGenerating}
+          />
+          {voiceSupported && (
+            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+              <InlineVoiceButton
+                isListening={isListening}
+                isSupported={voiceSupported}
+                error={voiceError}
+                onStart={handleVoiceStart}
+                onStop={stopListening}
+              />
+            </div>
+          )}
+        </div>
         {error && <p className="text-xs text-destructive">{error}</p>}
         <Button
           type="submit"
           size="sm"
           className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
-          disabled={isGenerating || !problem.trim()}
+          disabled={isGenerating || problem.trim().length < 10}
         >
           {isGenerating ? (
             <>
@@ -272,6 +319,75 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                   </Button>
                 </div>
               </motion.div>
+            ) : !showTextInput && voiceSupported ? (
+              <motion.div
+                key="voice-first"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col"
+              >
+                <div className="text-center p-4 pt-6">
+                  <h3 className="text-xl font-bold mb-2">Build Your AI Friction Map</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Speak your biggest time drain
+                  </p>
+                </div>
+
+                <div className="flex-1 flex flex-col items-center justify-center p-4">
+                  <VoiceInputButton
+                    isListening={isListening}
+                    isSupported={voiceSupported}
+                    error={voiceError}
+                    onStart={handleVoiceStart}
+                    onStop={stopListening}
+                    size="xl"
+                    variant="mobile-primary"
+                    showLabel
+                    label={isListening ? 'Listening...' : 'Tap to speak'}
+                  />
+
+                  {/* Show transcript as it's being recorded */}
+                  <AnimatePresence>
+                    {(problem || interimTranscript) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="mt-6 p-4 rounded-xl bg-muted/50 border max-w-sm text-center"
+                      >
+                        <p className="text-sm">
+                          {problem}
+                          {isListening && interimTranscript && (
+                            <span className="text-muted-foreground">{interimTranscript}</span>
+                          )}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <button
+                    onClick={() => setShowTextInput(true)}
+                    className="mt-6 text-xs text-mint-dark underline underline-offset-2 hover:text-mint transition-colors"
+                  >
+                    or type your challenge
+                  </button>
+                </div>
+
+                {/* Submit button when there's voice input */}
+                {problem && !isListening && problem.trim().length >= 10 && (
+                  <div className="p-4 border-t">
+                    <Button
+                      onClick={() => handleSubmit()}
+                      size="lg"
+                      className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
+                    >
+                      Generate Friction Map
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </div>
+                )}
+              </motion.div>
             ) : (
               <motion.div
                 key="input"
@@ -292,13 +408,27 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                     <label className="text-sm font-medium mb-2 block">
                       What's your biggest time drain?
                     </label>
-                    <Input
-                      value={problem}
-                      onChange={(e) => setProblem(e.target.value)}
-                      placeholder="e.g., Weekly reports take 5 hours to compile"
-                      className="text-base"
-                      disabled={isGenerating}
-                    />
+                    <div className="relative">
+                      <Input
+                        value={problem + (isListening ? interimTranscript : '')}
+                        onChange={(e) => setProblem(e.target.value)}
+                        placeholder="e.g., Weekly reports take 5 hours to compile"
+                        className="text-base pr-14"
+                        disabled={isGenerating}
+                      />
+                      {voiceSupported && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          <VoiceInputButton
+                            isListening={isListening}
+                            isSupported={voiceSupported}
+                            error={voiceError}
+                            onStart={handleVoiceStart}
+                            onStop={stopListening}
+                            size="sm"
+                          />
+                        </div>
+                      )}
+                    </div>
                     {error && <p className="text-xs text-destructive mt-2">{error}</p>}
                     <p className="text-xs text-muted-foreground mt-2">
                       Be specific for better recommendations (min 10 characters)
@@ -333,7 +463,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
             <MindmakerIcon size={20} />
             Your AI Friction Map
           </h3>
-          <Button variant="ghost" size="sm" onClick={clearFrictionMap} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+          <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
             Build Another
           </Button>
         </div>
@@ -440,18 +570,47 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
           <label className="text-sm font-medium mb-2 block">
             What's your biggest time drain?
           </label>
-          <Input
-            value={problem}
-            onChange={(e) => setProblem(e.target.value)}
-            placeholder="e.g., Weekly reports take 5 hours to compile and format"
-            className="text-base"
-            disabled={isGenerating}
-          />
+          <div className="relative">
+            <Input
+              value={problem + (isListening ? interimTranscript : '')}
+              onChange={(e) => setProblem(e.target.value)}
+              placeholder="e.g., Weekly reports take 5 hours to compile and format"
+              className="text-base pr-14"
+              disabled={isGenerating}
+            />
+            {voiceSupported && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <VoiceInputButton
+                  isListening={isListening}
+                  isSupported={voiceSupported}
+                  error={voiceError}
+                  onStart={handleVoiceStart}
+                  onStop={stopListening}
+                  size="sm"
+                />
+              </div>
+            )}
+          </div>
           {error && <p className="text-xs text-destructive mt-2">{error}</p>}
           <p className="text-xs text-muted-foreground mt-2">
             Be specific for better recommendations (min 10 characters)
           </p>
         </div>
+
+        {/* Voice status indicator */}
+        <AnimatePresence>
+          {isListening && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex items-center justify-center gap-2 text-sm text-mint"
+            >
+              <span className="w-2 h-2 rounded-full bg-mint animate-pulse" />
+              Listening... describe your challenge
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <Button
           type="submit"

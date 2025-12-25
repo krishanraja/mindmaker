@@ -1,24 +1,105 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAssessment } from '@/hooks/useAssessment';
-import { ArrowRight, RotateCcw, Award, CheckCircle2, Loader2, X } from 'lucide-react';
+import { ArrowRight, RotateCcw, Award, CheckCircle2, X } from 'lucide-react';
 import { useSessionData } from '@/contexts/SessionDataContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon } from '@/components/ui/MindmakerIcon';
 import { openCalendlyPopup } from '@/utils/calendly';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
+import { VoiceInputButton } from '@/components/ui/VoiceInputButton';
 
 interface BuilderAssessmentProps {
   compact?: boolean;
   onClose?: () => void;
 }
 
+// Number words mapping for voice recognition
+const numberWords: Record<string, number> = {
+  'one': 1, '1': 1, 'first': 1,
+  'two': 2, '2': 2, 'second': 2, 'to': 2, 'too': 2,
+  'three': 3, '3': 3, 'third': 3, 'tree': 3,
+  'four': 4, '4': 4, 'fourth': 4, 'for': 4,
+  'five': 5, '5': 5, 'fifth': 5,
+  'six': 6, '6': 6, 'sixth': 6,
+};
+
 export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmentProps) => {
   const { currentStep, questions, answers, profile, isGenerating, answerQuestion, nextQuestion, reset } = useAssessment();
   const { setAssessment } = useSessionData();
   const isMobile = useIsMobile();
   const [resultTab, setResultTab] = useState<'profile' | 'strengths' | 'next'>('profile');
+  const [highlightedOption, setHighlightedOption] = useState<string | null>(null);
+  const [voiceMode, setVoiceMode] = useState(false);
+
+  const currentQuestion = questions[currentStep];
+
+  const handleVoiceSelection = useCallback((transcript: string, isFinal: boolean) => {
+    if (!currentQuestion || profile || isGenerating) return;
+
+    const lowerTranscript = transcript.toLowerCase().trim();
+    
+    // Try to match by number first
+    for (const [word, num] of Object.entries(numberWords)) {
+      if (lowerTranscript.includes(word)) {
+        const optionIndex = num - 1;
+        if (optionIndex >= 0 && optionIndex < currentQuestion.options.length) {
+          const option = currentQuestion.options[optionIndex];
+          setHighlightedOption(option.value);
+          
+          if (isFinal) {
+            setTimeout(() => {
+              answerQuestion(currentQuestion.id, option.value);
+              setHighlightedOption(null);
+              setTimeout(() => nextQuestion(), 300);
+            }, 500);
+          }
+          return;
+        }
+      }
+    }
+
+    // Try to match by option text
+    for (const option of currentQuestion.options) {
+      const optionText = option.label.toLowerCase();
+      // Check if the transcript contains significant words from the option
+      const optionWords = optionText.split(/\s+/).filter(w => w.length > 3);
+      const matchingWords = optionWords.filter(w => lowerTranscript.includes(w));
+      
+      if (matchingWords.length >= 2 || (optionWords.length <= 2 && matchingWords.length >= 1)) {
+        setHighlightedOption(option.value);
+        
+        if (isFinal) {
+          setTimeout(() => {
+            answerQuestion(currentQuestion.id, option.value);
+            setHighlightedOption(null);
+            setTimeout(() => nextQuestion(), 300);
+          }, 500);
+        }
+        return;
+      }
+    }
+
+    // Clear highlight if no match
+    if (isFinal) {
+      setHighlightedOption(null);
+    }
+  }, [currentQuestion, profile, isGenerating, answerQuestion, nextQuestion]);
+
+  const {
+    isListening,
+    transcript,
+    isSupported: voiceSupported,
+    error: voiceError,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useVoiceInput({
+    silenceTimeout: 3000,
+    onTranscript: handleVoiceSelection,
+  });
 
   useEffect(() => {
     if (profile) {
@@ -30,6 +111,22 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
       });
     }
   }, [profile, answers, setAssessment]);
+
+  // Reset voice state when question changes
+  useEffect(() => {
+    setHighlightedOption(null);
+    resetTranscript();
+  }, [currentStep, resetTranscript]);
+
+  const handleVoiceStart = () => {
+    resetTranscript();
+    setVoiceMode(true);
+    startListening();
+  };
+
+  const handleVoiceStop = () => {
+    stopListening();
+  };
 
   // Compact mode - Results view
   if (compact && profile) {
@@ -83,7 +180,6 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
     }
 
     // Show compact question view
-    const currentQuestion = questions[currentStep];
     const progress = ((currentStep + 1) / questions.length) * 100;
     
     return (
@@ -119,7 +215,6 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
     );
   }
 
-  const currentQuestion = questions[currentStep];
   const progress = ((currentStep + 1) / questions.length) * 100;
 
   // Mobile full-screen wizard layout
@@ -294,9 +389,26 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                 transition={{ duration: 0.2 }}
                 className="flex-1 flex flex-col p-4"
               >
+                {/* Voice Mode Toggle */}
+                {voiceSupported && (
+                  <div className="flex items-center justify-center mb-4">
+                    <VoiceInputButton
+                      isListening={isListening}
+                      isSupported={voiceSupported}
+                      error={voiceError}
+                      onStart={handleVoiceStart}
+                      onStop={handleVoiceStop}
+                      size="lg"
+                      variant={isListening ? 'mobile-primary' : 'default'}
+                      showLabel
+                      label={isListening ? 'Say option number...' : 'Tap to answer by voice'}
+                    />
+                  </div>
+                )}
+
                 <h3 className="text-xl font-bold mb-6">{currentQuestion.question}</h3>
                 <div className="space-y-3 flex-1">
-                  {currentQuestion.options.map((option) => (
+                  {currentQuestion.options.map((option, index) => (
                     <button
                       key={option.value}
                       onClick={() => {
@@ -304,15 +416,36 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                         setTimeout(() => nextQuestion(), 300);
                       }}
                       className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
-                        answers[currentQuestion.id] === option.value
-                          ? 'border-mint bg-mint/10 font-semibold'
-                          : 'border-border hover:border-mint/50 hover:bg-mint/5'
+                        highlightedOption === option.value
+                          ? 'border-mint bg-mint/20 font-semibold scale-[1.02] shadow-lg shadow-mint/20'
+                          : answers[currentQuestion.id] === option.value
+                            ? 'border-mint bg-mint/10 font-semibold'
+                            : 'border-border hover:border-mint/50 hover:bg-mint/5'
                       }`}
                     >
-                      {option.label}
+                      <span className="inline-flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                          {index + 1}
+                        </span>
+                        {option.label}
+                      </span>
                     </button>
                   ))}
                 </div>
+
+                {/* Voice transcript feedback */}
+                <AnimatePresence>
+                  {isListening && transcript && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="mt-4 p-3 rounded-lg bg-mint/10 border border-mint/20 text-center"
+                    >
+                      <p className="text-sm text-mint-dark">Heard: "{transcript}"</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
           </AnimatePresence>
@@ -428,10 +561,26 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
         </div>
       </div>
 
+      {/* Voice Mode for Desktop */}
+      {voiceSupported && (
+        <div className="flex items-center justify-center mb-4">
+          <VoiceInputButton
+            isListening={isListening}
+            isSupported={voiceSupported}
+            error={voiceError}
+            onStart={handleVoiceStart}
+            onStop={handleVoiceStop}
+            size="md"
+            showLabel
+            label={isListening ? 'Say option number...' : 'Answer by voice'}
+          />
+        </div>
+      )}
+
       <div className="mb-6">
         <h3 className="text-xl font-bold mb-4">{currentQuestion.question}</h3>
         <div className="space-y-3">
-          {currentQuestion.options.map((option) => (
+          {currentQuestion.options.map((option, index) => (
             <button
               key={option.value}
               onClick={() => {
@@ -439,16 +588,37 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                 setTimeout(() => nextQuestion(), 300);
               }}
               className={`w-full p-4 rounded-lg border-2 text-left transition-all text-foreground ${
-                answers[currentQuestion.id] === option.value
-                  ? 'border-mint bg-mint/10 font-semibold'
-                  : 'border-border hover:border-mint/50 hover:bg-mint/5'
+                highlightedOption === option.value
+                  ? 'border-mint bg-mint/20 font-semibold scale-[1.02] shadow-lg shadow-mint/20'
+                  : answers[currentQuestion.id] === option.value
+                    ? 'border-mint bg-mint/10 font-semibold'
+                    : 'border-border hover:border-mint/50 hover:bg-mint/5'
               }`}
             >
-              {option.label}
+              <span className="inline-flex items-center gap-3">
+                <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                  {index + 1}
+                </span>
+                {option.label}
+              </span>
             </button>
           ))}
         </div>
       </div>
+
+      {/* Voice transcript feedback */}
+      <AnimatePresence>
+        {isListening && transcript && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="p-3 rounded-lg bg-mint/10 border border-mint/20 text-center"
+          >
+            <p className="text-sm text-mint-dark">Heard: "{transcript}"</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 };

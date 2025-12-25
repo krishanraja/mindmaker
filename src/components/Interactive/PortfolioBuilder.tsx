@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePortfolio } from '@/hooks/usePortfolio';
-import { TrendingUp, Download, ArrowRight, Copy, Check, X } from 'lucide-react';
+import { TrendingUp, Download, ArrowRight, Copy, Check, X, Mic } from 'lucide-react';
 import { useSessionData } from '@/contexts/SessionDataContext';
 import { generatePortfolioPDF } from '@/utils/pdfGenerator';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +12,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 import { openCalendlyPopup } from '@/utils/calendly';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
+import { VoiceInputButton } from '@/components/ui/VoiceInputButton';
 
 interface PortfolioBuilderProps {
   compact?: boolean;
@@ -26,18 +27,88 @@ interface MasterPrompt {
 }
 
 export const PortfolioBuilder = ({ compact = false, onClose }: PortfolioBuilderProps) => {
-  // #region agent log
-  fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:27',message:'PortfolioBuilder component mounted',data:{compact,hasOnClose:!!onClose,buildTime:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-  // #endregion
   const { tasks, toggleTask, updateTaskHours, getPortfolioData } = usePortfolio();
   const [showResults, setShowResults] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [masterPrompts, setMasterPrompts] = useState<MasterPrompt[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [resultTab, setResultTab] = useState<'overview' | 'prompts' | 'systems'>('overview');
+  const [lastVoiceAction, setLastVoiceAction] = useState<string | null>(null);
   const portfolioData = getPortfolioData();
   const { setPortfolioBuilder } = useSessionData();
   const isMobile = useIsMobile();
+
+  const handleVoiceCommand = useCallback((transcript: string, isFinal: boolean) => {
+    if (!isFinal || showResults || isGenerating) return;
+
+    const lowerTranscript = transcript.toLowerCase().trim();
+    
+    // Check for select/deselect commands
+    const selectMatch = lowerTranscript.match(/^(select|add|choose|pick)\s+(.+)/);
+    const deselectMatch = lowerTranscript.match(/^(deselect|remove|unselect|drop)\s+(.+)/);
+    const toggleMatch = lowerTranscript.match(/^(toggle)\s+(.+)/);
+
+    let targetName: string | null = null;
+    let action: 'select' | 'deselect' | 'toggle' = 'toggle';
+
+    if (selectMatch) {
+      targetName = selectMatch[2];
+      action = 'select';
+    } else if (deselectMatch) {
+      targetName = deselectMatch[2];
+      action = 'deselect';
+    } else if (toggleMatch) {
+      targetName = toggleMatch[2];
+      action = 'toggle';
+    } else {
+      // Try to find a task name in the transcript
+      targetName = lowerTranscript;
+      action = 'toggle';
+    }
+
+    if (targetName) {
+      // Fuzzy match task names
+      const matchedTask = tasks.find(task => {
+        const taskNameLower = task.name.toLowerCase();
+        const targetWords = targetName!.split(/\s+/).filter(w => w.length > 2);
+        const taskWords = taskNameLower.split(/\s+/).filter(w => w.length > 2);
+        
+        // Check for significant word matches
+        const matchingWords = targetWords.filter(tw => 
+          taskWords.some(tkw => tkw.includes(tw) || tw.includes(tkw))
+        );
+        
+        return matchingWords.length >= 1 || taskNameLower.includes(targetName!);
+      });
+
+      if (matchedTask) {
+        const shouldSelect = action === 'select' || (action === 'toggle' && !matchedTask.selected);
+        const shouldDeselect = action === 'deselect' || (action === 'toggle' && matchedTask.selected);
+
+        if ((shouldSelect && !matchedTask.selected) || (shouldDeselect && matchedTask.selected)) {
+          toggleTask(matchedTask.id);
+          setLastVoiceAction(`${shouldSelect ? 'Selected' : 'Deselected'}: ${matchedTask.name}`);
+          toast.success(`${shouldSelect ? 'Selected' : 'Deselected'}: ${matchedTask.name}`);
+          
+          // Clear the action message after a delay
+          setTimeout(() => setLastVoiceAction(null), 2000);
+        }
+      }
+    }
+  }, [tasks, toggleTask, showResults, isGenerating]);
+
+  const {
+    isListening,
+    transcript,
+    isSupported: voiceSupported,
+    error: voiceError,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useVoiceInput({
+    silenceTimeout: 2500,
+    onTranscript: handleVoiceCommand,
+  });
 
   useEffect(() => {
     if (showResults) {
@@ -59,14 +130,12 @@ export const PortfolioBuilder = ({ compact = false, onClose }: PortfolioBuilderP
     
     setIsGenerating(true);
     setShowResults(true);
+    resetTranscript();
     
     const tasksSummary = portfolioData.tasks.map(t => 
       `- ${t.name}: ${t.hoursPerWeek}h/week currently, could save ${t.potentialSavings}h/week. Suggested tools: ${t.aiTools.join(', ')}`
     ).join('\n');
 
-    // #region agent log
-    fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:53',message:'handleGenerate called - BEFORE API call',data:{tasksCount:portfolioData.tasks.length,totalTimeSaved:portfolioData.totalTimeSaved,promptLength:0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
     try {
       const promptContent = `You are creating a personalized AI portfolio for a senior leader. Analyze their selected tasks and generate 3 interconnected, expert-level master prompts that work together as a system.
 
@@ -146,9 +215,7 @@ Your prompts should make the leader think:
 If your prompts are generic templates, they're not good enough. If they don't reference their specific tasks, rewrite them. If they don't show interconnection, redesign them.
 
 Return ONLY valid JSON array, no markdown or explanation.`;
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:69',message:'Portfolio prompt content created',data:{promptLength:promptContent.length,hasEnhancedContent:promptContent.includes('Pattern Recognition'),hasSynergyAnalysis:promptContent.includes('Task Synergy'),first100:promptContent.substring(0,100)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
+
       const { data, error } = await supabase.functions.invoke('chat-with-krish', {
         body: {
           messages: [
@@ -160,9 +227,6 @@ Return ONLY valid JSON array, no markdown or explanation.`;
           widgetMode: 'tryit'
         }
       });
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PortfolioBuilder.tsx:152',message:'Edge function response received',data:{hasData:!!data,hasError:!!error,responseLength:data?.message?.length || 0,first200:data?.message?.substring(0,200) || '',isEnhanced:data?.message?.includes('interconnected') || false},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
 
       if (error) throw new Error(error.message || 'API error');
 
@@ -229,6 +293,17 @@ Return ONLY valid JSON array, no markdown or explanation.`;
     });
   };
 
+  const handleVoiceStart = () => {
+    resetTranscript();
+    startListening();
+  };
+
+  const handleReset = () => {
+    setShowResults(false);
+    setMasterPrompts([]);
+    resetTranscript();
+  };
+
   // Compact mode remains unchanged
   if (compact) {
     if (showResults) {
@@ -244,7 +319,7 @@ Return ONLY valid JSON array, no markdown or explanation.`;
               <div className="text-[10px] text-muted-foreground">Value/month</div>
             </div>
           </div>
-          <Button size="sm" variant="outline" className="w-full" onClick={() => setShowResults(false)}>
+          <Button size="sm" variant="outline" className="w-full" onClick={handleReset}>
             Edit Selection
           </Button>
         </div>
@@ -477,9 +552,48 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                 <div className="text-center p-4 shrink-0">
                   <h3 className="text-xl font-bold mb-2">Select Your Tasks</h3>
                   <p className="text-muted-foreground text-sm">
-                    Choose tasks and adjust hours to see your AI transformation potential
+                    Choose tasks to see your AI transformation potential
                   </p>
                 </div>
+
+                {/* Voice selection mode */}
+                {voiceSupported && (
+                  <div className="px-4 pb-3 shrink-0">
+                    <div className="flex items-center justify-center gap-3 p-3 rounded-xl bg-muted/50 border">
+                      <VoiceInputButton
+                        isListening={isListening}
+                        isSupported={voiceSupported}
+                        error={voiceError}
+                        onStart={handleVoiceStart}
+                        onStop={stopListening}
+                        size="md"
+                        variant={isListening ? 'mobile-primary' : 'default'}
+                      />
+                      <div className="text-left">
+                        <p className="text-sm font-medium">
+                          {isListening ? 'Listening...' : 'Select by voice'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {isListening ? 'Say a task name' : 'Say "select" + task name'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Voice action feedback */}
+                    <AnimatePresence>
+                      {lastVoiceAction && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="mt-2 p-2 rounded-lg bg-mint/10 border border-mint/20 text-center"
+                        >
+                          <p className="text-sm text-mint-dark">{lastVoiceAction}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 pb-4">
                   {tasks.map(task => (
@@ -550,7 +664,7 @@ Return ONLY valid JSON array, no markdown or explanation.`;
             <TrendingUp className="h-5 w-5 text-mint" />
             Your AI Portfolio
           </h3>
-          <Button variant="ghost" size="sm" onClick={() => { setShowResults(false); setMasterPrompts([]); }}>
+          <Button variant="ghost" size="sm" onClick={handleReset}>
             Edit
           </Button>
         </div>
@@ -677,6 +791,42 @@ Return ONLY valid JSON array, no markdown or explanation.`;
           Select your weekly tasks and see your personalized transformation roadmap
         </p>
       </div>
+
+      {/* Voice selection mode for desktop */}
+      {voiceSupported && (
+        <div className="shrink-0 mb-4 p-3 rounded-lg bg-muted/50 border flex items-center gap-3">
+          <VoiceInputButton
+            isListening={isListening}
+            isSupported={voiceSupported}
+            error={voiceError}
+            onStart={handleVoiceStart}
+            onStop={stopListening}
+            size="md"
+          />
+          <div>
+            <p className="text-sm font-medium">
+              {isListening ? 'Listening...' : 'Select tasks by voice'}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Say "select" or "deselect" followed by the task name
+            </p>
+          </div>
+          
+          {/* Voice action feedback */}
+          <AnimatePresence>
+            {lastVoiceAction && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="ml-auto px-3 py-1.5 rounded-full bg-mint/10 border border-mint/20"
+              >
+                <p className="text-sm text-mint-dark">{lastVoiceAction}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
 
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto min-h-0 pr-2 -mr-2">

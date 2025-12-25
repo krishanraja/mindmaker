@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,6 +9,8 @@ import { MarkdownResponse } from '@/components/ui/markdown-response';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 import { openCalendlyPopup } from '@/utils/calendly';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
+import { VoiceInputButton, VoiceFirstPrompt, InlineVoiceButton } from '@/components/ui/VoiceInputButton';
 
 interface TryItWidgetProps {
   compact?: boolean;
@@ -19,23 +21,43 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
   const [input, setInput] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showTextInput, setShowTextInput] = useState(false);
   const isMobile = useIsMobile();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    isListening,
+    transcript,
+    interimTranscript,
+    isSupported: voiceSupported,
+    error: voiceError,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useVoiceInput({
+    silenceTimeout: 2500,
+    onTranscript: (text, isFinal) => {
+      if (isFinal) {
+        setInput(prev => prev + text);
+      }
+    },
+  });
+
+  // Update input with interim transcript for real-time feedback
+  useEffect(() => {
+    if (interimTranscript && isListening) {
+      // Show interim in a visual way but don't set as final
+    }
+  }, [interimTranscript, isListening]);
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!input.trim()) return;
 
-    // #region agent log
-    fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AIDecisionHelper.tsx:23',message:'AI Decision Helper submit',data:{inputLength:input.length,inputPreview:input.substring(0,50)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
     setIsLoading(true);
     setResponse('');
+    resetTranscript();
 
     try {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AIDecisionHelper.tsx:30',message:'Calling chat-with-krish',data:{inputLength:input.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FRONTEND'})}).catch(()=>{});
-      // #endregion
-      
       const { data, error } = await supabase.functions.invoke('chat-with-krish', {
         body: {
           messages: [
@@ -47,10 +69,6 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
           widgetMode: 'tryit'
         }
       });
-
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/d84be03b-cc5f-4a51-8624-1abff965b9ec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AIDecisionHelper.tsx:47',message:'Response received',data:{hasData:!!data,hasError:!!error,errorMsg:error?.message,messageLength:data?.message?.length,metadataFallback:data?.metadata?.fallback,first100:data?.message?.substring(0,100)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FRONTEND'})}).catch(()=>{});
-      // #endregion
 
       if (error) throw new Error(error.message || 'API error');
 
@@ -75,17 +93,42 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
     }
   };
 
+  const handleVoiceStart = () => {
+    resetTranscript();
+    startListening();
+  };
+
+  const handleReset = () => {
+    setResponse('');
+    setInput('');
+    setShowTextInput(false);
+    resetTranscript();
+  };
+
   if (compact) {
     return (
       <div className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-3">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="e.g., Should we build or buy our AI chatbot?"
-            className="min-h-[100px] resize-none text-sm"
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Textarea
+              value={input + (isListening ? interimTranscript : '')}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="e.g., Should we build or buy our AI chatbot?"
+              className="min-h-[100px] resize-none text-sm pr-12"
+              disabled={isLoading}
+            />
+            {voiceSupported && (
+              <div className="absolute bottom-2 right-2">
+                <InlineVoiceButton
+                  isListening={isListening}
+                  isSupported={voiceSupported}
+                  error={voiceError}
+                  onStart={handleVoiceStart}
+                  onStop={stopListening}
+                />
+              </div>
+            )}
+          </div>
           
           <Button
             type="submit"
@@ -188,10 +231,7 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => {
-                      setResponse('');
-                      setInput('');
-                    }}
+                    onClick={handleReset}
                   >
                     Ask Another Question
                   </Button>
@@ -202,6 +242,74 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
                     Book a Builder Session
                   </Button>
                 </div>
+              </motion.div>
+            ) : !showTextInput && voiceSupported ? (
+              <motion.div
+                key="voice-first"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 flex flex-col"
+              >
+                <div className="text-center p-4 pt-6">
+                  <h3 className="text-xl font-bold mb-2">Stuck on an AI Decision?</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Speak your challenge. Get instant clarity.
+                  </p>
+                </div>
+
+                <div className="flex-1 flex flex-col items-center justify-center p-4">
+                  <VoiceInputButton
+                    isListening={isListening}
+                    isSupported={voiceSupported}
+                    error={voiceError}
+                    onStart={handleVoiceStart}
+                    onStop={stopListening}
+                    size="xl"
+                    variant="mobile-primary"
+                    showLabel
+                    label={isListening ? 'Listening...' : 'Tap to speak'}
+                  />
+
+                  {/* Show transcript as it's being recorded */}
+                  <AnimatePresence>
+                    {(input || interimTranscript) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="mt-6 p-4 rounded-xl bg-muted/50 border max-w-sm text-center"
+                      >
+                        <p className="text-sm">
+                          {input}
+                          {isListening && interimTranscript && (
+                            <span className="text-muted-foreground">{interimTranscript}</span>
+                          )}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <button
+                    onClick={() => setShowTextInput(true)}
+                    className="mt-6 text-xs text-mint-dark underline underline-offset-2 hover:text-mint transition-colors"
+                  >
+                    or type your question
+                  </button>
+                </div>
+
+                {/* Submit button when there's voice input */}
+                {input && !isListening && (
+                  <div className="p-4 border-t">
+                    <Button
+                      onClick={() => handleSubmit()}
+                      size="lg"
+                      className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
+                    >
+                      Get Instant Clarity
+                    </Button>
+                  </div>
+                )}
               </motion.div>
             ) : (
               <motion.div
@@ -219,13 +327,27 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-                  <Textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Example: Should we build or buy our AI chatbot? We have limited engineering resources but need something in production within 3 months..."
-                    className="flex-1 min-h-[150px] resize-none text-base"
-                    disabled={isLoading}
-                  />
+                  <div className="relative flex-1">
+                    <Textarea
+                      value={input + (isListening ? interimTranscript : '')}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Example: Should we build or buy our AI chatbot? We have limited engineering resources but need something in production within 3 months..."
+                      className="flex-1 min-h-[150px] h-full resize-none text-base pr-14"
+                      disabled={isLoading}
+                    />
+                    {voiceSupported && (
+                      <div className="absolute bottom-3 right-3">
+                        <VoiceInputButton
+                          isListening={isListening}
+                          isSupported={voiceSupported}
+                          error={voiceError}
+                          onStart={handleVoiceStart}
+                          onStop={stopListening}
+                          size="md"
+                        />
+                      </div>
+                    )}
+                  </div>
                   
                   <Button
                     type="submit"
@@ -260,19 +382,48 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
         <div className="pr-2">
           {!response ? (
             <div className="space-y-4">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Example: Should we build or buy our AI chatbot? We have limited engineering resources but need something in production within 3 months..."
-                className="min-h-[120px] resize-none text-base"
-                disabled={isLoading}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                    e.preventDefault();
-                    handleSubmit(e as any);
-                  }
-                }}
-              />
+              <div className="relative">
+                <Textarea
+                  value={input + (isListening ? interimTranscript : '')}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Example: Should we build or buy our AI chatbot? We have limited engineering resources but need something in production within 3 months..."
+                  className="min-h-[120px] resize-none text-base pr-14"
+                  disabled={isLoading}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                      e.preventDefault();
+                      handleSubmit(e as any);
+                    }
+                  }}
+                />
+                {voiceSupported && (
+                  <div className="absolute bottom-3 right-3">
+                    <VoiceInputButton
+                      isListening={isListening}
+                      isSupported={voiceSupported}
+                      error={voiceError}
+                      onStart={handleVoiceStart}
+                      onStop={stopListening}
+                      size="md"
+                    />
+                  </div>
+                )}
+              </div>
+              
+              {/* Voice status indicator */}
+              <AnimatePresence>
+                {isListening && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-center justify-center gap-2 text-sm text-mint"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-mint animate-pulse" />
+                    Listening... speak your question
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <AnimatePresence>
@@ -318,10 +469,7 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => {
-                setResponse('');
-                setInput('');
-              }}
+              onClick={handleReset}
             >
               Ask Another Question
             </Button>
