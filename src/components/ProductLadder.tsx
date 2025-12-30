@@ -141,14 +141,14 @@ const ProductLadder = () => {
       icon: User,
       label: "1-1 LEADERS",
       title: "Individual Builder Journey",
-      subtitle: "For hands-off leaders who need systems and authority, or hands-on builders who want to create alongside AI",
+      subtitle: "For senior leaders who want to own AI as a topic or start creating alongside AI",
       useSlider: true,
     },
     {
       icon: Users,
       label: "EXEC TEAMS",
       title: "Team Transformation",
-      subtitle: "For teams needing transformation: sharpen communal AI literacy before committing to vendors or consultants",
+      subtitle: "For teams that want to align, learn & motivate before implementing AI meaningfully",
       offerings: [
         {
           name: "AI Leadership Lab",
