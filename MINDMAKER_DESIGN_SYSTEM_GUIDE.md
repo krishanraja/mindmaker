@@ -124,12 +124,9 @@ color: hsl(var(--primary)); /* Perfect color resolution */
     --border: 215 28% 17%;
   }
   
-  /* Custom font definition */
-  @font-face {
-    font-family: 'Gobold';
-    src: url('/fonts/Gobold_Bold.otf') format('opentype');
-    font-weight: bold;
-  }
+  /* Modern Variable Fonts - Loaded from Google Fonts in index.html */
+  /* Inter Variable: Primary UI and body text */
+  /* Space Grotesk Variable: Display and headlines */
 }
 
 @layer components {
@@ -177,9 +174,9 @@ color: hsl(var(--primary)); /* Perfect color resolution */
 ### 2. Typography System - NO CONFLICTS
 
 ```css
-/* Font stack definitions */
-.font-primary { font-family: 'Inter', system-ui, sans-serif; }
-.font-display { font-family: 'Gobold', 'Impact', 'Arial Black', sans-serif; }
+/* Font stack definitions - Modern 2026 System */
+.font-primary { font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif; }
+.font-display { font-family: 'Space Grotesk Variable', 'Space Grotesk', 'Inter Variable', 'Inter', system-ui, sans-serif; }
 
 /* Mobile-first responsive typography */
 .mobile-text-sm { @apply text-sm sm:text-base md:text-lg; }

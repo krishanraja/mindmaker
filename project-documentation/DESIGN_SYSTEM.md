@@ -1,6 +1,6 @@
 # Design System
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2026-01-XX (Font System Modernized)
 
 ---
 
@@ -35,28 +35,48 @@ Graphite:    #333639 (HSL: 200 5% 21%) - Strong text
 
 ## Typography
 
-### Font Families
+### Font Families (2026 Modern System)
 ```
-Primary: 'Inter' - Body text, UI
-Display: 'Gobold' - Headlines, hero text
+Primary (Sans): 'Inter Variable' - Body text, UI elements, all non-display content
+Display:         'Space Grotesk Variable' - Headlines (h1-h3), hero text, display elements
 ```
 
-### Scale
+**Font Stack:**
+- **Sans:** `'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif`
+- **Display:** `'Space Grotesk Variable', 'Space Grotesk', 'Inter Variable', 'Inter', system-ui, sans-serif`
+
+### Typography Scale (Fluid & Responsive)
+
 ```
-Hero:     text-5xl to text-6xl (48-60px)
-H1:       text-4xl to text-5xl (36-48px)
-H2:       text-3xl to text-4xl (30-36px)
-H3:       text-2xl (24px)
-Body:     text-base (16px)
-Small:    text-sm (14px)
-Tiny:     text-xs (12px)
+Display (h1):   clamp(2.5rem, 5vw, 4.5rem)  | 40-72px  | weight 700 | line-height 1.1 | letter-spacing -0.03em
+Heading 2:      clamp(2rem, 4vw, 3rem)       | 32-48px  | weight 600 | line-height 1.2 | letter-spacing -0.02em
+Heading 3:      clamp(1.5rem, 3vw, 1.875rem)| 24-30px  | weight 600 | line-height 1.3 | letter-spacing -0.01em
+Heading 4-6:    clamp(1.25rem, 2.5vw, 1.5rem) | 20-24px  | weight 600 | line-height 1.4 | letter-spacing -0.01em
+Body Large:     clamp(1.125rem, 2vw, 1.25rem)| 18-20px  | weight 400 | line-height 1.6
+Body:           16px                         | 16px     | weight 400 | line-height 1.6
+Body Small:     14px                         | 14px     | weight 400 | line-height 1.5
+Caption:        12px                         | 12px     | weight 400 | line-height 1.4
 ```
 
 ### Usage Rules
-- **Gobold:** Hero headlines only, sparingly
-- **Inter:** All other text
-- **Line Height:** 1.6 for body, 1.2 for headlines
-- **Letter Spacing:** Tight (-0.02em) for headlines
+- **Space Grotesk Variable:** All headings (h1-h6), hero text, display elements
+- **Inter Variable:** Body text, UI elements, buttons, forms, all non-heading content
+- **Line Heights:** 1.6 for body text, 1.1-1.4 for headings (tighter for larger sizes)
+- **Letter Spacing:** Negative spacing for headings (-0.01em to -0.03em), normal for body
+- **Font Features:** Inter Variable uses OpenType features (cv02, cv03, cv04, cv11) for improved readability
+- **Font Smoothing:** Antialiased rendering enabled for crisp text on all displays
+
+### Tailwind Classes
+```tsx
+// Font families
+className="font-sans"      // Inter Variable (default)
+className="font-display"   // Space Grotesk Variable
+
+// Typography utilities
+className="text-base"      // 16px body text
+className="p.large"        // 18-20px large body
+className="caption"        // 12px caption text
+```
 
 ---
 

@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        gobold: ['Gobold', 'Impact', 'Arial Black', 'sans-serif'],
+        sans: ['Inter Variable', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Space Grotesk Variable', 'Space Grotesk', 'Inter Variable', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         // MINDMAKER 2.0 - INK + MINT PALETTE
