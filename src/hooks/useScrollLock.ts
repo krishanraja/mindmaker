@@ -29,6 +29,9 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
   const canReverseExitRef = useRef(options.canReverseExit ?? false);
   const lastScrollCheckRef = useRef(0);
   const lastWheelTimeRef = useRef(0);
+  const velocityRef = useRef(0);
+  const lastDeltaRef = useRef(0);
+  const scrollLockRafRef = useRef<number | null>(null);
   
   // Keep refs updated (these don't cause re-renders)
   useEffect(() => {
@@ -54,13 +57,28 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       e.preventDefault();
       e.stopPropagation();
       
-      const direction = e.deltaY > 0 ? 'down' : 'up';
+      const now = performance.now();
+      const timeDelta = now - lastWheelTimeRef.current;
+      const deltaY = e.deltaY;
+      
+      // Calculate velocity (pixels per millisecond)
+      if (timeDelta > 0) {
+        const currentVelocity = Math.abs(deltaY) / timeDelta;
+        // Smooth velocity with exponential moving average
+        velocityRef.current = velocityRef.current * 0.7 + currentVelocity * 0.3;
+      }
+      
+      // Smooth rapid delta changes to prevent jitter
+      const smoothedDelta = lastDeltaRef.current * 0.3 + deltaY * 0.7;
+      lastDeltaRef.current = smoothedDelta;
+      
+      const direction = smoothedDelta > 0 ? 'down' : 'up';
       
       // FIX (a): Pass delta with correct sign for bidirectional support
       // Negative delta for scroll up, positive for scroll down
-      onProgressRef.current(e.deltaY, direction);
+      onProgressRef.current(smoothedDelta, direction);
       
-      lastWheelTimeRef.current = performance.now();
+      lastWheelTimeRef.current = now;
     };
 
     const handleTouchStart = (e: TouchEvent) => {
@@ -72,14 +90,29 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       e.preventDefault();
       e.stopPropagation();
       
+      const now = performance.now();
       const currentY = e.touches[0].clientY;
       const delta = touchStartYRef.current - currentY;
+      const timeDelta = now - lastWheelTimeRef.current;
+      
+      // Calculate velocity for touch events too
+      if (timeDelta > 0) {
+        const currentVelocity = Math.abs(delta) / timeDelta;
+        velocityRef.current = velocityRef.current * 0.7 + currentVelocity * 0.3;
+      }
+      
+      // Smooth touch deltas
+      const smoothedDelta = lastDeltaRef.current * 0.3 + delta * 0.7;
+      lastDeltaRef.current = smoothedDelta;
+      
       touchStartYRef.current = currentY;
       
-      const direction = delta > 0 ? 'down' : 'up';
+      const direction = smoothedDelta > 0 ? 'down' : 'up';
       
       // FIX (a): Pass delta directly for bidirectional support
-      onProgressRef.current(delta, direction);
+      onProgressRef.current(smoothedDelta, direction);
+      
+      lastWheelTimeRef.current = now;
     };
 
     // Throttled scroll check - only check every 16ms (60fps)
@@ -135,12 +168,30 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       }
       
       // Maintain scroll position during lock to prevent drift
+      // Use RAF for smooth, stable position maintenance, especially during fast scrolling
       if (isLocked && !releaseCooldownRef.current) {
-        const currentScrollY = window.scrollY;
-        if (Math.abs(currentScrollY - scrollPositionRef.current) > 1) {
-          // If scroll position has drifted, restore it
-          window.scrollTo(0, scrollPositionRef.current);
+        // Cancel any pending RAF
+        if (scrollLockRafRef.current !== null) {
+          cancelAnimationFrame(scrollLockRafRef.current);
         }
+        
+        scrollLockRafRef.current = requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          const drift = Math.abs(currentScrollY - scrollPositionRef.current);
+          
+          // More aggressive locking during fast scrolling (high velocity)
+          const threshold = velocityRef.current > 2 ? 0.5 : 1;
+          
+          if (drift > threshold) {
+            // Smoothly restore position to prevent jitter
+            window.scrollTo({
+              top: scrollPositionRef.current,
+              behavior: 'auto' // Instant for stability
+            });
+          }
+          
+          scrollLockRafRef.current = null;
+        });
       }
     };
     
@@ -155,6 +206,14 @@ export const useScrollLock = (options: UseScrollLockOptions): UseScrollLockRetur
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('scroll', handleScroll);
+      // Cleanup RAF
+      if (scrollLockRafRef.current !== null) {
+        cancelAnimationFrame(scrollLockRafRef.current);
+        scrollLockRafRef.current = null;
+      }
+      // Reset velocity on cleanup
+      velocityRef.current = 0;
+      lastDeltaRef.current = 0;
     };
   }, [isLocked, options.lockThreshold, options.enabled, options.headerOffset, options.titleRef, options.titleOffset]);
 

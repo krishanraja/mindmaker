@@ -6,7 +6,7 @@ import { BuilderAssessment } from "@/components/Interactive/BuilderAssessment";
 import { FrictionMapBuilder } from "@/components/Interactive/FrictionMapBuilder";
 import { TryItWidget } from "@/components/Interactive/AIDecisionHelper";
 import { PortfolioBuilder } from "@/components/Interactive/PortfolioBuilder";
-import { User, Lightbulb, Map, TrendingUp, X, Mic } from "lucide-react";
+import { User, Lightbulb, Map, TrendingUp, X, Mic, Crown, Wrench, Users } from "lucide-react";
 import { Dialog, DialogWizardContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -37,12 +37,12 @@ const InteractiveCard = ({ icon, title, subtitle, description, onClick, delay = 
       onMouseLeave={() => setIsHovered(false)}
     >
       <div 
-        className="premium-card flex-1 flex flex-col p-6 cursor-pointer group relative overflow-hidden"
+        className="premium-card flex-1 flex flex-col p-6 cursor-pointer group relative overflow-hidden rounded-2xl"
         onClick={onClick}
       >
         {/* Animated gradient border effect on hover */}
         <motion.div
-          className="absolute inset-0 rounded-[4px] pointer-events-none"
+          className="absolute inset-0 rounded-2xl pointer-events-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
@@ -169,6 +169,265 @@ const MobileInteractiveCard = ({ icon, title, subtitle, description, onClick, ha
   );
 };
 
+// ICP Slider Component with shimmering borders
+const ICPSlider = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const isMobile = useIsMobile();
+
+  const icps = [
+    {
+      id: 'hands-off',
+      icon: Crown,
+      title: 'HANDS-OFF LEADERS',
+      description: 'AI systems, authority, and ideas. Deploy working systems without hands-on building.',
+    },
+    {
+      id: 'hands-on',
+      icon: Wrench,
+      title: 'HANDS-ON BUILDERS',
+      description: 'Build alongside AI. Create weapons-grade GTM engines, content engines, and apps.',
+    },
+    {
+      id: 'teams',
+      icon: Users,
+      title: 'TEAMS NEEDING TRANSFORMATION',
+      description: 'Sharpen communal AI literacy before committing. Stop wasting your one bullet.',
+    },
+  ];
+
+  return (
+    <div className="mb-12 md:mb-16">
+      {/* Desktop: Horizontal Slider with visible previews */}
+      <div className="hidden md:block">
+        <div className="relative max-w-6xl mx-auto px-8">
+          <div className="flex items-center gap-6 overflow-hidden">
+            {icps.map((icp, index) => {
+              const IconComponent = icp.icon;
+              const isSelected = selectedIndex === index;
+              const offset = index - selectedIndex;
+              const scale = isSelected ? 1 : 0.9;
+              const opacity = Math.abs(offset) <= 1 ? 1 : 0.4;
+              
+              return (
+                <motion.div
+                  key={icp.id}
+                  className="flex-1 cursor-pointer"
+                  onClick={() => setSelectedIndex(index)}
+                  initial={false}
+                  animate={{
+                    scale,
+                    opacity,
+                    x: offset * 20,
+                  }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <div className="relative p-6 rounded-2xl bg-card border-2 overflow-hidden group">
+                    {/* Shimmering border effect */}
+                    <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                      <motion.div
+                        className="absolute inset-0"
+                        style={{
+                          background: isSelected
+                            ? 'linear-gradient(135deg, hsl(var(--mint) / 0.4) 0%, transparent 50%, hsl(var(--mint) / 0.3) 100%)'
+                            : 'linear-gradient(135deg, hsl(var(--mint) / 0.1) 0%, transparent 50%, hsl(var(--mint) / 0.05) 100%)',
+                        }}
+                        animate={
+                          isSelected
+                            ? {
+                                backgroundPosition: ['0% 0%', '100% 100%'],
+                              }
+                            : {}
+                        }
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          repeatType: 'reverse',
+                          ease: 'linear',
+                        }}
+                      />
+                      {/* Animated shimmer line */}
+                      {isSelected && (
+                        <motion.div
+                          className="absolute inset-0"
+                          style={{
+                            background: 'linear-gradient(90deg, transparent 0%, hsl(var(--mint) / 0.6) 50%, transparent 100%)',
+                            backgroundSize: '200% 100%',
+                          }}
+                          animate={{
+                            backgroundPosition: ['-200% 0', '200% 0'],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: 'linear',
+                          }}
+                        />
+                      )}
+                    </div>
+
+                    {/* Border */}
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl pointer-events-none"
+                      style={{
+                        border: isSelected ? '2px solid hsl(var(--mint) / 0.6)' : '2px solid hsl(var(--border))',
+                        boxShadow: isSelected
+                          ? '0 0 20px hsl(var(--mint) / 0.3), inset 0 0 20px hsl(var(--mint) / 0.1)'
+                          : 'none',
+                      }}
+                      animate={{
+                        boxShadow: isSelected
+                          ? [
+                              '0 0 20px hsl(var(--mint) / 0.3), inset 0 0 20px hsl(var(--mint) / 0.1)',
+                              '0 0 30px hsl(var(--mint) / 0.4), inset 0 0 25px hsl(var(--mint) / 0.15)',
+                              '0 0 20px hsl(var(--mint) / 0.3), inset 0 0 20px hsl(var(--mint) / 0.1)',
+                            ]
+                          : 'none',
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                    />
+
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-4 mb-4">
+                        <motion.div
+                          className="w-16 h-16 rounded-xl bg-gradient-to-br from-mint/30 to-mint/10 flex items-center justify-center"
+                          animate={isSelected ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <IconComponent className="w-8 h-8 text-mint" />
+                        </motion.div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-sm text-mint-dark mb-1">{icp.title}</h3>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{icp.description}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Navigation dots */}
+          <div className="flex justify-center gap-2 mt-6">
+            {icps.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedIndex(index)}
+                className={`h-2 rounded-full transition-all ${
+                  selectedIndex === index ? 'w-8 bg-mint' : 'w-2 bg-muted-foreground/30'
+                }`}
+                aria-label={`Select ${icps[index].title}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile: Full-width swipeable cards */}
+      <div className="md:hidden">
+        <Carousel
+          setApi={(api) => {
+            if (api) {
+              api.on("select", () => {
+                setSelectedIndex(api.selectedScrollSnap());
+              });
+            }
+          }}
+          opts={{
+            align: "center",
+            loop: false,
+          }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {icps.map((icp, index) => {
+              const IconComponent = icp.icon;
+              return (
+                <CarouselItem key={icp.id} className="basis-full">
+                  <div className="relative p-6 rounded-2xl bg-card border-2 overflow-hidden mx-2">
+                    {/* Shimmering border effect */}
+                    <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                      <motion.div
+                        className="absolute inset-0"
+                        style={{
+                          background: 'linear-gradient(135deg, hsl(var(--mint) / 0.3) 0%, transparent 50%, hsl(var(--mint) / 0.2) 100%)',
+                        }}
+                        animate={{
+                          backgroundPosition: ['0% 0%', '100% 100%'],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          repeatType: 'reverse',
+                          ease: 'linear',
+                        }}
+                      />
+                      <motion.div
+                        className="absolute inset-0"
+                        style={{
+                          background: 'linear-gradient(90deg, transparent 0%, hsl(var(--mint) / 0.5) 50%, transparent 100%)',
+                          backgroundSize: '200% 100%',
+                        }}
+                        animate={{
+                          backgroundPosition: ['-200% 0', '200% 0'],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: 'linear',
+                        }}
+                      />
+                    </div>
+
+                    {/* Border */}
+                    <div
+                      className="absolute inset-0 rounded-2xl pointer-events-none"
+                      style={{
+                        border: '2px solid hsl(var(--mint) / 0.5)',
+                        boxShadow: '0 0 20px hsl(var(--mint) / 0.3), inset 0 0 20px hsl(var(--mint) / 0.1)',
+                      }}
+                    />
+
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-mint/30 to-mint/10 flex items-center justify-center">
+                          <IconComponent className="w-8 h-8 text-mint" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-sm text-mint-dark mb-1">{icp.title}</h3>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{icp.description}</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+        </Carousel>
+
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-2 mt-6">
+          {icps.map((_, index) => (
+            <div
+              key={index}
+              className={`h-2 rounded-full transition-all ${
+                selectedIndex === index ? 'w-8 bg-mint' : 'w-2 bg-muted-foreground/30'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const TheProblem = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const { elementRef: triggerRef, isVisible } = useScrollTrigger({ threshold: 0.2 });
@@ -280,29 +539,17 @@ const TheProblem = () => {
               <span className="text-sm font-medium text-mint-dark">Voice-enabled tools</span>
             </motion.div>
             
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Become the leader who bosses the boardroom confidently.
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              Boss the boardroom confidently.
             </h2>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto mb-6">
-              Three paths for commercial leaders who accept what's coming: build systems with AI, don't delegate to others. Whether you need AI systems and authority, want to build alongside AI, or need to sharpen your team's transformation readiness—all lead to one outcome: confident boardroom leadership.
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Three paths. One outcome: confident boardroom leadership.
             </p>
-            
-            <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto mt-8 text-left">
-              <div className="minimal-card p-4">
-                <h3 className="font-bold text-sm text-mint-dark mb-2">HANDS-OFF LEADERS</h3>
-                <p className="text-sm text-muted-foreground">Become the leader with AI systems, authority, and ideas. Deploy working systems that give you command without hands-on building.</p>
-              </div>
-              <div className="minimal-card p-4">
-                <h3 className="font-bold text-sm text-mint-dark mb-2">HANDS-ON BUILDERS</h3>
-                <p className="text-sm text-muted-foreground">Become a builder alongside AI. Create weapons-grade GTM engines, content engines, and end-to-end apps. (The Builder Economy path)</p>
-              </div>
-              <div className="minimal-card p-4">
-                <h3 className="font-bold text-sm text-mint-dark mb-2">TEAMS NEEDING TRANSFORMATION</h3>
-                <p className="text-sm text-muted-foreground">Sharpen communal AI literacy before committing to transformation. Stop wasting your one bullet on vendors who can't deliver.</p>
-              </div>
-            </div>
           </motion.div>
+
+          {/* ICP Slider */}
+          <ICPSlider />
 
           {/* Desktop: 2x2 Grid */}
           <div className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8">
