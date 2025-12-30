@@ -138,7 +138,7 @@ const NewHero = () => {
                 ref={measureRef}
                 className="absolute invisible pointer-events-none"
                 style={{
-                  fontSize: 'clamp(1.875rem, 5vw, 3.75rem)',
+                  fontSize: 'clamp(1rem, 4vw, 3rem)',
                   fontWeight: 'bold',
                   whiteSpace: 'nowrap',
                 }}
@@ -149,7 +149,7 @@ const NewHero = () => {
               <h1 
                 className="invisible font-bold leading-tight tracking-tight max-w-4xl pointer-events-none" 
                 style={{
-                  fontSize: 'clamp(1.875rem, 5vw, 3.75rem)',
+                  fontSize: 'clamp(1rem, 4vw, 3rem)',
                   lineHeight: '1.2',
                 }}
                 aria-hidden="true"
@@ -178,7 +178,7 @@ const NewHero = () => {
               <h1 
                 className="absolute top-0 left-0 font-bold leading-tight tracking-tight text-white max-w-4xl flex flex-col"
                 style={{
-                  fontSize: 'clamp(1.875rem, 5vw, 3.75rem)',
+                  fontSize: 'clamp(1rem, 4vw, 3rem)',
                   lineHeight: '1.2',
                   width: '100%',
                   overflowX: 'hidden',
@@ -236,7 +236,7 @@ const NewHero = () => {
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      fontSize: 'clamp(1.875rem, 5vw, 3.75rem)',
+                      fontSize: 'clamp(1rem, 4vw, 3rem)',
                       lineHeight: '1.2',
                       textShadow: '0 0 40px hsl(var(--mint) / 0.6), 0 0 80px hsl(var(--mint) / 0.4), 0 0 120px hsl(var(--mint) / 0.2)',
                       filter: 'drop-shadow(0 0 20px hsl(var(--mint) / 0.5))',
