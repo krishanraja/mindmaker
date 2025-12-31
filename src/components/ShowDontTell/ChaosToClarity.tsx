@@ -379,7 +379,7 @@ const ChaosToClarity = () => {
     canReverseExit: true,
     enabled: true,
     titleRef: titleRef, // Use title position to trigger scroll hijack
-    titleOffset: 100, // Trigger when title is 100px from top (less whitespace above)
+    titleOffset: isMobile ? 100 : 80, // Desktop: 80px (nav bar height), Mobile: 100px
   });
 
   // Initialize CSS variables
