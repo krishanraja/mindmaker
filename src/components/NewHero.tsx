@@ -122,16 +122,16 @@ const NewHero = () => {
       <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-mint/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '4s', animationDelay: '1s'}}></div>
       
       {/* Content */}
-      <div className="container-width relative z-10 pb-12 sm:pb-16 md:pb-20 overflow-x-hidden hero-content-wrapper" style={{ paddingTop: 'calc(5rem * 0.8)' }}>
+      <div className="container-width relative z-10 pb-12 sm:pb-16 md:pb-20 overflow-x-hidden hero-content-wrapper" style={{ paddingTop: 'calc(5rem * 0.8 * 0.5)' }}>
         <style>{`
           @media (min-width: 640px) {
             .hero-content-wrapper {
-              padding-top: calc(7rem * 0.8) !important;
+              padding-top: calc(7rem * 0.8 * 0.5) !important;
             }
           }
           @media (min-width: 768px) {
             .hero-content-wrapper {
-              padding-top: calc(8rem * 0.8) !important;
+              padding-top: calc(8rem * 0.8 * 0.5) !important;
             }
           }
         `}</style>
@@ -328,15 +328,15 @@ const NewHero = () => {
           }
         }
         
-        /* Hero text responsive sizing: 2.5x on mobile, 25% smaller on desktop */
+        /* Hero text responsive sizing: reduced mobile size by 40%, 25% smaller on desktop */
         .hero-text-size {
-          font-size: 2.5rem; /* 40px - 2.5x mobile size (was 16px) */
+          font-size: 1.5rem; /* 24px - 40% reduction from 2.5rem (was 40px) */
         }
         
         @media (min-width: 640px) {
           .hero-text-size {
-            /* Smoothly transition from 2.5rem (640px) to 2.25rem (1024px) */
-            font-size: clamp(2.25rem, calc(2.5rem - (100vw - 640px) * 0.000651rem), 2.5rem);
+            /* Smoothly transition from 1.5rem (640px) to 2.25rem (1024px) */
+            font-size: clamp(1.5rem, calc(1.5rem + (100vw - 640px) * 0.00195rem), 2.25rem);
           }
         }
         
