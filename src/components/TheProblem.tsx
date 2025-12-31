@@ -168,11 +168,11 @@ const Panel = ({ panel, index }: PanelProps) => {
           <source src={panel.problem.video} type="video/mp4" />
         </video>
         
-        {/* Problem Overlay */}
+        {/* Problem Overlay - Muted Red */}
         <div
           className="absolute inset-0"
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backgroundColor: 'rgba(185, 28, 28, 0.4)',
           }}
           aria-hidden="true"
         />
@@ -189,7 +189,7 @@ const Panel = ({ panel, index }: PanelProps) => {
             }}
             className="max-w-[90%] text-center"
             style={{
-              background: 'rgba(0, 0, 0, 0.6)',
+              background: 'rgba(0, 0, 0, 1)',
               backdropFilter: 'blur(8px)',
               padding: '1.5rem 2rem',
               borderRadius: '8px',
@@ -233,11 +233,11 @@ const Panel = ({ panel, index }: PanelProps) => {
           <source src={panel.opportunity.video} type="video/mp4" />
         </video>
         
-        {/* Opportunity Overlay */}
+        {/* Opportunity Overlay - Muted Green */}
         <div
           className="absolute inset-0"
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            backgroundColor: 'rgba(22, 163, 74, 0.4)',
           }}
           aria-hidden="true"
         />
@@ -254,7 +254,7 @@ const Panel = ({ panel, index }: PanelProps) => {
             }}
             className="max-w-[90%] text-center"
             style={{
-              background: 'rgba(255, 255, 255, 0.85)',
+              background: 'rgba(255, 255, 255, 1)',
               backdropFilter: 'blur(8px)',
               padding: '1.5rem 2rem',
               borderRadius: '8px',
@@ -349,7 +349,7 @@ const MobilePanel = ({ panel, index, isActive }: MobilePanelProps) => {
         <div
           className="absolute inset-0"
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backgroundColor: 'rgba(185, 28, 28, 0.4)',
           }}
           aria-hidden="true"
         />
@@ -364,7 +364,7 @@ const MobilePanel = ({ panel, index, isActive }: MobilePanelProps) => {
             }}
             className="max-w-[90%] text-center"
             style={{
-              background: 'rgba(0, 0, 0, 0.6)',
+              background: 'rgba(0, 0, 0, 1)',
               backdropFilter: 'blur(8px)',
               padding: '1.25rem 1.75rem',
               borderRadius: '8px',
@@ -419,7 +419,7 @@ const MobilePanel = ({ panel, index, isActive }: MobilePanelProps) => {
         <div
           className="absolute inset-0"
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            backgroundColor: 'rgba(22, 163, 74, 0.4)',
           }}
           aria-hidden="true"
         />
