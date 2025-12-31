@@ -153,7 +153,7 @@ const Panel = ({ panel, index }: PanelProps) => {
       )}
 
       {/* Problem Video Layer (Bottom - Always Visible) */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-0">
         <video
           autoPlay
           loop
@@ -178,10 +178,10 @@ const Panel = ({ panel, index }: PanelProps) => {
         />
 
         {/* Problem Text Overlay */}
-        <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6">
+        <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6" style={{ opacity: isWiped ? 0 : 1, transition: 'opacity 0.3s ease' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={isInView && !isWiped ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{
               duration: 0.8,
               ease: [0.25, 0.1, 0.25, 1],
@@ -211,11 +211,12 @@ const Panel = ({ panel, index }: PanelProps) => {
       {/* Solution Video Layer (Top - Revealed via Wipe) */}
       <div
         ref={containerRef}
-        className="absolute inset-0"
+        className="absolute inset-0 z-30"
         style={{
           clipPath: 'inset(var(--wipe-progress, 100%) 0 0 0)',
           transition: isWiped ? 'clip-path 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
           willChange: 'clip-path',
+          pointerEvents: isWiped ? 'auto' : 'none',
         }}
       >
         <video
@@ -330,7 +331,7 @@ const MobilePanel = ({ panel, index, isActive }: MobilePanelProps) => {
       aria-label={`Panel ${index + 1}: ${panel.problem.headline}`}
     >
       {/* Problem Video Layer */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-0">
         <video
           autoPlay
           loop
@@ -353,10 +354,10 @@ const MobilePanel = ({ panel, index, isActive }: MobilePanelProps) => {
           aria-hidden="true"
         />
 
-        <div className="absolute inset-0 z-10 flex items-center justify-center px-4">
+        <div className="absolute inset-0 z-10 flex items-center justify-center px-4" style={{ opacity: isWiped ? 0 : 1, transition: 'opacity 0.3s ease' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={isInView && !isWiped ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{
               duration: 0.6,
               ease: [0.25, 0.1, 0.25, 1],
@@ -393,11 +394,12 @@ const MobilePanel = ({ panel, index, isActive }: MobilePanelProps) => {
 
       {/* Solution Video Layer */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 z-30"
         style={{
           clipPath: 'inset(var(--wipe-progress, 100%) 0 0 0)',
           transition: isWiped ? 'clip-path 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
           willChange: 'clip-path',
+          pointerEvents: isWiped ? 'auto' : 'none',
         }}
       >
         <video
