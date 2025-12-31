@@ -60,7 +60,10 @@ export const useStatsTimer = ({ isActive, configs }: UseStatsTimerOptions) => {
     return () => {
       clearAllIntervals();
     };
-  }, [isActive, startTimer, clearAllIntervals]); // Remove configs to prevent recreation loop
+    // Note: configs should be memoized in the calling component (e.g., with useMemo)
+    // to prevent unnecessary effect re-runs. startTimer and clearAllIntervals are
+    // stable callbacks, so they won't cause loops.
+  }, [isActive, configs, startTimer, clearAllIntervals]);
 
   return {
     startTimer,

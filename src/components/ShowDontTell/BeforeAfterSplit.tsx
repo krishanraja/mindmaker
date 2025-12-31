@@ -39,9 +39,22 @@ const BeforeAfterSplit = () => {
   const accumulatedDeltaRef = useRef(0);
   const titleRef = useRef<HTMLDivElement>(null); // Ref for title element to trigger scroll hijack
   
+  // Refs to track current state values without causing dependency issues
+  const displayProgressRef = useRef(0);
+  const isCompleteRef = useRef(false);
+  
   // State only for discrete UI updates (progress indicator text, completion)
   const [displayProgress, setDisplayProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  
+  // Keep refs in sync with state
+  useEffect(() => {
+    displayProgressRef.current = displayProgress;
+  }, [displayProgress]);
+  
+  useEffect(() => {
+    isCompleteRef.current = isComplete;
+  }, [isComplete]);
   
   const PROGRESS_DIVISOR = isMobile ? 400 : 700;
   
@@ -64,19 +77,22 @@ const BeforeAfterSplit = () => {
       
       // Only update React state for discrete UI changes (every 10%)
       const displayBucket = Math.floor(newProgress * 10);
-      const currentBucket = Math.floor(displayProgress * 10);
+      const currentBucket = Math.floor(displayProgressRef.current * 10);
       if (displayBucket !== currentBucket || newProgress >= 1) {
+        displayProgressRef.current = newProgress;
         setDisplayProgress(newProgress);
       }
       
       // Check completion
-      if (newProgress >= 1 && !isComplete) {
+      if (newProgress >= 1 && !isCompleteRef.current) {
+        isCompleteRef.current = true;
         setIsComplete(true);
-      } else if (newProgress < 1 && isComplete) {
+      } else if (newProgress < 1 && isCompleteRef.current) {
+        isCompleteRef.current = false;
         setIsComplete(false);
       }
     });
-  }, [PROGRESS_DIVISOR, displayProgress, isComplete]);
+  }, [PROGRESS_DIVISOR]);
   
   const handleProgress = useCallback((delta: number, _direction: 'up' | 'down') => {
     accumulatedDeltaRef.current += delta;

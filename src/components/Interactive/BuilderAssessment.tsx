@@ -115,6 +115,9 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
         recommendedProduct: profile.recommendedProduct
       });
     }
+    // Note: profile, answers, and setAssessment are all stable dependencies
+    // profile only changes when assessment completes, answers changes when user answers,
+    // and setAssessment is a stable callback from context
   }, [profile, answers, setAssessment]);
 
   // Reset voice state when question changes

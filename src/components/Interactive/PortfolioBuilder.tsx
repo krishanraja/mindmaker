@@ -122,18 +122,17 @@ export const PortfolioBuilder = ({ compact = false, onClose }: PortfolioBuilderP
 
   useEffect(() => {
     if (showResults) {
-      const portfolio = getPortfolioData();
       setPortfolioBuilder({
-        selectedTasks: portfolio.tasks.map(t => ({
+        selectedTasks: portfolioData.tasks.map(t => ({
           name: t.name,
           hours: t.hoursPerWeek,
           savings: t.potentialSavings
         })),
-        totalTimeSaved: portfolio.totalTimeSaved,
-        totalCostSavings: portfolio.totalCostSavings
+        totalTimeSaved: portfolioData.totalTimeSaved,
+        totalCostSavings: portfolioData.totalCostSavings
       });
     }
-  }, [showResults, getPortfolioData, setPortfolioBuilder]);
+  }, [showResults, portfolioData.tasks, portfolioData.totalTimeSaved, portfolioData.totalCostSavings, setPortfolioBuilder]);
 
   const handleGenerate = async () => {
     if (portfolioData.tasks.length === 0) return;
