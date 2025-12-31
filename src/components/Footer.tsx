@@ -1,10 +1,10 @@
 const Footer = () => {
   return (
-    <footer className="relative bg-background border-t border-border pt-12 sm:pt-16 pb-24 sm:pb-28 z-20">
+    <footer className="relative bg-background border-t border-border/50 pt-16 sm:pt-20 pb-24 sm:pb-32 z-20">
       <div className="container-width">
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-16">
           {/* Main Footer Content - Grid Layout */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 lg:gap-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16 lg:gap-20">
             {/* Copyright Section - Full width on mobile, spans 2 cols on desktop */}
             <div className="sm:col-span-2 lg:col-span-1 flex flex-col gap-4">
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -20,25 +20,25 @@ const Footer = () => {
               <nav className="flex flex-col gap-3">
                 <a 
                   href="/builder-session" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Builder Session
                 </a>
                 <a 
                   href="/builder-sprint" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   AI Literacy-to-Influence
                 </a>
                 <a 
                   href="/leadership-lab" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Leadership Lab
                 </a>
                 <a 
                   href="/portfolio-program" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Portfolio Heatmap
                 </a>
@@ -55,7 +55,7 @@ const Footer = () => {
                   href="https://content.themindmaker.ai" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Blog
                 </a>
@@ -63,7 +63,7 @@ const Footer = () => {
                   href="https://content.themindmaker.ai/podcast" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Podcast
                 </a>
@@ -78,25 +78,25 @@ const Footer = () => {
               <nav className="flex flex-col gap-3">
                 <a 
                   href="/faq" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   FAQ
                 </a>
                 <a 
                   href="/privacy" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Privacy
                 </a>
                 <a 
                   href="/terms" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Terms
                 </a>
                 <a 
                   href="/contact" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Contact
                 </a>

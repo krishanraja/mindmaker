@@ -77,7 +77,7 @@ const Navigation = () => {
 
   return (
     <nav 
-      className="fixed top-0 w-full z-[100] bg-background border-b border-border shadow-sm pt-safe-top transition-transform duration-200 ease-out"
+      className="fixed top-0 w-full z-[100] bg-background/80 backdrop-blur-md border-b border-border/50 shadow-md pt-safe-top transition-all duration-300 ease-out"
       style={{ transform: isHidden ? 'translateY(-100%)' : 'translateY(0)' }}
     >
       <div className="container-width px-4 sm:px-6">
@@ -119,10 +119,10 @@ const Navigation = () => {
               >
                 <button 
                   onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                  className={`text-sm font-semibold transition-colors flex items-center gap-1.5
+                  className={`text-sm font-semibold transition-all duration-200 ease-out flex items-center gap-1.5
                     py-2 px-3 rounded-md ${
                     openDropdown === item.label 
-                      ? 'text-mint bg-mint/10' 
+                      ? 'text-mint bg-mint/10 shadow-sm' 
                       : 'text-ink dark:text-white hover:text-mint hover:bg-mint/5'
                   }`}
                   aria-expanded={openDropdown === item.label}
@@ -135,10 +135,10 @@ const Navigation = () => {
                 </button>
                 {openDropdown === item.label && (
                   <div 
-                    className="absolute top-full left-0 mt-1 
-                      bg-white dark:bg-[#0e1a2b] 
-                      border-2 border-border 
-                      rounded-lg shadow-xl 
+                    className="absolute top-full left-0 mt-2 
+                      bg-card/95 backdrop-blur-md
+                      border border-border/50 
+                      rounded-lg shadow-lg shadow-mint-sm
                       py-3 min-w-[240px] z-50
                       animate-in fade-in slide-in-from-top-2 duration-200"
                     role="menu"
@@ -167,13 +167,13 @@ const Navigation = () => {
                             </button>
                             
                             {/* Nested dropdown */}
-                            <div className="absolute left-full top-0 ml-1 
-                              bg-white dark:bg-[#0e1a2b] 
-                              border-2 border-border 
-                              rounded-lg shadow-xl 
+                            <div className="absolute left-full top-0 ml-2 
+                              bg-card/95 backdrop-blur-md
+                              border border-border/50 
+                              rounded-lg shadow-lg shadow-mint-sm
                               py-3 min-w-[200px]
                               opacity-0 invisible group-hover/nested:opacity-100 group-hover/nested:visible
-                              transition-all duration-200">
+                              transition-all duration-300 ease-out">
                               {subItem.nested.map((nestedItem) => (
                                 <a
                                   key={nestedItem.label}
