@@ -3,9 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { User, Lightbulb, Map, TrendingUp, Mic } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useEffect } from "react";
 
 type DialogType = 'quiz' | 'decision' | 'friction' | 'portfolio' | null;
 
@@ -33,12 +31,12 @@ const InteractiveCard = ({ icon, title, subtitle, description, onClick, delay = 
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="flex flex-col h-full"
+      className="flex flex-col"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div 
-        className="premium-card flex-1 flex flex-col p-6 cursor-pointer group relative overflow-hidden rounded-2xl"
+        className="premium-card flex flex-col p-4 cursor-pointer group relative overflow-hidden rounded-2xl"
         onClick={onClick}
       >
         {/* Animated gradient border effect on hover */}
@@ -54,55 +52,54 @@ const InteractiveCard = ({ icon, title, subtitle, description, onClick, delay = 
 
         {/* Content */}
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5">
               <motion.div 
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-mint/30 to-mint/10 flex items-center justify-center shadow-lg shadow-mint/10"
+                className="w-10 h-10 rounded-xl bg-gradient-to-br from-mint/30 to-mint/10 flex items-center justify-center shadow-lg shadow-mint/10 flex-shrink-0"
                 animate={isHovered ? { scale: 1.05, rotate: 3 } : { scale: 1, rotate: 0 }}
                 transition={{ duration: 0.3 }}
               >
                 {icon}
               </motion.div>
-              <div>
-                <h3 className="font-bold text-lg leading-tight">{title}</h3>
-                <p className="text-xs text-muted-foreground">{subtitle}</p>
+              <div className="min-w-0">
+                <h3 className="font-bold text-base leading-tight">{title}</h3>
+                <p className="text-[10px] text-muted-foreground">{subtitle}</p>
               </div>
             </div>
             
             {/* Voice indicator badge */}
             {hasVoice && (
               <motion.div
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-mint/10 border border-mint/20"
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-mint/10 border border-mint/20 flex-shrink-0"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: delay + 0.3 }}
               >
-                <Mic className="w-3 h-3 text-mint" />
-                <span className="text-[10px] font-medium text-mint-dark">Voice</span>
+                <Mic className="w-2.5 h-2.5 text-mint" />
+                <span className="text-[9px] font-medium text-mint-dark">Voice</span>
               </motion.div>
             )}
           </div>
           
-          <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+          <p className="text-xs text-muted-foreground mb-3 leading-relaxed line-clamp-2">
             {description}
           </p>
           
-          <div className="mt-auto">
-            <Button 
-              variant="mint" 
-              className="w-full group/btn relative overflow-hidden"
-            >
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                Open Tool
-                <motion.span
-                  animate={isHovered ? { x: 4 } : { x: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  →
-                </motion.span>
-              </span>
-            </Button>
-          </div>
+          <Button 
+            variant="mint" 
+            className="w-full group/btn relative overflow-hidden text-sm h-9"
+            size="sm"
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              Open Tool
+              <motion.span
+                animate={isHovered ? { x: 4 } : { x: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                →
+              </motion.span>
+            </span>
+          </Button>
         </div>
 
         {/* Decorative corner accent */}
@@ -118,16 +115,16 @@ const InteractiveCard = ({ icon, title, subtitle, description, onClick, delay = 
   );
 };
 
-// Mobile carousel card - more compact with glass morphism
+// Mobile card - compact to fit in viewport
 const MobileInteractiveCard = ({ icon, title, subtitle, description, onClick, hasVoice = true }: InteractiveCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="h-full"
+      className="flex flex-col"
     >
       <div 
-        className="h-full flex flex-col p-5 cursor-pointer rounded-2xl relative overflow-hidden"
+        className="flex flex-col p-3 cursor-pointer rounded-xl relative overflow-hidden"
         onClick={onClick}
         style={{
           background: 'linear-gradient(135deg, hsl(var(--card) / 0.95), hsl(var(--mint) / 0.05))',
@@ -138,30 +135,30 @@ const MobileInteractiveCard = ({ icon, title, subtitle, description, onClick, ha
       >
         {/* Voice indicator */}
         {hasVoice && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-mint/15 border border-mint/25">
-            <Mic className="w-2.5 h-2.5 text-mint" />
-            <span className="text-[9px] font-medium text-mint-dark">Voice</span>
+          <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-mint/15 border border-mint/25">
+            <Mic className="w-2 h-2 text-mint" />
+            <span className="text-[8px] font-medium text-mint-dark">Voice</span>
           </div>
         )}
 
-        <div className="flex items-start gap-3 mb-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-mint/30 to-mint/10 flex items-center justify-center flex-shrink-0">
+        <div className="flex items-start gap-2.5 mb-2">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-mint/30 to-mint/10 flex items-center justify-center flex-shrink-0">
             {icon}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-base leading-tight">{title}</h3>
-            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+            <h3 className="font-bold text-sm leading-tight">{title}</h3>
+            <p className="text-[10px] text-muted-foreground">{subtitle}</p>
           </div>
         </div>
         
-        <p className="text-sm text-muted-foreground mb-4 leading-relaxed flex-1">
+        <p className="text-xs text-muted-foreground mb-2.5 leading-relaxed line-clamp-2">
           {description}
         </p>
         
         <Button 
           variant="mint" 
-          className="w-full"
-          size="default"
+          className="w-full text-xs h-8"
+          size="sm"
         >
           Open Tool →
         </Button>
@@ -172,16 +169,6 @@ const MobileInteractiveCard = ({ icon, title, subtitle, description, onClick, ha
 
 export const ToolsDrawer = ({ open, onOpenChange, onToolClick }: ToolsDrawerProps) => {
   const isMobile = useIsMobile();
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  useEffect(() => {
-    if (!carouselApi) return;
-
-    carouselApi.on("select", () => {
-      setCurrentSlide(carouselApi.selectedScrollSnap());
-    });
-  }, [carouselApi]);
 
   const cards = [
     {
@@ -216,77 +203,55 @@ export const ToolsDrawer = ({ open, onOpenChange, onToolClick }: ToolsDrawerProp
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
-        <SheetHeader className="mb-6">
+      <SheetContent 
+        side="right" 
+        className="w-full sm:max-w-md h-screen max-h-screen overflow-hidden flex flex-col p-0"
+      >
+        <SheetHeader className="shrink-0 px-6 pt-6 pb-4 border-b">
           <SheetTitle className="text-sm font-bold italic text-mint-dark dark:text-mint text-center tracking-widest">
             IDEATE WITH MINDMAKER AI
           </SheetTitle>
         </SheetHeader>
 
-        <div className="space-y-6">
-          {/* Desktop: Grid Layout */}
-          <div className="hidden md:grid md:grid-cols-1 gap-4">
+        {/* Content area - constrained to viewport, no scrolling */}
+        <div className="flex-1 overflow-hidden flex flex-col min-h-0">
+          {/* Desktop: Vertical Stack - All cards fit without scrolling */}
+          <div className="hidden md:flex md:flex-col gap-2.5 px-5 py-3 h-full">
             {cards.map((card, index) => (
-              <InteractiveCard
-                key={card.id}
-                icon={card.icon}
-                title={card.title}
-                subtitle={card.subtitle}
-                description={card.description}
-                onClick={() => {
-                  onToolClick(card.id);
-                  onOpenChange(false);
-                }}
-                delay={0.1 * (index + 1)}
-                hasVoice={true}
-              />
+              <div key={card.id} className="flex-shrink-0">
+                <InteractiveCard
+                  icon={card.icon}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  description={card.description}
+                  onClick={() => {
+                    onToolClick(card.id);
+                    onOpenChange(false);
+                  }}
+                  delay={0.1 * (index + 1)}
+                  hasVoice={true}
+                />
+              </div>
             ))}
           </div>
 
-          {/* Mobile: Swipe Carousel */}
-          <div className="md:hidden">
-            <Carousel
-              setApi={setCarouselApi}
-              opts={{
-                align: "center",
-                loop: false,
-              }}
-              className="w-full"
-            >
-              <CarouselContent>
-                {cards.map((card) => (
-                  <CarouselItem key={card.id} className="basis-[85%]">
-                    <MobileInteractiveCard
-                      icon={card.icon}
-                      title={card.title}
-                      subtitle={card.subtitle}
-                      description={card.description}
-                      onClick={() => {
-                        onToolClick(card.id);
-                        onOpenChange(false);
-                      }}
-                      hasVoice={true}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-
-            {/* Dot Indicators */}
-            <div className="flex justify-center gap-2 mt-6">
-              {cards.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => carouselApi?.scrollTo(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    currentSlide === index 
-                      ? 'w-8 bg-mint' 
-                      : 'w-2 bg-muted-foreground/30'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
+          {/* Mobile: Vertical Stack - All cards fit without scrolling */}
+          <div className="md:hidden flex flex-col gap-2 px-3 py-2.5 h-full">
+            {cards.map((card) => (
+              <div key={card.id} className="flex-shrink-0">
+                <MobileInteractiveCard
+                  icon={card.icon}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  description={card.description}
+                  onClick={() => {
+                    onToolClick(card.id);
+                    onOpenChange(false);
+                  }}
+                  hasVoice={true}
                 />
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </SheetContent>
