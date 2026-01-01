@@ -88,7 +88,7 @@ export const ActionsHub = ({ onToolClick }: ActionsHubProps) => {
   const drawerContent = (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
+      <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-border/50">
         <h2 className="font-bold text-base tracking-wide text-foreground">Actions</h2>
       </div>
 
@@ -206,8 +206,8 @@ export const ActionsHub = ({ onToolClick }: ActionsHubProps) => {
           className={cn(
             "p-0 flex flex-col",
             isMobile 
-              ? "h-[85vh] rounded-t-3xl" 
-              : "w-full sm:max-w-[400px]"
+              ? "h-[80vh] rounded-t-3xl pt-2 pb-safe-area-bottom" 
+              : "w-full sm:max-w-[400px] pt-2"
           )}
         >
           {drawerContent}

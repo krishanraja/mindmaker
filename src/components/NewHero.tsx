@@ -191,7 +191,7 @@ const NewHero = () => {
                 style={{
                   lineHeight: '1.2',
                   width: '100%',
-                  overflowX: 'hidden',
+                  overflow: 'hidden',
                 }}
               >
                 {/* Line 1: Rotating text - exactly 2 lines, bottom-aligned */}
