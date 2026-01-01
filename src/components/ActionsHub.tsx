@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Sparkles, ChevronLeft, Calendar, MessageCircle, User, Lightbulb, Map, TrendingUp, X, Mic } from "lucide-react";
+import { Sparkles, ChevronLeft, Calendar, MessageCircle, User, Lightbulb, Map, TrendingUp, Mic } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
@@ -91,14 +90,6 @@ export const ActionsHub = ({ onToolClick }: ActionsHubProps) => {
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
         <h2 className="font-bold text-base tracking-wide text-foreground">Actions</h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsOpen(false)}
-          className="h-8 w-8"
-        >
-          <X className="h-4 w-4" />
-        </Button>
       </div>
 
       {/* Content */}
