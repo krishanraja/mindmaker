@@ -86,7 +86,7 @@ const NewHero = () => {
   }, [heroVariants.length]);
 
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center bg-ink text-white relative overflow-hidden overflow-x-hidden pt-safe-area-top">
+    <section id="hero" className="min-h-screen flex items-center justify-center bg-ink text-white relative overflow-hidden pt-safe-area-top" style={{ overflow: 'hidden' }}>
       {/* Dynamic Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-ink-900 via-ink to-ink-700/50"></div>
       <div className="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-transparent to-mint/5"></div>
@@ -259,7 +259,7 @@ const NewHero = () => {
             </div>
       
             <p className="text-base sm:text-lg md:text-xl lg:text-xl text-white/90 max-w-3xl font-light leading-relaxed">
-              Most leaders feel behind on AI, but don't know what to actually do about it. Level up with a tailored, outcomes-focused accelerator - so you can outlive the unpredictable changes that lie ahead.
+              Most leaders feel behind on AI, but don't know what to actually do about it. Learn how to command AI in the boardroom, and build AI systems to extend your own ideas and capabilities - so you can outlive the unpredictable changes that lie ahead.
             </p>
               
             {/* Trust Bar */}
@@ -329,15 +329,19 @@ const NewHero = () => {
           }
         }
         
-        /* Prevent horizontal scrollbar during page load */
+        /* Prevent any scrollbars on hero section */
         #hero {
+          overflow: hidden !important;
           overflow-x: hidden !important;
+          overflow-y: hidden !important;
         }
         
+        #hero *,
         #hero .hero-content-wrapper,
         #hero .max-w-5xl,
         #hero h1 {
           overflow-x: hidden !important;
+          overflow-y: visible;
         }
         
         /* Hero text responsive sizing: reduced mobile size by 40%, 25% smaller on desktop */

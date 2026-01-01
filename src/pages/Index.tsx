@@ -12,6 +12,7 @@ import { ParticleBackground } from "@/components/Animations/ParticleBackground";
 import WhitepaperPromo from "@/components/WhitepaperPromo";
 import WhitepaperPopup from "@/components/WhitepaperPopup";
 import { ToolsDrawerButton } from "@/components/ToolsDrawerButton";
+import { FloatingCTA } from "@/components/FloatingCTA";
 import { Dialog, DialogWizardContent } from "@/components/ui/dialog";
 import { BuilderAssessment } from "@/components/Interactive/BuilderAssessment";
 import { FrictionMapBuilder } from "@/components/Interactive/FrictionMapBuilder";
@@ -95,6 +96,9 @@ const Index = () => {
       
       {/* Tools Drawer Button - Fixed at page level */}
       <ToolsDrawerButton onToolClick={setDialogType} />
+      
+      {/* Floating CTA - Persistent Book Session button */}
+      <FloatingCTA />
 
       {/* Dialog for Interactive Tools */}
       <Dialog open={dialogType !== null} onOpenChange={() => setDialogType(null)}>

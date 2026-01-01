@@ -19,8 +19,8 @@ export const ToolsDrawerButton = ({ onToolClick }: ToolsDrawerButtonProps) => {
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed right-0 z-30",
-          "bottom-32 md:bottom-auto md:top-1/4 md:-translate-y-1/2",
+          "fixed right-0 z-[60]",
+          "bottom-1/2 translate-y-1/2 md:bottom-auto md:top-1/2 md:-translate-y-1/2",
           "w-12 h-24 rounded-l-2xl",
           "bg-gradient-to-br from-mint to-mint-dark",
           "shadow-lg hover:shadow-xl",

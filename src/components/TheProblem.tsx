@@ -59,9 +59,11 @@ const panels: PanelData[] = [
 interface PanelProps {
   panel: PanelData;
   index: number;
+  canAutoReveal: boolean;
+  onReveal: () => void;
 }
 
-const Panel = ({ panel, index }: PanelProps) => {
+const Panel = ({ panel, index, canAutoReveal, onReveal }: PanelProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [wipeProgress, setWipeProgress] = useState(0);
@@ -69,20 +71,26 @@ const Panel = ({ panel, index }: PanelProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isInView = useInView(panelRef, { once: false, amount: 0.3 });
   const isMobile = useIsMobile();
+  const autoRevealTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle hover for desktop
+  // Reveal the panel
+  const revealPanel = useCallback(() => {
+    if (!isWiped) {
+      setIsWiped(true);
+      setWipeProgress(1);
+      if (containerRef.current) {
+        containerRef.current.style.setProperty('--wipe-progress', '0%');
+      }
+      onReveal();
+    }
+  }, [isWiped, onReveal]);
+
+  // Handle hover for visual feedback only (no auto-reveal on hover)
   const handleMouseEnter = useCallback(() => {
     if (!isMobile) {
       setIsHovered(true);
-      if (!isWiped) {
-        setIsWiped(true);
-        setWipeProgress(1);
-        if (containerRef.current) {
-          containerRef.current.style.setProperty('--wipe-progress', '0%'); // 0% = fully revealed
-        }
-      }
     }
-  }, [isMobile, isWiped]);
+  }, [isMobile]);
 
   const handleMouseLeave = useCallback(() => {
     if (!isMobile) {
@@ -90,22 +98,40 @@ const Panel = ({ panel, index }: PanelProps) => {
     }
   }, [isMobile]);
 
-  // Handle click/tap as alternative trigger
+  // Handle click/tap to reveal
   const handleClick = useCallback(() => {
-    if (!isWiped) {
-      setIsWiped(true);
-      setWipeProgress(1);
-      if (containerRef.current) {
-        containerRef.current.style.setProperty('--wipe-progress', '0%');
-      }
+    revealPanel();
+  }, [revealPanel]);
+
+  // Auto-reveal after 3 seconds when this panel can auto-reveal and is in view
+  useEffect(() => {
+    if (canAutoReveal && isInView && !isWiped) {
+      autoRevealTimerRef.current = setTimeout(() => {
+        revealPanel();
+      }, 3000);
+
+      return () => {
+        if (autoRevealTimerRef.current) {
+          clearTimeout(autoRevealTimerRef.current);
+        }
+      };
     }
-  }, [isWiped]);
+  }, [canAutoReveal, isInView, isWiped, revealPanel]);
 
   // Initialize CSS variable (start at 100% = fully hidden)
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.style.setProperty('--wipe-progress', '100%');
     }
+  }, []);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoRevealTimerRef.current) {
+        clearTimeout(autoRevealTimerRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -147,7 +173,7 @@ const Panel = ({ panel, index }: PanelProps) => {
         >
           <div className="flex items-center gap-2 text-white/90 text-sm font-medium bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
             <MousePointer2 className="w-4 h-4" />
-            <span>Hover to reveal solution</span>
+            <span>Click to reveal solution</span>
           </div>
         </motion.div>
       )}
@@ -280,45 +306,63 @@ interface MobilePanelProps {
   panel: PanelData;
   index: number;
   isActive: boolean;
+  canAutoReveal: boolean;
+  onReveal: () => void;
 }
 
-const MobilePanel = ({ panel, index, isActive }: MobilePanelProps) => {
+const MobilePanel = ({ panel, index, isActive, canAutoReveal, onReveal }: MobilePanelProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [wipeProgress, setWipeProgress] = useState(0);
   const [isWiped, setIsWiped] = useState(false);
   const isInView = useInView(containerRef, { once: false, amount: 0.5 });
+  const autoRevealTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-reveal when panel is centered and in view
-  useEffect(() => {
-    if (isActive && isInView && !isWiped) {
-      const timer = setTimeout(() => {
-        setIsWiped(true);
-        setWipeProgress(1);
-        if (containerRef.current) {
-          containerRef.current.style.setProperty('--wipe-progress', '0%'); // 0% = fully revealed
-        }
-      }, 800); // Delay for better UX
-
-      return () => clearTimeout(timer);
-    }
-  }, [isActive, isInView, isWiped]);
-
-  // Handle tap to reveal
-  const handleClick = useCallback(() => {
+  // Reveal the panel
+  const revealPanel = useCallback(() => {
     if (!isWiped) {
       setIsWiped(true);
       setWipeProgress(1);
       if (containerRef.current) {
         containerRef.current.style.setProperty('--wipe-progress', '0%');
       }
+      onReveal();
     }
-  }, [isWiped]);
+  }, [isWiped, onReveal]);
+
+  // Auto-reveal after 3 seconds when this panel can auto-reveal, is active, and in view
+  useEffect(() => {
+    if (canAutoReveal && isActive && isInView && !isWiped) {
+      autoRevealTimerRef.current = setTimeout(() => {
+        revealPanel();
+      }, 3000);
+
+      return () => {
+        if (autoRevealTimerRef.current) {
+          clearTimeout(autoRevealTimerRef.current);
+        }
+      };
+    }
+  }, [canAutoReveal, isActive, isInView, isWiped, revealPanel]);
+
+  // Handle tap to reveal
+  const handleClick = useCallback(() => {
+    revealPanel();
+  }, [revealPanel]);
 
   // Initialize CSS variable
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.style.setProperty('--wipe-progress', '100%');
     }
+  }, []);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoRevealTimerRef.current) {
+        clearTimeout(autoRevealTimerRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -461,6 +505,8 @@ const TheProblem = () => {
   const isMobile = useIsMobile();
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  // Track which panel index can auto-reveal next (sequential: 0 -> 1 -> 2)
+  const [nextAutoRevealIndex, setNextAutoRevealIndex] = useState(0);
 
   useEffect(() => {
     if (!carouselApi) {
@@ -473,6 +519,14 @@ const TheProblem = () => {
       setCurrent(carouselApi.selectedScrollSnap());
     });
   }, [carouselApi]);
+
+  // Handle panel reveal - advance to next panel for auto-reveal
+  const handlePanelReveal = useCallback((index: number) => {
+    // When a panel is revealed, allow the next panel to auto-reveal
+    if (index === nextAutoRevealIndex) {
+      setNextAutoRevealIndex(index + 1);
+    }
+  }, [nextAutoRevealIndex]);
 
   // Desktop: Grid layout
   if (!isMobile) {
@@ -487,7 +541,13 @@ const TheProblem = () => {
         <div className="container-width">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {panels.map((panel, index) => (
-              <Panel key={index} panel={panel} index={index} />
+              <Panel 
+                key={index} 
+                panel={panel} 
+                index={index} 
+                canAutoReveal={index === nextAutoRevealIndex}
+                onReveal={() => handlePanelReveal(index)}
+              />
             ))}
           </div>
         </div>
@@ -519,7 +579,13 @@ const TheProblem = () => {
           <CarouselContent className="-ml-2 md:-ml-4">
             {panels.map((panel, index) => (
               <CarouselItem key={index} className="pl-2 md:pl-4 basis-[90%] sm:basis-[85%]">
-                <MobilePanel panel={panel} index={index} isActive={current === index} />
+                <MobilePanel 
+                  panel={panel} 
+                  index={index} 
+                  isActive={current === index}
+                  canAutoReveal={index === nextAutoRevealIndex}
+                  onReveal={() => handlePanelReveal(index)}
+                />
               </CarouselItem>
             ))}
           </CarouselContent>

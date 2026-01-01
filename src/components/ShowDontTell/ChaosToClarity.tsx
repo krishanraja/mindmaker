@@ -373,13 +373,13 @@ const ChaosToClarity = () => {
 
   const { sectionRef, isLocked } = useScrollLock({
     lockThreshold: 0, // Start hijack immediately when section reaches trigger point
-    headerOffset: 80, // Minimal breathing room - just a glimmer of space above title
+    headerOffset: 16, // Minimal breathing room - reduced from 80px
     onProgress: handleProgress,
     isComplete: uiState.isComplete,
     canReverseExit: true,
     enabled: true,
     titleRef: titleRef, // Use title position to trigger scroll hijack
-    titleOffset: isMobile ? 100 : 80, // Desktop: 80px (nav bar height), Mobile: 100px
+    titleOffset: isMobile ? 20 : 16, // Reduced from 80-100px to minimize whitespace
   });
 
   // Initialize CSS variables
@@ -405,11 +405,11 @@ const ChaosToClarity = () => {
     >
       <div 
         ref={containerRef}
-        className="w-full max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-16 chaos-clarity-container"
+        className="w-full max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-4 chaos-clarity-container"
       >
         {/* FIX (d): Changed to opaque background to prevent nav bleedthrough */}
         {/* FIX (c): Fixed height container prevents layout shift */}
-        <div className="sticky top-0 z-20 bg-background border-b border-border/40 pt-2 pb-4 md:pt-4 md:pb-6">
+        <div className="sticky top-0 z-20 bg-background border-b border-border/40 pt-1 pb-2 md:pt-2 md:pb-3">
           <div className="text-center" ref={titleRef}>
             {/* FIX (c): Increased fixed height to accommodate longest headline without wrapping */}
             <div className="relative h-[4rem] md:h-[5.5rem] lg:h-[6.5rem]">
