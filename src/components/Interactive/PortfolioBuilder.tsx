@@ -558,9 +558,9 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                 exit={{ opacity: 0 }}
                 className="flex-1 flex flex-col min-h-0 overflow-hidden"
               >
-                <div className="text-center p-4 shrink-0">
-                  <h3 className="text-xl font-bold mb-2">Select Your Tasks</h3>
-                  <p className="text-muted-foreground text-sm">
+                <div className="text-center p-4 shrink-0 pt-safe-top">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 overflow-hidden">Select Your Tasks</h3>
+                  <p className="text-muted-foreground text-sm overflow-hidden">
                     Choose tasks to see your AI transformation potential
                   </p>
                 </div>
@@ -604,7 +604,7 @@ Return ONLY valid JSON array, no markdown or explanation.`;
                   </div>
                 )}
 
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 pb-4">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
                   {tasks.map(task => (
                     <div key={task.id} className="p-4 rounded-xl border bg-muted/30">
                       <div className="flex items-start gap-3">

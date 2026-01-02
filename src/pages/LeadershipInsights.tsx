@@ -62,6 +62,7 @@ const DiagnosticCard = ({ children, className = '' }: { children: React.ReactNod
     exit={{ opacity: 0, y: -20 }}
     transition={{ duration: 0.4 }}
     className={`w-full max-w-lg bg-white rounded-lg shadow-lg border border-border p-6 sm:p-8 ${className}`}
+    style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))' }}
   >
     {children}
   </motion.div>
@@ -210,9 +211,9 @@ const LeadershipInsights = () => {
           <ViewportContainer key="questions">
             <DiagnosticCard>
               {/* Progress Header */}
-              <div className="mb-6">
+              <div className="mb-6 pt-safe-top">
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="font-semibold text-lg">Benchmark Progress</h2>
+                  <h2 className="font-semibold text-lg overflow-hidden">Benchmark Progress</h2>
                   <div className="flex items-center gap-1 text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
                     <Clock className="w-3 h-3" />
                     <span>{currentQuestionIndex + 1}/{totalQuestions}</span>
@@ -237,10 +238,10 @@ const LeadershipInsights = () => {
 
               {/* Question */}
               <div className="mb-6">
-                <h3 className="font-bold text-lg mb-2">
+                <h3 className="font-bold text-lg sm:text-xl mb-2 overflow-hidden">
                   Question {currentQuestionIndex + 1} of {totalQuestions}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground overflow-hidden">
                   {currentQuestion.question}
                 </p>
               </div>

@@ -60,7 +60,7 @@ const Footer = () => {
                   Blog
                 </a>
                 <a 
-                  href="https://content.themindmaker.ai/podcast" 
+                  href="https://www.thebuildereconomy.com" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"

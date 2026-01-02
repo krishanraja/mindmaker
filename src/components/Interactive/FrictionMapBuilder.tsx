@@ -160,7 +160,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
   // Mobile full-screen wizard layout
   if (isMobile) {
     return (
-      <div className="flex flex-col h-full min-h-0 overflow-hidden">
+      <div className="flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                 </div>
 
                 {/* Tab Content */}
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-4" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
                   <AnimatePresence mode="wait">
                     {resultTab === 'overview' && (
                       <motion.div
@@ -306,7 +306,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                 </div>
 
                 {/* Actions */}
-                <div className="p-4 border-t space-y-2">
+                <div className="p-4 border-t space-y-2 pb-safe-bottom">
                   <Button onClick={handleDownload} variant="outline" className="w-full">
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF
@@ -327,9 +327,9 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                 exit={{ opacity: 0 }}
                 className="flex-1 flex flex-col"
               >
-                <div className="text-center p-4 pt-6">
-                  <h3 className="text-xl font-bold mb-2">Build Your AI Friction Map</h3>
-                  <p className="text-muted-foreground text-sm">
+                <div className="text-center p-4 pt-6 pt-safe-top">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 overflow-hidden">Build Your AI Friction Map</h3>
+                  <p className="text-muted-foreground text-sm overflow-hidden">
                     Speak your biggest time drain
                   </p>
                 </div>
@@ -396,9 +396,9 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                 exit={{ opacity: 0 }}
                 className="flex-1 flex flex-col p-4"
               >
-                <div className="text-center mb-6">
-                  <h3 className="text-xl font-bold mb-2">Build Your AI Friction Map</h3>
-                  <p className="text-muted-foreground text-sm">
+                <div className="text-center mb-6 pt-safe-top">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 overflow-hidden">Build Your AI Friction Map</h3>
+                  <p className="text-muted-foreground text-sm overflow-hidden">
                     Describe a workflow challenge and get AI-powered recommendations.
                   </p>
                 </div>
@@ -440,6 +440,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
                     size="lg"
                     className="w-full mt-4 bg-mint text-ink hover:bg-mint/90 font-bold"
                     disabled={isGenerating || problem.trim().length < 10}
+                    style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}
                   >
                     Generate Friction Map
                     <ArrowRight className="h-4 w-4 ml-2" />

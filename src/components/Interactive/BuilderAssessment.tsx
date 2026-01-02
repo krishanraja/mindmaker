@@ -237,7 +237,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
   // Mobile full-screen wizard layout
   if (isMobile && !compact) {
     return (
-      <div className="flex flex-col h-full min-h-0 overflow-hidden">
+      <div className="flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
@@ -260,7 +260,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
 
         {/* Progress */}
         {!profile && !isGenerating && (
-          <div className="px-4 py-3 border-b bg-muted/30">
+          <div className="px-4 py-3 border-b bg-muted/30 pt-safe-top">
             <div className="flex justify-between text-xs text-muted-foreground mb-1">
               <span>Question {currentStep + 1} of {questions.length}</span>
               <span>{Math.round(progress)}%</span>
@@ -321,7 +321,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                 </div>
 
                 {/* Tab Content */}
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-4" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
                   <AnimatePresence mode="wait">
                     {resultTab === 'profile' && (
                       <motion.div
@@ -384,7 +384,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                 </div>
 
                 {/* Fixed CTA */}
-                <div className="p-4 border-t bg-ink text-white">
+                <div className="p-4 border-t bg-ink text-white pb-safe-bottom">
                   <div className="text-xs font-bold text-mint text-center mb-2">RECOMMENDED FOR YOU</div>
                   <div className="text-lg font-bold text-center mb-3">{profile.recommendedProduct}</div>
                   <Button
@@ -405,6 +405,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
                 className="flex-1 flex flex-col p-4"
+                style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
               >
                 {/* Voice Mode Toggle */}
                 {voiceSupported && (
@@ -423,7 +424,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
                   </div>
                 )}
 
-                <h3 className="text-xl font-bold mb-6">{currentQuestion.question}</h3>
+                <h3 className="text-xl sm:text-2xl font-bold mb-6 overflow-hidden">{currentQuestion.question}</h3>
                 <div className="space-y-3 flex-1">
                   {currentQuestion.options.map((option, index) => (
                     <button

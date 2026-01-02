@@ -26,7 +26,7 @@ const SimpleCTA = () => {
           </div>
           
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white dark:text-foreground">
-            Ready to Accelerate AI Decisions?
+            Ready to future proof yourself for the next decade?
           </h2>
           
           <p className="text-xl text-white/80 dark:text-foreground/80 leading-relaxed mb-8">
