@@ -1,7 +1,9 @@
 # DIAGNOSIS: Mobile Hero Text Overflow Issues
 
-**Date:** 2025-01-XX  
+**Date:** 2026-01-03  
 **Status:** P0 Critical - Text falling off page edges + Rotating text clipped
+
+---
 
 ## Problem Summary
 
@@ -12,6 +14,8 @@
 ### Issue 2: Rotating Hero Text Clipped at Top and Bottom (Vertical Overflow)
 - **Symptom**: Rotating text in line 1 gets cut off at top and bottom during animation transitions
 - **Impact**: Text appears truncated during rotation, animation looks broken
+
+---
 
 ## Architecture Map
 
@@ -27,6 +31,8 @@
                   ├─ Line 1: Rotating text container (line 99-120)
                   └─ Line 2: Static text "AI literacy..." (line 123-156)
 ```
+
+---
 
 ## Root Cause Analysis
 
@@ -100,6 +106,8 @@
 - **Problem**: `flex items-center` centers content, but doesn't provide extra space for animation movement
 - **Why**: Centering assumes content fits within bounds, but animation needs buffer space
 
+---
+
 ## Observed Errors (From Screenshot)
 
 1. **Horizontal Overflow**:
@@ -108,9 +116,10 @@
    - Missing "AI" at start and "ers" at end suggests left/right clipping
 
 2. **Vertical Clipping**:
-   - Rotating text "u your KIIOWItUyt iSitau uI ina on IT with" appears cut off
-   - Text seems truncated at top and bottom
-   - Animation transitions likely showing clipped text
+   - Rotating text appears cut off at top and bottom
+   - Animation transitions show clipped text
+
+---
 
 ## Related Issues from Previous Fixes
 
@@ -123,6 +132,8 @@
 - Static text has overflow handling (lines 139-140) but still overflows due to width calculation issues
 - Rotating text has `overflow-hidden` (line 100) which now clips animation
 - Absolute positioning (line 91) still breaks container constraints
+
+---
 
 ## Container Width Calculation Chain
 
@@ -146,6 +157,8 @@ Static text span: w-full = 343px (line 132)
   Text width: ~740px >> 343px = OVERFLOW
 ```
 
+---
+
 ## Required Fixes
 
 ### Fix 1: Horizontal Overflow
@@ -167,16 +180,42 @@ Static text span: w-full = 343px (line 132)
 - Ensure static text fits on mobile without truncation
 - Preserve responsive font sizing
 
-## Next Steps
+---
 
-1. **Phase 2**: Root Cause Verification
-   - Measure actual text widths at different viewport sizes
-   - Test animation clipping with different container heights
-   - Verify container width calculation chain
+## Implementation Options
 
-2. **Phase 3**: Implementation Plan
-   - Redesign container structure to fix absolute positioning issue
-   - Adjust font sizing to ensure text fits
-   - Fix animation container height
-   - Add proper overflow handling
+### Option A: Responsive Text Scaling
+```css
+/* Use container-aware font sizing */
+font-size: clamp(1rem, 4vw, 2rem);
+```
 
+### Option B: Remove Absolute Positioning
+```tsx
+{/* Use flexbox instead of absolute */}
+<div className="flex flex-col">
+  <div className="line-1">...</div>
+  <div className="line-2">...</div>
+</div>
+```
+
+### Option C: Add Proper Width Constraints
+```tsx
+<div className="relative w-full max-w-4xl mx-auto overflow-x-hidden">
+  {/* Content here */}
+</div>
+```
+
+### Option D: Use CSS Container Queries (Modern)
+```css
+@container (max-width: 400px) {
+  .hero-text { font-size: 1.5rem; }
+}
+```
+
+---
+
+**See Also:**
+- `DIAGNOSIS.md` - Overview of all current issues
+- `ROOT_CAUSE.md` - Root cause analysis
+- `project-documentation/COMMON_ISSUES.md` - Full issues list

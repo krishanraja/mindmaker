@@ -137,13 +137,14 @@ export const WizardContainer = ({
         </div>
         {onClose && (
           <Button
-            variant="ghost"
-            size="icon"
+            variant="outline"
+            size="sm"
             onClick={onClose}
-            className="shrink-0"
+            className="min-w-[44px] min-h-[44px] touch-target gap-1.5 px-3 shrink-0"
+            aria-label={`Close ${title || 'wizard'}`}
           >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
+            <X className="h-4 w-4" />
+            <span className="text-xs font-medium">Close</span>
           </Button>
         )}
       </div>

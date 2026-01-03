@@ -1,6 +1,6 @@
 # Features
 
-**Last Updated:** 2025-12-14
+**Last Updated:** 2026-01-03
 
 ---
 
@@ -143,12 +143,40 @@
 
 ---
 
+### 7. Builder Profile Assessment
+**Status:** ✅ Live  
+**Duration:** 5 minutes  
+**Price:** Free
+
+**Purpose:** AI-powered assessment that generates CEO-grade profile based on user answers
+
+**User Flow:**
+1. User answers 3 assessment questions
+2. Answers processed by Vertex AI RAG
+3. CEO-grade profile generated with:
+   - Profile type and framework
+   - Strengths and unique advantages
+   - Implementation recommendations
+   - Specific timelines and action items
+
+**Technical Details:**
+- Uses `chat-with-krish` edge function with Builder Profile mode detection
+- 4096 token allocation for detailed responses
+- Fallback to LLM-generated or score-based profile if parsing fails
+- All fallbacks are CEO-grade, not generic templates
+
+**Implementation:** `useAssessment.ts`, `chat-with-krish` edge function
+
+---
+
 ## Website Features
 
 ### Landing Page (/)
 - Hero with particle animation
+- Rotating headline text (dormant ideas, daily decisions, strategy debates, knowledge islands)
 - Problem statement (chaos to clarity)
 - Interactive command center demo
+- ICP slider ("Who does Mindmaker help?")
 - Product ladder (3 tracks) with smooth scroll-to-top navigation
 - Trust section with proof points
 - Before/After comparison
@@ -172,15 +200,23 @@
 - Slide-out panel
 - AI-powered responses (Vertex AI RAG with Gemini 2.5 Flash)
 - Custom RAG corpus (business-specific knowledge)
+- Mode detection: Chat, Try It Widget, Builder Profile
 - Context-aware with conversation history
 - Persistent across navigation
 - Anti-fragile error handling (graceful fallbacks)
+
+### News Ticker
+- AI-generated intelligence briefings
+- Categories: SIGNAL, HOT TAKE, OPERATOR INTEL, WATCH LIST
+- 20 headlines with operator perspective
+- Fallback to static headlines on error
+- Powered by Lovable AI Gateway (Gemini 2.5 Flash)
 
 ### Supporting Pages
 - `/builder-session` - Session details
 - `/builder-sprint` - Sprint details
 - `/leadership-lab` - Lab details
-- `/partner-program` - Partnership details
+- `/portfolio-program` - Partnership details
 - `/builder-economy` - Thought leadership
 - `/leaders` or `/leadership-insights` - AI Leadership Benchmark diagnostic
 - `/faq`, `/privacy`, `/terms`, `/contact`
@@ -199,6 +235,9 @@
 ### Edge Functions
 **Status:** ✅ Live (Supabase/Deno)
 - `chat-with-krish` - AI chatbot (Vertex AI RAG + Gemini 2.5 Flash)
+  - Mode detection: Builder Profile, Try It Widget, Chat
+  - Token allocation: 4096/1024/2048 per mode
+  - Custom RAG corpus for business knowledge
 - `get-ai-news` - News ticker (Lovable AI Gateway + Gemini 2.5 Flash)
 - `get-market-sentiment` - Market analysis (OpenAI GPT-4o-mini)
 - `send-lead-email` - Lead capture + company research (OpenAI + Resend)
@@ -206,6 +245,14 @@
 - `send-leadership-insights-email` - Leadership Benchmark results + lead notification (Resend)
 - `create-consultation-hold` - Stripe checkout (**Paused, kept for future use**)
 - All functions: CORS enabled, public access, comprehensive logging
+
+### SEO Implementation
+**Status:** ✅ Complete (10/10 score)
+- Meta tags and Open Graph optimization
+- Structured data / Schema.org (JSON-LD)
+- robots.txt and sitemap.xml configured
+- Canonical URLs on all pages
+- Performance optimization (preconnect, prefetch)
 
 ### Authentication
 **Status:** ❌ Not implemented
@@ -218,9 +265,69 @@
 
 ---
 
+## Interactive Demos
+
+### Try It Widget
+**Status:** ✅ Live
+- Interactive AI decision helper
+- Demonstrates Mindmaker's AI approach
+- Uses TRYIT_SYSTEM_PROMPT
+- 1024 token allocation
+
+### Friction Map
+**Status:** ✅ Live
+- Visual workflow friction identification
+- Session data captured for lead intelligence
+
+### Portfolio Builder
+**Status:** ✅ Live
+- AI portfolio construction tool
+- Session data captured for lead intelligence
+
+---
+
+## Design System
+
+### Color Palette
+- **Ink** (#0e1a2b): Primary dark, structure, typography
+- **Mint** (#7ef4c2): Highlights, accents, CTAs (sparingly)
+- Neutrals: Off-white, light grey, mid grey, graphite
+
+### Typography
+- **Gobold**: Hero h1 only (distinctive display font)
+- **Inter**: Everything else (h2-h6, body, UI)
+
+### Components
+- Glass morphism cards (`.glass-card`, `.glass-card-dark`)
+- Shadcn/ui base components
+- Framer Motion animations
+- Responsive breakpoints (mobile-first)
+
+---
+
+## Known Issues (Active)
+
+### Mobile Hero Text
+**Status:** 🔴 P0 - Text falling off page edges
+- Horizontal overflow on mobile viewports
+- Vertical clipping during rotation animations
+- Root cause: Absolute positioning + clamp() sizing conflict
+
+### ICP Cards
+**Status:** 🟡 P1 - UX improvements needed
+- Missing "Who does Mindmaker help?" heading
+- Aggressive shimmer (3 overlapping animations)
+- Unequal card heights
+
+See `DIAGNOSIS.md` and `ROOT_CAUSE.md` for full details.
+
+---
+
 ## Feature Roadmap
 
 ### Q1 2026
+- Fix mobile hero text overflow
+- Fix ICP cards UX issues
 - Client portal dashboard
 - Progress tracking
 - Template library

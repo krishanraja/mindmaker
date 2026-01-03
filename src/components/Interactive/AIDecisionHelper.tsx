@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, X } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { MarkdownResponse } from '@/components/ui/markdown-response';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
+import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
 import { openCalendlyPopup } from '@/utils/calendly';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { VoiceInputButton, VoiceFirstPrompt, InlineVoiceButton } from '@/components/ui/VoiceInputButton';
@@ -172,25 +173,10 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
   if (isMobile) {
     return (
       <div className="flex flex-col h-full min-h-0 overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-3">
-            <MindmakerIcon size={24} />
-            <div>
-              <h2 className="font-semibold">AI Decision Helper</h2>
-              <p className="text-xs text-muted-foreground">Powered by Mindmaker</p>
-            </div>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onClose || (() => {})}
-            className="min-w-[44px] min-h-[44px] touch-target"
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
+        <ToolDrawerHeader 
+          title="AI Decision Helper"
+          onClose={onClose}
+        />
 
         {/* Content */}
         <div className="flex-1 flex flex-col overflow-hidden min-h-0">

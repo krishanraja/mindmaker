@@ -1,7 +1,9 @@
 # DIAGNOSIS: ICP Cards & Mobile Hero Text Issues
 
-**Date:** 2025-01-XX  
+**Date:** 2026-01-03  
 **Status:** P0 Critical Mobile UX Issue + ICP Cards UX Issues
+
+---
 
 ## Problem Summary
 
@@ -14,6 +16,8 @@
 - **Text truncation**: Static text "AI literacy for commercial leaders" is being cut off on mobile
 - **Layout breakage**: Two-line layout implementation is failing on mobile viewports
 - **Responsive sizing issue**: clamp() calculation may be too aggressive for small screens
+
+---
 
 ## Architecture Map
 
@@ -34,6 +38,8 @@ Index.tsx
           ├── Desktop: Horizontal slider with shimmer
           └── Mobile: Carousel with shimmer
 ```
+
+---
 
 ## Root Cause Analysis
 
@@ -88,6 +94,8 @@ Index.tsx
    - Static text span has `whiteSpace: 'nowrap'` but no `overflow: hidden` or text scaling
    - Text can overflow container boundaries
 
+---
+
 ## Observed Errors
 
 ### From Screenshots:
@@ -101,6 +109,8 @@ Index.tsx
    - Cards appear to have shimmer effect (visible in description)
    - Cards may have different heights (not visible but reported)
 
+---
+
 ## Conditional Rendering Branches
 
 ### NewHero.tsx
@@ -111,6 +121,8 @@ Index.tsx
 - Desktop vs Mobile: `hidden md:block` vs `md:hidden`
 - Selected card: `isSelected` determines animation intensity
 - Shimmer animations: Only active when `isSelected === true`
+
+---
 
 ## Related Files & Dependencies
 
@@ -124,6 +136,8 @@ Index.tsx
 - `Carousel` component: Used for mobile ICP slider
 - `motion` from framer-motion: All animations
 
+---
+
 ## Environment Considerations
 
 - Mobile viewport: ~375px-428px typical
@@ -131,16 +145,50 @@ Index.tsx
 - Browser: Mobile Safari, Chrome Mobile
 - Touch interactions: Swipe gestures for carousel
 
-## Next Steps
+---
 
-1. **Phase 2**: Root Cause Investigation
-   - Test clamp() calculation on actual mobile viewports
-   - Measure actual text width vs container width
-   - Verify shimmer animation performance impact
-   - Measure card content heights
+## Required Fixes
 
-2. **Phase 3**: Implementation Plan
-   - Fix mobile hero text sizing/overflow
-   - Add heading to ICP section
-   - Reduce shimmer animation intensity
-   - Equalize card heights
+### Fix 1: ICP Heading
+- Add heading "Who does Mindmaker help?" above ICPSlider component
+- Location: TheProblem.tsx, above line 551
+
+### Fix 2: Shimmer Intensity
+- Reduce to single, subtle shimmer effect
+- Increase animation duration (slower = less aggressive)
+- Reduce opacity/intensity of shimmer
+- Consider disabling on mobile to save battery
+
+### Fix 3: Card Heights
+- Set `min-height` on card container to accommodate longest content
+- OR use CSS Grid with equal row heights
+
+### Fix 4: Mobile Hero Horizontal Overflow
+- Remove absolute positioning or constrain it properly
+- Ensure width constraints propagate through container chain
+- Add `overflow-x: hidden` to intermediate containers
+- Adjust font size calculation for mobile
+
+### Fix 5: Mobile Hero Vertical Clipping
+- Increase container height to accommodate animation movement
+- Adjust `overflow-hidden` to allow animation space
+- Adjust animation values or container height calculation
+
+---
+
+## Priority
+
+| Issue | Priority | Impact |
+|-------|----------|--------|
+| Mobile hero horizontal overflow | P0 | Breaks core messaging |
+| Mobile hero vertical clipping | P0 | Animation looks broken |
+| ICP heading missing | P1 | UX clarity |
+| Shimmer aggression | P2 | Visual comfort |
+| Card heights | P2 | Visual consistency |
+
+---
+
+**See Also:**
+- `ROOT_CAUSE.md` - Detailed root cause analysis
+- `MOBILE_HERO_OVERFLOW_DIAGNOSIS.md` - Technical mobile hero diagnosis
+- `project-documentation/COMMON_ISSUES.md` - Full issues list

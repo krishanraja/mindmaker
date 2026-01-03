@@ -1,6 +1,109 @@
 # History
 
-**Last Updated:** 2025-12-14
+**Last Updated:** 2026-01-03
+
+---
+
+## 2026-01-XX: Builder Profile Pipeline Fixes
+
+**What Changed:**
+- Fixed Builder Profile to use correct system prompt (removed `widgetMode: 'tryit'`)
+- Added Builder Profile mode detection in chat-with-krish edge function
+- Increased token allocation for Builder Profile (4096 tokens)
+- Improved fallback quality with LLM-generated responses instead of hardcoded templates
+
+**Why:**
+- Builder Profile was receiving wrong system prompt (Try It Widget instead of CEO-grade)
+- User complaint: outputs were generic ("Open mindset", "Willingness to learn")
+- Root cause: `widgetMode: 'tryit'` triggered wrong prompt selection in edge function
+
+**Technical Details:**
+- Frontend: Removed `widgetMode` from Builder Profile API call
+- Backend: Added mode detection from message content or explicit mode param
+- Backend: Added minimal system prompt for Builder Profile that defers to user instructions
+- Token allocation: Builder Profile 4096, Try It Widget 1024, Chat 2048
+
+**Files Modified:**
+- `src/hooks/useAssessment.ts`
+- `supabase/functions/chat-with-krish/index.ts`
+
+---
+
+## 2026-01-XX: Mobile Hero & ICP Cards Diagnosis
+
+**What Changed:**
+- Documented mobile hero text overflow issues (horizontal and vertical)
+- Documented ICP cards UX issues (missing heading, aggressive shimmer, unequal heights)
+- Created comprehensive root cause analysis
+
+**Issues Identified:**
+1. **Mobile Hero Horizontal Overflow**: Text falling off left and right sides
+2. **Mobile Hero Vertical Clipping**: Rotating text cut off during animation
+3. **ICP Cards Missing Heading**: No "Who does Mindmaker help?" above slider
+4. **ICP Cards Aggressive Shimmer**: 3 overlapping infinite animations
+5. **ICP Cards Unequal Heights**: Variable content causing different card sizes
+
+**Root Causes:**
+- Absolute positioning breaking container constraints
+- `clamp()` + fixed height + `nowrap` conflict
+- `overflow-hidden` clipping animation movement
+- No min-height on card containers
+
+**Files Created:**
+- `DIAGNOSIS.md`, `ROOT_CAUSE.md`, `MOBILE_HERO_OVERFLOW_DIAGNOSIS.md`
+
+---
+
+## 2026-01-26: SEO Implementation Complete
+
+**What Changed:**
+- Implemented comprehensive SEO (10/10 score)
+- Added structured data / Schema.org markup
+- Configured robots.txt and sitemap.xml
+- Optimized meta tags for all pages
+
+**SEO Elements Added:**
+- Meta tags and HTML head optimization
+- Open Graph and Twitter Card tags
+- JSON-LD structured data (Organization, WebSite, Service, Person, FAQ)
+- Geographic targeting
+- Performance optimization (preconnect, prefetch)
+- Mobile and accessibility meta tags
+
+**Target Keywords:**
+- no-code AI, AI for non-technical leaders, AI literacy training
+- executive AI training, AI strategy consultant
+- hands-on AI learning, practical AI implementation
+
+**Files Modified:**
+- `index.html`, `public/robots.txt`, `public/sitemap.xml`
+- SEO component added to all major pages
+
+---
+
+## 2025-01-25: Vertex AI RAG Migration
+
+**What Changed:**
+- Migrated `chat-with-krish` from OpenAI to Vertex AI RAG with Gemini 2.5 Flash
+- Kept news ticker on Lovable AI Gateway
+- Kept market sentiment on OpenAI
+- Implemented anti-fragile error handling
+
+**Why:**
+- Custom RAG corpus provides business-specific knowledge
+- Gemini 2.5 Flash offers comparable performance
+- Separation of concerns: chatbot uses custom knowledge, news uses general knowledge
+
+**Implementation Details:**
+- Service account authentication with RS256 JWT signing
+- Token caching (50-minute lifetime)
+- RAG Corpus ID: `6917529027641081856`
+- Project: `gen-lang-client-0174430158`, Region: `us-east1`
+- Fallback message provides actionable alternatives on any failure
+
+**Files Modified:**
+- `supabase/functions/chat-with-krish/index.ts` (complete rewrite)
+- `supabase/functions/_shared/vertex-client.ts` (new)
 
 ---
 
@@ -41,8 +144,22 @@
 - `src/App.tsx` (removed Toaster imports, added routes)
 - `supabase/config.toml` (added new edge function config)
 
-**Documentation Updated:**
-- `FEATURES.md`, `ARCHITECTURE.md`, `DECISIONS_LOG.md`, `HISTORY.md`
+---
+
+## 2025-12-13: Production Readiness Audit
+
+**What Changed:**
+- Removed duplicate ChatBot component from Index.tsx
+- Added React StrictMode to main.tsx
+- Fixed faqItems hoisting bug in FAQ.tsx
+- Updated SEO schema dates to 2026-12-31
+- Fixed unused imports and SPA navigation patterns
+- Added DialogDescription for accessibility
+
+**Files Modified:**
+- `src/pages/Index.tsx`, `src/main.tsx`, `src/pages/FAQ.tsx`
+- `src/pages/BuilderSession.tsx`, `src/components/ConsultationBooking.tsx`
+- `src/pages/BuilderEconomy.tsx`, `src/components/WhitepaperPopup.tsx`
 
 ---
 
@@ -66,11 +183,6 @@
 
 **Files Modified:**
 - `src/components/ProductLadder.tsx`
-
-**User Impact:**
-- "Learn More" buttons now smoothly scroll to top before navigation
-- "Book Session" button behavior unchanged (opens modal)
-- Consistent navigation experience across mobile and desktop
 
 ---
 
@@ -106,7 +218,6 @@
 - `supabase/functions/chat-with-krish/index.ts` (added logging)
 - `supabase/functions/get-market-sentiment/index.ts` (added logging)
 - `supabase/functions/get-ai-news/index.ts` (improved error messages)
-- All backend documentation files
 
 **Stripe Integration Status:**
 - Code kept but commented out
@@ -275,9 +386,41 @@
 - Urgency messaging
 - Analytics setup
 
+### Phase 6: Lead Generation (Week 4+)
+- AI Leadership Benchmark diagnostic
+- Lead intelligence system
+- Stripe hold paused for validation
+- SEO implementation complete
+
+### Phase 7: AI Backend Migration (2025-01-XX)
+- Vertex AI RAG migration
+- Custom business knowledge corpus
+- Anti-fragile error handling
+- Builder Profile pipeline fixes
+
 ---
 
 ## Major Decisions
+
+### 2026-01-XX: Builder Profile Mode Detection
+**Decision:** Detect Builder Profile mode from message content, not widgetMode  
+**Rationale:** widgetMode: 'tryit' was causing wrong system prompt selection  
+**Result:** CEO-grade Builder Profile outputs, not generic templates
+
+### 2025-01-25: Vertex AI RAG for Chatbot
+**Decision:** Use Vertex AI RAG with custom corpus instead of OpenAI  
+**Rationale:** Business-specific knowledge, existing RAG investment  
+**Result:** More relevant, contextual chatbot responses
+
+### 2025-12-14: Self-Serve Lead Gen Diagnostic
+**Decision:** Create AI Leadership Benchmark for self-serve lead qualification  
+**Rationale:** Lower friction than booking calls, provides immediate value  
+**Result:** New lead generation channel with engaged prospects
+
+### 2025-12-01: Pause Stripe $50 Hold
+**Decision:** Remove payment requirement for booking  
+**Rationale:** Reduce friction during validation phase  
+**Result:** More bookings, lead intelligence instead of payment signal
 
 ### 2025-11-24: Two-Color System
 **Decision:** Use only Ink + Mint (no gradients, no multi-color)  
@@ -308,20 +451,27 @@
 ✅ Component-first development  
 ✅ Deferring auth until needed  
 ✅ Using Calendly for scheduling  
-✅ Authorization holds over charges
+✅ Authorization holds over charges  
+✅ Self-serve diagnostic for lead gen  
+✅ Vertex AI RAG for business-specific knowledge  
+✅ Anti-fragile error handling
 
 ### What Changed
 🔄 Initial multi-CTA approach → Single modal entry  
-🔄 Direct Calendly links → Stripe-first flow  
+🔄 Direct Calendly links → Stripe-first flow → Stripe paused  
 🔄 Complex color system → Two-color simplicity  
-🔄 Generic CTAs → Program-specific qualification
+🔄 Generic CTAs → Program-specific qualification  
+🔄 OpenAI chatbot → Vertex AI RAG chatbot  
+🔄 widgetMode for Builder Profile → mode detection from content
 
 ### What to Avoid
 ❌ Hardcoding colors (use tokens)  
 ❌ Over-engineering booking flow  
 ❌ Multiple entry points (confusing)  
 ❌ Building features before needed  
-❌ Skipping mobile testing
+❌ Skipping mobile testing  
+❌ Using wrong widgetMode for different tools  
+❌ Generic fallback templates (use LLM-generated)
 
 ---
 
@@ -346,28 +496,14 @@
 5. Ship and iterate.
 ```
 
----
-
-## Metrics Evolution
-
-### Week 1
-- Landing page live
-- 0 bookings (no booking flow)
-
-### Week 2
-- Booking flow live
-- First consultation booked
-- Chatbot conversations starting
-
-### Week 3
-- Stripe integration live
-- CTA conversion improving
-- Program qualification working
-
-### Week 4 (Current)
-- CTA flow redesigned
-- Tracking program interests
-- Holiday campaign live
+### Anti-Fragile Pattern
+```
+1. Always have fallback behavior
+2. Log all failure points
+3. Graceful degradation on errors
+4. User never sees broken UI
+5. Monitor and iterate
+```
 
 ---
 

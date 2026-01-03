@@ -1,7 +1,9 @@
 # ROOT CAUSE ANALYSIS
 
-**Date:** 2025-01-XX  
-**Related:** DIAGNOSIS.md
+**Date:** 2026-01-03  
+**Related:** DIAGNOSIS.md, MOBILE_HERO_OVERFLOW_DIAGNOSIS.md
+
+---
 
 ## Issue 1: ICP Cards - Missing Heading
 
@@ -132,14 +134,6 @@ The two-line layout uses absolute positioning with fixed heights, but doesn't ac
 
 ---
 
-## Summary of Root Causes
-
-1. **ICP Heading**: Missing contextual heading (simple addition)
-2. **Shimmer Aggression**: Too many simultaneous animations (reduce to one, slower)
-3. **Card Heights**: No height constraint (add min-height or grid)
-4. **Mobile Text Truncation**: clamp() + fixed height + nowrap conflict (adjust sizing strategy)
-5. **Layout Architecture**: Fixed heights don't account for actual text rendering (use more flexible approach)
-
 ## Issue 6: Dark Mode Text Contrast (TheProblem Section)
 
 **Root Cause:**
@@ -166,11 +160,31 @@ In dark mode:
 
 ---
 
+## Summary of Root Causes
+
+| # | Issue | Root Cause | Fix |
+|---|-------|------------|-----|
+| 1 | ICP Heading | Missing contextual heading | Add heading |
+| 2 | Shimmer Aggression | 3 simultaneous infinite animations | Reduce to 1, slower |
+| 3 | Card Heights | No height constraint | Add min-height or grid |
+| 4 | Mobile Text Truncation | clamp() + fixed height + nowrap conflict | Adjust sizing strategy |
+| 5 | Layout Architecture | Fixed heights don't account for actual text | Use flexible approach |
+| 6 | Dark Mode Contrast | Insufficient contrast in dark theme | Lighten text colors |
+
+---
+
 ## Priority
 
-- **P0**: Mobile hero text truncation (breaks core messaging) - CONFIRMED: Text truncated by container overflow
-- **P1**: Dark mode text contrast (all text in "Boss the boardroom" section needs lightening)
-- **P1**: ICP cards heading (UX clarity)
-- **P2**: Shimmer aggression (too fast, too bright, too many overlapping effects - all of the above)
-- **P2**: Card heights (need to investigate - may be container or content issue)
+| Issue | Priority | Impact |
+|-------|----------|--------|
+| Mobile hero text truncation | P0 | Breaks core messaging |
+| Dark mode text contrast | P1 | Readability in dark theme |
+| ICP cards heading | P1 | UX clarity |
+| Shimmer aggression | P2 | Visual comfort |
+| Card heights | P2 | Visual consistency |
 
+---
+
+**See Also:**
+- `DIAGNOSIS.md` - Problem summary and architecture
+- `MOBILE_HERO_OVERFLOW_DIAGNOSIS.md` - Detailed mobile hero analysis

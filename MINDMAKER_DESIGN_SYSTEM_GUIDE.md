@@ -321,6 +321,56 @@ color: hsl(var(--primary)); /* Perfect color resolution */
 
 ---
 
+## 🚪 TOOL DRAWER HEADER PATTERN
+
+### The "Old Website X Button" Crisis
+**What Happened:** AI Decision Helper used a ghost icon-only X button while other tools used a proper labeled button  
+**Root Cause:** Inconsistent inline implementations across tool components  
+**Resolution:** Created shared `ToolDrawerHeader` component that ALL tools must use
+
+### The Correct Pattern - ALWAYS USE THIS
+```tsx
+import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
+
+// In your mobile tool layout:
+<ToolDrawerHeader 
+  title="Your Tool Name"
+  onClose={onClose}
+/>
+```
+
+### Close Button Specification
+**NEVER** use `variant="ghost"` + `size="icon"` for drawer close buttons.
+
+**ALWAYS** use this pattern:
+```tsx
+<Button 
+  variant="outline"      // NOT ghost
+  size="sm"              // NOT icon
+  onClick={onClose}
+  className="min-w-[44px] min-h-[44px] touch-target gap-1.5 px-3"
+  aria-label={`Close ${title}`}
+>
+  <X className="h-4 w-4" />                    // NOT h-5 w-5
+  <span className="text-xs font-medium">Close</span>  // MUST have text label
+</Button>
+```
+
+### Tools Using Shared Header
+All 4 drawer tools MUST use `ToolDrawerHeader`:
+- Builder Profile Quiz
+- AI Decision Helper  
+- Friction Map Builder
+- AI Portfolio Builder
+
+### Why This Matters
+- **Accessibility**: Text label + icon is more accessible than icon-only
+- **Touch targets**: 44px minimum for mobile
+- **Consistency**: Users learn ONE pattern across all tools
+- **Professional appearance**: Avoids "old website" aesthetic
+
+---
+
 ## 🚨 CRITICAL "NEVER DO THIS" LIST
 
 ### ❌ CSS SYNTAX KILLERS

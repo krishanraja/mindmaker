@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePortfolio } from '@/hooks/usePortfolio';
-import { TrendingUp, Download, ArrowRight, Copy, Check, X, Mic } from 'lucide-react';
+import { TrendingUp, Download, ArrowRight, Copy, Check, Mic } from 'lucide-react';
 import { useSessionData } from '@/contexts/SessionDataContext';
 import { generatePortfolioPDF } from '@/utils/pdfGenerator';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
+import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
 import { openCalendlyPopup } from '@/utils/calendly';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { VoiceInputButton } from '@/components/ui/VoiceInputButton';
@@ -365,26 +366,10 @@ Return ONLY valid JSON array, no markdown or explanation.`;
   if (isMobile) {
     return (
       <div className="flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b shrink-0">
-          <div className="flex items-center gap-3">
-            <MindmakerIcon size={24} />
-            <div>
-              <h2 className="font-semibold text-base">Model out your starting points</h2>
-              <p className="text-xs text-muted-foreground">Powered by Mindmaker</p>
-            </div>
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={onClose || (() => {})}
-            className="min-w-[44px] min-h-[44px] touch-target gap-1.5 px-3"
-            aria-label="Close portfolio builder"
-          >
-            <X className="h-4 w-4" />
-            <span className="text-xs font-medium">Close</span>
-          </Button>
-        </div>
+        <ToolDrawerHeader 
+          title="AI Portfolio Builder"
+          onClose={onClose}
+        />
 
         {/* Content */}
         <div className="flex-1 flex flex-col overflow-hidden min-h-0">

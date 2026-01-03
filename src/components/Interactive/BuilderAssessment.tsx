@@ -1,12 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAssessment } from '@/hooks/useAssessment';
-import { ArrowRight, RotateCcw, Award, CheckCircle2, X } from 'lucide-react';
+import { ArrowRight, RotateCcw, Award, CheckCircle2 } from 'lucide-react';
 import { useSessionData } from '@/contexts/SessionDataContext';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon } from '@/components/ui/MindmakerIcon';
+import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
 import { openCalendlyPopup } from '@/utils/calendly';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { VoiceInputButton } from '@/components/ui/VoiceInputButton';
@@ -238,26 +239,10 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
   if (isMobile && !compact) {
     return (
       <div className="flex flex-col flex-1 min-h-0 h-full overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b shrink-0">
-          <div className="flex items-center gap-3">
-            <MindmakerIcon size={24} />
-            <div>
-              <h2 className="font-semibold text-base">Builder Profile Quiz</h2>
-              <p className="text-xs text-muted-foreground">Powered by Mindmaker</p>
-            </div>
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={onClose || (() => {})}
-            className="min-w-[44px] min-h-[44px] touch-target gap-1.5 px-3"
-            aria-label="Close quiz"
-          >
-            <X className="h-4 w-4" />
-            <span className="text-xs font-medium">Close</span>
-          </Button>
-        </div>
+        <ToolDrawerHeader 
+          title="Builder Profile Quiz"
+          onClose={onClose}
+        />
 
         {/* Progress */}
         {!profile && !isGenerating && (

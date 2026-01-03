@@ -1,6 +1,6 @@
 # Architecture
 
-**Last Updated:** 2025-12-14
+**Last Updated:** 2026-01-03
 
 ---
 
@@ -15,6 +15,8 @@
 - Framer Motion (animations)
 - React Router DOM 6.x
 - TanStack Query (data fetching)
+- React Helmet (SEO)
+- Zod (validation)
 
 **Backend:**
 - Supabase Edge Functions (Deno runtime)
@@ -29,7 +31,8 @@
 - Resend (email delivery)
 
 **Hosting & Deployment:**
-- Lovable Cloud (auto-deploy)
+- Lovable Cloud (auto-deploy) / Vercel (frontend)
+- Supabase Cloud (edge functions)
 - GitHub integration (bidirectional sync)
 
 ---
@@ -49,6 +52,9 @@ mindmaker/
 │   │   ├── ConsultationBooking.tsx
 │   │   ├── Navigation.tsx
 │   │   ├── Footer.tsx
+│   │   ├── NewHero.tsx      # Main hero section
+│   │   ├── TheProblem.tsx   # ICP cards section
+│   │   ├── ProductLadder.tsx
 │   │   └── ...
 │   ├── pages/               # Route pages
 │   │   ├── Index.tsx        # Landing page
@@ -57,11 +63,18 @@ mindmaker/
 │   │   ├── LeadershipLab.tsx
 │   │   ├── PartnerProgram.tsx
 │   │   ├── BuilderEconomy.tsx
+│   │   ├── LeadershipInsights.tsx  # AI Leadership Benchmark
 │   │   ├── FAQ.tsx
 │   │   ├── Privacy.tsx
 │   │   ├── Terms.tsx
+│   │   ├── Contact.tsx
 │   │   └── NotFound.tsx
 │   ├── hooks/               # Custom React hooks
+│   │   ├── useAssessment.ts      # Builder Profile logic
+│   │   ├── useLeadershipInsights.ts  # Leadership diagnostic logic
+│   │   └── ...
+│   ├── contexts/            # React contexts
+│   │   └── SessionDataContext.tsx
 │   ├── lib/                 # Utilities
 │   ├── integrations/supabase/ # Supabase client
 │   ├── index.css            # Design system tokens
@@ -69,15 +82,20 @@ mindmaker/
 │   └── main.tsx             # Entry point
 ├── supabase/
 │   ├── functions/           # Edge functions
-│   │   ├── create-consultation-hold/ (paused)
+│   │   ├── _shared/         # Shared utilities
+│   │   │   └── vertex-client.ts  # Vertex AI RAG client
 │   │   ├── chat-with-krish/
 │   │   ├── get-ai-news/
 │   │   ├── get-market-sentiment/
 │   │   ├── send-lead-email/
 │   │   ├── send-contact-email/
-│   │   └── send-leadership-insights-email/
+│   │   ├── send-leadership-insights-email/
+│   │   └── create-consultation-hold/ (paused)
 │   └── config.toml          # Supabase config
 ├── public/                  # Static assets
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   └── ...
 ├── project-documentation/   # This documentation
 ├── tailwind.config.ts       # Tailwind config
 ├── vite.config.ts           # Vite config
@@ -86,10 +104,33 @@ mindmaker/
 
 ---
 
+## Application Routes
+
+```typescript
+// src/App.tsx
+<Route path="/" element={<Index />} />
+<Route path="/builder-session" element={<BuilderSession />} />
+<Route path="/builder-sprint" element={<BuilderSprint />} />
+<Route path="/leadership-lab" element={<LeadershipLab />} />
+<Route path="/portfolio-program" element={<PartnerProgram />} />
+<Route path="/builder-economy" element={<BuilderEconomy />} />
+<Route path="/privacy" element={<Privacy />} />
+<Route path="/terms" element={<Terms />} />
+<Route path="/faq" element={<FAQ />} />
+<Route path="/contact" element={<Contact />} />
+<Route path="/leaders" element={<LeadershipInsights />} />
+<Route path="/leadership-insights" element={<LeadershipInsights />} />
+<Route path="/builder" element={<Navigate to="/builder-session" />} />
+<Route path="/partner-program" element={<Navigate to="/portfolio-program" />} />
+<Route path="*" element={<NotFound />} />
+```
+
+---
+
 ## Data Flow
 
-### Booking Flow (Critical Path)
-**Status:** Stripe hold paused as of 2025-12-01 - Direct Calendly booking
+### Booking Flow (Current - As of 2025-12-01)
+**Status:** Stripe hold paused - Direct Calendly booking
 
 ```
 1. User clicks CTA
@@ -118,12 +159,6 @@ mindmaker/
 
 7. User books time on Calendly
    └─> Calendly sends confirmation email
-
-**Previously (Stripe hold flow, paused):**
-- Step 3 called create-consultation-hold
-- Created $50 authorization hold via Stripe
-- Redirected to Calendly after payment
-- Manual capture when user proceeded
 ```
 
 ### Leadership Insights Flow
@@ -156,6 +191,30 @@ mindmaker/
    └─> Resend: Krish receives lead notification
 ```
 
+### Builder Profile Flow
+```
+1. User completes assessment questions
+   └─> Answers stored in React state
+
+2. Frontend calls edge function
+   └─> supabase.functions.invoke('chat-with-krish', {
+         body: { messages: [{ role: 'user', content: '...detailed prompt...' }] }
+       })
+   └─> NO widgetMode sent (was bug, now fixed)
+
+3. Edge function detects Builder Profile mode
+   └─> Checks message content for patterns
+   └─> Uses minimal system prompt (defers to user instructions)
+
+4. Edge function calls Vertex AI RAG
+   └─> Gemini 2.5 Flash + custom RAG corpus
+   └─> maxOutputTokens: 4096 (increased for CEO-grade output)
+
+5. Response parsed and displayed
+   └─> JSON extraction with multiple strategies
+   └─> Fallback to LLM-generated or score-based profile if parsing fails
+```
+
 ### Chatbot Flow
 ```
 1. User clicks chat button
@@ -166,7 +225,7 @@ mindmaker/
 
 3. Frontend calls edge function
    └─> supabase.functions.invoke('chat-with-krish', {
-         body: { messages: conversationHistory }
+         body: { messages: conversationHistory, widgetMode: 'tryit' or undefined }
        })
 
 4. Edge function authenticates with Google
@@ -254,11 +313,6 @@ serve(async (req) => {
 });
 ```
 
-### Deployment
-- Auto-deploy on code push to GitHub
-- Deploy time: 30-60 seconds
-- Logs available in Lovable Cloud console
-
 ### Current Functions
 
 #### `chat-with-krish`
@@ -270,8 +324,27 @@ serve(async (req) => {
 - Service account authentication (RS256 JWT signing)
 - Token caching (50-minute lifetime)
 - RAG corpus integration for business-specific knowledge
+- Mode detection: Builder Profile, Try It Widget, Chat
 - Comprehensive error handling with graceful fallbacks
 - Anti-fragile design: always returns usable content
+
+**Mode Detection:**
+```typescript
+const isBuilderProfile = mode === 'builder-profile' || 
+  (messages[0]?.content?.includes('AI readiness assessment') || 
+   messages[0]?.content?.includes('Builder Profile') ||
+   messages[0]?.content?.includes('CEO/COO/CPO\'s AI readiness'));
+```
+
+**System Prompt Selection:**
+- Builder Profile → Minimal prompt (defers to user instructions)
+- Try It Widget → TRYIT_SYSTEM_PROMPT
+- Chat → CHAT_SYSTEM_PROMPT
+
+**Token Allocation:**
+- Builder Profile: 4096 tokens
+- Try It Widget: 1024 tokens
+- Chat: 2048 tokens
 
 **Request Format:**
 ```typescript
@@ -280,6 +353,8 @@ serve(async (req) => {
     role: 'user' | 'assistant' | 'system';
     content: string;
   }>;
+  widgetMode?: 'tryit';  // Optional
+  mode?: 'builder-profile' | 'tryit' | 'chat';  // Optional
 }
 ```
 
@@ -484,6 +559,14 @@ portfolio_companies (
   name text,
   status text
 )
+
+profiles (
+  id uuid primary key,
+  user_id uuid references users,
+  assessment_answers jsonb,
+  profile_result jsonb,
+  created_at timestamp
+)
 ```
 
 ---
@@ -499,6 +582,10 @@ portfolio_companies (
 **Form State:** React Hook Form (validation, submission)
 
 **Server State:** TanStack Query (caching, refetching)
+
+**Context State:**
+- `SessionDataContext` - Session engagement tracking
+- `ThemeProvider` - Light/dark theme
 
 ---
 
@@ -551,7 +638,7 @@ try {
 ## Security
 
 ### Environment Variables
-**Secrets stored in Lovable Cloud:**
+**Secrets stored in Supabase/Lovable Cloud:**
 - `STRIPE_SECRET_KEY` (Stripe API key)
 - `GOOGLE_SERVICE_ACCOUNT_KEY` (Google service account JSON for Vertex AI RAG)
 - `OPENAI_API_KEY` (OpenAI API key for market sentiment, company research)
@@ -572,8 +659,9 @@ try {
 
 ### Input Validation
 - Frontend: React Hook Form + Zod schemas
-- Backend: Manual validation in edge functions
+- Backend: Zod validation in edge functions
 - Stripe: Handled by Stripe Checkout
+- HTML Escaping: XSS prevention in email templates
 
 ---
 
@@ -592,9 +680,9 @@ npm run build        # Vite build → dist/
 ### Deploy
 ```
 1. Push to GitHub (any branch)
-   └─> Auto-sync to Lovable
+   └─> Auto-sync to Lovable/Vercel
    
-2. Lovable builds frontend
+2. Frontend builds
    └─> Deploys to CDN
    
 3. Edge functions auto-deploy
@@ -615,6 +703,7 @@ npm run build        # Vite build → dist/
 
 ### Edge Functions
 - Lovable Cloud logs (real-time)
+- Supabase Dashboard logs
 - `console.log` statements (visible in logs)
 - Error responses (returned to frontend)
 
