@@ -38,9 +38,10 @@ const Navigation = () => {
     { 
       label: "Learning & Content", 
       dropdown: [
-        { label: "Lightning Lessons", type: "lessons" },
-        { label: "Podcast", href: "https://www.thebuildereconomy.com", external: true },
-        { label: "Blog", href: "https://content.themindmaker.ai", external: true },
+        { label: "Free Lightning Lessons", type: "lessons" },
+        { label: "Cohorts", href: "https://maven.com/aimindmaker/ai-literacy-to-strategy-for-leaders", external: true },
+        { label: "Live Learnings", href: "https://www.content.themindmaker.ai", external: true },
+        { label: "Blog", href: "/blog" },
       ]
     },
     { 
@@ -268,7 +269,7 @@ const Navigation = () => {
                                     text-base font-medium text-ink dark:text-white 
                                     hover:bg-mint/10 rounded-md transition-colors"
                                 >
-                                  Lightning Lessons
+                                  Free Lightning Lessons
                                   <ChevronDown className={`h-4 w-4 transition-transform ${lessonsExpanded ? 'rotate-180' : ''}`} />
                                 </button>
                                 

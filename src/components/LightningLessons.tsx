@@ -104,11 +104,11 @@ export const LightningLessons = () => {
                   <Button 
                     asChild 
                     size="sm"
-                    className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold mt-auto"
+                    className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold mt-auto text-xs px-2"
                   >
                     <a href={lesson.url} target="_blank" rel="noopener noreferrer">
-                      {lesson.cta}
-                      <ExternalLink className="ml-2 h-3.5 w-3.5" />
+                      <span className="truncate">{lesson.cta}</span>
+                      <ExternalLink className="ml-1.5 h-3 w-3 shrink-0" />
                     </a>
                   </Button>
                 </div>

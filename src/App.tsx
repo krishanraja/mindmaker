@@ -14,6 +14,8 @@ import Terms from "./pages/Terms";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import LeadershipInsights from "./pages/LeadershipInsights";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             {/* Leadership Insights Diagnostic - accessible at /leaders */}
             <Route path="/leaders" element={<LeadershipInsights />} />
             <Route path="/leadership-insights" element={<LeadershipInsights />} />
