@@ -49,6 +49,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Processing contact form submission:", { name, email });
 
+    // Extract additional fields if present
+    const company = body.company || '';
+    const role = body.role || '';
+    const interest = body.interest || '';
+
     // Send email to Krish using Resend API
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -59,15 +64,72 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         from: "Mindmaker Contact <contact@themindmaker.ai>",
         to: ["krish@themindmaker.ai"],
-        subject: `Contact Form: ${name}`,
+        reply_to: email,
+        subject: `📬 New Contact: ${name}${company ? ` from ${company}` : ''}${interest ? ` - ${interest}` : ''}`,
         html: `
-          <h1>New Contact Form Submission</h1>
-          <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p><strong>Message:</strong></p>
-          <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
-          <hr>
-          <p style="color: #666; font-size: 12px;">Sent from themindmaker.ai contact form</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 0; background-color: #f7f7f5;">
+  <div style="background: linear-gradient(135deg, #0e1a2b 0%, #1a2b3d 100%); padding: 32px 24px; text-align: center;">
+    <h1 style="color: #ffffff; margin: 0 0 8px 0; font-size: 24px; font-weight: 700;">New Contact Form Submission</h1>
+    <p style="color: #7ef4c2; margin: 0; font-size: 14px;">themindmaker.ai/contact</p>
+  </div>
+  
+  <div style="background: #ffffff; padding: 32px 24px; border-radius: 0 0 8px 8px;">
+    <div style="background: #f7f7f5; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Contact Details</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #666; font-size: 14px; width: 100px;">Name</td>
+          <td style="padding: 8px 0; color: #0e1a2b; font-size: 14px; font-weight: 600;">${escapeHtml(name)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #666; font-size: 14px;">Email</td>
+          <td style="padding: 8px 0; color: #0e1a2b; font-size: 14px;"><a href="mailto:${escapeHtml(email)}" style="color: #0e1a2b; text-decoration: underline;">${escapeHtml(email)}</a></td>
+        </tr>
+        ${company ? `
+        <tr>
+          <td style="padding: 8px 0; color: #666; font-size: 14px;">Company</td>
+          <td style="padding: 8px 0; color: #0e1a2b; font-size: 14px;">${escapeHtml(company)}</td>
+        </tr>
+        ` : ''}
+        ${role ? `
+        <tr>
+          <td style="padding: 8px 0; color: #666; font-size: 14px;">Role</td>
+          <td style="padding: 8px 0; color: #0e1a2b; font-size: 14px;">${escapeHtml(role)}</td>
+        </tr>
+        ` : ''}
+        ${interest ? `
+        <tr>
+          <td style="padding: 8px 0; color: #666; font-size: 14px;">Interest</td>
+          <td style="padding: 8px 0; color: #0e1a2b; font-size: 14px;"><span style="background: #7ef4c2; color: #0e1a2b; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${escapeHtml(interest)}</span></td>
+        </tr>
+        ` : ''}
+      </table>
+    </div>
+    
+    <div style="margin-bottom: 24px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">Message</h2>
+      <div style="background: #fafafa; border-left: 4px solid #7ef4c2; padding: 16px 20px; border-radius: 0 8px 8px 0;">
+        <p style="margin: 0; color: #333; font-size: 14px; white-space: pre-wrap;">${escapeHtml(message).replace(/\n/g, '<br>')}</p>
+      </div>
+    </div>
+    
+    <div style="text-align: center; padding-top: 16px; border-top: 1px solid #e5e5e3;">
+      <a href="mailto:${escapeHtml(email)}" style="display: inline-block; background: #0e1a2b; color: #ffffff; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 8px;">Reply to ${escapeHtml(name.split(' ')[0])}</a>
+    </div>
+  </div>
+  
+  <div style="text-align: center; padding: 24px; color: #999; font-size: 12px;">
+    <p style="margin: 0;">Sent from the contact form at <a href="https://www.themindmaker.ai/contact" style="color: #666;">themindmaker.ai</a></p>
+    <p style="margin: 8px 0 0 0;">© ${new Date().getFullYear()} Mindmaker LLC</p>
+  </div>
+</body>
+</html>
         `,
       }),
     });

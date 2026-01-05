@@ -162,7 +162,7 @@ ${formData.message}
                     asChild
                   >
                     <a 
-                      href="https://www.linkedin.com/in/krishraja/" 
+                      href="https://www.linkedin.com/in/krish-raja/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                     >

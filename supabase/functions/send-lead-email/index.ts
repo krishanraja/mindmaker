@@ -185,38 +185,103 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
       "not-sure": "Not sure yet"
     };
 
-    let emailHtml = `
-      <h1>🎯 New Lead from TheMindMaker.ai</h1>
-      
-      <h2>Lead Details</h2>
-      <ul>
-        <li><strong>Name:</strong> ${escapeHtml(name)}</li>
-        <li><strong>Job Title:</strong> ${escapeHtml(jobTitle)}</li>
-        <li><strong>Email:</strong> ${escapeHtml(email)}</li>
-        <li><strong>Interest:</strong> ${escapeHtml(programLabels[selectedProgram] || selectedProgram)}</li>
-      </ul>
+    // Calculate engagement score (0-100)
+    const engagementFactors = [
+      sessionData.frictionMap ? 25 : 0,
+      sessionData.portfolioBuilder && sessionData.portfolioBuilder.selectedTasks.length > 0 ? 25 : 0,
+      sessionData.assessment ? 20 : 0,
+      sessionData.tryItWidget && sessionData.tryItWidget.challenges.length > 0 ? 15 : 0,
+      Math.min(sessionData.timeOnSite / 180 * 10, 10), // Max 10 points for 3+ min
+      Math.min(sessionData.scrollDepth / 100 * 5, 5), // Max 5 points for 100% scroll
+    ];
+    const engagementScore = Math.round(engagementFactors.reduce((a, b) => a + b, 0));
+    const engagementLevel = engagementScore >= 70 ? 'Hot 🔥' : engagementScore >= 40 ? 'Warm ☀️' : 'New 🌱';
 
-      <h2>🔍 Company Research</h2>
-      <ul>
-        <li><strong>Company:</strong> ${escapeHtml(companyResearch.companyName)}</li>
-        <li><strong>Domain:</strong> ${escapeHtml(domain)}</li>
-        <li><strong>Industry:</strong> ${escapeHtml(companyResearch.industry)}</li>
-        <li><strong>Size:</strong> ${escapeHtml(companyResearch.companySize)}</li>
-        <li><strong>Recent News:</strong> ${escapeHtml(companyResearch.latestNews)}</li>
-        <li><strong>Suggested Scope:</strong> ${escapeHtml(companyResearch.suggestedScope)}</li>
-        <li><strong>Confidence:</strong> ${escapeHtml(companyResearch.confidence)}</li>
-      </ul>
+    const timeMinutes = Math.floor(sessionData.timeOnSite / 60);
+    const timeSeconds = sessionData.timeOnSite % 60;
+
+    let emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 700px; margin: 0 auto; padding: 0; background-color: #f7f7f5;">
+  <div style="background: linear-gradient(135deg, #0e1a2b 0%, #1a2b3d 100%); padding: 32px 24px;">
+    <div style="text-align: center;">
+      <p style="color: #7ef4c2; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">New Lead Alert</p>
+      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">${escapeHtml(name)}</h1>
+      <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0 0; font-size: 16px;">${escapeHtml(jobTitle || 'Role not specified')} at ${escapeHtml(companyResearch.companyName)}</p>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 24px; margin-top: 24px;">
+      <div style="text-align: center;">
+        <p style="color: rgba(255,255,255,0.6); margin: 0; font-size: 11px; text-transform: uppercase;">Engagement</p>
+        <p style="color: #7ef4c2; margin: 4px 0 0 0; font-size: 18px; font-weight: 700;">${engagementLevel}</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="color: rgba(255,255,255,0.6); margin: 0; font-size: 11px; text-transform: uppercase;">Score</p>
+        <p style="color: #ffffff; margin: 4px 0 0 0; font-size: 18px; font-weight: 700;">${engagementScore}/100</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="color: rgba(255,255,255,0.6); margin: 0; font-size: 11px; text-transform: uppercase;">Interest</p>
+        <p style="color: #ffffff; margin: 4px 0 0 0; font-size: 18px; font-weight: 700;">${escapeHtml(programLabels[selectedProgram] || selectedProgram)}</p>
+      </div>
+    </div>
+  </div>
+  
+  <div style="background: #ffffff; padding: 32px 24px;">
+    <!-- Quick Actions -->
+    <div style="text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e5e3;">
+      <a href="mailto:${escapeHtml(email)}" style="display: inline-block; background: #0e1a2b; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 8px;">Email ${escapeHtml(name.split(' ')[0])}</a>
+      <a href="https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(name + ' ' + companyResearch.companyName)}" style="display: inline-block; background: #0077b5; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Find on LinkedIn</a>
+    </div>
+
+    <!-- Company Research -->
+    <div style="background: #f7f7f5; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 16px; font-weight: 600; display: flex; align-items: center;">
+        <span style="margin-right: 8px;">🔍</span> Company Intelligence
+      </h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 10px 0; color: #666; font-size: 13px; width: 120px; vertical-align: top;">Company</td>
+          <td style="padding: 10px 0; color: #0e1a2b; font-size: 13px; font-weight: 600;">${escapeHtml(companyResearch.companyName)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; font-size: 13px; vertical-align: top;">Industry</td>
+          <td style="padding: 10px 0; color: #0e1a2b; font-size: 13px;">${escapeHtml(companyResearch.industry)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; font-size: 13px; vertical-align: top;">Size</td>
+          <td style="padding: 10px 0; color: #0e1a2b; font-size: 13px;"><span style="background: #e8f5f0; color: #0e1a2b; padding: 3px 10px; border-radius: 10px; font-size: 12px;">${escapeHtml(companyResearch.companySize)}</span></td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; font-size: 13px; vertical-align: top;">Latest News</td>
+          <td style="padding: 10px 0; color: #0e1a2b; font-size: 13px;">${escapeHtml(companyResearch.latestNews)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; font-size: 13px; vertical-align: top;">Suggested Scope</td>
+          <td style="padding: 10px 0; color: #0e1a2b; font-size: 13px; font-style: italic;">"${escapeHtml(companyResearch.suggestedScope)}"</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; font-size: 13px; vertical-align: top;">Confidence</td>
+          <td style="padding: 10px 0; font-size: 13px;">
+            <span style="background: ${companyResearch.confidence === 'high' ? '#22c55e' : companyResearch.confidence === 'medium' ? '#f59e0b' : '#ef4444'}; color: #fff; padding: 3px 10px; border-radius: 10px; font-size: 11px; text-transform: uppercase;">${escapeHtml(companyResearch.confidence)}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
     `;
 
     // Add session engagement data
     if (sessionData.frictionMap) {
       emailHtml += `
-        <h2>🗺️ Friction Map (Used)</h2>
-        <ul>
-          <li><strong>Problem:</strong> "${escapeHtml(sessionData.frictionMap.problem)}"</li>
-          <li><strong>Estimated Time Savings:</strong> ${sessionData.frictionMap.timeSaved}h/week</li>
-          <li><strong>Tools Recommended:</strong> ${sessionData.frictionMap.toolRecommendations.map(t => escapeHtml(t)).join(", ")}</li>
-        </ul>
+    <div style="background: #fff8e6; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #f59e0b;">
+      <h3 style="color: #92400e; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">🗺️ Used Friction Map Tool</h3>
+      <p style="margin: 0 0 8px 0; color: #451a03; font-size: 14px;"><strong>Problem:</strong> "${escapeHtml(sessionData.frictionMap.problem)}"</p>
+      <p style="margin: 0 0 8px 0; color: #451a03; font-size: 14px;"><strong>Potential Savings:</strong> ${sessionData.frictionMap.timeSaved}h/week</p>
+      <p style="margin: 0; color: #451a03; font-size: 14px;"><strong>Tools:</strong> ${sessionData.frictionMap.toolRecommendations.map(t => escapeHtml(t)).join(", ")}</p>
+    </div>
       `;
     }
 
@@ -225,47 +290,67 @@ If you cannot find reliable, current information, say "Unable to verify" rather 
         `${escapeHtml(t.name)} (${t.hours}h/week)`
       ).join(", ");
       emailHtml += `
-        <h2>📊 Portfolio Builder (Used)</h2>
-        <ul>
-          <li><strong>Tasks Selected:</strong> ${tasks}</li>
-          <li><strong>Total Time Savings:</strong> ${sessionData.portfolioBuilder.totalTimeSaved}h/week</li>
-          <li><strong>Total Cost Savings:</strong> $${sessionData.portfolioBuilder.totalCostSavings.toLocaleString()}/month</li>
-        </ul>
+    <div style="background: #e8f5f0; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #7ef4c2;">
+      <h3 style="color: #0e1a2b; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">📊 Used Portfolio Builder</h3>
+      <p style="margin: 0 0 8px 0; color: #0e1a2b; font-size: 14px;"><strong>Tasks:</strong> ${tasks}</p>
+      <p style="margin: 0 0 8px 0; color: #0e1a2b; font-size: 14px;"><strong>Time Savings:</strong> ${sessionData.portfolioBuilder.totalTimeSaved}h/week</p>
+      <p style="margin: 0; color: #0e1a2b; font-size: 14px;"><strong>Cost Savings:</strong> $${sessionData.portfolioBuilder.totalCostSavings.toLocaleString()}/month</p>
+    </div>
       `;
     }
 
     if (sessionData.assessment) {
       emailHtml += `
-        <h2>✅ Assessment (Completed)</h2>
-        <ul>
-          <li><strong>Profile Type:</strong> ${escapeHtml(sessionData.assessment.profileType)}</li>
-          <li><strong>Description:</strong> ${escapeHtml(sessionData.assessment.profileDescription)}</li>
-          <li><strong>Recommended Product:</strong> ${escapeHtml(sessionData.assessment.recommendedProduct)}</li>
-        </ul>
+    <div style="background: #eff6ff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #3b82f6;">
+      <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">✅ Completed Assessment</h3>
+      <p style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 14px;"><strong>Profile:</strong> ${escapeHtml(sessionData.assessment.profileType)}</p>
+      <p style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 14px;">${escapeHtml(sessionData.assessment.profileDescription)}</p>
+      <p style="margin: 0; color: #1e3a8a; font-size: 14px;"><strong>Recommended:</strong> ${escapeHtml(sessionData.assessment.recommendedProduct)}</p>
+    </div>
       `;
     }
 
     if (sessionData.tryItWidget && sessionData.tryItWidget.challenges.length > 0) {
       const lastChallenge = sessionData.tryItWidget.challenges[sessionData.tryItWidget.challenges.length - 1];
       emailHtml += `
-        <h2>💡 Try It Widget (Used ${sessionData.tryItWidget.challenges.length}x)</h2>
-        <ul>
-          <li><strong>Most Recent Challenge:</strong> "${escapeHtml(lastChallenge.input)}"</li>
-          <li><strong>Response:</strong> "${escapeHtml(lastChallenge.response.substring(0, 150))}..."</li>
-        </ul>
+    <div style="background: #fdf4ff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #a855f7;">
+      <h3 style="color: #7e22ce; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">💡 Used Try It Widget (${sessionData.tryItWidget.challenges.length}x)</h3>
+      <p style="margin: 0 0 8px 0; color: #581c87; font-size: 14px;"><strong>Last Challenge:</strong> "${escapeHtml(lastChallenge.input)}"</p>
+      <p style="margin: 0; color: #581c87; font-size: 13px; font-style: italic;">"${escapeHtml(lastChallenge.response.substring(0, 200))}..."</p>
+    </div>
       `;
     }
 
     // Engagement signals
-    const timeMinutes = Math.floor(sessionData.timeOnSite / 60);
-    const timeSeconds = sessionData.timeOnSite % 60;
     emailHtml += `
-      <h2>📈 Engagement Signals</h2>
-      <ul>
-        <li><strong>Pages Visited:</strong> ${sessionData.pagesVisited.join(", ") || "Homepage only"}</li>
-        <li><strong>Time on Site:</strong> ${timeMinutes}m ${timeSeconds}s</li>
-        <li><strong>Scroll Depth:</strong> ${sessionData.scrollDepth}%</li>
-      </ul>
+    <div style="background: #f7f7f5; border-radius: 12px; padding: 24px;">
+      <h3 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 14px; font-weight: 600;">📈 Session Analytics</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; text-align: center;">
+        <div>
+          <p style="color: #666; margin: 0; font-size: 11px; text-transform: uppercase;">Time on Site</p>
+          <p style="color: #0e1a2b; margin: 4px 0 0 0; font-size: 20px; font-weight: 700;">${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}</p>
+        </div>
+        <div>
+          <p style="color: #666; margin: 0; font-size: 11px; text-transform: uppercase;">Scroll Depth</p>
+          <p style="color: #0e1a2b; margin: 4px 0 0 0; font-size: 20px; font-weight: 700;">${sessionData.scrollDepth}%</p>
+        </div>
+        <div>
+          <p style="color: #666; margin: 0; font-size: 11px; text-transform: uppercase;">Pages</p>
+          <p style="color: #0e1a2b; margin: 4px 0 0 0; font-size: 20px; font-weight: 700;">${sessionData.pagesVisited.length || 1}</p>
+        </div>
+      </div>
+      ${sessionData.pagesVisited.length > 0 ? `
+      <p style="color: #666; margin: 16px 0 0 0; font-size: 12px;"><strong>Pages:</strong> ${sessionData.pagesVisited.join(" → ")}</p>
+      ` : ''}
+    </div>
+  </div>
+  
+  <div style="text-align: center; padding: 24px; color: #999; font-size: 12px;">
+    <p style="margin: 0;">Lead captured at <a href="https://www.themindmaker.ai" style="color: #666;">themindmaker.ai</a></p>
+    <p style="margin: 8px 0 0 0;">© ${new Date().getFullYear()} Mindmaker LLC</p>
+  </div>
+</body>
+</html>
     `;
 
     // Send email with retry logic

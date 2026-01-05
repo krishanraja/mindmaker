@@ -60,42 +60,124 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Processing leadership insights submission:", { name, email, department, aiFocus });
 
-    // Generate email content
-    const resultsHtml = results ? `
-      <div style="background: #f7f7f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-        <h2 style="color: #0e1a2b; margin-bottom: 16px;">Your AI Leadership Score: ${results.score}/100</h2>
-        <p style="color: #666; margin-bottom: 8px;"><strong>Tier:</strong> ${escapeHtml(results.tier)}</p>
-        <p style="color: #666; margin-bottom: 8px;"><strong>Percentile:</strong> Top ${100 - results.percentile}% of executives</p>
+    // Determine tier color
+    const getTierColor = (tier: string) => {
+      if (tier.includes('Visionary') || tier.includes('Advanced')) return '#22c55e';
+      if (tier.includes('Strategic') || tier.includes('Developing')) return '#f59e0b';
+      return '#ef4444';
+    };
+
+    // Generate user email content
+    const userEmailHtml = results ? `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 0; background-color: #f7f7f5;">
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #0e1a2b 0%, #1a2b3d 100%); padding: 40px 24px; text-align: center;">
+    <p style="color: #7ef4c2; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">AI Leadership Benchmark</p>
+    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Your Results Are In</h1>
+    <p style="color: rgba(255,255,255,0.8); margin: 12px 0 0 0; font-size: 16px;">Personalized for ${escapeHtml(name)}</p>
+  </div>
+  
+  <div style="background: #ffffff; padding: 32px 24px;">
+    <!-- Score Card -->
+    <div style="background: linear-gradient(135deg, #f7f7f5 0%, #e8f5f0 100%); border-radius: 16px; padding: 32px; text-align: center; margin-bottom: 32px;">
+      <p style="color: #666; margin: 0 0 8px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Your AI Leadership Score</p>
+      <div style="font-size: 72px; font-weight: 800; color: #0e1a2b; margin: 0; line-height: 1;">${results.score}</div>
+      <p style="color: #666; margin: 4px 0 16px 0; font-size: 14px;">out of 100</p>
+      <div style="display: inline-block; background: ${getTierColor(results.tier)}; color: #ffffff; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600;">${escapeHtml(results.tier)}</div>
+      <p style="color: #666; margin: 16px 0 0 0; font-size: 14px;">Top <strong>${100 - results.percentile}%</strong> of executives assessed</p>
+    </div>
+
+    <!-- Strengths -->
+    <div style="margin-bottom: 28px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600; display: flex; align-items: center;">
+        <span style="display: inline-block; width: 24px; height: 24px; background: #22c55e; border-radius: 50%; margin-right: 10px; text-align: center; line-height: 24px; font-size: 12px;">✓</span>
+        Your Strengths
+      </h2>
+      ${results.strengths.map(s => `
+      <div style="background: #f0fdf4; border-left: 3px solid #22c55e; padding: 12px 16px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
+        <p style="margin: 0; color: #166534; font-size: 14px;">${escapeHtml(s)}</p>
       </div>
-
-      <h3 style="color: #0e1a2b; margin-top: 24px;">Your Strengths</h3>
-      <ul style="color: #333; padding-left: 20px;">
-        ${results.strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
-      </ul>
-
-      <h3 style="color: #0e1a2b; margin-top: 24px;">Growth Opportunities</h3>
-      <ul style="color: #333; padding-left: 20px;">
-        ${results.growthAreas.map(g => `<li>${escapeHtml(g)}</li>`).join('')}
-      </ul>
-
-      <h3 style="color: #0e1a2b; margin-top: 24px;">Strategic Insights</h3>
-      <ol style="color: #333; padding-left: 20px;">
-        ${results.strategicInsights.map(i => `<li style="margin-bottom: 8px;">${escapeHtml(i)}</li>`).join('')}
-      </ol>
-
-      <h3 style="color: #0e1a2b; margin-top: 24px;">AI Prompt Templates for You</h3>
-      ${results.promptTemplates.map((p, i) => `
-        <div style="background: #fff; border: 1px solid #e5e5e3; padding: 12px; border-radius: 4px; margin: 8px 0;">
-          <strong>Prompt ${i + 1}:</strong><br>
-          <code style="color: #0e1a2b; font-size: 13px;">${escapeHtml(p)}</code>
-        </div>
       `).join('')}
+    </div>
 
-      <h3 style="color: #0e1a2b; margin-top: 24px;">Your 90-Day Action Plan</h3>
-      <ol style="color: #333; padding-left: 20px;">
-        ${results.actionPlan.map(a => `<li style="margin-bottom: 8px;">${escapeHtml(a)}</li>`).join('')}
-      </ol>
-    ` : '';
+    <!-- Growth Areas -->
+    <div style="margin-bottom: 28px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600; display: flex; align-items: center;">
+        <span style="display: inline-block; width: 24px; height: 24px; background: #f59e0b; border-radius: 50%; margin-right: 10px; text-align: center; line-height: 24px; font-size: 12px;">↑</span>
+        Growth Opportunities
+      </h2>
+      ${results.growthAreas.map(g => `
+      <div style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px 16px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
+        <p style="margin: 0; color: #92400e; font-size: 14px;">${escapeHtml(g)}</p>
+      </div>
+      `).join('')}
+    </div>
+
+    <!-- Strategic Insights -->
+    <div style="margin-bottom: 28px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Strategic Insights</h2>
+      ${results.strategicInsights.map((insight, i) => `
+      <div style="display: flex; margin-bottom: 12px;">
+        <div style="width: 28px; height: 28px; background: #0e1a2b; color: #fff; border-radius: 50%; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; flex-shrink: 0; margin-right: 12px;">${i + 1}</div>
+        <p style="margin: 0; color: #333; font-size: 14px; padding-top: 4px;">${escapeHtml(insight)}</p>
+      </div>
+      `).join('')}
+    </div>
+
+    <!-- Prompt Templates -->
+    <div style="background: #f7f7f5; border-radius: 12px; padding: 24px; margin-bottom: 28px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">🎯 AI Prompt Templates for You</h2>
+      <p style="color: #666; margin: 0 0 16px 0; font-size: 13px;">Copy and paste these into ChatGPT or Claude:</p>
+      ${results.promptTemplates.map((p, i) => `
+      <div style="background: #ffffff; border: 1px solid #e5e5e3; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+        <p style="color: #666; margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Prompt ${i + 1}</p>
+        <code style="color: #0e1a2b; font-size: 13px; line-height: 1.5; display: block; white-space: pre-wrap;">${escapeHtml(p)}</code>
+      </div>
+      `).join('')}
+    </div>
+
+    <!-- 90-Day Action Plan -->
+    <div style="margin-bottom: 28px;">
+      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">📅 Your 90-Day Action Plan</h2>
+      ${results.actionPlan.map((action, i) => `
+      <div style="display: flex; align-items: flex-start; margin-bottom: 12px; padding: 12px; background: ${i % 2 === 0 ? '#fafafa' : '#fff'}; border-radius: 8px;">
+        <div style="width: 24px; height: 24px; border: 2px solid #7ef4c2; border-radius: 50%; margin-right: 12px; flex-shrink: 0;"></div>
+        <p style="margin: 0; color: #333; font-size: 14px;">${escapeHtml(action)}</p>
+      </div>
+      `).join('')}
+    </div>
+
+    <!-- CTA -->
+    <div style="background: linear-gradient(135deg, #0e1a2b 0%, #1a2b3d 100%); color: white; padding: 32px 24px; border-radius: 12px; text-align: center;">
+      <h3 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 600;">Ready to Accelerate Your AI Journey?</h3>
+      <p style="margin: 0 0 20px 0; opacity: 0.9; font-size: 14px;">Book a 1:1 Builder Session with Krish to build your first working AI system in 60 minutes.</p>
+      <a href="https://www.themindmaker.ai/#book" style="display: inline-block; background: #7ef4c2; color: #0e1a2b; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;">Book Your Session →</a>
+    </div>
+  </div>
+  
+  <div style="text-align: center; padding: 24px; color: #999; font-size: 12px;">
+    <p style="margin: 0;">You completed the AI Leadership Benchmark at <a href="https://www.themindmaker.ai" style="color: #666;">themindmaker.ai</a></p>
+    <p style="margin: 8px 0 0 0;">© ${new Date().getFullYear()} Mindmaker LLC</p>
+  </div>
+</body>
+</html>
+    ` : `
+<!DOCTYPE html>
+<html>
+<body style="font-family: -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h1>Thank you for your interest!</h1>
+  <p>Hi ${escapeHtml(name)},</p>
+  <p>We received your submission but couldn't generate detailed results. Please try the assessment again or reach out to us directly.</p>
+  <a href="https://www.themindmaker.ai/#book">Book a Session</a>
+</body>
+</html>
+    `;
 
     // Send email to user with their results
     const userEmailResponse = await fetch("https://api.resend.com/emails", {
@@ -105,38 +187,10 @@ const handler = async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "MindMaker AI Insights <onboarding@resend.dev>",
+        from: "Mindmaker AI Insights <insights@themindmaker.ai>",
         to: [email],
-        subject: `${name}, Your AI Leadership Benchmark Results`,
-        html: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          </head>
-          <body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #0e1a2b; margin-bottom: 8px;">Your AI Leadership Insights</h1>
-              <p style="color: #666;">Personalized for ${escapeHtml(name)}</p>
-            </div>
-
-            ${resultsHtml}
-
-            <div style="background: linear-gradient(135deg, #0e1a2b, #1a2b3d); color: white; padding: 24px; border-radius: 8px; margin-top: 32px; text-align: center;">
-              <h3 style="margin-bottom: 12px;">Ready to Accelerate Your AI Journey?</h3>
-              <p style="margin-bottom: 16px; opacity: 0.9;">Book a 1:1 Builder Session with Krish to build your first AI system in 60 minutes.</p>
-              <a href="https://www.themindmaker.ai/#book" style="display: inline-block; background: #7ef4c2; color: #0e1a2b; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600;">Book Your Session →</a>
-            </div>
-
-            <hr style="border: none; border-top: 1px solid #e5e5e3; margin: 32px 0;">
-            <p style="color: #666; font-size: 12px; text-align: center;">
-              You received this email because you completed the AI Leadership Benchmark at themindmaker.ai<br>
-              <a href="https://www.themindmaker.ai" style="color: #0e1a2b;">www.themindmaker.ai</a>
-            </p>
-          </body>
-          </html>
-        `,
+        subject: `${escapeHtml(name)}, Your AI Leadership Score: ${results?.score || 'N/A'}/100`,
+        html: userEmailHtml,
       }),
     });
 
@@ -154,31 +208,88 @@ const handler = async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "MindMaker Leads <leads@themindmaker.ai>",
+        from: "Mindmaker Leads <leads@themindmaker.ai>",
         to: ["krish@themindmaker.ai"],
-        subject: `New AI Leadership Benchmark: ${name} (${results?.tier || 'Unknown'})`,
+        reply_to: email,
+        subject: `📊 New Benchmark: ${escapeHtml(name)} scored ${results?.score || 'N/A'}/100 (${results?.tier || 'Unknown'})`,
         html: `
-          <h1>New Leadership Insights Submission</h1>
-          <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p><strong>Department:</strong> ${department ? escapeHtml(department) : 'Not specified'}</p>
-          <p><strong>AI Focus:</strong> ${aiFocus ? escapeHtml(aiFocus) : 'Not specified'}</p>
-          
-          ${results ? `
-          <h2>Results</h2>
-          <p><strong>Score:</strong> ${results.score}/100</p>
-          <p><strong>Tier:</strong> ${escapeHtml(results.tier)}</p>
-          <p><strong>Percentile:</strong> Top ${100 - results.percentile}%</p>
-          
-          <h3>Strengths</h3>
-          <ul>${results.strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>
-          
-          <h3>Growth Areas</h3>
-          <ul>${results.growthAreas.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul>
-          ` : ''}
-          
-          <hr>
-          <p style="color: #666; font-size: 12px;">Sent from the AI Leadership Benchmark at leaders.themindmaker.ai</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 0; background-color: #f7f7f5;">
+  <div style="background: linear-gradient(135deg, #0e1a2b 0%, #1a2b3d 100%); padding: 32px 24px;">
+    <div style="text-align: center;">
+      <p style="color: #7ef4c2; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">AI Leadership Benchmark</p>
+      <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">${escapeHtml(name)}</h1>
+      <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0 0; font-size: 14px;">${department ? escapeHtml(department) : 'Department not specified'}</p>
+    </div>
+    ${results ? `
+    <div style="display: flex; justify-content: center; gap: 32px; margin-top: 24px;">
+      <div style="text-align: center;">
+        <p style="color: rgba(255,255,255,0.6); margin: 0; font-size: 11px; text-transform: uppercase;">Score</p>
+        <p style="color: #7ef4c2; margin: 4px 0 0 0; font-size: 28px; font-weight: 700;">${results.score}/100</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="color: rgba(255,255,255,0.6); margin: 0; font-size: 11px; text-transform: uppercase;">Tier</p>
+        <p style="color: #ffffff; margin: 4px 0 0 0; font-size: 18px; font-weight: 600;">${escapeHtml(results.tier)}</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="color: rgba(255,255,255,0.6); margin: 0; font-size: 11px; text-transform: uppercase;">Percentile</p>
+        <p style="color: #ffffff; margin: 4px 0 0 0; font-size: 18px; font-weight: 600;">Top ${100 - results.percentile}%</p>
+      </div>
+    </div>
+    ` : ''}
+  </div>
+  
+  <div style="background: #ffffff; padding: 24px;">
+    <div style="text-align: center; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #e5e5e3;">
+      <a href="mailto:${escapeHtml(email)}" style="display: inline-block; background: #0e1a2b; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 8px;">Email ${escapeHtml(name.split(' ')[0])}</a>
+      <a href="https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(name)}" style="display: inline-block; background: #0077b5; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Find on LinkedIn</a>
+    </div>
+
+    <div style="background: #f7f7f5; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+      <h3 style="color: #0e1a2b; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">Contact Details</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-size: 13px; width: 100px;">Email</td>
+          <td style="padding: 6px 0; color: #0e1a2b; font-size: 13px;"><a href="mailto:${escapeHtml(email)}" style="color: #0e1a2b;">${escapeHtml(email)}</a></td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-size: 13px;">Department</td>
+          <td style="padding: 6px 0; color: #0e1a2b; font-size: 13px;">${department ? escapeHtml(department) : 'Not specified'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #666; font-size: 13px;">AI Focus</td>
+          <td style="padding: 6px 0; color: #0e1a2b; font-size: 13px;">${aiFocus ? escapeHtml(aiFocus) : 'Not specified'}</td>
+        </tr>
+      </table>
+    </div>
+
+    ${results ? `
+    <div style="margin-bottom: 20px;">
+      <h3 style="color: #22c55e; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">✓ Strengths</h3>
+      <ul style="margin: 0; padding-left: 20px; color: #333; font-size: 13px;">
+        ${results.strengths.map(s => `<li style="margin-bottom: 4px;">${escapeHtml(s)}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <h3 style="color: #f59e0b; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">↑ Growth Areas</h3>
+      <ul style="margin: 0; padding-left: 20px; color: #333; font-size: 13px;">
+        ${results.growthAreas.map(g => `<li style="margin-bottom: 4px;">${escapeHtml(g)}</li>`).join('')}
+      </ul>
+    </div>
+    ` : ''}
+  </div>
+  
+  <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+    <p style="margin: 0;">AI Leadership Benchmark at <a href="https://www.themindmaker.ai" style="color: #666;">themindmaker.ai</a></p>
+  </div>
+</body>
+</html>
         `,
       }),
     });
