@@ -371,6 +371,66 @@ All 4 drawer tools MUST use `ToolDrawerHeader`:
 
 ---
 
+## 🌑 DARK CTA CARD PATTERN
+
+### The "Text Contrast Crisis" 
+**What Happened:** Text on dark ink background cards was unreadable on mobile devices  
+**Root Cause:** Using `text-white/80` (80% opacity) instead of solid, high-contrast colors  
+**Resolution:** Created design tokens and shared `.dark-cta-card` component class
+
+### Design Tokens (in `src/index.css`)
+```css
+/* DARK CARD TEXT COLORS - WCAG AA Compliant */
+--dark-card-heading: 0 0% 100%;      /* Pure white - headings */
+--dark-card-body: 0 0% 93%;          /* Off-white - body text */
+--dark-card-muted: 0 0% 75%;         /* Softer white - metadata */
+```
+
+### Tailwind Classes (in `tailwind.config.ts`)
+```typescript
+"dark-card": {
+  heading: "hsl(var(--dark-card-heading))",
+  body: "hsl(var(--dark-card-body))",
+  muted: "hsl(var(--dark-card-muted))",
+}
+```
+
+### The Correct Pattern - USE THIS FOR DARK CARDS
+```tsx
+// Option 1: Use the component class (automatic text colors)
+<div className="dark-cta-card">
+  <h3>Title here</h3>  {/* Automatically white */}
+  <p>Body text here</p> {/* Automatically off-white */}
+  <Button variant="mint">CTA</Button>
+</div>
+
+// Option 2: Use utility classes directly
+<div className="bg-gradient-to-br from-ink to-ink-900 rounded-2xl p-8">
+  <h3 className="text-dark-card-heading">Title</h3>
+  <p className="text-dark-card-body">Body text</p>
+  <span className="text-dark-card-muted">Metadata</span>
+</div>
+```
+
+### ❌ NEVER DO THIS
+```tsx
+// BAD: Opacity-based text colors fail WCAG contrast on mobile
+<div className="bg-ink text-white">
+  <p className="text-white/80">This is hard to read!</p>
+  <span className="text-white/60">This is even worse!</span>
+</div>
+```
+
+### Files Using This Pattern
+All these files have been updated to use high-contrast text:
+- `src/pages/FAQ.tsx` - "Still Have Questions?" card
+- `src/pages/BlogPost.tsx` - CTA section
+- `src/pages/Contact.tsx` - Mission Statement card
+- `src/pages/Blog.tsx` - Featured post card
+- `src/components/SimpleCTA.tsx` - Main CTA section
+
+---
+
 ## 🚨 CRITICAL "NEVER DO THIS" LIST
 
 ### ❌ CSS SYNTAX KILLERS
@@ -384,6 +444,7 @@ All 4 drawer tools MUST use `ToolDrawerHeader`:
 - **Missing HSL format** - Use `248 73% 67%` not `hsl(248, 73%, 67%)`
 - **Hardcoded colors** - Always use CSS custom properties
 - **Mixed color formats** - Stick to HSL throughout
+- **Opacity-based text on dark backgrounds** - `text-white/80` fails WCAG! Use `text-dark-card-body` instead
 
 ### ❌ ANIMATION CONFLICTS
 - **Utility classes blocking animations** - Remove `text-white` from animated text

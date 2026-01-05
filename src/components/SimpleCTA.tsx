@@ -25,13 +25,13 @@ const SimpleCTA = () => {
             />
           </div>
           
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white dark:text-foreground">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-dark-card-heading dark:text-foreground">
             Ready to future proof yourself for the next decade?
           </h2>
           
-          <p className="text-xl text-white/80 dark:text-foreground/80 leading-relaxed mb-8">
+          <p className="text-xl text-dark-card-body dark:text-foreground leading-relaxed mb-8">
             "Businesses with AI literate leaders will set the pace in 2026 - and the rest will have to keep up with them"
-            <span className="block mt-2 text-lg text-white dark:text-foreground">-Krish Raja, Founder</span>
+            <span className="block mt-2 text-lg text-dark-card-heading dark:text-foreground">-Krish Raja, Founder</span>
           </p>
           
           <Button 
@@ -43,7 +43,7 @@ const SimpleCTA = () => {
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           
-          <p className="text-sm text-white/60 dark:text-foreground/60 mt-6">
+          <p className="text-sm text-dark-card-muted dark:text-muted-foreground mt-6">
             No prep required. Just bring your real work.
           </p>
         </div>

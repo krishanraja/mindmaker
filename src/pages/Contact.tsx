@@ -184,14 +184,14 @@ ${formData.message}
               </div>
 
               {/* Mission Statement */}
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-ink to-ink-900 text-white">
+              <div className="dark-cta-card !p-6">
                 <h3 className="text-lg font-bold mb-3">Why This Mission Matters</h3>
-                <p className="text-white/80 text-sm leading-relaxed mb-4">
+                <p className="text-sm leading-relaxed mb-4">
                   AI literacy will be the defining skill of the next decade. Yet most leaders 
                   are stuck between vendor hype and technical jargon. They need practical 
                   capability, not more theory.
                 </p>
-                <p className="text-white/80 text-sm leading-relaxed">
+                <p className="text-sm leading-relaxed">
                   My mission is to ensure senior leaders can confidently integrate AI into 
                   their work—making informed strategic decisions and leading their organizations 
                   through the AI transformation with clarity.

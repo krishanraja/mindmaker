@@ -283,11 +283,11 @@ const BlogPost = () => {
         {/* CTA Section */}
         <section className="container-width mt-16">
           <div className="max-w-3xl">
-            <div className="p-8 md:p-12 rounded-2xl bg-gradient-to-br from-ink to-ink-900 text-white">
+            <div className="dark-cta-card">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">
                 Ready to Build Your AI Literacy?
               </h2>
-              <p className="text-white/80 mb-6">
+              <p className="mb-6">
                 Stop reading about AI and start building with it. Book a Builder Session 
                 to create your first working AI systems in 60 minutes.
               </p>

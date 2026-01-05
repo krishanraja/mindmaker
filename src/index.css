@@ -91,6 +91,12 @@
     --section-padding-sm: 3rem;   /* 48px */
     --section-padding-md: 5rem;   /* 80px */
     --section-padding-lg: 8rem;  /* 128px */
+    
+    /* DARK CARD TEXT COLORS - WCAG AA Compliant */
+    /* Use these for text on dark ink backgrounds (from-ink to-ink-900) */
+    --dark-card-heading: 0 0% 100%;      /* Pure white - headings, titles */
+    --dark-card-body: 0 0% 93%;          /* Slightly off-white - body text */
+    --dark-card-muted: 0 0% 75%;         /* Softer white - metadata, captions */
   }
 
   .dark {
@@ -160,6 +166,11 @@
     --gradient-ink-subtle: linear-gradient(180deg, hsl(var(--ink-800)) 0%, hsl(var(--ink-900)) 100%);
     --gradient-mint-subtle: linear-gradient(135deg, hsl(var(--mint) / 0.15) 0%, transparent 100%);
     --gradient-glass: linear-gradient(135deg, hsl(var(--card) / 0.6) 0%, hsl(var(--card) / 0.4) 100%);
+    
+    /* DARK CARD TEXT COLORS - Same in dark mode (cards have same ink bg) */
+    --dark-card-heading: 0 0% 100%;
+    --dark-card-body: 0 0% 93%;
+    --dark-card-muted: 0 0% 75%;
   }
 }
 
@@ -531,6 +542,34 @@ a:hover {
       transform: scale(1.01) translateY(-2px);
       box-shadow: var(--shadow-2xl), var(--shadow-mint-lg);
     }
+  }
+
+  /* DARK CTA CARDS - High contrast text on dark ink backgrounds */
+  /* Use this class for CTAs, feature cards, and callouts with dark backgrounds */
+  .dark-cta-card {
+    background: linear-gradient(to bottom right, hsl(var(--ink)), hsl(var(--ink-900)));
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+  
+  @media (min-width: 48rem) {
+    .dark-cta-card {
+      padding: 3rem;
+    }
+  }
+  
+  .dark-cta-card h2,
+  .dark-cta-card h3 {
+    color: hsl(var(--dark-card-heading));
+    font-weight: 700;
+  }
+  
+  .dark-cta-card p {
+    color: hsl(var(--dark-card-body));
+  }
+  
+  .dark-cta-card .dark-card-muted {
+    color: hsl(var(--dark-card-muted));
   }
 
   /* Editorial Rules - Section dividers */

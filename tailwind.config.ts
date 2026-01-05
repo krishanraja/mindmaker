@@ -80,6 +80,13 @@ export default {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
+        
+        // DARK CARD TEXT - WCAG AA compliant text for dark backgrounds
+        "dark-card": {
+          heading: "hsl(var(--dark-card-heading))",
+          body: "hsl(var(--dark-card-body))",
+          muted: "hsl(var(--dark-card-muted))",
+        },
       },
       boxShadow: {
         xs: "var(--shadow-xs)",

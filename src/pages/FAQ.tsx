@@ -317,9 +317,9 @@ const FAQ = () => {
           {/* CTA Cards */}
           <div className="grid md:grid-cols-2 gap-6 mt-16 max-w-4xl">
             {/* Book Session CTA */}
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-ink to-ink-900 text-white">
+            <div className="dark-cta-card">
               <h3 className="text-xl font-bold mb-3">Still Have Questions?</h3>
-              <p className="text-white/80 mb-6">
+              <p className="mb-6">
                 Book a Builder Session to talk through your situation and get personalized guidance.
               </p>
               <Button 

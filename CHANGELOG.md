@@ -1,6 +1,34 @@
 # AI MINDMAKER CHANGELOG
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-05
+
+---
+
+## Text Contrast System Fix (2026-01-05)
+
+### Critical Accessibility Fix
+- **Root Cause**: `text-white/80` on dark ink backgrounds failed WCAG AA contrast requirements (4.5:1 for body text)
+- **Impact**: Text was unreadable on mobile devices across FAQ, Blog, BlogPost, Contact, and SimpleCTA pages
+
+### Architectural Solution
+- **src/index.css**: Added WCAG-compliant design tokens for dark card text colors
+  - `--dark-card-heading: 0 0% 100%` (pure white for headings)
+  - `--dark-card-body: 0 0% 93%` (off-white for body text)
+  - `--dark-card-muted: 0 0% 75%` (softer white for metadata)
+- **src/index.css**: Created `.dark-cta-card` component class with enforced high-contrast text
+- **tailwind.config.ts**: Added `dark-card` color utilities (heading, body, muted)
+
+### Files Updated
+- `src/pages/FAQ.tsx`: "Still Have Questions?" card now uses `.dark-cta-card`
+- `src/pages/BlogPost.tsx`: CTA section now uses `.dark-cta-card`
+- `src/pages/Contact.tsx`: Mission Statement card now uses `.dark-cta-card`
+- `src/pages/Blog.tsx`: Featured post card uses `text-dark-card-*` utilities
+- `src/components/SimpleCTA.tsx`: Main CTA uses `text-dark-card-*` utilities
+
+### Prevention System
+- Updated `MINDMAKER_DESIGN_SYSTEM_GUIDE.md` with dark card pattern documentation
+- Added "NEVER DO THIS" warning for `text-white/80` on dark backgrounds
+- Documented the correct pattern for future development
 
 ---
 

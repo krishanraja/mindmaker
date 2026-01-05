@@ -128,7 +128,7 @@ const Blog = () => {
               to={`/blog/${featuredPost.slug}`}
               className="block mb-12 group"
             >
-              <article className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-ink to-ink-900 text-white p-8 md:p-12 hover:border-mint/50 transition-all duration-300">
+              <article className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-ink to-ink-900 p-8 md:p-12 hover:border-mint/50 transition-all duration-300">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-mint/10 to-transparent opacity-50" />
                 
                 <div className="relative z-10">
@@ -136,20 +136,20 @@ const Blog = () => {
                     <Badge className="bg-mint text-ink border-0 font-medium">
                       Featured
                     </Badge>
-                    <Badge variant="outline" className="border-white/30 text-white/80">
+                    <Badge variant="outline" className="border-dark-card-muted text-dark-card-body">
                       {categoryLabels[featuredPost.category]}
                     </Badge>
                   </div>
                   
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 group-hover:text-mint transition-colors">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-dark-card-heading group-hover:text-mint transition-colors">
                     {featuredPost.title}
                   </h2>
                   
-                  <p className="text-white/80 text-lg mb-6 max-w-2xl">
+                  <p className="text-dark-card-body text-lg mb-6 max-w-2xl">
                     {featuredPost.excerpt}
                   </p>
                   
-                  <div className="flex items-center gap-6 text-sm text-white/60">
+                  <div className="flex items-center gap-6 text-sm text-dark-card-muted">
                     <span className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       {new Date(featuredPost.publishedAt).toLocaleDateString('en-US', { 
