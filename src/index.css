@@ -92,6 +92,11 @@
     --section-padding-md: 5rem;   /* 80px */
     --section-padding-lg: 8rem;  /* 128px */
     
+    /* LAYOUT DIMENSIONS - Used for navbar-aware positioning */
+    --navbar-height: 4rem;        /* 64px - mobile/default */
+    --navbar-height-sm: 4.5rem;   /* 72px - small screens */
+    --navbar-height-md: 5rem;     /* 80px - medium+ screens */
+    
     /* DARK CARD TEXT COLORS - WCAG AA Compliant */
     /* Use these for text on dark ink backgrounds (from-ink to-ink-900) */
     --dark-card-heading: 0 0% 100%;      /* Pure white - headings, titles */
@@ -326,6 +331,36 @@ a:hover {
 
   .container-width { 
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* HERO TEXT SIZING - Loaded early to prevent scrollbar flash */
+  /* This MUST be in the CSS layer (not inline) to apply before first paint */
+  .hero-text-size {
+    font-size: 1.5rem !important; /* 24px - mobile base, prevents global h1 override */
+    line-height: 1.2 !important;
+  }
+  
+  @media (min-width: 640px) {
+    .hero-text-size {
+      /* Smoothly transition from 1.5rem (640px) to 2.25rem (1024px) */
+      font-size: clamp(1.5rem, calc(1.5rem + (100vw - 640px) * 0.00195), 2.25rem) !important;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .hero-text-size {
+      font-size: 2.25rem !important; /* 36px - desktop */
+    }
+  }
+
+  /* Hero section container - prevents scrollbar flash during animation init */
+  #hero .hero-content-wrapper {
+    contain: layout style;
+  }
+  
+  /* Prevent hero h1 from using global h1 sizing */
+  #hero h1 {
+    font-size: inherit;
   }
 
   /* Premium hover lift - desktop only, calm 600ms ease */
@@ -621,6 +656,31 @@ a:hover {
   .pt-safe-top { padding-top: max(1rem, env(safe-area-inset-top)); }
   .pt-safe-area-top { padding-top: max(5rem, env(safe-area-inset-top, 5rem)); }
   .pb-safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+  .pb-safe-area-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem)); }
+
+  /* NAVBAR-AWARE SHEET POSITIONING */
+  /* Use on right-side sheets to prevent navbar overlap on desktop */
+  .sheet-navbar-aware {
+    top: var(--navbar-height) !important;
+    height: calc(100vh - var(--navbar-height)) !important;
+    height: calc(100dvh - var(--navbar-height)) !important;
+  }
+  
+  @media (min-width: 640px) {
+    .sheet-navbar-aware {
+      top: var(--navbar-height-sm) !important;
+      height: calc(100vh - var(--navbar-height-sm)) !important;
+      height: calc(100dvh - var(--navbar-height-sm)) !important;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .sheet-navbar-aware {
+      top: var(--navbar-height-md) !important;
+      height: calc(100vh - var(--navbar-height-md)) !important;
+      height: calc(100dvh - var(--navbar-height-md)) !important;
+    }
+  }
 
   /* TOUCH TARGET - Minimum 44x44px */
   .touch-target {

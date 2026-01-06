@@ -207,7 +207,7 @@ export const ActionsHub = ({ onToolClick }: ActionsHubProps) => {
             "p-0 flex flex-col",
             isMobile 
               ? "h-[80vh] rounded-t-3xl pt-2 pb-safe-area-bottom" 
-              : "w-full sm:max-w-[400px] pt-2"
+              : "w-full sm:max-w-[400px] sheet-navbar-aware"
           )}
         >
           {drawerContent}

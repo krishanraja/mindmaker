@@ -317,36 +317,7 @@ const NewHero = () => {
         </div>
       </div>
       
-      <style>{`
-        @keyframes expandWidth {
-          0% {
-            transform: scaleX(0);
-            opacity: 0;
-          }
-          100% {
-            transform: scaleX(1);
-            opacity: 1;
-          }
-        }
-        
-        /* Hero text responsive sizing: reduced mobile size by 40%, 25% smaller on desktop */
-        .hero-text-size {
-          font-size: 1.5rem; /* 24px - 40% reduction from 2.5rem (was 40px) */
-        }
-        
-        @media (min-width: 640px) {
-          .hero-text-size {
-            /* Smoothly transition from 1.5rem (640px) to 2.25rem (1024px) */
-            font-size: clamp(1.5rem, calc(1.5rem + (100vw - 640px) * 0.00195rem), 2.25rem);
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .hero-text-size {
-            font-size: 2.25rem; /* 36px - 25% smaller than original 48px desktop size */
-          }
-        }
-      `}</style>
+      {/* NOTE: .hero-text-size styles moved to src/index.css to prevent scrollbar flash on load */}
 
       {/* Initial Consult Modal */}
       <InitialConsultModal 

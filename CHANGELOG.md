@@ -1,6 +1,43 @@
 # AI MINDMAKER CHANGELOG
 
-**Last Updated:** 2026-01-05
+**Last Updated:** 2026-01-06
+
+---
+
+## Hero Scrollbar Flash & Drawer Positioning Fix (2026-01-06)
+
+### Critical UX Fixes
+
+#### Issue 1: Hero Text Scrollbar Flash on Page Load
+- **Root Cause**: Global CSS h1 styles (clamp 40-72px) applied before component's inline `<style>` tag (24-36px) was parsed, causing temporary oversized text that triggered horizontal scrollbar
+- **Impact**: Horizontal scrollbar briefly flashed during first ~1 second of page load
+
+#### Issue 2: Side Drawer Content Cut Off at Top
+- **Root Cause**: Sheet component used `inset-y-0` positioning from viewport edge (top: 0), while navbar is fixed at z-100 covering top 64-80px
+- **Impact**: "Actions" header and top content hidden behind navbar on desktop
+
+### Architectural Solutions
+
+#### Hero Scrollbar Fix
+- **src/index.css**: Moved `.hero-text-size` class from component inline styles to CSS `@layer components` for early parsing
+- **src/index.css**: Added `#hero h1 { font-size: inherit; }` to prevent global h1 override
+- **src/index.css**: Added `#hero .hero-content-wrapper { contain: layout style; }` for layout containment
+- **src/components/NewHero.tsx**: Removed inline `<style>` tag for hero-text-size (now in index.css)
+
+#### Drawer Positioning Fix
+- **src/index.css**: Added CSS variables for navbar height: `--navbar-height`, `--navbar-height-sm`, `--navbar-height-md`
+- **src/index.css**: Created `.sheet-navbar-aware` class with responsive top offset and height calculation
+- **src/components/ActionsHub.tsx**: Applied `sheet-navbar-aware` class to desktop SheetContent
+
+### Files Modified
+- `src/index.css` (lines 93-96, 351-371, 647-670)
+- `src/components/NewHero.tsx` (removed inline styles)
+- `src/components/ActionsHub.tsx` (added sheet-navbar-aware class)
+
+### Verification
+- Hard refresh: No scrollbar flash during page load
+- Drawer opens with "Actions" header fully visible below navbar
+- All drawer content accessible without blank space issues
 
 ---
 

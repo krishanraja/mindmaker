@@ -1,7 +1,32 @@
 # DIAGNOSIS: ICP Cards & Mobile Hero Text Issues
 
-**Date:** 2026-01-03  
-**Status:** P0 Critical Mobile UX Issue + ICP Cards UX Issues
+**Date:** 2026-01-03 (Updated 2026-01-06)  
+**Status:** RESOLVED - Hero Scrollbar & Drawer Issues Fixed
+
+---
+
+## Update 2026-01-06: Hero Scrollbar & Drawer Fixes
+
+### Resolved Issues
+
+#### Hero Text Scrollbar Flash
+- **Cause**: Global h1 CSS styles loaded before component's inline styles, causing temporary oversized text
+- **Fix**: Moved `.hero-text-size` to `src/index.css` under `@layer components` for early CSS cascade
+- **Prevention**: Added `#hero h1 { font-size: inherit; }` override and CSS containment
+
+#### Side Drawer Top Cutoff
+- **Cause**: Sheet component positioned from viewport top (0px) while navbar covers top 64-80px
+- **Fix**: Added `--navbar-height` CSS variables and `.sheet-navbar-aware` class with responsive offsets
+- **Prevention**: Centralized navbar-aware positioning in index.css for reuse
+
+### Files Modified
+- `src/index.css`: Added navbar height variables, hero text styles in layer, sheet-navbar-aware class
+- `src/components/NewHero.tsx`: Removed inline style tag
+- `src/components/ActionsHub.tsx`: Applied sheet-navbar-aware class
+
+---
+
+## Original Issues (2026-01-03)
 
 ---
 
