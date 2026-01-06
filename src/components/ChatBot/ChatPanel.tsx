@@ -182,7 +182,7 @@ export const ChatPanel = ({ onClose }: ChatPanelProps) => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 w-[380px] h-[600px] minimal-card flex flex-col shadow-2xl z-50 animate-scale-in border-2">
+    <div className="fixed bottom-4 right-4 w-[380px] h-[600px] minimal-card bg-card flex flex-col shadow-2xl z-50 animate-scale-in border-2">
       {chatContent}
     </div>
   );

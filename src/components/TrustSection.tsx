@@ -64,7 +64,7 @@ const TestimonialCard = ({ testimonial, onExpandChange }: TestimonialCardProps) 
 
 const TrustSection = () => {
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(4);
   const [isAnyExpanded, setIsAnyExpanded] = useState(false);
 
   const testimonials = [
@@ -173,7 +173,8 @@ const TrustSection = () => {
           setApi={setApi}
           opts={{ 
             align: "start", 
-            loop: true 
+            loop: true,
+            startIndex: 4
           }} 
           className="w-full max-w-6xl mx-auto px-4 sm:px-0"
         >
