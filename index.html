@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- CRITICAL: Prevent horizontal scrollbar flash before any CSS loads -->
+    <!-- This MUST be first to ensure overflow is hidden from first paint -->
+    <style>
+      html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+      #root { overflow-x: hidden; max-width: 100vw; }
+      /* Prevent hero content from causing scrollbar during CSS/font loading race */
+      #hero { overflow: hidden !important; max-width: 100vw !important; }
+      #hero * { max-width: 100%; }
+    </style>
+    
     <!-- Primary Meta Tags -->
     <title>AI Leadership Accelerator | The Mindmaker</title>
     <meta name="title" content="Build AI Systems Without Code | The Mindmaker - AI Builder for Leaders" />

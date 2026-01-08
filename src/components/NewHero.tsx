@@ -86,14 +86,14 @@ const NewHero = () => {
   }, [heroVariants.length]);
 
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center bg-ink text-white relative overflow-hidden pt-safe-area-top">
-      {/* Dynamic Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-ink-900 via-ink to-ink-700/50"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-transparent to-mint/5"></div>
+    <section id="hero" className="min-h-[100dvh] flex items-center justify-center bg-ink text-white relative overflow-hidden pt-safe-area-top">
+      {/* Dynamic Gradient Background - hero-decoration prevents overflow */}
+      <div className="hero-decoration absolute inset-0 bg-gradient-to-br from-ink-900 via-ink to-ink-700/50"></div>
+      <div className="hero-decoration absolute inset-0 bg-gradient-to-t from-ink-900/80 via-transparent to-mint/5"></div>
       
-      {/* GIF Background Overlay */}
+      {/* GIF Background Overlay - hero-decoration prevents overflow */}
       <div 
-        className="absolute inset-0 opacity-20"
+        className="hero-decoration absolute inset-0 opacity-20"
         style={{
           backgroundImage: 'url(/mindmaker-background-green.gif)',
           backgroundSize: 'cover',
@@ -102,8 +102,8 @@ const NewHero = () => {
         }}
       ></div>
       
-      {/* Animated Grid Background */}
-      <div className="absolute inset-0 opacity-[0.08]">
+      {/* Animated Grid Background - hero-decoration prevents overflow */}
+      <div className="hero-decoration absolute inset-0 opacity-[0.08]">
         <div 
           className="absolute inset-0 animate-pulse" 
           style={{
@@ -117,24 +117,12 @@ const NewHero = () => {
         />
       </div>
       
-      {/* Glowing Orbs */}
-      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-mint/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '3s'}}></div>
-      <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-mint/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '4s', animationDelay: '1s'}}></div>
+      {/* Glowing Orbs - hero-decoration prevents blur-3xl from causing overflow */}
+      <div className="hero-decoration absolute top-1/4 right-1/4 w-96 h-96 bg-mint/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '3s'}}></div>
+      <div className="hero-decoration absolute bottom-1/4 left-1/3 w-80 h-80 bg-mint/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '4s', animationDelay: '1s'}}></div>
       
-      {/* Content */}
-      <div className="container-width relative z-10 pb-12 sm:pb-16 md:pb-20 overflow-x-hidden hero-content-wrapper" style={{ paddingTop: 'calc(5rem * 0.8 * 0.5)' }}>
-        <style>{`
-          @media (min-width: 640px) {
-            .hero-content-wrapper {
-              padding-top: calc(7rem * 0.8 * 0.5) !important;
-            }
-          }
-          @media (min-width: 768px) {
-            .hero-content-wrapper {
-              padding-top: calc(8rem * 0.8 * 0.5) !important;
-            }
-          }
-        `}</style>
+      {/* Content - padding-top styles moved to index.css @layer hero */}
+      <div className="container-width relative z-10 pb-12 sm:pb-16 md:pb-20 overflow-x-hidden hero-content-wrapper">
         {/* Hero Content */}
         <div className="max-w-5xl overflow-x-hidden">
           <div className="space-y-6 sm:space-y-8 md:space-y-10 fade-in-up" style={{animationDelay: '0.1s'}}>
@@ -209,9 +197,9 @@ const NewHero = () => {
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentIndex}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
                       className="w-full"
                       style={{ 

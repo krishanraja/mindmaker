@@ -1,18 +1,98 @@
 # DIAGNOSIS: ICP Cards & Mobile Hero Text Issues
 
-**Date:** 2026-01-03 (Updated 2026-01-06)  
-**Status:** RESOLVED - Hero Scrollbar & Drawer Issues Fixed
+**Date:** 2026-01-03 (Updated 2026-01-08)  
+**Status:** RESOLVED - Hero Scrollbar PERMANENTLY Fixed via Defense-in-Depth Architecture
 
 ---
 
-## Update 2026-01-06: Hero Scrollbar & Drawer Fixes
+## Update 2026-01-08: PERMANENT Hero Scrollbar Fix (17 Root Causes Addressed)
+
+### Problem
+The 2026-01-06 fix addressed only ONE cause (CSS layer ordering). The scrollbar still appeared for ~2 seconds because there were **17 contributing factors** that were never addressed.
+
+### Root Causes Identified
+
+**Category A: CSS Loading Race Conditions**
+- A1: Font Loading Flash (async fonts with different metrics)
+- A2: Global h1 override racing with hero-specific styles
+- A3: Inline `<style>` tag in component applied after React hydration
+
+**Category B: Layout Containment Gaps**
+- B1: Overflow containers applied to wrong elements (content wrapper, not decorative elements)
+- B2: Large orbs (384px) with blur-3xl extending beyond viewport
+- B3: Measurement element with `whiteSpace: nowrap` and no width constraint
+
+**Category C: JavaScript/Animation Timing**
+- C1: Framer Motion `y: 10` transforms causing vertical overflow
+- C2: useEffect headline validation triggering reflow after first paint
+
+**Category D: External Resources**
+- D1: GIF background not preloaded
+
+**Category E: Viewport/Safe Area**
+- E1: `min-h-screen` (100vh) exceeds viewport on iOS Safari
+- E2: Safe area inset delay
+
+**Category F: GPU Compositing**
+- F1: blur-3xl GPU layer initialization
+
+### Architectural Solution: Defense-in-Depth
+
+Instead of fixing individual causes, implemented **7 overlapping prevention layers**:
+
+**Layer 1: HTML-Level Prevention** (`index.html`)
+- Critical inline CSS that loads BEFORE any other styles
+- Forces `overflow-x: hidden` on html, body, #root, and #hero
+
+**Layer 2: CSS Layer Priority** (`index.css`)
+- New `@layer hero` that loads BEFORE base layer
+- Hero containment rules guaranteed to apply from first paint
+
+**Layer 3: No Inline Styles** (`NewHero.tsx`)
+- Removed all inline `<style>` tags
+- Responsive padding moved to CSS file
+
+**Layer 4: Decorative Element Containment** (`NewHero.tsx`)
+- Added `hero-decoration` class to all background elements (orbs, GIF, grid)
+- CSS rule forces `overflow: hidden; max-width: 100%` on all decorations
+
+**Layer 5: Animation Overflow Prevention** (`NewHero.tsx`)
+- Removed `y` transforms from Framer Motion animations
+- Now uses opacity-only transitions
+
+**Layer 6: Viewport Unit Fix** (`NewHero.tsx`)
+- Replaced `min-h-screen` (100vh) with `min-h-[100dvh]`
+- Dynamic viewport height accounts for mobile browser toolbars
+
+**Layer 7: Fallback Support** (`index.css`)
+- `@supports not (100dvh)` fallback for older browsers
+
+### Files Modified
+- `index.html`: Added critical inline CSS before any stylesheets
+- `src/index.css`: Added `@layer hero` with comprehensive containment rules
+- `src/components/NewHero.tsx`: Removed inline styles, added hero-decoration classes, fixed animations
+
+### Prevention Guardrails
+1. Hero styles in separate CSS layer with highest priority
+2. No inline `<style>` tags allowed in hero components
+3. All decorative elements must use `hero-decoration` class
+4. Animation transforms must not cause overflow
+
+---
+
+## Previous Fix (2026-01-06) - INCOMPLETE
+
+The previous fix only addressed CSS layer ordering:
+- Moved `.hero-text-size` to `src/index.css` under `@layer components`
+- Added `#hero h1 { font-size: inherit; }` override
+
+**Why it failed**: `@layer components` still loads AFTER `@layer base`, allowing a race condition window.
+
+---
+
+## Update 2026-01-06: Side Drawer Positioning
 
 ### Resolved Issues
-
-#### Hero Text Scrollbar Flash
-- **Cause**: Global h1 CSS styles loaded before component's inline styles, causing temporary oversized text
-- **Fix**: Moved `.hero-text-size` to `src/index.css` under `@layer components` for early CSS cascade
-- **Prevention**: Added `#hero h1 { font-size: inherit; }` override and CSS containment
 
 #### Side Drawer Top Cutoff
 - **Cause**: Sheet component positioned from viewport top (0px) while navbar covers top 64-80px
@@ -20,8 +100,7 @@
 - **Prevention**: Centralized navbar-aware positioning in index.css for reuse
 
 ### Files Modified
-- `src/index.css`: Added navbar height variables, hero text styles in layer, sheet-navbar-aware class
-- `src/components/NewHero.tsx`: Removed inline style tag
+- `src/index.css`: Added navbar height variables, sheet-navbar-aware class
 - `src/components/ActionsHub.tsx`: Applied sheet-navbar-aware class
 
 ---

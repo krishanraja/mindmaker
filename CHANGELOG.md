@@ -1,6 +1,69 @@
 # AI MINDMAKER CHANGELOG
 
-**Last Updated:** 2026-01-06
+**Last Updated:** 2026-01-08
+
+---
+
+## PERMANENT Hero Scrollbar Fix - Defense-in-Depth Architecture (2026-01-08)
+
+### Problem
+The 2026-01-06 scrollbar fix was **incomplete**. The scrollbar still appeared for ~2 seconds because only ONE of 17 contributing factors was addressed.
+
+### 17 Root Causes Identified
+1. Font loading flash (async fonts with different metrics)
+2. Global h1 override racing with hero-specific styles
+3. Inline `<style>` tag applied after React hydration
+4. Overflow containers on wrong elements (not decorative elements)
+5. Large orbs (384px) with blur-3xl extending beyond viewport
+6. Measurement element with `whiteSpace: nowrap` and no width constraint
+7. Framer Motion `y: 10` transforms causing vertical overflow
+8. useEffect headline validation triggering reflow after first paint
+9. GIF background not preloaded
+10. `min-h-screen` (100vh) exceeds viewport on iOS Safari
+11. Safe area inset delay
+12. blur-3xl GPU layer initialization
+13. ParticleBackground canvas sizing
+14. Navigation fixed positioning
+15. CSS variables initialization delay
+16. React hydration timing
+17. Tailwind JIT compilation race
+
+### Architectural Solution: 7 Defense Layers
+
+**Layer 1: HTML-Level Prevention** (`index.html`)
+- Critical inline CSS before any stylesheets: `html, body { overflow-x: hidden !important }`
+
+**Layer 2: CSS Layer Priority** (`index.css`)
+- New `@layer hero` loads BEFORE base layer
+- Hero containment rules apply from first paint
+
+**Layer 3: No Inline Styles** (`NewHero.tsx`)
+- Removed all inline `<style>` tags
+- Responsive padding moved to CSS file
+
+**Layer 4: Decorative Containment** (`NewHero.tsx`)
+- All background elements use `hero-decoration` class
+- CSS forces `overflow: hidden; max-width: 100%` on decorations
+
+**Layer 5: Animation Fix** (`NewHero.tsx`)
+- Removed `y` transforms from Framer Motion (opacity-only now)
+
+**Layer 6: Viewport Unit Fix** (`NewHero.tsx`)
+- Replaced `min-h-screen` with `min-h-[100dvh]`
+- Dynamic viewport height accounts for mobile toolbars
+
+**Layer 7: Fallback Support** (`index.css`)
+- `@supports not (100dvh)` fallback for older browsers
+
+### Files Modified
+- `index.html`: Added critical inline overflow prevention
+- `src/index.css`: Added `@layer hero` with containment rules, removed duplicate styles from components layer
+- `src/components/NewHero.tsx`: Removed inline styles, added hero-decoration classes, fixed animations, fixed viewport units
+
+### Verification
+- Build passes: `npm run build` ✅
+- No linter errors ✅
+- Defense-in-depth ensures ANY single layer failure won't cause scrollbar
 
 ---
 

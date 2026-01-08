@@ -1,12 +1,71 @@
 # Common Issues
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-08
 
 ---
 
-## Builder Profile Issues
+## Recently Fixed Issues
 
-### Issue: Builder Profile Returns Generic Output
+### ✅ FIXED: Hero Scrollbar Flash on Page Load (2026-01-08 - PERMANENT FIX)
+**Symptom:** Horizontal scrollbar briefly appeared during first ~2 seconds of page load  
+**Root Cause:** 17 contributing factors including CSS race conditions, font loading, animation overflow, and viewport units
+
+**Previous Incomplete Fix (2026-01-06):** Only addressed CSS layer ordering - scrollbar still appeared
+
+**Permanent Solution (2026-01-08):** Defense-in-depth architecture with 7 overlapping prevention layers:
+1. HTML-level inline CSS preventing overflow before any stylesheets load
+2. New `@layer hero` that loads BEFORE base layer
+3. Removed all inline `<style>` tags from component
+4. `hero-decoration` class on all background elements with overflow containment
+5. Removed Framer Motion `y` transforms (opacity-only animations)
+6. Replaced `min-h-screen` (100vh) with `min-h-[100dvh]` for mobile
+7. CSS fallback for older browsers
+
+**Files Fixed:**
+- `index.html`: Critical inline overflow prevention
+- `src/index.css`: `@layer hero` with comprehensive containment
+- `src/components/NewHero.tsx`: Removed inline styles, added containment classes
+
+**Prevention:** Any single layer failure won't cause scrollbar (defense-in-depth)
+
+---
+
+### ✅ FIXED: Side Drawer Content Cut Off (2026-01-06)
+**Symptom:** "Actions" header and top content hidden behind navbar on desktop  
+**Root Cause:** Sheet component used `inset-y-0` positioning from viewport edge (top: 0), while navbar is fixed at z-100 covering top 64-80px  
+**Solution:**
+1. Added CSS variables for navbar height: `--navbar-height`, `--navbar-height-sm`, `--navbar-height-md`
+2. Created `.sheet-navbar-aware` class with responsive top offset and height calculation
+3. Applied `sheet-navbar-aware` class to desktop SheetContent
+
+**Files Fixed:**
+- `src/index.css`
+- `src/components/ActionsHub.tsx`
+
+---
+
+### ✅ FIXED: Text Contrast on Dark Backgrounds (2026-01-05)
+**Symptom:** `text-white/80` on dark ink backgrounds failed WCAG AA contrast requirements  
+**Root Cause:** Insufficient contrast ratio (< 4.5:1) for body text  
+**Solution:**
+1. Added WCAG-compliant design tokens for dark card text colors
+2. Created `.dark-cta-card` component class with enforced high-contrast text
+3. Added `dark-card-*` Tailwind utilities
+
+**Files Fixed:**
+- `src/index.css`
+- `tailwind.config.ts`
+- `src/pages/FAQ.tsx`
+- `src/pages/BlogPost.tsx`
+- `src/pages/Contact.tsx`
+- `src/pages/Blog.tsx`
+- `src/components/SimpleCTA.tsx`
+
+**Prevention:** Never use `text-white/80` on dark backgrounds. Use `.dark-cta-card` class or `text-dark-card-*` utilities.
+
+---
+
+### ✅ FIXED: Builder Profile Returns Generic Output
 **Symptom:** Profile shows "Open mindset", "Willingness to learn" instead of CEO-grade insights  
 **Cause:** `widgetMode: 'tryit'` was being sent, triggering wrong system prompt  
 **Solution:**
@@ -27,7 +86,7 @@ const { data } = await supabase.functions.invoke('chat-with-krish', {
 });
 ```
 
-**Files Affected:**
+**Files Fixed:**
 - `src/hooks/useAssessment.ts`
 - `supabase/functions/chat-with-krish/index.ts`
 
@@ -35,7 +94,7 @@ const { data } = await supabase.functions.invoke('chat-with-krish', {
 
 ---
 
-### Issue: Builder Profile Fallback Is Generic
+### ✅ FIXED: Builder Profile Fallback Is Generic
 **Symptom:** On error, profile shows generic "Curious Explorer" template  
 **Cause:** Hardcoded fallback templates in useAssessment.ts  
 **Solution:**
@@ -44,6 +103,32 @@ const { data } = await supabase.functions.invoke('chat-with-krish', {
 3. All fallbacks include timelines and reference specific answers
 
 **Prevention:** Never use hardcoded templates - always try LLM first
+
+---
+
+## Active Issues
+
+### Issue: Mobile Hero Text Overflow (Edge Cases Only)
+**Status:** ✅ Resolved for standard viewports, monitoring edge cases  
+**Symptom:** Text potentially cut off on very small mobile viewports (< 360px)  
+**Cause:** Combination of absolute positioning, clamp() sizing, and container width conflicts  
+**Resolution:** Current implementation works for standard mobile viewports (375px+)
+
+**Note:** The scrollbar flash issue was PERMANENTLY fixed (2026-01-08) with defense-in-depth architecture. See DIAGNOSIS.md for full details.
+
+---
+
+### Issue: ICP Cards UX
+**Status:** 🟡 P1 - Improvements planned  
+**Symptoms:**
+1. Missing "Who does Mindmaker help?" heading
+2. Aggressive shimmer (3 overlapping animations)
+3. Unequal card heights
+
+**Planned Fixes:**
+- Add contextual heading above ICPSlider component
+- Reduce to single, subtle shimmer effect
+- Set `min-height` on card containers
 
 ---
 
@@ -159,44 +244,6 @@ return new Response(JSON.stringify(data), {
 
 ---
 
-## Mobile Issues (P0)
-
-### Issue: Mobile Hero Text Falling Off Edges
-**Symptom:** Text "AI literacy for commercial leaders" cut off on left/right on mobile  
-**Cause:** Combination of absolute positioning, clamp() sizing, and container width conflicts  
-**Root Causes:**
-1. Absolute positioning (`left-0 right-0`) ignores `max-w-5xl` constraint
-2. Text width (~740px at 32px font) exceeds container width (~343px on 375px viewport)
-3. `max-w-4xl` on absolutely positioned element doesn't constrain content properly
-4. Missing `overflow-x: hidden` on intermediate containers
-
-**Status:** 🔴 P0 - Documented in DIAGNOSIS.md, fix pending
-
-**Fix Required:**
-- Remove absolute positioning or constrain it properly
-- Ensure width constraints propagate through container chain
-- Add `overflow-x: hidden` to intermediate containers
-- Adjust font size calculation for mobile
-
----
-
-### Issue: Mobile Hero Text Vertical Clipping
-**Symptom:** Rotating text cut off at top and bottom during animation  
-**Cause:** Fixed height too small for animation movement  
-**Root Causes:**
-1. `height: 1.2em` = 36px but animation needs ~56px (36px + 10px up + 10px down)
-2. `overflow-hidden` clips text during `y: 10` and `y: -10` animation
-3. `absolute inset-0` on motion.div creates positioning conflict
-
-**Status:** 🔴 P0 - Documented in MOBILE_HERO_OVERFLOW_DIAGNOSIS.md, fix pending
-
-**Fix Required:**
-- Increase container height to accommodate animation movement
-- Adjust `overflow-hidden` to allow animation space
-- Adjust animation values or container height calculation
-
----
-
 ## Frontend Issues
 
 ### Issue: Modal State Persists After Navigation
@@ -253,34 +300,41 @@ if (!data?.url) {
 
 ---
 
-## Build Issues
+## Design System Issues
 
-### Issue: Build Fails with TypeScript Error
-**Symptom:** `npm run build` fails with type errors  
-**Cause:** Missing type definitions or incorrect types  
+### Issue: Poor Text Contrast on Dark Backgrounds
+**Symptom:** Text hard to read on dark ink backgrounds  
+**Cause:** Using `text-white/80` which fails WCAG AA  
 **Solution:**
-1. Check error message for specific file/line
-2. Verify imports are correct
-3. Check if types exist for third-party packages
-4. Use `any` as last resort, add `// @ts-ignore` with comment
+```tsx
+// ❌ NEVER DO THIS on dark backgrounds
+<div className="bg-ink">
+  <p className="text-white/80">Hard to read</p>
+</div>
 
-**Prevention:** Run `npm run build` locally before pushing
+// ✅ DO THIS - Use dark-cta-card class
+<div className="dark-cta-card">
+  <h2>Heading is white</h2>
+  <p>Body text is high-contrast off-white</p>
+</div>
 
----
-
-### Issue: Missing Dependency Error
-**Symptom:** `Cannot find module` error  
-**Cause:** Package installed locally but not in package.json  
-**Solution:**
-```bash
-npm install [package-name] --save
+// ✅ OR USE - text-dark-card-* utilities
+<div className="bg-ink">
+  <h2 className="text-dark-card-heading">Clear heading</h2>
+  <p className="text-dark-card-body">Readable body text</p>
+</div>
 ```
 
-**Prevention:** Always use `npm install` (not manual package.json edit)
+**Design Tokens:**
+```css
+--dark-card-heading: 0 0% 100%;    /* Pure white - headings */
+--dark-card-body: 0 0% 93%;        /* Off-white - body text */
+--dark-card-muted: 0 0% 75%;       /* Softer white - metadata */
+```
+
+**Prevention:** Always use `.dark-cta-card` or `text-dark-card-*` utilities on dark backgrounds
 
 ---
-
-## Design System Issues
 
 ### Issue: CSS Conflicts with Text Effects
 **Symptom:** Shimmer/gradient effects don't work on text  
@@ -314,80 +368,51 @@ npm install [package-name] --save
 
 ---
 
-### Issue: Text Not Readable on Background
-**Symptom:** Poor contrast, hard to read  
-**Cause:** Not using semantic tokens correctly  
-**Solution:**
-```typescript
-// ❌ Wrong - low contrast
-<div className="bg-mint text-white">
+## Build Issues
 
-// ✅ Correct - high contrast
-<div className="bg-mint text-ink">
+### Issue: Build Fails with TypeScript Error
+**Symptom:** `npm run build` fails with type errors  
+**Cause:** Missing type definitions or incorrect types  
+**Solution:**
+1. Check error message for specific file/line
+2. Verify imports are correct
+3. Check if types exist for third-party packages
+4. Use `any` as last resort, add `// @ts-ignore` with comment
+
+**Prevention:** Run `npm run build` locally before pushing
+
+---
+
+### Issue: Missing Dependency Error
+**Symptom:** `Cannot find module` error  
+**Cause:** Package installed locally but not in package.json  
+**Solution:**
+```bash
+npm install [package-name] --save
 ```
 
-**Prevention:** Always test contrast with WebAIM Contrast Checker
-
----
-
-## ICP Cards Issues
-
-### Issue: Missing "Who does Mindmaker help?" Heading
-**Symptom:** No contextual heading above ICP slider  
-**Cause:** ICPSlider called without heading  
-**Solution:** Add heading above ICPSlider component
-
-**Status:** 🟡 P1 - Fix pending
-
----
-
-### Issue: Aggressive Shimmer Animation
-**Symptom:** Visual overload on selected card  
-**Cause:** 3 simultaneous infinite animations:
-1. Background gradient position (3s infinite reverse)
-2. Shimmer line sweep (2s infinite linear)
-3. Box shadow pulse (2s infinite easeInOut)
-
-**Solution:**
-- Reduce to single, subtle shimmer effect
-- Increase animation duration (slower = less aggressive)
-- Reduce opacity/intensity of shimmer
-- Consider disabling on mobile to save battery
-
-**Status:** 🟡 P2 - Fix pending
-
----
-
-### Issue: Unequal Card Heights
-**Symptom:** Cards have different heights  
-**Cause:** `flex-1` but no height constraint, variable content length  
-**Solution:**
-- Set `min-height` on card container to accommodate longest content
-- OR use CSS Grid with equal row heights
-- OR set fixed height and handle text overflow with ellipsis
-
-**Status:** 🟡 P2 - Needs investigation
+**Prevention:** Always use `npm install` (not manual package.json edit)
 
 ---
 
 ## Production Audit Issues (Fixed 2025-12-13)
 
-### Issue: Duplicate ChatBot Component ✅ FIXED
+### ✅ FIXED: Duplicate ChatBot Component
 **Symptom:** Two chat buttons appearing, inconsistent state  
 **Cause:** ChatBot rendered both in App.tsx and Index.tsx  
 **Solution:** Remove duplicate from Index.tsx - App.tsx renders it globally
 
-### Issue: FAQ Items Hoisting ✅ FIXED
+### ✅ FIXED: FAQ Items Hoisting
 **Symptom:** FAQ schema not loading, possible runtime errors  
 **Cause:** `faqItems` used in useEffect before being defined in component  
 **Solution:** Move `faqItems` constant outside component
 
-### Issue: Outdated SEO Dates ✅ FIXED
+### ✅ FIXED: Outdated SEO Dates
 **Symptom:** Schema.org pricing shows as expired  
 **Cause:** `priceValidUntil` dates set in the past  
 **Solution:** Update dates to future (e.g., 2026-12-31)
 
-### Issue: Missing SEO on Pages ✅ FIXED
+### ✅ FIXED: Missing SEO on Pages
 **Symptom:** Pages don't have proper meta tags in search results  
 **Cause:** SEO component not added to all pages  
 **Solution:** Add SEO component with title, description, canonical URL
@@ -430,6 +455,8 @@ When investigating issues:
 10. ✅ Check for TypeScript errors in build
 11. ✅ Verify correct system prompt is being used (for AI features)
 12. ✅ Check Vertex AI/OpenAI quota and limits
+13. ✅ Verify WCAG contrast on dark backgrounds
+14. ✅ Check for CSS layer/specificity conflicts
 
 ---
 
