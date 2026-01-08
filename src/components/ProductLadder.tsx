@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { User, Users, Compass, CheckCircle } from "lucide-react";
+import { User, Users, Compass, CheckCircle, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
+import { motion, AnimatePresence } from "framer-motion";
+import { PromoBanner } from "@/components/PromoBanner";
 
+type AudienceType = "individual" | "team";
 type PathType = "build" | "orchestrate";
 
 interface Offering {
@@ -12,18 +15,17 @@ interface Offering {
   name: string;
   duration: string;
   description: string;
-  pricing?: string;
   cta: string;
   intensity: string;
 }
 
+// Individual offerings
 const buildOfferings: Offering[] = [
   {
     depth: "1hr",
     name: "Drop-In Build Session",
     duration: "60 minutes",
     description: "Live session with Krish. Bring one real problem. Leave with a working prototype, friction map, and prompts you can extend yourself.",
-    pricing: "$250 → $150 until Jan 1",
     cta: "Book Build Session",
     intensity: "Quick Win",
   },
@@ -51,7 +53,6 @@ const orchestrateOfferings: Offering[] = [
     name: "Executive Decision Review",
     duration: "60 minutes",
     description: "A decision review session for leaders who delegate execution but own outcomes. Leave with frameworks to evaluate AI initiatives and direct teams effectively.",
-    pricing: "$250 → $150 until Jan 1",
     cta: "Book Decision Review",
     intensity: "Quick Clarity",
   },
@@ -70,6 +71,34 @@ const orchestrateOfferings: Offering[] = [
     description: "Full executive AI governance program. Build decision frameworks, oversight models, and evaluation criteria. Leave with board-level confidence on AI.",
     cta: "Learn How to Orchestrate",
     intensity: "Full Governance",
+  },
+];
+
+// Team offerings - 3hr / 4wk / 90d format
+const teamOfferings: Offering[] = [
+  {
+    depth: "3hr",
+    name: "Team Alignment Session",
+    duration: "3 hours",
+    description: "Drop-in session to align your leadership team and define your AI strategy. Surface conflicts, agree on priorities, leave with clarity on next steps.",
+    cta: "Book Alignment Session",
+    intensity: "Quick Alignment",
+  },
+  {
+    depth: "4wk",
+    name: "Accelerated Exec Lab",
+    duration: "4 weeks",
+    description: "Shortened executive team lab. Build shared decision frameworks and commit to a pilot with owner and gates. Fast-track your team's AI alignment.",
+    cta: "Learn More",
+    intensity: "Focused Sprint",
+  },
+  {
+    depth: "90d",
+    name: "Full Executive Lab",
+    duration: "90 days",
+    description: "Complete executive team transformation. Align on AI, run real decisions through new workflows, leave with a board-ready charter and 90-day pilot commitment.",
+    cta: "Start Full Lab",
+    intensity: "Full Transformation",
   },
 ];
 
@@ -102,26 +131,169 @@ const pathInfo = {
   },
 };
 
-const PathSlider = ({ 
-  path, 
-  navigate 
-}: { 
-  path: PathType; 
+const teamInfo = {
+  icon: Users,
+  label: "EXECUTIVE TEAMS",
+  title: "Align Your Leadership Team",
+  subtitle: "For exec teams that need shared AI decision frameworks and alignment, fast.",
+  bullets: [
+    "Conflicting views on AI risk and value across leadership",
+    "Vendor noise and pilot confusion slowing decisions",
+    "Need a clear 90-day pilot charter with owner and gates",
+  ],
+  offerings: teamOfferings,
+  route: "/leadership-lab",
+};
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.2 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 24,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    scale: 0.98,
+    transition: { duration: 0.2 },
+  },
+};
+
+const slideVariants = {
+  hidden: { opacity: 0, x: 20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 24,
+    },
+  },
+  exit: {
+    opacity: 0,
+    x: -20,
+    transition: { duration: 0.15 },
+  },
+};
+
+// Audience Selection Component
+const AudienceSelection = ({
+  onSelect,
+}: {
+  onSelect: (audience: AudienceType) => void;
+}) => {
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="max-w-2xl mx-auto px-4 sm:px-0"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Individual Card */}
+        <motion.button
+          variants={cardVariants}
+          onClick={() => onSelect("individual")}
+          className="group relative bg-card border-2 border-border rounded-xl p-6 sm:p-8 text-left transition-all duration-300 hover:border-ink/40 hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <div className="flex flex-col h-full min-h-[180px] sm:min-h-[200px]">
+            <div className="w-12 h-12 bg-ink text-white rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <User className="h-6 w-6" />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+              Level Up Yourself
+            </h3>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed flex-1">
+              Build or orchestrate AI systems personally. Grow your own capabilities.
+            </p>
+            <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-ink group-hover:gap-3 transition-all duration-300">
+              <span>Choose your path</span>
+              <ArrowLeft className="h-4 w-4 rotate-180" />
+            </div>
+          </div>
+        </motion.button>
+
+        {/* Team Card */}
+        <motion.button
+          variants={cardVariants}
+          onClick={() => onSelect("team")}
+          className="group relative bg-card border-2 border-border rounded-xl p-6 sm:p-8 text-left transition-all duration-300 hover:border-ink/40 hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <div className="flex flex-col h-full min-h-[180px] sm:min-h-[200px]">
+            <div className="w-12 h-12 bg-ink text-white rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <Users className="h-6 w-6" />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+              Align Your Team
+            </h3>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed flex-1">
+              Get your executive team aligned on AI strategy and decision frameworks.
+            </p>
+            <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-ink group-hover:gap-3 transition-all duration-300">
+              <span>Choose your commitment</span>
+              <ArrowLeft className="h-4 w-4 rotate-180" />
+            </div>
+          </div>
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+};
+
+// Commitment Slider Component (reusable for both paths)
+const CommitmentSlider = ({
+  offerings,
+  sliderLabels,
+  route,
+  navigate,
+}: {
+  offerings: Offering[];
+  sliderLabels: [string, string, string];
+  route: string;
   navigate: (path: string) => void;
 }) => {
   const [journeyStage, setJourneyStage] = useState([0]);
-  const info = pathInfo[path];
-  const offerings = info.offerings;
 
   const currentIndex = journeyStage[0] <= 33 ? 0 : journeyStage[0] <= 66 ? 1 : 2;
   const currentOffering = offerings[currentIndex];
   const depthParam = currentOffering.depth;
 
   return (
-    <div className="premium-card flex flex-col transition-all duration-300">
+    <motion.div
+      variants={cardVariants}
+      className="premium-card flex flex-col transition-all duration-300"
+    >
       {/* Slider Section */}
       <div className="mb-6">
-        <div className="text-xs font-bold text-muted-foreground mb-2">YOUR COMMITMENT</div>
+        <div className="text-xs font-bold text-muted-foreground mb-3">YOUR COMMITMENT</div>
         <Slider
           value={journeyStage}
           onValueChange={setJourneyStage}
@@ -130,209 +302,307 @@ const PathSlider = ({
           className="mb-4"
         />
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span className={journeyStage[0] <= 33 ? "text-foreground font-semibold" : ""}>1 hr</span>
-          <span className={journeyStage[0] > 33 && journeyStage[0] <= 66 ? "text-foreground font-semibold" : ""}>4 weeks</span>
-          <span className={journeyStage[0] > 66 ? "text-foreground font-semibold" : ""}>90 days</span>
+          <span className={journeyStage[0] <= 33 ? "text-foreground font-semibold" : ""}>
+            {sliderLabels[0]}
+          </span>
+          <span className={journeyStage[0] > 33 && journeyStage[0] <= 66 ? "text-foreground font-semibold" : ""}>
+            {sliderLabels[1]}
+          </span>
+          <span className={journeyStage[0] > 66 ? "text-foreground font-semibold" : ""}>
+            {sliderLabels[2]}
+          </span>
         </div>
       </div>
 
-      {/* Offering Details */}
-      <div className="flex-1 flex flex-col transition-all duration-300">
-        <div className="text-xs text-mint-dark font-bold mb-2">{currentOffering.intensity}</div>
-        <h4 className="text-lg font-bold text-foreground mb-2">
-          {currentOffering.name}
-        </h4>
-        <div className="text-xs text-muted-foreground mb-3">
-          {currentOffering.duration}
-        </div>
-        
-        {currentOffering.pricing && (
-          <div className="text-sm font-bold text-mint mb-3">
-            {currentOffering.pricing}
-          </div>
-        )}
-        
-        <p className="text-sm leading-relaxed mb-4 text-foreground flex-1">
-          {currentOffering.description}
-        </p>
-        
-        <Button 
-          size="lg"
-          variant="mint"
-          className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
-          onClick={() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            navigate(`${info.route}?depth=${depthParam}`);
-          }}
+      {/* Promo Banner */}
+      <PromoBanner compact className="mb-6" />
+
+      {/* Offering Details with AnimatePresence for smooth transitions */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1 flex flex-col"
         >
-          {currentOffering.cta}
-        </Button>
-      </div>
-    </div>
+          <div className="text-xs text-mint-dark font-bold mb-2">{currentOffering.intensity}</div>
+          <h4 className="text-lg font-bold text-foreground mb-2">
+            {currentOffering.name}
+          </h4>
+          <div className="text-xs text-muted-foreground mb-3">
+            {currentOffering.duration}
+          </div>
+
+          <p className="text-sm leading-relaxed mb-4 text-foreground flex-1 min-h-[60px]">
+            {currentOffering.description}
+          </p>
+
+          <Button
+            size="lg"
+            variant="mint"
+            className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              navigate(`${route}?depth=${depthParam}`);
+            }}
+          >
+            {currentOffering.cta}
+          </Button>
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
-const TeamCard = ({ navigate }: { navigate: (path: string) => void }) => {
+// Individual Path Component
+const IndividualPath = ({
+  onBack,
+  navigate,
+}: {
+  onBack: () => void;
+  navigate: (path: string) => void;
+}) => {
+  const [selectedPath, setSelectedPath] = useState<PathType>("build");
+  const currentPathInfo = pathInfo[selectedPath];
+  const PathIcon = currentPathInfo.icon;
+
   return (
-    <div className="minimal-card flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-          <Users className="h-5 w-5" />
-        </div>
-        <div className="text-xs font-bold text-muted-foreground">
-          EXEC TEAMS
-        </div>
-      </div>
-      
-      <h3 className="text-xl font-bold text-foreground mb-2">
-        Align your leadership team
-      </h3>
-      
-      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-        For exec teams that need shared AI decision frameworks, fast.
-      </p>
-      
-      <ul className="space-y-2 mb-6 flex-1">
-        <li className="flex items-start gap-2 text-sm text-foreground">
-          <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
-          <span>Conflicting views on AI risk and value</span>
-        </li>
-        <li className="flex items-start gap-2 text-sm text-foreground">
-          <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
-          <span>Vendor noise and pilot confusion</span>
-        </li>
-        <li className="flex items-start gap-2 text-sm text-foreground">
-          <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
-          <span>Need a 90-day pilot charter</span>
-        </li>
-      </ul>
-      
-      <Button
-        size="lg"
-        variant="default"
-        className="w-full touch-target mt-auto"
-        onClick={() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          navigate("/leadership-lab");
-        }}
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="max-w-2xl mx-auto px-4 sm:px-0"
+    >
+      {/* Back Button */}
+      <motion.button
+        variants={cardVariants}
+        onClick={onBack}
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors group"
       >
-        Run an exec lab
-      </Button>
-    </div>
+        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+        <span>Back to selection</span>
+      </motion.button>
+
+      {/* Tab Buttons */}
+      <motion.div variants={cardVariants} className="flex gap-2 mb-6">
+        <button
+          onClick={() => setSelectedPath("build")}
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+            selectedPath === "build"
+              ? "bg-ink text-white shadow-md"
+              : "bg-card border border-border text-foreground hover:border-ink/30"
+          }`}
+        >
+          <User className="h-4 w-4" />
+          <span>Build with AI</span>
+        </button>
+        <button
+          onClick={() => setSelectedPath("orchestrate")}
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+            selectedPath === "orchestrate"
+              ? "bg-ink text-white shadow-md"
+              : "bg-card border border-border text-foreground hover:border-ink/30"
+          }`}
+        >
+          <Compass className="h-4 w-4" />
+          <span>Orchestrate AI</span>
+        </button>
+      </motion.div>
+
+      {/* Path Info Card */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedPath}
+          variants={slideVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="minimal-card mb-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
+              <PathIcon className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-muted-foreground">
+                {currentPathInfo.label}
+              </div>
+              <h3 className="text-xl font-bold text-foreground">
+                {currentPathInfo.title}
+              </h3>
+            </div>
+          </div>
+
+          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+            {currentPathInfo.subtitle}
+          </p>
+
+          <ul className="space-y-2">
+            {currentPathInfo.bullets.map((bullet, index) => (
+              <li key={index} className="flex items-start gap-2 text-sm text-foreground">
+                <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Slider */}
+      <CommitmentSlider
+        offerings={currentPathInfo.offerings}
+        sliderLabels={["1 hr", "4 weeks", "90 days"]}
+        route={currentPathInfo.route}
+        navigate={navigate}
+      />
+    </motion.div>
   );
 };
 
+// Team Path Component
+const TeamPath = ({
+  onBack,
+  navigate,
+}: {
+  onBack: () => void;
+  navigate: (path: string) => void;
+}) => {
+  const TeamIcon = teamInfo.icon;
+
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="max-w-2xl mx-auto px-4 sm:px-0"
+    >
+      {/* Back Button */}
+      <motion.button
+        variants={cardVariants}
+        onClick={onBack}
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors group"
+      >
+        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+        <span>Back to selection</span>
+      </motion.button>
+
+      {/* Team Info Card */}
+      <motion.div variants={cardVariants} className="minimal-card mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
+            <TeamIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-muted-foreground">
+              {teamInfo.label}
+            </div>
+            <h3 className="text-xl font-bold text-foreground">
+              {teamInfo.title}
+            </h3>
+          </div>
+        </div>
+
+        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+          {teamInfo.subtitle}
+        </p>
+
+        <ul className="space-y-2">
+          {teamInfo.bullets.map((bullet, index) => (
+            <li key={index} className="flex items-start gap-2 text-sm text-foreground">
+              <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      </motion.div>
+
+      {/* Team Slider */}
+      <CommitmentSlider
+        offerings={teamInfo.offerings}
+        sliderLabels={["3 hr", "4 weeks", "90 days"]}
+        route={teamInfo.route}
+        navigate={navigate}
+      />
+    </motion.div>
+  );
+};
+
+// Main Component
 const ProductLadder = () => {
   const navigate = useNavigate();
   const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
-  const [selectedPath, setSelectedPath] = useState<PathType>("build");
+  const [audience, setAudience] = useState<AudienceType | null>(null);
 
   // Auto-open modal when #book hash is present
   useEffect(() => {
     const handleHashChange = () => {
-      if (window.location.hash === '#book') {
+      if (window.location.hash === "#book") {
         setConsultModalOpen(true);
-        window.history.replaceState(null, '', window.location.pathname);
+        window.history.replaceState(null, "", window.location.pathname);
       }
     };
 
     handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  const currentPathInfo = pathInfo[selectedPath];
-  const PathIcon = currentPathInfo.icon;
+  const handleBack = () => {
+    setAudience(null);
+  };
 
   return (
     <section className="section-padding bg-background" id="products">
       <div className="container-width">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12 px-4 sm:px-0">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
-            How do you want to work with AI?
-          </h2>
-          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            Choose your path, then select your commitment level.
-          </p>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6"
+          >
+            {audience === null
+              ? "Who is this for?"
+              : audience === "individual"
+              ? "How do you want to work with AI?"
+              : "Choose your team commitment"}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto"
+          >
+            {audience === null
+              ? "Select whether you're leveling up yourself or aligning your team."
+              : audience === "individual"
+              ? "Choose your path, then select your commitment level."
+              : "Select how deep you want to go with your leadership team."}
+          </motion.p>
         </div>
 
-        {/* Main Content: Tabs + Slider */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-0 mb-12">
-          {/* Tab Buttons */}
-          <div className="flex gap-2 mb-6">
-            <button
-              onClick={() => setSelectedPath("build")}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                selectedPath === "build"
-                  ? "bg-ink text-white shadow-md"
-                  : "bg-card border border-border text-foreground hover:border-ink/30"
-              }`}
-            >
-              <User className="h-4 w-4" />
-              <span>Build with AI</span>
-            </button>
-            <button
-              onClick={() => setSelectedPath("orchestrate")}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                selectedPath === "orchestrate"
-                  ? "bg-ink text-white shadow-md"
-                  : "bg-card border border-border text-foreground hover:border-ink/30"
-              }`}
-            >
-              <Compass className="h-4 w-4" />
-              <span>Orchestrate AI</span>
-            </button>
-          </div>
-
-          {/* Path Info Card */}
-          <div className="minimal-card mb-6 fade-in-up">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-                <PathIcon className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-muted-foreground">
-                  {currentPathInfo.label}
-                </div>
-                <h3 className="text-xl font-bold text-foreground">
-                  {currentPathInfo.title}
-                </h3>
-              </div>
-            </div>
-            
-            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-              {currentPathInfo.subtitle}
-            </p>
-            
-            <ul className="space-y-2">
-              {currentPathInfo.bullets.map((bullet, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-foreground">
-                  <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
-                  <span>{bullet}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Slider */}
-          <PathSlider path={selectedPath} navigate={navigate} />
-        </div>
-
-        {/* Team Section - Separate Below */}
-        <div className="max-w-md mx-auto px-4 sm:px-0">
-          <div className="text-center mb-6">
-            <p className="text-sm text-muted-foreground">
-              Need to align your entire leadership team first?
-            </p>
-          </div>
-          <TeamCard navigate={navigate} />
-        </div>
+        {/* Main Content with AnimatePresence */}
+        <AnimatePresence mode="wait">
+          {audience === null && (
+            <AudienceSelection key="audience" onSelect={setAudience} />
+          )}
+          {audience === "individual" && (
+            <IndividualPath key="individual" onBack={handleBack} navigate={navigate} />
+          )}
+          {audience === "team" && (
+            <TeamPath key="team" onBack={handleBack} navigate={navigate} />
+          )}
+        </AnimatePresence>
 
         {/* Initial Consult Modal */}
-        <InitialConsultModal 
-          open={consultModalOpen} 
+        <InitialConsultModal
+          open={consultModalOpen}
           onOpenChange={setConsultModalOpen}
           preselectedProgram={preselectedProgram}
         />

@@ -6,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import { ModuleExplorer } from "@/components/ModuleExplorer";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { PromoBanner } from "@/components/PromoBanner";
 
 type DepthType = "1hr" | "4wk" | "90d";
 
@@ -17,7 +18,6 @@ const depthContent = {
     icon: Zap,
     headline: "Bring one real problem. Leave with a working prototype.",
     description: "A live session with Krish where you build something real. Bring your biggest friction point and leave with a working prototype, friction map, and prompts you can extend yourself.",
-    pricing: "$250 → $150 until Jan 1",
     qualifier: {
       title: "This is for hands-on leaders who want a quick win.",
       body: "If you have one specific problem you want to solve with AI and you're ready to build, this session will get you unstuck fast.",
@@ -200,14 +200,12 @@ const BuilderSprint = () => {
               <IconComponent className="h-5 w-5" />
               <span className="text-lg">{content.duration}</span>
             </div>
-            {content.pricing && (
-              <div className="text-lg font-bold text-mint mb-4">
-                {content.pricing}
-              </div>
-            )}
-            <p className="text-xl text-foreground leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-foreground leading-relaxed max-w-3xl mx-auto mb-8">
               {content.headline}
             </p>
+            
+            {/* Promo Banner */}
+            <PromoBanner className="max-w-2xl mx-auto" />
           </div>
           
           {/* Qualifier Section */}

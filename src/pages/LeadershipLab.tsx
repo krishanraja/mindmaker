@@ -4,6 +4,7 @@ import { Users, CheckCircle } from "lucide-react";
 import { ConsultationBooking } from "@/components/ConsultationBooking";
 import { SEO } from "@/components/SEO";
 import { ModuleExplorer } from "@/components/ModuleExplorer";
+import { PromoBanner } from "@/components/PromoBanner";
 
 const LeadershipLab = () => {
   const seoData = {
@@ -87,10 +88,13 @@ const LeadershipLab = () => {
               <Users className="h-5 w-5" />
               <span className="text-lg">4 hours • 6-12 executives</span>
             </div>
-            <p className="text-xl text-foreground leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-foreground leading-relaxed max-w-3xl mx-auto mb-8">
               Executive teams move from conflicting views to a shared decision framework. 
               In four hours, commit to a single 90-day pilot with an owner, budget and gates.
             </p>
+            
+            {/* Promo Banner */}
+            <PromoBanner className="max-w-2xl mx-auto" />
           </div>
           
           {/* Qualifier Section */}
