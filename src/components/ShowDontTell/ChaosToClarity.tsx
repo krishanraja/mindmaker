@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import AINewsTicker from "@/components/AINewsTicker";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { mapRange, easeInOutCubic, lerp, smoothStep } from "@/utils/animationEasing";
-import { useScrollLock } from "@/hooks/useScrollLock";
+import { useScrollHijack } from "@/hooks/useScrollHijack";
 
 type Category = "Technical" | "Commercial" | "Organizational" | "Competitive";
 
@@ -117,8 +117,10 @@ const getRandomPosition = (id: number, isMobile: boolean) => {
   const randX = Math.abs((Math.sin(seed) * 10000) % 100) / 100;
   const randY = Math.abs((Math.cos(seed * 1.5) * 10000) % 100) / 100;
 
-  const xMin = isMobile ? 35 : 5;
-  const xRange = isMobile ? 30 : 90;
+  // FIX: Reduced xRange from 90 to 75 to prevent labels overflowing right edge
+  // Elements at x: 5% + 75% = 80% max, which with translateX: -50% keeps them in bounds
+  const xMin = isMobile ? 35 : 10;
+  const xRange = isMobile ? 30 : 75;
   const yMin = 30;
   const yRange = 40;
 
@@ -126,7 +128,7 @@ const getRandomPosition = (id: number, isMobile: boolean) => {
     x: xMin + randX * xRange,
     y: yMin + randY * yRange,
     rotation: (randX - 0.5) * 50,
-    translateX: isMobile ? -50 : 0,
+    translateX: isMobile ? -50 : -50, // Always center-align to prevent overflow
   };
 };
 
@@ -193,9 +195,10 @@ const ChaosToClarity = () => {
   // Ref-based progress for continuous animation (no re-renders)
   const progressRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const rafIdRef = useRef<number | null>(null);
-  const accumulatedDeltaRef = useRef(0);
-  const titleRef = useRef<HTMLDivElement>(null); // Ref for title element to trigger scroll hijack
+  
+  // Refs for scroll hijack (defense-in-depth)
+  const sectionRef = useRef<HTMLElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   
   // State only for discrete UI changes (visibility thresholds)
   const [uiState, setUiState] = useState({
@@ -326,60 +329,60 @@ const ChaosToClarity = () => {
     container.style.setProperty('--ticker-y', `${lerp(30, 0, newsTickerProgress)}px`);
   }, [conceptPositions, groupedConcepts, isMobile]);
 
-  // Batched progress updates via RAF
-  const scheduleUpdate = useCallback(() => {
-    if (rafIdRef.current !== null) return;
+  // Handle progress updates from scroll hijack
+  const handleProgress = useCallback((progress: number, delta: number, _direction: 'up' | 'down') => {
+    // The new hook provides progress directly, but we also handle delta for compatibility
+    progressRef.current = progress;
+    updateAnimationState(progress);
+    
+    // Update React state for discrete visibility changes
+    const newShowClarity = progress > 0.8;
+    const newShowTicker = progress > 0.75;
+    const newShowScrollHint = progress < 0.4;
+    const newIsComplete = progress >= 1;
 
-    rafIdRef.current = requestAnimationFrame(() => {
-      const delta = accumulatedDeltaRef.current;
-      accumulatedDeltaRef.current = 0;
-      rafIdRef.current = null;
-
-      const newProgress = clamp01(progressRef.current + delta / PROGRESS_DIVISOR);
-      progressRef.current = newProgress;
-
-      // Update all CSS variables (GPU-accelerated)
-      updateAnimationState(newProgress);
-
-      // Only update React state for discrete visibility changes
-      const newShowClarity = newProgress > 0.8;
-      const newShowTicker = newProgress > 0.75;
-      const newShowScrollHint = newProgress < 0.4;
-      const newIsComplete = newProgress >= 1;
-
-      setUiState(prev => {
-        if (
-          prev.showClarity !== newShowClarity ||
-          prev.showTicker !== newShowTicker ||
-          prev.showScrollHint !== newShowScrollHint ||
-          prev.isComplete !== newIsComplete
-        ) {
-          return {
-            showClarity: newShowClarity,
-            showTicker: newShowTicker,
-            showScrollHint: newShowScrollHint,
-            isComplete: newIsComplete,
-          };
-        }
-        return prev;
-      });
+    setUiState(prev => {
+      if (
+        prev.showClarity !== newShowClarity ||
+        prev.showTicker !== newShowTicker ||
+        prev.showScrollHint !== newShowScrollHint ||
+        prev.isComplete !== newIsComplete
+      ) {
+        return {
+          showClarity: newShowClarity,
+          showTicker: newShowTicker,
+          showScrollHint: newShowScrollHint,
+          isComplete: newIsComplete,
+        };
+      }
+      return prev;
     });
-  }, [PROGRESS_DIVISOR, updateAnimationState]);
+  }, [updateAnimationState]);
 
-  const handleProgress = useCallback((delta: number, _direction: 'up' | 'down') => {
-    accumulatedDeltaRef.current += delta;
-    scheduleUpdate();
-  }, [scheduleUpdate]);
+  // Handle escape velocity (user scrolling very fast = wants to skip)
+  const handleEscapeVelocity = useCallback(() => {
+    // Smoothly animate to completion
+    progressRef.current = 1;
+    updateAnimationState(1);
+    setUiState({
+      showClarity: true,
+      showTicker: true,
+      showScrollHint: false,
+      isComplete: true,
+    });
+  }, [updateAnimationState]);
 
-  const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: 0, // Start hijack immediately when section reaches trigger point
-    headerOffset: 16, // Minimal breathing room - reduced from 80px
+  // Use defense-in-depth scroll hijack hook
+  const { isLocked, skipToEnd } = useScrollHijack({
+    sentinelRef,
+    sectionRef,
     onProgress: handleProgress,
     isComplete: uiState.isComplete,
-    canReverseExit: true,
+    progressDivisor: PROGRESS_DIVISOR,
     enabled: true,
-    titleRef: titleRef, // Use title position to trigger scroll hijack
-    titleOffset: isMobile ? 20 : 16, // Reduced from 80-100px to minimize whitespace
+    maxDeltaPerFrame: 0.08, // Max 8% progress per frame (prevents skipping)
+    escapeVelocityThreshold: 12, // pixels/ms - trigger fast-forward
+    onEscapeVelocity: handleEscapeVelocity,
   });
 
   // Initialize CSS variables
@@ -389,20 +392,21 @@ const ChaosToClarity = () => {
     }
   }, [updateAnimationState]);
 
-  // Cleanup RAF on unmount
-  useEffect(() => {
-    return () => {
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-    };
-  }, []);
+  // Note: RAF cleanup is now handled internally by useScrollHijack hook
 
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-background relative overflow-hidden min-h-screen"
+      className="w-full bg-background relative overflow-hidden min-h-screen scroll-hijack-section"
     >
+      {/* LAYER 4: Sentinel element for anticipatory detection */}
+      {/* Positioned 100px above the section to trigger lock preparation before section reaches viewport */}
+      <div 
+        ref={sentinelRef}
+        className="scroll-hijack-sentinel"
+        aria-hidden="true"
+      />
+      
       <div 
         ref={containerRef}
         className="w-full max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-4 chaos-clarity-container"
@@ -553,10 +557,11 @@ const ChaosToClarity = () => {
               {!uiState.showScrollHint && (
                 <button
                   onClick={() => {
+                    // Use the hook's skipToEnd for proper state management
+                    skipToEnd();
+                    // Also update local state immediately for UI
                     progressRef.current = 1;
-                    if (containerRef.current) {
-                      updateAnimationState(1);
-                    }
+                    updateAnimationState(1);
                     setUiState({
                       showClarity: true,
                       showTicker: true,

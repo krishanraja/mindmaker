@@ -1,6 +1,6 @@
 # The Mindmaker - AI Literacy Platform
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-08
 
 ---
 
@@ -61,10 +61,16 @@ npm run preview
 mindmaker/
 ├── src/
 │   ├── components/     # React components
+│   │   ├── ui/         # Shadcn base components
+│   │   ├── ChatBot/    # AI chatbot system
+│   │   ├── Animations/ # Visual effects
+│   │   ├── Interactive/# Interactive demos
+│   │   └── ShowDontTell/# Content sections
 │   ├── pages/          # Route pages
 │   ├── hooks/          # Custom hooks
 │   ├── contexts/       # React contexts
 │   ├── lib/            # Utilities
+│   ├── data/           # Static data
 │   └── index.css       # Design tokens
 ├── supabase/
 │   └── functions/      # Edge functions
@@ -85,6 +91,9 @@ mindmaker/
 | `/leadership-lab` | Team workshop details |
 | `/portfolio-program` | Partner program details |
 | `/leaders` | AI Leadership Benchmark diagnostic |
+| `/blog` | Blog listing page |
+| `/blog/:slug` | Individual blog posts |
+| `/builder-economy` | Thought leadership page |
 | `/faq`, `/privacy`, `/terms`, `/contact` | Support pages |
 
 ---
@@ -122,23 +131,30 @@ Full documentation available in `/project-documentation/`:
 
 - **[ARCHITECTURE.md](./project-documentation/ARCHITECTURE.md)** - System architecture
 - **[FEATURES.md](./project-documentation/FEATURES.md)** - Feature catalogue
-- **[COMMON_ISSUES.md](./project-documentation/COMMON_ISSUES.md)** - Known issues
+- **[DESIGN_SYSTEM.md](./project-documentation/DESIGN_SYSTEM.md)** - Design system guide
+- **[COMMON_ISSUES.md](./project-documentation/COMMON_ISSUES.md)** - Known issues & solutions
 - **[HISTORY.md](./project-documentation/HISTORY.md)** - Change history
 - **[DECISIONS_LOG.md](./project-documentation/DECISIONS_LOG.md)** - Design decisions
+- **[DEPLOYMENT.md](./project-documentation/DEPLOYMENT.md)** - Deployment checklist
 
 ---
 
 ## Recent Changes (2026-01)
 
-### Builder Profile Pipeline Fix
+### Hero & Drawer UX Fixes (2026-01-06)
+- Fixed horizontal scrollbar flash on page load
+- Fixed side drawer content cut off behind navbar
+- Added navbar-aware sheet positioning system
+
+### Text Contrast System Fix (2026-01-05)
+- Fixed WCAG AA contrast failures on dark backgrounds
+- Added `dark-cta-card` component class
+- Added `dark-card-*` text color utilities
+
+### Builder Profile Pipeline Fix (2026-01-XX)
 - Fixed `widgetMode: 'tryit'` bug causing generic outputs
 - Added Builder Profile mode detection in edge function
 - Improved fallback quality with LLM-generated responses
-
-### Mobile Issues Diagnosed
-- Hero text horizontal/vertical overflow on mobile
-- ICP cards missing heading, aggressive shimmer, unequal heights
-- Full diagnosis in `DIAGNOSIS.md`, `ROOT_CAUSE.md`
 
 ### AI Backend (2025-01-25)
 - Migrated chatbot to Vertex AI RAG with custom corpus
@@ -153,8 +169,17 @@ Full documentation available in `/project-documentation/`:
 |---------|-------|
 | Primary Dark (Ink) | `#0e1a2b` |
 | Primary Accent (Mint) | `#7ef4c2` |
-| Display Font | Gobold (hero only) |
-| Body Font | Inter |
+| Display Font | Space Grotesk Variable |
+| Body Font | Inter Variable |
+
+### Typography System
+- **Headings (h1-h6)**: Space Grotesk Variable
+- **Body text**: Inter Variable
+- **Fluid sizing**: Uses `clamp()` for responsive typography
+
+### Dark Card Text (WCAG Compliant)
+- Never use `text-white/80` on dark backgrounds
+- Use `.dark-cta-card` class or `text-dark-card-*` utilities
 
 ---
 

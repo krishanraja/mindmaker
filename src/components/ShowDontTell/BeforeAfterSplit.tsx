@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useScrollLock } from '@/hooks/useScrollLock';
+import { useScrollHijack } from '@/hooks/useScrollHijack';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const transformations = [
@@ -32,12 +32,13 @@ const transformations = [
 const BeforeAfterSplit = () => {
   const isMobile = useIsMobile();
   
-  // Use refs for continuous animation, state only for discrete UI changes
+  // Refs for animation
   const progressRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const rafIdRef = useRef<number | null>(null);
-  const accumulatedDeltaRef = useRef(0);
-  const titleRef = useRef<HTMLDivElement>(null); // Ref for title element to trigger scroll hijack
+  
+  // Refs for scroll hijack (defense-in-depth)
+  const sectionRef = useRef<HTMLElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   
   // Refs to track current state values without causing dependency issues
   const displayProgressRef = useRef(0);
@@ -58,66 +59,55 @@ const BeforeAfterSplit = () => {
   
   const PROGRESS_DIVISOR = isMobile ? 400 : 700;
   
-  // Batch updates via RAF for smooth GPU animation
-  const scheduleUpdate = useCallback(() => {
-    if (rafIdRef.current !== null) return;
+  // Handle progress updates from scroll hijack
+  const handleProgress = useCallback((progress: number, _delta: number, _direction: 'up' | 'down') => {
+    progressRef.current = progress;
     
-    rafIdRef.current = requestAnimationFrame(() => {
-      const delta = accumulatedDeltaRef.current;
-      accumulatedDeltaRef.current = 0;
-      rafIdRef.current = null;
-      
-      const newProgress = Math.max(0, Math.min(1, progressRef.current + delta / PROGRESS_DIVISOR));
-      progressRef.current = newProgress;
-      
-      // Update CSS variable for GPU-accelerated clipPath
-      if (containerRef.current) {
-        containerRef.current.style.setProperty('--wipe-progress', `${newProgress * 100}%`);
-      }
-      
-      // Only update React state for discrete UI changes (every 10%)
-      const displayBucket = Math.floor(newProgress * 10);
-      const currentBucket = Math.floor(displayProgressRef.current * 10);
-      if (displayBucket !== currentBucket || newProgress >= 1) {
-        displayProgressRef.current = newProgress;
-        setDisplayProgress(newProgress);
-      }
-      
-      // Check completion
-      if (newProgress >= 1 && !isCompleteRef.current) {
-        isCompleteRef.current = true;
-        setIsComplete(true);
-      } else if (newProgress < 1 && isCompleteRef.current) {
-        isCompleteRef.current = false;
-        setIsComplete(false);
-      }
-    });
-  }, [PROGRESS_DIVISOR]);
-  
-  const handleProgress = useCallback((delta: number, _direction: 'up' | 'down') => {
-    accumulatedDeltaRef.current += delta;
-    scheduleUpdate();
-  }, [scheduleUpdate]);
+    // Update CSS variable for GPU-accelerated clipPath
+    if (containerRef.current) {
+      containerRef.current.style.setProperty('--wipe-progress', `${progress * 100}%`);
+    }
+    
+    // Only update React state for discrete UI changes (every 10%)
+    const displayBucket = Math.floor(progress * 10);
+    const currentBucket = Math.floor(displayProgressRef.current * 10);
+    if (displayBucket !== currentBucket || progress >= 1) {
+      displayProgressRef.current = progress;
+      setDisplayProgress(progress);
+    }
+    
+    // Check completion
+    if (progress >= 1 && !isCompleteRef.current) {
+      isCompleteRef.current = true;
+      setIsComplete(true);
+    } else if (progress < 1 && isCompleteRef.current) {
+      isCompleteRef.current = false;
+      setIsComplete(false);
+    }
+  }, []);
 
-  const { sectionRef, isLocked } = useScrollLock({
-    lockThreshold: isMobile ? 0.3 : 0,
-    headerOffset: 80,
+  // Handle escape velocity (user scrolling very fast = wants to skip)
+  const handleEscapeVelocity = useCallback(() => {
+    progressRef.current = 1;
+    if (containerRef.current) {
+      containerRef.current.style.setProperty('--wipe-progress', '100%');
+    }
+    setDisplayProgress(1);
+    setIsComplete(true);
+  }, []);
+
+  // Use defense-in-depth scroll hijack hook
+  const { isLocked, skipToEnd } = useScrollHijack({
+    sentinelRef,
+    sectionRef,
     onProgress: handleProgress,
     isComplete: isComplete,
-    canReverseExit: true,
+    progressDivisor: PROGRESS_DIVISOR,
     enabled: true,
-    titleRef: titleRef, // Use title position to trigger scroll hijack
-    titleOffset: 100, // Trigger when title is 100px from top (less whitespace above)
+    maxDeltaPerFrame: 0.08, // Max 8% progress per frame
+    escapeVelocityThreshold: 12, // pixels/ms
+    onEscapeVelocity: handleEscapeVelocity,
   });
-  
-  // Cleanup RAF on unmount
-  useEffect(() => {
-    return () => {
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-    };
-  }, []);
 
   // Initialize CSS variable
   useEffect(() => {
@@ -126,14 +116,32 @@ const BeforeAfterSplit = () => {
     }
   }, []);
 
+  // Skip handler for buttons
+  const handleSkip = useCallback(() => {
+    skipToEnd();
+    progressRef.current = 1;
+    setDisplayProgress(1);
+    setIsComplete(true);
+    if (containerRef.current) {
+      containerRef.current.style.setProperty('--wipe-progress', '100%');
+    }
+  }, [skipToEnd]);
+
   return (
     <section 
       ref={sectionRef}
-      className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8 md:py-16"
+      className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8 md:py-16 scroll-hijack-section"
     >
+      {/* LAYER 4: Sentinel element for anticipatory detection */}
+      <div 
+        ref={sentinelRef}
+        className="scroll-hijack-sentinel"
+        aria-hidden="true"
+      />
+      
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
-        <div className="text-center mb-4 md:mb-6" ref={titleRef}>
+        <div className="text-center mb-4 md:mb-6">
           <h2 className="text-2xl md:text-3xl font-bold mb-2">
             The Transformation
           </h2>
@@ -158,14 +166,7 @@ const BeforeAfterSplit = () => {
             </span>
             {displayProgress > 0.3 && (
               <button
-                onClick={() => {
-                  progressRef.current = 1;
-                  setDisplayProgress(1);
-                  setIsComplete(true);
-                  if (containerRef.current) {
-                    containerRef.current.style.setProperty('--wipe-progress', '100%');
-                  }
-                }}
+                onClick={handleSkip}
                 className="text-xs text-mint hover:text-mint-dark underline underline-offset-2 transition-colors"
               >
                 Skip →
@@ -177,7 +178,7 @@ const BeforeAfterSplit = () => {
         {/* Two-layer card with CSS variable-driven horizontal wipe */}
         <div 
           ref={containerRef}
-          className="relative editorial-card overflow-hidden scroll-animation-container"
+          className="relative editorial-card overflow-hidden scroll-animation-container scroll-hijack-canvas"
           style={{ '--wipe-progress': '0%' } as React.CSSProperties}
         >
           {/* AFTER layer (bottom) - always visible */}
@@ -223,7 +224,7 @@ const BeforeAfterSplit = () => {
 
           {/* BEFORE layer (top) - clips away via CSS variable */}
           <div
-            className="absolute inset-0 bg-card before-layer-wipe"
+            className="absolute inset-0 bg-card before-layer-wipe scroll-hijack-item"
             style={{
               clipPath: `inset(0 0 0 var(--wipe-progress, 0%))`,
             }}
@@ -292,7 +293,7 @@ const BeforeAfterSplit = () => {
         {/* Scroll Lock Indicator */}
         {isLocked && displayProgress < 1 && (
           <div
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in"
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in scroll-hijack-indicator"
           >
             <div className="bg-background/90 px-4 py-2 rounded-full border shadow-lg backdrop-blur-sm flex items-center gap-3">
               <span className="text-xs text-muted-foreground">
@@ -300,14 +301,7 @@ const BeforeAfterSplit = () => {
               </span>
               {displayProgress > 0.3 && (
                 <button
-                  onClick={() => {
-                    progressRef.current = 1;
-                    setDisplayProgress(1);
-                    setIsComplete(true);
-                    if (containerRef.current) {
-                      containerRef.current.style.setProperty('--wipe-progress', '100%');
-                    }
-                  }}
+                  onClick={handleSkip}
                   className="text-xs text-mint hover:text-mint-dark underline underline-offset-2 transition-colors"
                 >
                   Skip →

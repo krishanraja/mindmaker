@@ -1,6 +1,6 @@
 # Features
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-08
 
 ---
 
@@ -169,6 +169,23 @@
 
 ---
 
+### 8. Blog / Content Hub
+**Status:** ✅ Live  
+**Routes:** `/blog`, `/blog/:slug`
+
+**Purpose:** Thought leadership content, SEO, and audience engagement
+
+**Features:**
+- Blog listing page with featured posts
+- Individual blog post pages with rich content
+- SEO-optimized with meta tags and structured data
+- Dark-themed CTA cards with WCAG-compliant contrast
+- Responsive design
+
+**Implementation:** `Blog.tsx`, `BlogPost.tsx`
+
+---
+
 ## Website Features
 
 ### Landing Page (/)
@@ -204,6 +221,7 @@
 - Context-aware with conversation history
 - Persistent across navigation
 - Anti-fragile error handling (graceful fallbacks)
+- Voice input support (Web Speech API)
 
 ### News Ticker
 - AI-generated intelligence briefings
@@ -212,6 +230,12 @@
 - Fallback to static headlines on error
 - Powered by Lovable AI Gateway (Gemini 2.5 Flash)
 
+### Actions Hub
+- Side drawer component
+- Navbar-aware positioning (doesn't overlap with fixed navbar)
+- Quick actions and navigation
+- Responsive design
+
 ### Supporting Pages
 - `/builder-session` - Session details
 - `/builder-sprint` - Sprint details
@@ -219,6 +243,8 @@
 - `/portfolio-program` - Partnership details
 - `/builder-economy` - Thought leadership
 - `/leaders` or `/leadership-insights` - AI Leadership Benchmark diagnostic
+- `/blog` - Blog listing
+- `/blog/:slug` - Individual blog posts
 - `/faq`, `/privacy`, `/terms`, `/contact`
 
 ---
@@ -294,24 +320,33 @@
 - Neutrals: Off-white, light grey, mid grey, graphite
 
 ### Typography
-- **Gobold**: Hero h1 only (distinctive display font)
-- **Inter**: Everything else (h2-h6, body, UI)
+- **Space Grotesk Variable**: Headings (h1-h6), display text
+- **Inter Variable**: Body text, UI elements
 
 ### Components
-- Glass morphism cards (`.glass-card`, `.glass-card-dark`)
+- Glass morphism cards (`.glass-card`)
+- Editorial cards (`.editorial-card`)
+- Premium cards (`.premium-card`)
+- Dark CTA cards (`.dark-cta-card`) - WCAG AA compliant
 - Shadcn/ui base components
 - Framer Motion animations
 - Responsive breakpoints (mobile-first)
+
+### Accessibility
+- WCAG AA compliant text contrast
+- `dark-card-*` utilities for text on dark backgrounds
+- Focus visible states
+- Reduced motion support
 
 ---
 
 ## Known Issues (Active)
 
 ### Mobile Hero Text
-**Status:** 🔴 P0 - Text falling off page edges
-- Horizontal overflow on mobile viewports
-- Vertical clipping during rotation animations
-- Root cause: Absolute positioning + clamp() sizing conflict
+**Status:** 🟡 Monitored - Scrollbar flash fixed (2026-01-06)
+- Root cause: Global CSS h1 styles applying before component styles
+- Fix: Moved hero-text-size class to CSS `@layer components`
+- Remaining: Horizontal overflow on very small viewports being monitored
 
 ### ICP Cards
 **Status:** 🟡 P1 - UX improvements needed
@@ -319,15 +354,43 @@
 - Aggressive shimmer (3 overlapping animations)
 - Unequal card heights
 
-See `DIAGNOSIS.md` and `ROOT_CAUSE.md` for full details.
+See `COMMON_ISSUES.md` for full details.
+
+---
+
+## Recently Fixed Issues
+
+### Hero Scrollbar Flash (2026-01-06)
+✅ **Fixed:** Horizontal scrollbar flash on page load
+- Moved `.hero-text-size` to CSS layer for early parsing
+- Added layout containment for hero wrapper
+
+### Drawer Positioning (2026-01-06)
+✅ **Fixed:** Side drawer content cut off behind navbar
+- Added navbar-aware sheet positioning system
+- CSS variables for responsive navbar heights
+
+### Text Contrast (2026-01-05)
+✅ **Fixed:** WCAG AA contrast failures on dark backgrounds
+- Added `dark-cta-card` component class
+- Added `dark-card-*` text color utilities
+- Updated FAQ, Blog, Contact, SimpleCTA pages
+
+### Builder Profile Generic Output (2026-01-XX)
+✅ **Fixed:** Profile returning generic outputs
+- Removed `widgetMode: 'tryit'` from API call
+- Added Builder Profile mode detection
+- Increased token allocation to 4096
 
 ---
 
 ## Feature Roadmap
 
 ### Q1 2026
-- Fix mobile hero text overflow
-- Fix ICP cards UX issues
+- ✅ Fix hero scrollbar flash
+- ✅ Fix drawer positioning
+- ✅ Fix text contrast on dark backgrounds
+- Blog/content hub expansion
 - Client portal dashboard
 - Progress tracking
 - Template library

@@ -1,6 +1,6 @@
 # Architecture
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-08
 
 ---
 
@@ -48,6 +48,8 @@ mindmaker/
 │   │   ├── Animations/      # Visual effects
 │   │   ├── Interactive/     # Interactive demos
 │   │   ├── ShowDontTell/    # Content sections
+│   │   ├── ActionsHub.tsx   # Side drawer with actions
+│   │   ├── AINewsTicker.tsx # News ticker component
 │   │   ├── InitialConsultModal.tsx
 │   │   ├── ConsultationBooking.tsx
 │   │   ├── Navigation.tsx
@@ -55,6 +57,14 @@ mindmaker/
 │   │   ├── NewHero.tsx      # Main hero section
 │   │   ├── TheProblem.tsx   # ICP cards section
 │   │   ├── ProductLadder.tsx
+│   │   ├── SimpleCTA.tsx
+│   │   ├── TrustSection.tsx
+│   │   ├── SEO.tsx          # SEO component
+│   │   ├── LightningLessons.tsx
+│   │   ├── ModuleExplorer.tsx
+│   │   ├── WhitepaperPopup.tsx
+│   │   ├── WhitepaperPromo.tsx
+│   │   ├── WhoThisIsFor.tsx
 │   │   └── ...
 │   ├── pages/               # Route pages
 │   │   ├── Index.tsx        # Landing page
@@ -64,6 +74,8 @@ mindmaker/
 │   │   ├── PartnerProgram.tsx
 │   │   ├── BuilderEconomy.tsx
 │   │   ├── LeadershipInsights.tsx  # AI Leadership Benchmark
+│   │   ├── Blog.tsx         # Blog listing
+│   │   ├── BlogPost.tsx     # Individual blog posts
 │   │   ├── FAQ.tsx
 │   │   ├── Privacy.tsx
 │   │   ├── Terms.tsx
@@ -72,9 +84,25 @@ mindmaker/
 │   ├── hooks/               # Custom React hooks
 │   │   ├── useAssessment.ts      # Builder Profile logic
 │   │   ├── useLeadershipInsights.ts  # Leadership diagnostic logic
-│   │   └── ...
+│   │   ├── useAINewsTicker.ts    # News ticker hook
+│   │   ├── useFrictionMap.ts     # Friction map logic
+│   │   ├── usePortfolio.ts       # Portfolio builder logic
+│   │   ├── useVoiceInput.ts      # Voice input for chat
+│   │   ├── useScrollAnimation.ts # Scroll-based animations
+│   │   ├── useScrollDirection.ts # Navbar hide/show
+│   │   ├── useScrollLock.ts      # Animation scroll hijacking
+│   │   ├── useScrollTrigger.ts   # Scroll trigger events
+│   │   ├── useScrollBackToTop.ts # Back to top functionality
+│   │   ├── useFontLoader.ts      # Font loading status
+│   │   ├── useRealisticCounters.ts # Counter animations
+│   │   ├── useStatsTimer.ts      # Stats display timing
+│   │   ├── useThrottledProgress.ts # Progress bar throttling
+│   │   ├── useOpenAIContext.ts   # AI context management
+│   │   ├── use-mobile.tsx        # Mobile detection
+│   │   └── use-toast.ts          # Toast notifications
 │   ├── contexts/            # React contexts
 │   │   └── SessionDataContext.tsx
+│   ├── data/                # Static data files
 │   ├── lib/                 # Utilities
 │   ├── integrations/supabase/ # Supabase client
 │   ├── index.css            # Design system tokens
@@ -118,6 +146,8 @@ mindmaker/
 <Route path="/terms" element={<Terms />} />
 <Route path="/faq" element={<FAQ />} />
 <Route path="/contact" element={<Contact />} />
+<Route path="/blog" element={<Blog />} />
+<Route path="/blog/:slug" element={<BlogPost />} />
 <Route path="/leaders" element={<LeadershipInsights />} />
 <Route path="/leadership-insights" element={<LeadershipInsights />} />
 <Route path="/builder" element={<Navigate to="/builder-session" />} />
@@ -625,13 +655,18 @@ try {
 
 ### Asset Optimization
 - Images: WebP format preferred
-- Fonts: Preloaded, font-display: optional
+- Fonts: Variable fonts (Inter Variable, Space Grotesk Variable), preloaded, font-display: optional
 - Icons: SVG via Lucide React (tree-shakeable)
 
 ### Caching Strategy
 - Static assets: Vite build hash (cache forever)
 - API responses: TanStack Query (5min stale time)
 - Edge function responses: No caching (always fresh)
+
+### CSS Performance
+- Layout containment (`contain: layout style`) for animation sections
+- `will-change` hints for scroll-triggered animations
+- Disabled heavy hover transforms on mobile/touch devices
 
 ---
 

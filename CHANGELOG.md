@@ -4,6 +4,90 @@
 
 ---
 
+## PERMANENT Scroll Hijack Fix - Defense-in-Depth Architecture (2026-01-08)
+
+### Problem
+The ChaosToClarity and BeforeAfterSplit scroll hijack animations were unreliable. Users could escape the scroll lock by scrolling fast enough. 31 root causes identified across 10 categories.
+
+### 31 Root Causes Identified (Categories)
+- **A: Scroll Detection Race Conditions (3)** - 16ms throttling, single-point trigger, no anticipation
+- **B: Browser Momentum/Inertia (3)** - iOS Safari momentum, missing touch-action, scroll-behavior conflict
+- **C: Event Handling Gaps (3)** - Keyboard not blocked, programmatic scroll, history navigation
+- **D: Position Maintenance (3)** - RAF too late, lenient threshold, scrollTo delays
+- **E: State Management (3)** - Stale state, cooldown vulnerability, completion timing
+- **F: Component Conflicts (3)** - Two scroll hijacks, nav direction, no mutual exclusion
+- **G: CSS/Layout (3)** - Label overflow, wrong container, max-width edge cases
+- **H: Alternative Inputs (3)** - Pointer lock, trackpad gestures, touch inertia
+- **I: Missing Patterns (4)** - No sentinel, no IntersectionObserver, no capping, no escape velocity
+- **J: Edge Cases (3)** - Mobile keyboard, DevTools, pinch-to-zoom
+
+### Architectural Solution: 8 Defense Layers
+
+**Layer 1: HTML-Level CSS** (`index.html`)
+- Critical inline scroll containment before React loads
+- `scroll-hijack-locked` class forces `overflow: hidden`, `touch-action: none`, `position: fixed`
+
+**Layer 2: CSS Layer Priority** (`index.css`)
+- New `@layer scroll-hijack` loads BEFORE all other layers
+- Comprehensive containment rules: `touch-action: none`, `overscroll-behavior: none`
+- Kills `scroll-behavior: smooth` during lock
+
+**Layer 3: IntersectionObserver Detection** (`useScrollHijack.ts`)
+- Replaces unreliable scroll event detection
+- Uses `rootMargin` for anticipatory triggering
+
+**Layer 4: Sentinel Element** (Components)
+- Invisible element 100px above section
+- Triggers lock preparation before section reaches viewport
+
+**Layer 5: Multi-Event Blocking** (`useScrollHijack.ts`)
+- Wheel: `preventDefault`, `stopPropagation` with capture
+- Touch: `preventDefault` with capture
+- Keyboard: Blocks Arrow, Page, Space, Home, End
+- History: Handles `popstate` events
+
+**Layer 6: Instant Position Lock** (`useScrollHijack.ts`)
+- `body { position: fixed }` during lock
+- Saves/restores scroll position
+- Zero drift possible
+
+**Layer 7: Animation Progress Smoothing** (`useScrollHijack.ts`)
+- `maxDeltaPerFrame: 0.08` (8% max progress per frame)
+- Prevents animation skipping
+
+**Layer 8: Graceful Fast-Forward** (`useScrollHijack.ts`)
+- Escape velocity detection (>12 pixels/ms)
+- Smoothly completes animation on very fast scroll
+- Respects user intent to skip
+
+### Files Created
+- `src/hooks/useScrollHijack.ts`: New defense-in-depth scroll hijack hook
+
+### Files Modified
+- `index.html`: Added scroll hijack inline CSS
+- `src/index.css`: Added `@layer scroll-hijack` with containment rules
+- `src/components/ShowDontTell/ChaosToClarity.tsx`: 
+  - Uses new `useScrollHijack` hook
+  - Added sentinel element
+  - Fixed concept label overflow (xRange 90→75)
+- `src/components/ShowDontTell/BeforeAfterSplit.tsx`:
+  - Uses new `useScrollHijack` hook
+  - Added sentinel element
+  - Added scroll-hijack-section class
+
+### Verification
+- Fast scroll cannot escape lock
+- Keyboard navigation blocked during lock
+- iOS Safari momentum handled
+- Escape velocity triggers graceful completion
+- Skip button works at any progress
+- No concept labels overflow viewport
+
+### Documentation
+- `SCROLL_HIJACK_DIAGNOSIS.md`: Complete diagnosis with test matrix
+
+---
+
 ## PERMANENT Hero Scrollbar Fix - Defense-in-Depth Architecture (2026-01-08)
 
 ### Problem

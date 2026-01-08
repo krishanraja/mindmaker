@@ -1,5 +1,7 @@
 # Deployment Checklist
 
+**Last Updated:** 2026-01-08
+
 This document outlines the pre-deploy and post-deploy verification steps for the Mindmaker project.
 
 ---
@@ -14,18 +16,19 @@ Run these checks before every deployment:
 - [ ] ESLint passes with no warnings/errors
 
 ### 2. Environment Variables
-- [ ] All required secrets are configured in Lovable Cloud:
-  - `GOOGLE_SERVICE_ACCOUNT_KEY` (Vertex AI RAG)
-  - `NEWSAPI_KEY` (AI news ticker)
-  - `RESEND_API_KEY` (lead emails)
-  - `OPENAI_API_KEY` (lead enrichment)
-  - `LOVABLE_API_KEY` (AI gateway fallback)
+- [ ] All required secrets are configured in Lovable Cloud/Supabase:
+  - `GOOGLE_SERVICE_ACCOUNT_KEY` (Vertex AI RAG - required for chatbot)
+  - `OPENAI_API_KEY` (market sentiment, lead enrichment)
+  - `RESEND_API_KEY` (email delivery - required for lead capture)
+  - `LOVABLE_API_KEY` (AI gateway for news ticker - auto-provisioned)
+  - `STRIPE_SECRET_KEY` (payments - optional, currently paused)
 
 ### 3. Edge Functions
 - [ ] All edge functions have CORS headers configured
 - [ ] All edge functions handle OPTIONS preflight requests
 - [ ] All edge functions return 200 on error with fallback data (anti-fragile design)
 - [ ] Logging is present for all key branches
+- [ ] Mode detection logic is correct (Builder Profile, Try It, Chat)
 
 ### 4. Database (if applicable)
 - [ ] Migrations have been applied
@@ -34,9 +37,18 @@ Run these checks before every deployment:
 
 ### 5. Frontend
 - [ ] All routes are accessible
-- [ ] Mobile responsive layouts verified
+- [ ] Mobile responsive layouts verified (375px, 640px, 1024px)
 - [ ] No console errors on page load
 - [ ] All external links working
+- [ ] No horizontal scrollbar on hero (check with hard refresh)
+- [ ] Side drawers/sheets positioned below navbar
+- [ ] Text contrast WCAG AA compliant on dark backgrounds
+
+### 6. Design System Compliance
+- [ ] No hardcoded colors (use tokens)
+- [ ] Dark backgrounds use `.dark-cta-card` or `text-dark-card-*` utilities
+- [ ] No `text-white/80` on dark backgrounds
+- [ ] Critical CSS in `@layer components` (not inline styles)
 
 ---
 
@@ -52,25 +64,93 @@ Run these checks after every deployment:
 
 ### 2. Regression Check
 - [ ] Builder Assessment completes successfully
+- [ ] Leadership Benchmark diagnostic works end-to-end
 - [ ] Friction Map generates output
 - [ ] Portfolio Builder calculates savings
 - [ ] Try It Widget receives AI responses
 - [ ] Calendly booking modal opens
+- [ ] Blog pages load correctly
 
 ### 3. Edge Function Verification
 - [ ] `chat-with-krish`: Send test message, verify response
 - [ ] `get-ai-news`: Check network tab for successful fetch
 - [ ] `send-lead-email`: (test environment only) Submit test lead
+- [ ] `send-leadership-insights-email`: (test) Complete diagnostic and unlock
 
 ### 4. Log Scan
 - [ ] Check Lovable Cloud logs for any errors
 - [ ] Verify no 500 errors in edge function logs
 - [ ] Check for rate limiting issues
+- [ ] Verify no authentication failures (Vertex AI)
 
 ### 5. Performance
 - [ ] Page load under 3s on desktop
 - [ ] No layout shift during scroll
 - [ ] Animations smooth (60fps)
+- [ ] No scrollbar flash on page load
+
+### 6. Accessibility
+- [ ] Text contrast passes WCAG AA on all pages
+- [ ] Focus states visible on interactive elements
+- [ ] Screen reader announces dialog content
+
+---
+
+## Environment Secrets Reference
+
+### Required Secrets
+
+| Secret | Purpose | Provider |
+|--------|---------|----------|
+| `GOOGLE_SERVICE_ACCOUNT_KEY` | Vertex AI RAG authentication | Google Cloud |
+| `RESEND_API_KEY` | Email delivery | Resend |
+| `OPENAI_API_KEY` | Market sentiment, company research | OpenAI |
+
+### Auto-Provisioned Secrets
+
+| Secret | Purpose | Notes |
+|--------|---------|-------|
+| `LOVABLE_API_KEY` | AI Gateway (news ticker) | Auto-provisioned with Lovable Cloud |
+| `SUPABASE_URL` | Database connection | Auto-configured |
+| `SUPABASE_PUBLISHABLE_KEY` | Client API key | Auto-configured |
+| `SUPABASE_SERVICE_ROLE_KEY` | Admin API key | Auto-configured |
+
+### Optional Secrets
+
+| Secret | Purpose | Status |
+|--------|---------|--------|
+| `STRIPE_SECRET_KEY` | Payment processing | Currently paused |
+
+---
+
+## Secret Configuration Guide
+
+### Google Service Account Key
+```json
+{
+  "type": "service_account",
+  "project_id": "gen-lang-client-0174430158",
+  "private_key_id": "...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "...",
+  "client_id": "...",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token"
+}
+```
+- Store as raw JSON (not base64 encoded)
+- Ensure service account has Vertex AI permissions
+- Project ID must match: `gen-lang-client-0174430158`
+
+### Resend API Key
+- Get from: https://resend.com/api-keys
+- Format: `re_...`
+- Ensure sending domain is verified (not using test domain)
+
+### OpenAI API Key
+- Get from: https://platform.openai.com/api-keys
+- Format: `sk-...`
+- Monitor usage to avoid quota issues
 
 ---
 
@@ -92,9 +172,30 @@ If critical issues are found post-deploy:
 
 ---
 
+## Edge Function Deployment
+
+Edge functions auto-deploy when code is pushed. Allow 30-60 seconds for deployment.
+
+### Verifying Deployment
+1. Check Lovable Cloud logs for deployment timestamp
+2. Test function endpoint directly
+3. Verify secrets are available via `Deno.env.get()`
+
+### Troubleshooting
+- If function returns 404: Wait 60 seconds, then retry
+- If secrets not found: Check Supabase Dashboard → Settings → Secrets
+- If CORS errors: Verify OPTIONS handler and headers
+
+---
+
 ## Contact
 
 For deployment issues, check:
 - `project-documentation/COMMON_ISSUES.md`
 - `project-documentation/ARCHITECTURE.md`
 - Edge function logs in Lovable Cloud
+- Supabase Dashboard logs
+
+---
+
+**End of DEPLOYMENT**

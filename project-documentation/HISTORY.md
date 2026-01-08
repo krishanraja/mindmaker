@@ -1,6 +1,53 @@
 # History
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-08
+
+---
+
+## 2026-01-06: Hero Scrollbar Flash & Drawer Positioning Fix
+
+**What Changed:**
+- Fixed horizontal scrollbar flash on page load
+- Fixed side drawer content cut off behind navbar
+- Added navbar-aware sheet positioning system
+
+**Why:**
+- Hero scrollbar flash: Global CSS h1 styles (clamp 40-72px) applied before component's inline styles
+- Drawer cut off: Sheet used `inset-y-0` from viewport edge while navbar covers 64-80px
+
+**Technical Details:**
+- Moved `.hero-text-size` to CSS `@layer components` for early parsing
+- Added `#hero h1 { font-size: inherit; }` to prevent global override
+- Created CSS variables: `--navbar-height`, `--navbar-height-sm`, `--navbar-height-md`
+- Added `.sheet-navbar-aware` class with responsive positioning
+
+**Files Modified:**
+- `src/index.css`
+- `src/components/NewHero.tsx`
+- `src/components/ActionsHub.tsx`
+
+---
+
+## 2026-01-05: Text Contrast System Fix
+
+**What Changed:**
+- Fixed WCAG AA contrast failures on dark backgrounds
+- Added `dark-cta-card` component class
+- Added `dark-card-*` text color utilities
+
+**Why:**
+- `text-white/80` on dark ink backgrounds failed WCAG AA contrast requirements (4.5:1)
+- Text was unreadable on mobile devices across FAQ, Blog, BlogPost, Contact, SimpleCTA
+
+**Technical Details:**
+- Added design tokens: `--dark-card-heading`, `--dark-card-body`, `--dark-card-muted`
+- Created `.dark-cta-card` component class with enforced high-contrast text
+- Added Tailwind utilities: `text-dark-card-heading`, `text-dark-card-body`, `text-dark-card-muted`
+
+**Files Modified:**
+- `src/index.css`, `tailwind.config.ts`
+- `src/pages/FAQ.tsx`, `src/pages/BlogPost.tsx`, `src/pages/Contact.tsx`, `src/pages/Blog.tsx`
+- `src/components/SimpleCTA.tsx`
 
 ---
 
@@ -68,7 +115,6 @@
 - JSON-LD structured data (Organization, WebSite, Service, Person, FAQ)
 - Geographic targeting
 - Performance optimization (preconnect, prefetch)
-- Mobile and accessibility meta tags
 
 **Target Keywords:**
 - no-code AI, AI for non-technical leaders, AI literacy training
@@ -398,9 +444,25 @@
 - Anti-fragile error handling
 - Builder Profile pipeline fixes
 
+### Phase 8: Polish & Accessibility (2026-01)
+- Text contrast system fix (WCAG AA compliance)
+- Hero scrollbar flash fix
+- Drawer positioning fix
+- Blog/content hub
+
 ---
 
 ## Major Decisions
+
+### 2026-01-06: Navbar-Aware Sheet Positioning
+**Decision:** Add CSS variables for navbar height and `.sheet-navbar-aware` class  
+**Rationale:** Side drawer content was cut off behind fixed navbar  
+**Result:** Drawers now position correctly below navbar on all screen sizes
+
+### 2026-01-05: Dark Card Text Contrast System
+**Decision:** Create dedicated tokens and utilities for text on dark backgrounds  
+**Rationale:** `text-white/80` failed WCAG AA contrast requirements  
+**Result:** All dark backgrounds now use high-contrast text utilities
 
 ### 2026-01-XX: Builder Profile Mode Detection
 **Decision:** Detect Builder Profile mode from message content, not widgetMode  
@@ -454,7 +516,9 @@
 ✅ Authorization holds over charges  
 ✅ Self-serve diagnostic for lead gen  
 ✅ Vertex AI RAG for business-specific knowledge  
-✅ Anti-fragile error handling
+✅ Anti-fragile error handling  
+✅ CSS-first solutions for positioning issues  
+✅ Design tokens for contrast compliance
 
 ### What Changed
 🔄 Initial multi-CTA approach → Single modal entry  
@@ -462,7 +526,8 @@
 🔄 Complex color system → Two-color simplicity  
 🔄 Generic CTAs → Program-specific qualification  
 🔄 OpenAI chatbot → Vertex AI RAG chatbot  
-🔄 widgetMode for Builder Profile → mode detection from content
+🔄 widgetMode for Builder Profile → mode detection from content  
+🔄 text-white/80 → dark-card-* utilities for contrast
 
 ### What to Avoid
 ❌ Hardcoding colors (use tokens)  
@@ -471,7 +536,9 @@
 ❌ Building features before needed  
 ❌ Skipping mobile testing  
 ❌ Using wrong widgetMode for different tools  
-❌ Generic fallback templates (use LLM-generated)
+❌ Generic fallback templates (use LLM-generated)  
+❌ Low-contrast text on dark backgrounds (use WCAG AA utilities)  
+❌ Inline styles for critical CSS (use @layer components)
 
 ---
 
@@ -503,6 +570,15 @@
 3. Graceful degradation on errors
 4. User never sees broken UI
 5. Monitor and iterate
+```
+
+### CSS Architecture Pattern
+```
+1. Use CSS variables for dynamic values
+2. Put critical styles in @layer components
+3. Use design tokens, not hardcoded values
+4. Test on mobile first
+5. Respect reduced-motion preferences
 ```
 
 ---

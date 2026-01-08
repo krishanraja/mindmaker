@@ -1,10 +1,132 @@
 # Decisions Log
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-08
 
 ---
 
 ## Architecture Decisions
+
+### 2026-01-06: Navbar-Aware Sheet Positioning System
+
+**Decision:** Create CSS variables for navbar height and `.sheet-navbar-aware` class for side drawers
+
+**Context:**
+- ActionsHub side drawer content was cut off behind the fixed navbar
+- Sheet component used `inset-y-0` from viewport edge (top: 0)
+- Navbar is fixed at z-100 covering top 64-80px depending on screen size
+
+**Rationale:**
+- CSS-first solution is simpler than JavaScript-based positioning
+- CSS variables allow responsive adjustment across breakpoints
+- Single class application keeps component code clean
+
+**Implementation:**
+```css
+--navbar-height: 4rem;      /* 64px - mobile */
+--navbar-height-sm: 4.5rem; /* 72px - small screens */
+--navbar-height-md: 5rem;   /* 80px - medium+ screens */
+
+.sheet-navbar-aware {
+  top: var(--navbar-height) !important;
+  height: calc(100dvh - var(--navbar-height)) !important;
+}
+```
+
+**Alternatives Considered:**
+- JavaScript positioning based on navbar ref → More complex, potential timing issues
+- Fixed pixel values → Not responsive to navbar height changes
+- Removing fixed navbar → Would break navigation UX
+
+**Impact:**
+- Side drawers now position correctly below navbar
+- Works across all screen sizes
+- No JavaScript complexity
+
+**Files Affected:**
+- `src/index.css` (lines 93-96, 647-670)
+- `src/components/ActionsHub.tsx`
+
+---
+
+### 2026-01-06: Hero Text Size in CSS Layer
+
+**Decision:** Move hero text sizing from inline styles to CSS `@layer components`
+
+**Context:**
+- Horizontal scrollbar briefly flashed during page load
+- Global CSS h1 styles (clamp 40-72px) applied before component's inline `<style>` tag
+- Caused oversized text (~72px) for ~1 second before component styles loaded
+
+**Rationale:**
+- CSS in `@layer components` is parsed earlier than inline `<style>` tags
+- Eliminates race condition between global and component styles
+- Layout containment prevents layout recalculation
+
+**Implementation:**
+```css
+/* In @layer components */
+.hero-text-size {
+  font-size: 1.5rem !important;
+  line-height: 1.2 !important;
+}
+
+#hero h1 { font-size: inherit; }
+#hero .hero-content-wrapper { contain: layout style; }
+```
+
+**Alternatives Considered:**
+- Remove global h1 clamp() sizing → Would affect all h1 elements site-wide
+- Use JavaScript to detect and fix → Adds complexity, might still flash
+- Add `overflow-x: hidden` to body → Hides symptom, not root cause
+
+**Impact:**
+- No scrollbar flash on page load
+- Hero text renders at correct size immediately
+- Global h1 styles still work elsewhere
+
+**Files Affected:**
+- `src/index.css`
+- `src/components/NewHero.tsx` (removed inline styles)
+
+---
+
+### 2026-01-05: Dark Card Text Contrast System
+
+**Decision:** Create dedicated design tokens and utilities for text on dark backgrounds
+
+**Context:**
+- `text-white/80` on dark ink backgrounds failed WCAG AA contrast requirements
+- Contrast ratio was below 4.5:1 required for body text
+- Text was unreadable on mobile devices
+
+**Rationale:**
+- WCAG AA compliance is a legal and ethical requirement
+- Design tokens ensure consistent usage across codebase
+- Component class (`.dark-cta-card`) makes correct pattern easy to apply
+
+**Implementation:**
+```css
+--dark-card-heading: 0 0% 100%;  /* Pure white */
+--dark-card-body: 0 0% 93%;      /* Off-white for body */
+--dark-card-muted: 0 0% 75%;     /* Softer for metadata */
+```
+
+**Alternatives Considered:**
+- Use `text-white` everywhere → Harsh on eyes, doesn't solve hierarchy
+- Lighten dark backgrounds → Breaks design system consistency
+- Add opacity inline → No enforcement, easy to forget
+
+**Impact:**
+- All dark backgrounds now have readable text
+- WCAG AA compliant across site
+- Design system enforces correct usage
+
+**Files Affected:**
+- `src/index.css`, `tailwind.config.ts`
+- `src/pages/FAQ.tsx`, `src/pages/BlogPost.tsx`, `src/pages/Contact.tsx`, `src/pages/Blog.tsx`
+- `src/components/SimpleCTA.tsx`
+
+---
 
 ### 2026-01-XX: Builder Profile Mode Detection - Fix widgetMode Bug
 
@@ -72,9 +194,9 @@ const isBuilderProfile = mode === 'builder-profile' ||
 - Fallback message provides actionable alternatives on any failure
 
 **Alternatives Considered:**
-1. Switch all AI features to Vertex AI → Rejected (news ticker doesn't need custom knowledge)
-2. Keep OpenAI for everything → Rejected (client has existing investment in RAG)
-3. No error fallbacks → Rejected (breaks user experience on API failures)
+1. Switch all AI features to Vertex AI: Rejected (news ticker doesn't need custom knowledge)
+2. Keep OpenAI for everything: Rejected (client has existing investment in RAG)
+3. No error fallbacks: Rejected (breaks user experience on API failures)
 
 **Impact:**
 - Frontend: Bug fixes only (response path corrections)
@@ -153,7 +275,7 @@ const isBuilderProfile = mode === 'builder-profile' ||
 - Stripe code kept commented out for future re-enablement
 
 **Impact:**
-- Lower booking friction → Expected higher conversion
+- Lower booking friction: Expected higher conversion
 - Lead enrichment via company research + session data
 - Stripe integration dormant but ready to reactivate
 - Risk of no-shows acceptable during validation phase
@@ -321,7 +443,7 @@ Mint: Highlights, CTAs, accents (sparingly)
 
 ---
 
-## AI & Backend Decisions
+## AI and Backend Decisions
 
 ### 2026-01-XX: Fallback Quality Improvement
 
@@ -361,7 +483,7 @@ Mint: Highlights, CTAs, accents (sparingly)
 **Implementation:**
 ```typescript
 <p className="text-sm text-muted-foreground">
-  ⚡ <span className="font-semibold">Holiday rates</span> available through December
+  Lightning bolt <span className="font-semibold">Holiday rates</span> available through December
 </p>
 ```
 
@@ -502,26 +624,25 @@ Mint: Highlights, CTAs, accents (sparingly)
 
 ## Design Decisions
 
-### 2025-11-24: Gobold Font for Headlines Only
+### 2026-01-08: Space Grotesk Variable for Display Typography
 
-**Decision:** Use Gobold for hero headlines only, Inter for everything else
+**Decision:** Use Space Grotesk Variable for all headings instead of Gobold
 
 **Rationale:**
-- Gobold is distinctive but not readable at small sizes
-- Inter is professional, readable
-- Clear hierarchy (display vs body)
-- Performance (minimal custom font usage)
+- Variable fonts offer better performance (single file, multiple weights)
+- Space Grotesk is modern, distinctive yet readable
+- Better font loading with variable axis support
+- Pairs well with Inter Variable for body text
 
-**Alternatives Considered:**
-- Gobold everywhere (poor readability)
-- Inter everywhere (less distinctive)
-- Multiple fonts (inconsistent)
+**Font Stack:**
+```css
+font-family: 'Space Grotesk Variable', 'Space Grotesk', 'Inter Variable', system-ui, sans-serif;
+```
 
-**Usage Rules:**
-```
-Gobold: Hero h1 only
-Inter:  Everything else (h2-h6, body, UI)
-```
+**Impact:**
+- Improved typography performance
+- Consistent heading hierarchy
+- Modern, professional appearance
 
 ---
 

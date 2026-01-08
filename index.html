@@ -12,6 +12,41 @@
       /* Prevent hero content from causing scrollbar during CSS/font loading race */
       #hero { overflow: hidden !important; max-width: 100vw !important; }
       #hero * { max-width: 100%; }
+      
+      /* SCROLL HIJACK LAYER 1: Critical containment before React loads */
+      /* Scroll-locked state - prevents ALL native scrolling */
+      html.scroll-hijack-locked {
+        overflow: hidden !important;
+        overscroll-behavior: none !important;
+        touch-action: none !important;
+        -webkit-overflow-scrolling: auto !important;
+      }
+      html.scroll-hijack-locked body {
+        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+        overscroll-behavior: none !important;
+        touch-action: none !important;
+      }
+      /* Scroll hijack sections - contain overflow from first paint */
+      .scroll-hijack-section {
+        overflow: hidden !important;
+        contain: layout style paint !important;
+        max-width: 100vw !important;
+      }
+      .scroll-hijack-section * {
+        max-width: 100%;
+      }
+      /* Sentinel elements for anticipatory detection */
+      .scroll-hijack-sentinel {
+        position: absolute;
+        top: -100px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        pointer-events: none;
+        visibility: hidden;
+      }
     </style>
     
     <!-- Primary Meta Tags -->

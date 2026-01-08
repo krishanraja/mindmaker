@@ -1,12 +1,96 @@
-/* LAYER ORDER: hero loads FIRST to prevent scrollbar flash */
-@layer hero, base, components, utilities;
+/* LAYER ORDER: scroll-hijack loads FIRST, then hero, to prevent all scroll issues */
+@layer scroll-hijack, hero, base, components, utilities;
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* =============================================================
-   HERO LAYER - Loads BEFORE all other layers
+   SCROLL HIJACK LAYER - Loads BEFORE ALL other layers
+   Defense-in-depth for bulletproof scroll hijacking
+   ============================================================= */
+@layer scroll-hijack {
+  /* Root scroll state - MOST AGGRESSIVE containment */
+  html.scroll-hijack-locked {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+    -webkit-overflow-scrolling: auto !important;
+    scroll-behavior: auto !important; /* Disable smooth scrolling during lock */
+  }
+  
+  /* Body lock - Fixed positioning to prevent ALL scrolling */
+  html.scroll-hijack-locked body {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+  }
+  
+  /* Scroll hijack sections - contain all content */
+  .scroll-hijack-section {
+    position: relative;
+    overflow: hidden !important;
+    contain: layout style paint !important;
+    max-width: 100vw !important;
+  }
+  
+  /* All children of hijack sections - prevent overflow */
+  .scroll-hijack-section * {
+    max-width: 100%;
+  }
+  
+  /* Animation canvas - absolutely contained */
+  .scroll-hijack-canvas {
+    position: relative;
+    overflow: hidden !important;
+    contain: layout style !important;
+  }
+  
+  /* Sentinel elements for anticipatory detection */
+  .scroll-hijack-sentinel {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  
+  /* Progress indicator fixed at bottom */
+  .scroll-hijack-indicator {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    pointer-events: auto;
+  }
+  
+  /* GPU Acceleration for scroll hijack elements */
+  html.scroll-hijack-locked .scroll-hijack-item {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  
+  /* Prevent momentum scrolling on iOS during lock */
+  html.scroll-hijack-locked *:not(.scroll-hijack-indicator) {
+    -webkit-overflow-scrolling: auto !important;
+  }
+  
+  /* Kill all smooth scrolling during hijack */
+  html.scroll-hijack-locked,
+  html.scroll-hijack-locked * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =============================================================
+   HERO LAYER - Loads BEFORE base layers
    Prevents scrollbar flash during CSS/font loading race
    ============================================================= */
 @layer hero {
@@ -286,9 +370,20 @@ html {
 }
 
 /* Scroll lock utility for smooth animation hijacking */
+/* LEGACY: scroll-locked class for backward compatibility */
+/* NEW: scroll-hijack-locked class with defense-in-depth (see @layer scroll-hijack) */
 html.scroll-locked {
-  overflow: hidden;
-  overscroll-behavior: none;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: none !important;
+  -webkit-overflow-scrolling: auto !important;
+  scroll-behavior: auto !important;
+}
+
+html.scroll-locked body {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: none !important;
 }
 
 /* GPU Performance Hints for Scroll Animations */

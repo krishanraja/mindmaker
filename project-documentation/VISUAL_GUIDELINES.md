@@ -1,6 +1,6 @@
 # Visual Guidelines
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2026-01-08
 
 ---
 
@@ -10,6 +10,7 @@
 2. **Functional, Not Decorative** - Every visual serves purpose
 3. **Professional, Not Corporate** - Clean but not sterile
 4. **Modern, Not Trendy** - Timeless, not chasing fads
+5. **Accessible, Not Compromised** - WCAG AA minimum for all text
 
 ---
 
@@ -53,7 +54,7 @@ XLarge:   80px+      (hero, major dividers)
   {/* Content */}
   <div className="container-width relative z-10">
     <Logo />
-    <h1>Large headline with <span>mint highlight</span></h1>
+    <h1 className="font-display">Large headline with <span className="text-mint">mint highlight</span></h1>
     <p>Supporting copy</p>
     <CTAs />
   </div>
@@ -66,6 +67,18 @@ XLarge:   80px+      (hero, major dividers)
 - Animated grid pattern
 - Glowing orbs (mint, blurred, animated pulse)
 
+### Hero Text Sizing
+```css
+/* Mobile: 24px */
+.hero-text-size { font-size: 1.5rem; }
+
+/* Tablet: Fluid 24px-36px */
+@media (min-width: 640px) { font-size: clamp(1.5rem, ..., 2.25rem); }
+
+/* Desktop: 36px */
+@media (min-width: 1024px) { font-size: 2.25rem; }
+```
+
 ---
 
 ## Content Sections
@@ -74,7 +87,7 @@ XLarge:   80px+      (hero, major dividers)
 ```tsx
 <section className="section-padding bg-background">
   <div className="container-width">
-    <h2 className="text-center mb-12">Section Title</h2>
+    <h2 className="font-display text-center mb-12">Section Title</h2>
     <Grid>{cards}</Grid>
   </div>
 </section>
@@ -92,36 +105,62 @@ Section 4: bg-ink (dark, with white text)
 
 ## Card Patterns
 
-### Premium Card (Featured)
+### Glass Card (Glassmorphism)
 ```css
-background: white
-border: 2px solid border
-shadow: lg
-padding: 24px
-border-radius: 8px
-```
-
-**Use for:** Recommended products, highlighted content
-
-### Minimal Card (Standard)
-```css
-background: card
-border: 1px solid border
-padding: 24px
-border-radius: 8px
-```
-
-**Use for:** Standard content grid items
-
-### Glass Card (Hero)
-```css
-background: white/95
+background: white/70
 backdrop-filter: blur(12px)
 border: 1px solid white/30
 shadow: 2xl
 ```
 
 **Use for:** Hero CTAs, overlays on images
+
+### Editorial Card (Default)
+```css
+background: subtle mint tint gradient
+border: 2px solid ink/15
+shadow: sm
+hover: mint border, lift
+```
+
+**Use for:** Standard content grid items
+
+### Minimal Card
+```css
+background: subtle mint tint
+border: 2px solid ink/15
+shadow: xs
+```
+
+**Use for:** Clean, simple content
+
+### Accent Card
+```css
+background: off-white
+border-left: 4px solid ink
+border-top: 2px mint line
+```
+
+**Use for:** Callouts, important notes
+
+### Premium Card (Featured)
+```css
+background: mint tint gradient
+border: 2px solid mint/40
+shadow: md + mint glow
+```
+
+**Use for:** Recommended products, highlighted content
+
+### Dark CTA Card (WCAG Compliant)
+```css
+background: ink gradient
+text-heading: pure white
+text-body: off-white (93%)
+text-muted: softer white (75%)
+```
+
+**Use for:** CTAs, callouts on dark backgrounds
 
 ---
 
@@ -154,11 +193,11 @@ shadow: 2xl
 
 ### Page Hierarchy
 ```
-H1 (Hero):     60px bold, Gobold, mint accent
-H2 (Section):  36px bold, Inter, ink
-H3 (Card):     24px semibold, Inter, ink
+H1 (Hero):     clamp(40-72px) bold, Space Grotesk, mint accent
+H2 (Section):  clamp(32-48px) semibold, Space Grotesk, ink
+H3 (Card):     clamp(24-30px) semibold, Space Grotesk, ink
 Body:          16px regular, Inter, foreground
-Caption:       14px regular, Inter, muted-foreground
+Caption:       12-14px regular, Inter, muted-foreground
 ```
 
 ### Visual Weight
@@ -182,6 +221,15 @@ Headings:        text-foreground (ink)
 Hero headings:   text-white with mint <span>
 ```
 
+### Dark Background Text (Critical)
+```
+Headings:        text-dark-card-heading (pure white)
+Body text:       text-dark-card-body (off-white 93%)
+Metadata:        text-dark-card-muted (softer white 75%)
+```
+
+**NEVER use `text-white/80` on dark backgrounds - fails WCAG AA**
+
 ### Background Usage
 ```
 Page background:     bg-background (off-white)
@@ -203,13 +251,15 @@ Dark mode:       border-border (adjusted in dark mode)
 
 ## Interactive States
 
-### Hover Effects
+### Hover Effects (Desktop Only)
 ```css
 Buttons:    scale-105, shadow increase
-Cards:      subtle lift (shadow)
+Cards:      scale-1.01, translateY(-2px), mint border
 Links:      underline, mint color
 Icons:      translateX(4px) for arrows
 ```
+
+**Mobile:** Hover transforms disabled to save battery and prevent accidental triggers
 
 ### Focus States
 ```css
@@ -240,6 +290,7 @@ style={{animationDelay: `${index * 0.1}s`}}
 Hover:      0.3s ease-out
 Focus:      0.2s ease
 Transitions: 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+Card hovers: 600ms ease (slow, premium feel)
 ```
 
 ### Pulse Effects
@@ -247,6 +298,13 @@ Transitions: 0.3s cubic-bezier(0.4, 0, 0.2, 1)
 Glowing orbs:  3-4s duration
 Hero accent:   2s duration
 CTAs:          group-hover:animate-pulse (on icon)
+```
+
+### Motion Preferences
+```css
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; }
+}
 ```
 
 ---
@@ -278,7 +336,7 @@ CTAs:          group-hover:animate-pulse (on icon)
 
 ### Touch Targets
 ```css
-Minimum: 44px × 44px (touch-target class)
+Minimum: 44px x 44px (touch-target class)
 Buttons: px-6 py-3 minimum
 Icons:   Adequate padding around
 ```
@@ -292,17 +350,23 @@ Mobile:    1 column (stack)
 
 ### Font Scaling
 ```
-Hero:     text-4xl → text-6xl (sm:md:lg)
-H2:       text-2xl → text-4xl
-Body:     text-base (consistent)
+Hero:     1.5rem -> clamp -> 2.25rem (mobile->tablet->desktop)
+H2:       clamp(2rem, 4vw, 3rem)
+Body:     16px (consistent)
 ```
 
 ### Spacing Adjustments
 ```
-Section padding: py-12 → py-20
-Container:       px-4 → px-6
-Gaps:            gap-4 → gap-6
+Section padding: py-12 -> py-16 -> py-24 -> py-32
+Container:       px-4 -> px-6 -> px-8
+Gaps:            gap-4 -> gap-6
 ```
+
+### Mobile-Specific
+- Disable heavy hover transforms
+- Use `100dvh` for proper viewport height
+- Respect safe area insets
+- Test on 375px width minimum
 
 ---
 
@@ -313,6 +377,7 @@ Gaps:            gap-4 → gap-6
 - AAA preferred (7:1)
 - Test: Ink on Off-White = 12.6:1 ✅
 - Test: Mint on White = 1.9:1 ❌ (accent only, not text)
+- Test: dark-card-body on Ink = ~14:1 ✅
 
 ### Visual Hierarchy
 - Clear heading levels (don't skip)
@@ -323,6 +388,30 @@ Gaps:            gap-4 → gap-6
 - Visible on all interactive elements
 - Mint ring (2px) with 2px offset
 - Never remove focus styles
+
+### Dark Background Rules
+- Use `.dark-cta-card` class for dark cards
+- Use `text-dark-card-*` utilities for manual control
+- Never use opacity variants (`text-white/80`)
+
+---
+
+## Navbar-Aware Positioning
+
+### CSS Variables
+```css
+--navbar-height:    4rem;     /* 64px - mobile */
+--navbar-height-sm: 4.5rem;   /* 72px - small screens */
+--navbar-height-md: 5rem;     /* 80px - medium+ */
+```
+
+### Sheet/Drawer Positioning
+```css
+.sheet-navbar-aware {
+  top: var(--navbar-height) !important;
+  height: calc(100dvh - var(--navbar-height)) !important;
+}
+```
 
 ---
 

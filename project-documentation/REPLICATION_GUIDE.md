@@ -1,6 +1,6 @@
 # Replication Guide
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2026-01-08
 
 ---
 
