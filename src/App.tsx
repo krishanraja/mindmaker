@@ -6,7 +6,6 @@ import Index from "./pages/Index";
 import BuilderSession from "./pages/BuilderSession";
 import BuilderSprint from "./pages/BuilderSprint";
 import LeadershipLab from "./pages/LeadershipLab";
-import PartnerProgram from "./pages/PartnerProgram";
 import BuilderEconomy from "./pages/BuilderEconomy";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
@@ -29,7 +28,6 @@ const App = () => (
             <Route path="/builder-session" element={<BuilderSession />} />
             <Route path="/builder-sprint" element={<BuilderSprint />} />
             <Route path="/leadership-lab" element={<LeadershipLab />} />
-            <Route path="/portfolio-program" element={<PartnerProgram />} />
             <Route path="/builder-economy" element={<BuilderEconomy />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
@@ -42,7 +40,6 @@ const App = () => (
             <Route path="/leadership-insights" element={<LeadershipInsights />} />
             {/* Redirects for common URL variations */}
             <Route path="/builder" element={<Navigate to="/builder-session" replace />} />
-            <Route path="/partner-program" element={<Navigate to="/portfolio-program" replace />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

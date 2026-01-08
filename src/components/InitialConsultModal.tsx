@@ -22,39 +22,34 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [jobTitle, setJobTitle] = useState("");
-  const [selectedProgram, setSelectedProgram] = useState(preselectedProgram || "");
+  const [selectedPath, setSelectedPath] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { sessionData } = useSessionData();
 
-  const programs = [
+  const pathOptions = [
     { 
-      value: "for-you", 
-      label: "For You", 
-      subtitle: "Individual leadership development"
+      value: "build", 
+      label: "I want to build with AI myself",
+      helper: "Requires hands-on work and habit change."
     },
     { 
-      value: "for-team", 
-      label: "For Your Leadership Team", 
-      subtitle: "Executive team transformation"
+      value: "orchestrate", 
+      label: "I want to orchestrate AI as an executive",
+      helper: "Focused on decision control, not building tools."
     },
     { 
-      value: "for-portfolio", 
-      label: "For Your Client Base or Portfolio", 
-      subtitle: "Help the leaders you serve become AI literate"
-    },
-    { 
-      value: "not-sure", 
-      label: "Not sure yet - help me decide", 
-      subtitle: "Exploration call"
+      value: "team", 
+      label: "I'm booking for a leadership team",
+      helper: "Facilitated decision reset for exec teams."
     },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name || !email || !jobTitle || !selectedProgram) {
+    if (!name || !email || !jobTitle || !selectedPath) {
       toast({
         title: "Missing information",
         description: "Please fill in all fields",
@@ -66,7 +61,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     setIsLoading(true);
 
     try {
-      const selectedProgramData = programs.find(p => p.value === selectedProgram);
+      const selectedPathData = pathOptions.find(p => p.value === selectedPath);
       
       // Send enriched lead email
       const { data: emailData, error: emailError } = await supabase.functions.invoke('send-lead-email', {
@@ -74,7 +69,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
           name,
           email,
           jobTitle,
-          selectedProgram,
+          selectedProgram: selectedPath,
           sessionData
         }
       });
@@ -89,7 +84,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
         name,
         email,
         source: 'initial-consult',
-        preselectedProgram: selectedProgram,
+        preselectedProgram: selectedPath,
       });
       onOpenChange(false);
       toast({
@@ -97,12 +92,6 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
         description: "Booking your consultation...",
       });
       
-      // Keep Stripe integration code for future use
-      // const { data, error } = await supabase.functions.invoke('create-consultation-hold', {
-      //   body: { name, email, selectedProgram }
-      // });
-      // if (error) throw error;
-      // if (data?.url) window.open(data.url, '_blank');
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast({
@@ -117,36 +106,32 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
 
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-      {/* Program Selection */}
+      {/* Path Selection - Required First Question */}
       <div className="space-y-3">
-        <Label className="text-sm font-semibold">What are you most interested in?</Label>
-        <RadioGroup value={selectedProgram} onValueChange={setSelectedProgram}>
-          {programs.map((program) => (
-            <div key={program.value} className="flex items-start space-x-3 space-y-0">
-              <RadioGroupItem value={program.value} id={program.value} className="mt-1" />
+        <Label className="text-sm font-semibold">How do you want to work with AI?</Label>
+        <RadioGroup value={selectedPath} onValueChange={setSelectedPath}>
+          {pathOptions.map((path) => (
+            <div key={path.value} className="flex items-start space-x-3 space-y-0">
+              <RadioGroupItem value={path.value} id={path.value} className="mt-1" />
               <Label 
-                htmlFor={program.value} 
+                htmlFor={path.value} 
                 className="font-normal cursor-pointer flex-1 leading-tight"
               >
                 <div>
-                  <span className="font-semibold block">{program.label}</span>
-                  <span className="text-xs text-muted-foreground">{program.subtitle}</span>
+                  <span className="font-semibold block">{path.label}</span>
                 </div>
               </Label>
             </div>
           ))}
         </RadioGroup>
         
-        {/* Conditional pricing text */}
-        {selectedProgram === 'for-you' && (
-          <p className="text-sm text-muted-foreground pl-7">
-            Single session from $250
-          </p>
-        )}
-        {(selectedProgram === 'for-team' || selectedProgram === 'for-portfolio') && (
-          <p className="text-sm text-muted-foreground pl-7">
-            Final pricing given on scope
-          </p>
+        {/* Conditional helper text based on selection */}
+        {selectedPath && (
+          <div className="pl-7 py-2 px-3 bg-muted/50 rounded-md border border-border/50">
+            <p className="text-sm text-muted-foreground">
+              {pathOptions.find(p => p.value === selectedPath)?.helper}
+            </p>
+          </div>
         )}
       </div>
 

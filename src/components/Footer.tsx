@@ -24,28 +24,22 @@ const Footer = () => {
               </h4>
               <nav className="flex flex-col gap-3">
                 <a 
-                  href="/builder-session" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
-                >
-                  Builder Session
-                </a>
-                <a 
                   href="/builder-sprint" 
                   className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
-                  30-Day Sprint
+                  Build with AI
+                </a>
+                <a 
+                  href="/builder-session" 
+                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
+                >
+                  Orchestrate AI
                 </a>
                 <a 
                   href="/leadership-lab" 
                   className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
                 >
                   Leadership Lab
-                </a>
-                <a 
-                  href="/portfolio-program" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 ease-out hover:underline underline-offset-4"
-                >
-                  Portfolio Program
                 </a>
               </nav>
             </div>

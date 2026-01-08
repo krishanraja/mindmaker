@@ -1,43 +1,39 @@
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { User, Users, TrendingUp, ChevronDown } from "lucide-react";
+import { User, Users, Compass, ChevronDown, CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import peerComparisonMatrix from "@/assets/peer-comparison-matrix.png";
-import battleTestStrategy from "@/assets/battle-test-strategy.png";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 
-const JourneySlider = ({ onBookClick, navigate }: { onBookClick: (program: string) => void; navigate: (path: string) => void }) => {
+const BuildPathSlider = ({ navigate }: { navigate: (path: string) => void }) => {
   const [journeyStage, setJourneyStage] = useState([0]);
   
   const offerings = [
     {
-      name: "Drop In Builder Session",
+      name: "Drop-In Build Session",
       duration: "60 minutes",
-      description: "Live session with Krish. Bring one real leadership problem. Leave with an AI friction map, 1-2 draft systems, and written follow-up with prompts.",
+      description: "Live session with Krish. Bring one real problem. Leave with a working prototype, friction map, and prompts you can extend yourself.",
       pricing: "$250 → $150 until Jan 1",
       cta: "Book Session",
-      program: "builder-session",
-      intensity: "Light Touch",
+      link: "/builder-session",
+      intensity: "Quick Win",
     },
     {
-      name: "Curated Weekly Updates",
+      name: "Weekly Build Cadence",
       duration: "4 weeks async",
-      description: "Weekly recommendations and async access to Krish. Stay current on what matters for your context. Build at your own pace.",
+      description: "Weekly recommendations and async access. Build at your own pace with guidance. Ship something real every week.",
       cta: "Learn More",
-      link: "/builder-session",
-      program: "builder-session",
+      link: "/builder-sprint",
       intensity: "Steady Build",
     },
     {
-      name: "AI Literacy-to-Influence",
+      name: "90-Day Builder Sprint",
       duration: "90 days",
-      description: "For senior commercial leaders. Build working AI-enabled systems around your actual week. Become the leader with systems and authority (hands-off path) or build alongside AI to create weapons-grade engines (hands-on path). Leave with a Builder Dossier and implementation plan.",
-      cta: "Learn More",
+      description: "Full transformation. Build working AI-enabled systems around your actual week. Leave with a Builder Dossier and the ability to extend everything independently.",
+      cta: "Learn How to Build",
       link: "/builder-sprint",
-      program: "builder-sprint",
       intensity: "Deep Dive",
     },
   ];
@@ -48,11 +44,11 @@ const JourneySlider = ({ onBookClick, navigate }: { onBookClick: (program: strin
   return (
     <div className="premium-card h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
       <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg w-fit">
-        ⭐ RECOMMENDED
+        CHOOSE YOUR DEPTH
       </div>
       
       <div className="mb-6">
-        <div className="text-xs font-bold text-muted-foreground mb-2">YOUR JOURNEY</div>
+        <div className="text-xs font-bold text-muted-foreground mb-2">YOUR COMMITMENT</div>
         <Slider
           value={journeyStage}
           onValueChange={setJourneyStage}
@@ -91,17 +87,76 @@ const JourneySlider = ({ onBookClick, navigate }: { onBookClick: (program: strin
           variant="mint"
           className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
           onClick={() => {
-            if ('link' in currentOffering && currentOffering.link) {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              navigate(currentOffering.link);
-            } else {
-              onBookClick(currentOffering.program);
-            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            navigate(currentOffering.link);
           }}
         >
           {currentOffering.cta}
         </Button>
       </div>
+    </div>
+  );
+};
+
+interface TrackCardProps {
+  icon: React.ElementType;
+  label: string;
+  title: string;
+  subtitle: string;
+  bullets: string[];
+  cta: string;
+  link: string;
+  recommended?: boolean;
+}
+
+const TrackCard = ({ icon: IconComponent, label, title, subtitle, bullets, cta, link, recommended }: TrackCardProps) => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className={`minimal-card h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${recommended ? 'ring-2 ring-mint/50' : ''}`}>
+      {recommended && (
+        <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg w-fit">
+          RECOMMENDED
+        </div>
+      )}
+      
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
+          <IconComponent className="h-5 w-5" />
+        </div>
+        <div className="text-xs font-bold text-muted-foreground">
+          {label}
+        </div>
+      </div>
+      
+      <h3 className="text-xl font-bold text-foreground mb-2">
+        {title}
+      </h3>
+      
+      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+        {subtitle}
+      </p>
+      
+      <ul className="space-y-2 mb-6 flex-1">
+        {bullets.map((bullet, index) => (
+          <li key={index} className="flex items-start gap-2 text-sm text-foreground">
+            <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
+            <span>{bullet}</span>
+          </li>
+        ))}
+      </ul>
+      
+      <Button
+        size="lg"
+        variant="default"
+        className="w-full touch-target mt-auto"
+        onClick={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          navigate(link);
+        }}
+      >
+        {cta}
+      </Button>
     </div>
   );
 };
@@ -131,52 +186,48 @@ const ProductLadder = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const handleBookClick = (program: string) => {
-    setPreselectedProgram(program);
-    setConsultModalOpen(true);
-  };
-
   const tracks = [
     {
       icon: User,
-      label: "1-1 LEADERS",
-      title: "Individual Builder Journey",
-      subtitle: "For senior leaders who want to own AI as a topic or start creating alongside AI",
+      label: "HANDS-ON LEADERS",
+      title: "Build with AI",
+      subtitle: "For operators who want to personally create AI-powered systems, apps, and workflows.",
+      bullets: [
+        "You actively build GTM systems, tools, or automations",
+        "You want AI to expand your creative and strategic output",
+        "You're willing to change how you work week to week",
+      ],
+      cta: "Learn how to build",
+      link: "/builder-sprint",
       useSlider: true,
+    },
+    {
+      icon: Compass,
+      label: "HANDS-OFF EXECUTIVES",
+      title: "Orchestrate AI",
+      subtitle: "For executives who want control, clarity, and governance without building tools themselves.",
+      bullets: [
+        "You delegate execution but own decisions",
+        "You need board-level confidence on AI",
+        "You want systems you can oversee, not tinker with",
+      ],
+      cta: "Learn how to orchestrate",
+      link: "/builder-session",
+      useSlider: false,
     },
     {
       icon: Users,
       label: "EXEC TEAMS",
-      title: "Team Transformation",
-      subtitle: "For teams that want to align, learn & motivate before implementing AI meaningfully",
-      offerings: [
-        {
-          name: "AI Leadership Lab",
-          duration: "2-8 hours",
-          description: "For 6-12 executives. Sharpen your team's communal AI literacy. Run two real decisions through a new AI-enabled way of working. Leave with a 90-day pilot charter and the confidence to evaluate vendors without wasting your one transformation bullet.",
-          cta: "Learn More",
-          link: "/leadership-lab",
-          program: "leadership-lab",
-          image: battleTestStrategy,
-        },
+      title: "Align your leadership team",
+      subtitle: "For exec teams that need shared AI decision frameworks, fast.",
+      bullets: [
+        "Conflicting views on AI risk and value",
+        "Vendor noise and pilot confusion",
+        "Need a 90-day pilot charter",
       ],
-    },
-    {
-      icon: TrendingUp,
-      label: "PORTFOLIOS",
-      title: "Portfolio-Wide Programs",
-      subtitle: "For VCs, advisors, consultancies helping leaders become transformation-ready",
-      offerings: [
-        {
-          name: "Portfolio Program",
-          duration: "6-12 months",
-          description: "For VCs, advisors, consultancies. Help the commercial leaders you serve become AI literate and transformation-ready with a repeatable method and co-branded delivery. They'll confidently evaluate vendors and lead boardroom discussions.",
-          cta: "Learn More",
-          link: "/portfolio-program",
-          program: "portfolio-program",
-          image: peerComparisonMatrix,
-        },
-      ],
+      cta: "Run an exec lab",
+      link: "/leadership-lab",
+      useSlider: false,
     },
   ];
 
@@ -185,10 +236,10 @@ const ProductLadder = () => {
       <div className="container-width">
         <div className="text-center mb-8 sm:mb-12 px-4 sm:px-0">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
-            Choose Your Builder Journey
+            How do you want to work with AI?
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto mb-4">
-            Three paths to confidently boss the boardroom: hands-off leaders get systems and authority, hands-on builders create alongside AI, teams sharpen transformation readiness.
+            Two ways to lead with AI, plus team alignment for exec teams ready to commit.
           </p>
         </div>
         
@@ -220,11 +271,9 @@ const ProductLadder = () => {
                           <h3 className="text-lg font-bold text-foreground">
                             {track.title}
                           </h3>
-                          {track.subtitle && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {track.subtitle}
-                            </p>
-                          )}
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {track.subtitle}
+                          </p>
                         </div>
                       </div>
                       <ChevronDown 
@@ -237,56 +286,17 @@ const ProductLadder = () => {
                   
                   <CollapsibleContent className="pt-4">
                     {track.useSlider ? (
-                      <JourneySlider onBookClick={handleBookClick} navigate={navigate} />
+                      <BuildPathSlider navigate={navigate} />
                     ) : (
-                      <div className="h-full flex flex-col">
-                        {track.offerings?.map((offering, offeringIndex) => (
-                        <div 
-                            key={offeringIndex}
-                            className="minimal-card h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                          >
-                            <h4 className="text-lg font-bold text-foreground mb-2">
-                              {offering.name}
-                            </h4>
-                            <div className="text-xs text-muted-foreground mb-3">
-                              {offering.duration}
-                            </div>
-                            
-                            <p className="text-sm leading-relaxed mb-4 text-foreground">
-                              {offering.description}
-                            </p>
-                            
-                            {offering.image && (
-                              <div className="mb-4 flex-1 flex items-center justify-center overflow-visible relative group">
-                                <div className="w-full h-32 rounded-lg overflow-hidden border border-border/50 transition-all duration-300 bg-background">
-                                  <img 
-                                    src={offering.image} 
-                                    alt={offering.name}
-                                    className="w-full h-full object-contain"
-                                    loading="eager"
-                                  />
-                                </div>
-                              </div>
-                            )}
-                            
-                            <Button
-                              size="lg"
-                              variant="default"
-                              className="w-full touch-target mt-auto"
-                              onClick={() => {
-                                if ('link' in offering && offering.link) {
-                                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                                  navigate(offering.link);
-                                } else {
-                                  handleBookClick(offering.program);
-                                }
-                              }}
-                            >
-                              {offering.cta}
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
+                      <TrackCard
+                        icon={track.icon}
+                        label={track.label}
+                        title={track.title}
+                        subtitle={track.subtitle}
+                        bullets={track.bullets}
+                        cta={track.cta}
+                        link={track.link}
+                      />
                     )}
                   </CollapsibleContent>
                 </Collapsible>
@@ -294,100 +304,58 @@ const ProductLadder = () => {
             })}
           </div>
         ) : (
-          // Desktop: Original Grid Layout
+          // Desktop: Grid Layout
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-4 sm:px-0">
             {tracks.map((track, trackIndex) => {
-              const IconComponent = track.icon;
               return (
                 <div key={trackIndex} className="fade-in-up flex flex-col" style={{animationDelay: `${trackIndex * 0.1}s`}}>
-                  {/* Track Header */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-                      <IconComponent className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-muted-foreground">
-                        {track.label}
-                      </div>
-                      <h3 className="text-xl font-bold text-foreground">
-                        {track.title}
-                      </h3>
-                      {track.subtitle && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {track.subtitle}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Track Content */}
                   {track.useSlider ? (
-                    <JourneySlider onBookClick={handleBookClick} navigate={navigate} />
-                  ) : (
-                    <div className="h-full flex flex-col">
-                      {track.offerings?.map((offering, offeringIndex) => (
-                        <div 
-                          key={offeringIndex}
-                          className="minimal-card h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                        >
-                          <h4 className="text-lg font-bold text-foreground mb-2">
-                            {offering.name}
-                          </h4>
-                          <div className="text-xs text-muted-foreground mb-3">
-                            {offering.duration}
-                          </div>
-                          
-                          <p className="text-sm leading-relaxed mb-4 text-foreground">
-                            {offering.description}
-                          </p>
-                          
-                          {offering.image && (
-                            <div className="mb-4 flex-1 flex items-center justify-center overflow-visible relative group">
-                              <div className="w-full h-32 rounded-lg overflow-hidden border border-border/50 transition-all duration-300 md:group-hover:scale-[2] md:group-hover:z-50 md:group-hover:shadow-2xl md:cursor-zoom-in bg-background">
-                                <img 
-                                  src={offering.image} 
-                                  alt={offering.name}
-                                  className="w-full h-full object-contain"
-                                  loading="eager"
-                                />
-                              </div>
-                            </div>
-                          )}
-                          
-                          <Button
-                            size="lg"
-                            variant="default"
-                            className="w-full touch-target mt-auto"
-                            onClick={() => {
-                              if ('link' in offering && offering.link) {
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                                navigate(offering.link);
-                              } else {
-                                handleBookClick(offering.program);
-                              }
-                            }}
-                          >
-                            {offering.cta}
-                          </Button>
+                    <>
+                      {/* Track Header for Slider */}
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
+                          <track.icon className="h-5 w-5" />
                         </div>
-                      ))}
-                    </div>
+                        <div>
+                          <div className="text-xs font-bold text-muted-foreground">
+                            {track.label}
+                          </div>
+                          <h3 className="text-xl font-bold text-foreground">
+                            {track.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {track.subtitle}
+                          </p>
+                        </div>
+                      </div>
+                      <BuildPathSlider navigate={navigate} />
+                    </>
+                  ) : (
+                    <TrackCard
+                      icon={track.icon}
+                      label={track.label}
+                      title={track.title}
+                      subtitle={track.subtitle}
+                      bullets={track.bullets}
+                      cta={track.cta}
+                      link={track.link}
+                    />
                   )}
                 </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
         )}
 
-      {/* Initial Consult Modal */}
-      <InitialConsultModal 
-        open={consultModalOpen} 
-        onOpenChange={setConsultModalOpen}
-        preselectedProgram={preselectedProgram}
-      />
-    </div>
-  </section>
-);
+        {/* Initial Consult Modal */}
+        <InitialConsultModal 
+          open={consultModalOpen} 
+          onOpenChange={setConsultModalOpen}
+          preselectedProgram={preselectedProgram}
+        />
+      </div>
+    </section>
+  );
 };
 
 export default ProductLadder;

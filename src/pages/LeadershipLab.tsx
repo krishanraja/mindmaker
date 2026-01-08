@@ -7,10 +7,10 @@ import { ModuleExplorer } from "@/components/ModuleExplorer";
 
 const LeadershipLab = () => {
   const seoData = {
-    title: "AI Leadership Lab - Executive Team Transformation",
-    description: "4-hour executive team workshop for 6-12 leaders. Run two real decisions through AI-enabled workflows. Leave with a 90-day pilot charter and board-ready summary.",
+    title: "AI Leadership Lab - Executive Team Decision Reset",
+    description: "4-hour facilitated decision reset for 6-12 executives. Not training. Align on AI, commit to a 90-day pilot with owner, budget and gates. Leave with a board-ready charter.",
     canonical: "/leadership-lab",
-    keywords: "executive AI training, AI leadership workshop, executive team AI, AI transformation, executive workshop, AI for executives, leadership AI program, team AI training",
+    keywords: "executive AI alignment, AI leadership lab, executive team AI decisions, AI transformation, executive workshop, AI governance, leadership AI program, team AI alignment",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "EducationalEvent",
@@ -64,8 +64,8 @@ const LeadershipLab = () => {
   const deliverables = [
     "Executive summary deck within 72 hours",
     "A 90-day pilot charter, ready to be shared with the board",
-    "Team literacy and comfort snapshot, so you know where to focus",
-    "Optional internal GPT sandbox based on the outputs, for leaders to keep working with the material",
+    "Team alignment snapshot showing where you agree and where you don't",
+    "Clear owner, budget envelope, and first review date",
   ];
 
   return (
@@ -81,15 +81,22 @@ const LeadershipLab = () => {
               FOR EXECUTIVE TEAMS
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              AI Leadership Lab
+              Align Your Leadership Team
             </h1>
             <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
               <Users className="h-5 w-5" />
               <span className="text-lg">4 hours • 6-12 executives</span>
             </div>
             <p className="text-xl text-foreground leading-relaxed max-w-3xl mx-auto">
-              Executive teams move from loose AI curiosity to a shared, practical path. 
+              Executive teams move from conflicting views to a shared decision framework. 
               In four hours, commit to a single 90-day pilot with an owner, budget and gates.
+            </p>
+          </div>
+          
+          {/* Qualifier Section */}
+          <div className="minimal-card bg-mint/10 mb-8">
+            <p className="text-foreground font-semibold text-lg">
+              This is not training. It is a facilitated decision reset for leadership teams.
             </p>
           </div>
           
@@ -97,7 +104,7 @@ const LeadershipLab = () => {
           <div className="minimal-card mb-12">
             <h2 className="text-2xl font-bold mb-4">Who It's For</h2>
             <p className="text-foreground leading-relaxed mb-4">
-              Executive teams of 6 to 12 people who need to move from loose AI curiosity to a shared, practical path.
+              Executive teams of 6 to 12 people who need to align on AI decisions, not learn about AI.
             </p>
             <p className="text-foreground leading-relaxed">
               <span className="font-semibold">Ideal mix:</span> CEO, COO, CFO, product, marketing, data, people, 
@@ -106,8 +113,8 @@ const LeadershipLab = () => {
           </div>
           
           {/* Outcome */}
-          <div className="minimal-card bg-mint/10 mb-12">
-            <h2 className="text-2xl font-bold mb-4">Outcome</h2>
+          <div className="minimal-card bg-muted/30 mb-12">
+            <h2 className="text-2xl font-bold mb-4">What You Decide Together</h2>
             <p className="text-foreground leading-relaxed mb-4">
               In four hours the team:
             </p>
@@ -115,7 +122,7 @@ const LeadershipLab = () => {
               <li>• Surfaces the real bottlenecks that matter for the next 12 to 24 months</li>
               <li>• Runs two real decisions through a new AI-enabled way of working</li>
               <li>• Commits to a single 90-day pilot with an owner, budget and gates</li>
-              <li>• Leaves with a short, board-ready summary of what will happen next</li>
+              <li>• Leaves with a short, board-ready charter of what will happen next</li>
             </ul>
           </div>
           

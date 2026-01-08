@@ -32,7 +32,6 @@ const Navigation = () => {
           ]
         },
         { label: "Team", href: "/leadership-lab" },
-        { label: "Portfolio", href: "/portfolio-program" },
       ]
     },
     { 
