@@ -516,6 +516,24 @@ a:hover {
     @apply py-12 sm:py-16 md:py-24 lg:py-32;
   }
 
+  /* Section padding with navbar offset - use on pages with fixed navbar */
+  .section-padding-nav {
+    @apply pb-12 sm:pb-16 md:pb-24 lg:pb-32;
+    padding-top: calc(var(--navbar-height) + 3rem);
+  }
+  
+  @media (min-width: 640px) {
+    .section-padding-nav {
+      padding-top: calc(var(--navbar-height-sm) + 4rem);
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .section-padding-nav {
+      padding-top: calc(var(--navbar-height-md) + 6rem);
+    }
+  }
+
   .container-width { 
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }

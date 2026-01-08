@@ -7,6 +7,8 @@ import { ModuleExplorer } from "@/components/ModuleExplorer";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PromoBanner } from "@/components/PromoBanner";
+import { JourneyInfoCarousel, type JourneyCard } from "@/components/JourneyInfoCarousel";
+import { FloatingBookCTA } from "@/components/FloatingBookCTA";
 
 type DepthType = "1hr" | "4wk" | "90d";
 
@@ -158,7 +160,7 @@ const BuilderSprint = () => {
       <SEO {...seoData} />
       <Navigation />
       
-      <section className="section-padding">
+      <section className="section-padding-nav">
         <div className="container-width max-w-5xl">
           {/* Depth Switcher */}
           <div className="flex justify-center gap-2 mb-8">
@@ -236,22 +238,63 @@ const BuilderSprint = () => {
             </div>
           </div>
           
-          {/* Who It's For */}
-          <div className="minimal-card mb-12">
-            <h2 className="text-2xl font-bold mb-4">Who It's For</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              A senior leader with real authority over a slice of the business 
-              who wants to personally build with AI. Often a CEO, GM, CCO, CPO, CRO or transformation owner.
-            </p>
-            <p className="text-foreground leading-relaxed">
-              You are likely:
-            </p>
-            <ul className="space-y-2 text-foreground mt-4">
-              <li>• Ready to get your hands dirty with AI tools</li>
-              <li>• Dipping into tools yourself but with no repeatable method</li>
-              <li>• Frustrated that every AI meeting ends in a slide, not a change you built</li>
-            </ul>
-          </div>
+          {/* Info Cards Carousel */}
+          <JourneyInfoCarousel
+            className="mb-8"
+            cards={[
+              {
+                id: "who-its-for",
+                title: "Who It's For",
+                content: (
+                  <>
+                    <p className="text-foreground leading-relaxed mb-4">
+                      A senior leader with real authority over a slice of the business 
+                      who wants to personally build with AI. Often a CEO, GM, CCO, CPO, CRO or transformation owner.
+                    </p>
+                    <p className="text-foreground leading-relaxed">
+                      You are likely:
+                    </p>
+                    <ul className="space-y-2 text-foreground mt-4">
+                      <li>• Ready to get your hands dirty with AI tools</li>
+                      <li>• Dipping into tools yourself but with no repeatable method</li>
+                      <li>• Frustrated that every AI meeting ends in a slide, not a change you built</li>
+                    </ul>
+                  </>
+                ),
+              },
+              {
+                id: "what-you-get",
+                title: "What You Get",
+                content: (
+                  <div className="space-y-4">
+                    {content.deliverables.map((item, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-mint flex-shrink-0 mt-0.5" />
+                        <p className="text-foreground">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                id: "what-you-build",
+                title: "What You Will Build",
+                bgClass: "bg-muted/30",
+                content: (
+                  <>
+                    <p className="text-foreground leading-relaxed mb-4">
+                      You leave with:
+                    </p>
+                    <ul className="space-y-3 text-foreground">
+                      {content.outcomes.map((outcome, index) => (
+                        <li key={index}>• {outcome}</li>
+                      ))}
+                    </ul>
+                  </>
+                ),
+              },
+            ] as JourneyCard[]}
+          />
           
           {/* Structure - Only for 90d */}
           {depth === "90d" && content.weeks && (
@@ -279,32 +322,6 @@ const BuilderSprint = () => {
             </div>
           )}
           
-          {/* What You Get */}
-          <div className="minimal-card mb-8">
-            <h2 className="text-2xl font-bold mb-6">What You Get</h2>
-            <div className="space-y-4">
-              {content.deliverables.map((item, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-mint flex-shrink-0 mt-0.5" />
-                  <p className="text-foreground">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Outcome */}
-          <div className="minimal-card bg-muted/30 mb-8">
-            <h2 className="text-2xl font-bold mb-4">What You Will Build</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              You leave with:
-            </p>
-            <ul className="space-y-3 text-foreground">
-              {content.outcomes.map((outcome, index) => (
-                <li key={index}>• {outcome}</li>
-              ))}
-            </ul>
-          </div>
-          
           {/* Module Explorer */}
           <ModuleExplorer context="individual" />
           
@@ -314,6 +331,9 @@ const BuilderSprint = () => {
       </section>
       
       <Footer />
+      
+      {/* Floating Book CTA for mobile */}
+      <FloatingBookCTA preselectedProgram="builder-sprint" />
     </main>
   );
 };

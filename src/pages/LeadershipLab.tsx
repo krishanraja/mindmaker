@@ -5,6 +5,8 @@ import { ConsultationBooking } from "@/components/ConsultationBooking";
 import { SEO } from "@/components/SEO";
 import { ModuleExplorer } from "@/components/ModuleExplorer";
 import { PromoBanner } from "@/components/PromoBanner";
+import { JourneyInfoCarousel, type JourneyCard } from "@/components/JourneyInfoCarousel";
+import { FloatingBookCTA } from "@/components/FloatingBookCTA";
 
 const LeadershipLab = () => {
   const seoData = {
@@ -74,7 +76,7 @@ const LeadershipLab = () => {
       <SEO {...seoData} />
       <Navigation />
       
-      <section className="section-padding">
+      <section className="section-padding-nav">
         <div className="container-width max-w-5xl">
           {/* Header */}
           <div className="text-center mb-12">
@@ -104,31 +106,59 @@ const LeadershipLab = () => {
             </p>
           </div>
           
-          {/* Who It's For */}
-          <div className="minimal-card mb-12">
-            <h2 className="text-2xl font-bold mb-4">Who It's For</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              Executive teams of 6 to 12 people who need to align on AI decisions, not learn about AI.
-            </p>
-            <p className="text-foreground leading-relaxed">
-              <span className="font-semibold">Ideal mix:</span> CEO, COO, CFO, product, marketing, data, people, 
-              operations and innovation leads.
-            </p>
-          </div>
-          
-          {/* Outcome */}
-          <div className="minimal-card bg-muted/30 mb-12">
-            <h2 className="text-2xl font-bold mb-4">What You Decide Together</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              In four hours the team:
-            </p>
-            <ul className="space-y-3 text-foreground">
-              <li>• Surfaces the real bottlenecks that matter for the next 12 to 24 months</li>
-              <li>• Runs two real decisions through a new AI-enabled way of working</li>
-              <li>• Commits to a single 90-day pilot with an owner, budget and gates</li>
-              <li>• Leaves with a short, board-ready charter of what will happen next</li>
-            </ul>
-          </div>
+          {/* Info Cards Carousel */}
+          <JourneyInfoCarousel
+            className="mb-8"
+            cards={[
+              {
+                id: "who-its-for",
+                title: "Who It's For",
+                content: (
+                  <>
+                    <p className="text-foreground leading-relaxed mb-4">
+                      Executive teams of 6 to 12 people who need to align on AI decisions, not learn about AI.
+                    </p>
+                    <p className="text-foreground leading-relaxed">
+                      <span className="font-semibold">Ideal mix:</span> CEO, COO, CFO, product, marketing, data, people, 
+                      operations and innovation leads.
+                    </p>
+                  </>
+                ),
+              },
+              {
+                id: "what-you-decide",
+                title: "What You Decide Together",
+                bgClass: "bg-muted/30",
+                content: (
+                  <>
+                    <p className="text-foreground leading-relaxed mb-3">
+                      In four hours the team:
+                    </p>
+                    <ul className="space-y-2 text-foreground">
+                      <li className="text-sm">• Surfaces the real bottlenecks that matter for the next 12 to 24 months</li>
+                      <li className="text-sm">• Runs two real decisions through a new AI-enabled way of working</li>
+                      <li className="text-sm">• Commits to a single 90-day pilot with an owner, budget and gates</li>
+                      <li className="text-sm">• Leaves with a short, board-ready charter of what will happen next</li>
+                    </ul>
+                  </>
+                ),
+              },
+              {
+                id: "deliverables",
+                title: "Deliverables",
+                content: (
+                  <div className="space-y-3">
+                    {deliverables.map((item, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-mint flex-shrink-0 mt-0.5" />
+                        <p className="text-foreground text-sm">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+            ] as JourneyCard[]}
+          />
           
           {/* What Happens */}
           <div className="mb-12">
@@ -154,19 +184,6 @@ const LeadershipLab = () => {
             </div>
           </div>
           
-          {/* Deliverables */}
-          <div className="minimal-card mb-8">
-            <h2 className="text-2xl font-bold mb-6">Deliverables</h2>
-            <div className="space-y-4">
-              {deliverables.map((item, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-mint flex-shrink-0 mt-0.5" />
-                  <p className="text-foreground">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          
           {/* Module Explorer */}
           <ModuleExplorer context="team" />
           
@@ -176,6 +193,9 @@ const LeadershipLab = () => {
       </section>
       
       <Footer />
+      
+      {/* Floating Book CTA for mobile */}
+      <FloatingBookCTA preselectedProgram="leadership-lab" />
     </main>
   );
 };

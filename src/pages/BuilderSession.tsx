@@ -7,6 +7,8 @@ import { ModuleExplorer } from "@/components/ModuleExplorer";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PromoBanner } from "@/components/PromoBanner";
+import { JourneyInfoCarousel, type JourneyCard } from "@/components/JourneyInfoCarousel";
+import { FloatingBookCTA } from "@/components/FloatingBookCTA";
 
 type DepthType = "1hr" | "4wk" | "90d";
 
@@ -183,7 +185,7 @@ const BuilderSession = () => {
       <SEO {...seoData} />
       <Navigation />
       
-      <section className="section-padding">
+      <section className="section-padding-nav">
         <div className="container-width max-w-5xl">
           {/* Depth Switcher */}
           <div className="flex justify-center gap-2 mb-8">
@@ -261,19 +263,74 @@ const BuilderSession = () => {
             </div>
           </div>
           
-          {/* Who This Is For */}
-          <div className="minimal-card mb-12">
-            <h2 className="text-2xl font-bold mb-4">Who This Is For</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              Senior executives (CEO, CFO, Board Members, C-Suite) who:
-            </p>
-            <ul className="space-y-2 text-foreground">
-              <li>• Delegate execution but need to own AI decisions</li>
-              <li>• Want board-level confidence on AI without becoming technical</li>
-              <li>• Need to evaluate vendors and initiatives without getting lost in details</li>
-              <li>• Want systems they can oversee, not tinker with</li>
-            </ul>
-          </div>
+          {/* Info Cards Carousel */}
+          <JourneyInfoCarousel
+            className="mb-8"
+            cards={[
+              {
+                id: "who-this-is-for",
+                title: "Who This Is For",
+                content: (
+                  <>
+                    <p className="text-foreground leading-relaxed mb-4">
+                      Senior executives (CEO, CFO, Board Members, C-Suite) who:
+                    </p>
+                    <ul className="space-y-2 text-foreground">
+                      <li>• Delegate execution but need to own AI decisions</li>
+                      <li>• Want board-level confidence on AI without becoming technical</li>
+                      <li>• Need to evaluate vendors and initiatives without getting lost in details</li>
+                      <li>• Want systems they can oversee, not tinker with</li>
+                    </ul>
+                  </>
+                ),
+              },
+              ...((depth === "1hr" || depth === "4wk") && content.howItWorks ? [{
+                id: "how-it-works",
+                title: "How It Works",
+                content: (
+                  <div className="space-y-4">
+                    {content.howItWorks.map((item, index) => (
+                      <div key={index}>
+                        <h3 className="font-semibold text-foreground mb-1">{item.step}</h3>
+                        <p className="text-muted-foreground text-sm">{item.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              }] : []),
+              {
+                id: "what-you-get",
+                title: "What You Get",
+                content: (
+                  <div className="space-y-3">
+                    {content.deliverables.map((item, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-mint flex-shrink-0 mt-0.5" />
+                        <p className="text-foreground text-sm">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                id: "what-you-leave-with",
+                title: "What You Leave With",
+                bgClass: "bg-muted/30",
+                content: (
+                  <>
+                    <p className="text-foreground leading-relaxed mb-3">
+                      You leave with:
+                    </p>
+                    <ul className="space-y-2 text-foreground">
+                      {content.outcomes.map((outcome, index) => (
+                        <li key={index} className="text-sm">• {outcome}</li>
+                      ))}
+                    </ul>
+                  </>
+                ),
+              },
+            ] as JourneyCard[]}
+          />
 
           {/* Phases - Only for 90d */}
           {depth === "90d" && content.phases && (
@@ -300,47 +357,6 @@ const BuilderSession = () => {
               </div>
             </div>
           )}
-
-          {/* How It Works - for 1hr and 4wk */}
-          {(depth === "1hr" || depth === "4wk") && content.howItWorks && (
-            <div className="minimal-card mb-8">
-              <h2 className="text-2xl font-bold mb-6">How It Works</h2>
-              <div className="space-y-6">
-                {content.howItWorks.map((item, index) => (
-                  <div key={index}>
-                    <h3 className="font-semibold text-foreground mb-2">{item.step}</h3>
-                    <p className="text-muted-foreground">{item.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* What You Get */}
-          <div className="minimal-card mb-8">
-            <h2 className="text-2xl font-bold mb-6">What You Get</h2>
-            <div className="space-y-4">
-              {content.deliverables.map((item, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-mint flex-shrink-0 mt-0.5" />
-                  <p className="text-foreground">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Outcome */}
-          <div className="minimal-card bg-muted/30 mb-8">
-            <h2 className="text-2xl font-bold mb-4">What You Leave With</h2>
-            <p className="text-foreground leading-relaxed mb-4">
-              You leave with:
-            </p>
-            <ul className="space-y-3 text-foreground">
-              {content.outcomes.map((outcome, index) => (
-                <li key={index}>• {outcome}</li>
-              ))}
-            </ul>
-          </div>
           
           {/* Module Explorer */}
           <ModuleExplorer context="individual" />
@@ -351,6 +367,9 @@ const BuilderSession = () => {
       </section>
       
       <Footer />
+      
+      {/* Floating Book CTA for mobile */}
+      <FloatingBookCTA preselectedProgram="builder-session" />
     </main>
   );
 };
