@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import NewHero from "@/components/NewHero";
 import ChaosToClarity from "@/components/ShowDontTell/ChaosToClarity";
@@ -17,6 +17,7 @@ import { BuilderAssessment } from "@/components/Interactive/BuilderAssessment";
 import { FrictionMapBuilder } from "@/components/Interactive/FrictionMapBuilder";
 import { TryItWidget } from "@/components/Interactive/AIDecisionHelper";
 import { PortfolioBuilder } from "@/components/Interactive/PortfolioBuilder";
+import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { Mic } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -24,7 +25,18 @@ type DialogType = 'quiz' | 'decision' | 'friction' | 'portfolio' | null;
 
 const Index = () => {
   const [dialogType, setDialogType] = useState<DialogType>(null);
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
   const isMobile = useIsMobile();
+
+  // Listen for custom event from Navigation to open consult modal
+  useEffect(() => {
+    const handleOpenConsultModal = () => {
+      setConsultModalOpen(true);
+    };
+
+    window.addEventListener('openConsultModal', handleOpenConsultModal);
+    return () => window.removeEventListener('openConsultModal', handleOpenConsultModal);
+  }, []);
 
   const getDialogTitle = () => {
     switch (dialogType) {
@@ -122,6 +134,12 @@ const Index = () => {
           </div>
         </DialogWizardContent>
       </Dialog>
+
+      {/* Global Consult Modal for Navigation button */}
+      <InitialConsultModal
+        open={consultModalOpen}
+        onOpenChange={setConsultModalOpen}
+      />
     </main>
   );
 };

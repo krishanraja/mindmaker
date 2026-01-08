@@ -274,11 +274,19 @@ const CommitmentSlider = ({
   sliderLabels,
   route,
   navigate,
+  onCTAClick,
+  audienceType,
+  pathType,
+  learnMoreLink,
 }: {
   offerings: Offering[];
   sliderLabels: [string, string, string];
   route: string;
   navigate: (path: string) => void;
+  onCTAClick: (commitmentLevel: string) => void;
+  audienceType: "individual" | "team";
+  pathType?: "build" | "orchestrate";
+  learnMoreLink: string;
 }) => {
   const [journeyStage, setJourneyStage] = useState([0]);
 
@@ -339,17 +347,24 @@ const CommitmentSlider = ({
             {currentOffering.description}
           </p>
 
-          <Button
-            size="lg"
-            variant="mint"
-            className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-              navigate(`${route}?depth=${depthParam}`);
-            }}
-          >
-            {currentOffering.cta}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="lg"
+              variant="mint"
+              className="flex-1 touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
+              onClick={() => onCTAClick(depthParam)}
+            >
+              {currentOffering.cta}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="touch-target font-semibold"
+              onClick={() => navigate(learnMoreLink)}
+            >
+              Learn More
+            </Button>
+          </div>
         </motion.div>
       </AnimatePresence>
     </motion.div>
@@ -360,9 +375,11 @@ const CommitmentSlider = ({
 const IndividualPath = ({
   onBack,
   navigate,
+  onCTAClick,
 }: {
   onBack: () => void;
   navigate: (path: string) => void;
+  onCTAClick: (commitmentLevel: string, pathType: "build" | "orchestrate") => void;
 }) => {
   const [selectedPath, setSelectedPath] = useState<PathType>("build");
   const currentPathInfo = pathInfo[selectedPath];
@@ -457,6 +474,10 @@ const IndividualPath = ({
         sliderLabels={["1 hr", "4 weeks", "90 days"]}
         route={currentPathInfo.route}
         navigate={navigate}
+        onCTAClick={(commitmentLevel) => onCTAClick(commitmentLevel, selectedPath)}
+        audienceType="individual"
+        pathType={selectedPath}
+        learnMoreLink={`/individual?path=${selectedPath}`}
       />
     </motion.div>
   );
@@ -466,9 +487,11 @@ const IndividualPath = ({
 const TeamPath = ({
   onBack,
   navigate,
+  onCTAClick,
 }: {
   onBack: () => void;
   navigate: (path: string) => void;
+  onCTAClick: (commitmentLevel: string) => void;
 }) => {
   const TeamIcon = teamInfo.icon;
 
@@ -526,6 +549,9 @@ const TeamPath = ({
         sliderLabels={["3 hr", "4 weeks", "90 days"]}
         route={teamInfo.route}
         navigate={navigate}
+        onCTAClick={onCTAClick}
+        audienceType="team"
+        learnMoreLink="/team"
       />
     </motion.div>
   );
@@ -536,6 +562,9 @@ const ProductLadder = () => {
   const navigate = useNavigate();
   const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
+  const [commitmentLevel, setCommitmentLevel] = useState<string | undefined>();
+  const [audienceType, setAudienceType] = useState<"individual" | "team" | undefined>();
+  const [pathType, setPathType] = useState<"build" | "orchestrate" | undefined>();
   const [audience, setAudience] = useState<AudienceType | null>(null);
 
   // Auto-open modal when #book hash is present
@@ -554,6 +583,22 @@ const ProductLadder = () => {
 
   const handleBack = () => {
     setAudience(null);
+  };
+
+  const handleIndividualCTAClick = (commitment: string, path: "build" | "orchestrate") => {
+    setCommitmentLevel(commitment);
+    setAudienceType("individual");
+    setPathType(path);
+    setPreselectedProgram(path);
+    setConsultModalOpen(true);
+  };
+
+  const handleTeamCTAClick = (commitment: string) => {
+    setCommitmentLevel(commitment);
+    setAudienceType("team");
+    setPathType(undefined);
+    setPreselectedProgram("team");
+    setConsultModalOpen(true);
   };
 
   return (
@@ -593,10 +638,10 @@ const ProductLadder = () => {
             <AudienceSelection key="audience" onSelect={setAudience} />
           )}
           {audience === "individual" && (
-            <IndividualPath key="individual" onBack={handleBack} navigate={navigate} />
+            <IndividualPath key="individual" onBack={handleBack} navigate={navigate} onCTAClick={handleIndividualCTAClick} />
           )}
           {audience === "team" && (
-            <TeamPath key="team" onBack={handleBack} navigate={navigate} />
+            <TeamPath key="team" onBack={handleBack} navigate={navigate} onCTAClick={handleTeamCTAClick} />
           )}
         </AnimatePresence>
 
@@ -605,6 +650,9 @@ const ProductLadder = () => {
           open={consultModalOpen}
           onOpenChange={setConsultModalOpen}
           preselectedProgram={preselectedProgram}
+          commitmentLevel={commitmentLevel}
+          audienceType={audienceType}
+          pathType={pathType}
         />
       </div>
     </section>

@@ -3,9 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { SessionDataProvider } from "@/contexts/SessionDataContext";
 import Index from "./pages/Index";
-import BuilderSession from "./pages/BuilderSession";
+import Individual from "./pages/Individual";
+import Team from "./pages/Team";
 import BuilderSprint from "./pages/BuilderSprint";
-import LeadershipLab from "./pages/LeadershipLab";
 import BuilderEconomy from "./pages/BuilderEconomy";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
@@ -25,9 +25,9 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/builder-session" element={<BuilderSession />} />
+            <Route path="/individual" element={<Individual />} />
+            <Route path="/team" element={<Team />} />
             <Route path="/builder-sprint" element={<BuilderSprint />} />
-            <Route path="/leadership-lab" element={<LeadershipLab />} />
             <Route path="/builder-economy" element={<BuilderEconomy />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
@@ -38,8 +38,10 @@ const App = () => (
             {/* Leadership Insights Diagnostic - accessible at /leaders */}
             <Route path="/leaders" element={<LeadershipInsights />} />
             <Route path="/leadership-insights" element={<LeadershipInsights />} />
-            {/* Redirects for common URL variations */}
-            <Route path="/builder" element={<Navigate to="/builder-session" replace />} />
+            {/* Redirects for old URLs */}
+            <Route path="/builder-session" element={<Navigate to="/individual?path=orchestrate" replace />} />
+            <Route path="/leadership-lab" element={<Navigate to="/team" replace />} />
+            <Route path="/builder" element={<Navigate to="/individual?path=build" replace />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

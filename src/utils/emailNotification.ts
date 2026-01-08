@@ -9,7 +9,13 @@ export interface LeadEmailParams {
   name: string;
   email: string;
   source: string;
-  additionalData?: Record<string, any>;
+  additionalData?: {
+    jobTitle?: string;
+    sessionData?: Record<string, any>;
+    commitmentLevel?: string;
+    audienceType?: "individual" | "team";
+    pathType?: "build" | "orchestrate";
+  };
 }
 
 /**
@@ -24,6 +30,9 @@ export const sendLeadEmail = async (params: LeadEmailParams): Promise<void> => {
         email: params.email,
         jobTitle: params.additionalData?.jobTitle || 'Not specified',
         selectedProgram: params.source,
+        commitmentLevel: params.additionalData?.commitmentLevel,
+        audienceType: params.additionalData?.audienceType,
+        pathType: params.additionalData?.pathType,
         sessionData: params.additionalData?.sessionData || {},
       },
     });

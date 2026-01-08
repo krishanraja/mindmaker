@@ -16,17 +16,34 @@ interface InitialConsultModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   preselectedProgram?: string;
+  commitmentLevel?: string;
+  audienceType?: "individual" | "team";
+  pathType?: "build" | "orchestrate";
 }
 
-export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: InitialConsultModalProps) => {
+export const InitialConsultModal = ({ 
+  open, 
+  onOpenChange, 
+  preselectedProgram, 
+  commitmentLevel,
+  audienceType,
+  pathType 
+}: InitialConsultModalProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [jobTitle, setJobTitle] = useState("");
-  const [selectedPath, setSelectedPath] = useState("");
+  const [selectedPath, setSelectedPath] = useState(preselectedProgram || "");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { sessionData } = useSessionData();
+
+  // Auto-select path if provided
+  useEffect(() => {
+    if (preselectedProgram && !selectedPath) {
+      setSelectedPath(preselectedProgram);
+    }
+  }, [preselectedProgram, selectedPath]);
 
   const pathOptions = [
     { 
@@ -49,7 +66,10 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name || !email || !jobTitle || !selectedPath) {
+    // If preselectedProgram is provided, selectedPath is optional
+    const pathRequired = !preselectedProgram;
+    
+    if (!name || !email || !jobTitle || (pathRequired && !selectedPath)) {
       toast({
         title: "Missing information",
         description: "Please fill in all fields",
@@ -63,13 +83,19 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
     try {
       const selectedPathData = pathOptions.find(p => p.value === selectedPath);
       
-      // Send enriched lead email
+      // Determine the program value to send
+      const programValue = preselectedProgram || selectedPath || 'not-sure';
+      
+      // Send enriched lead email with all context
       const { data: emailData, error: emailError } = await supabase.functions.invoke('send-lead-email', {
         body: {
           name,
           email,
           jobTitle,
-          selectedProgram: selectedPath,
+          selectedProgram: programValue,
+          commitmentLevel: commitmentLevel,
+          audienceType: audienceType,
+          pathType: pathType,
           sessionData
         }
       });
@@ -84,7 +110,7 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
         name,
         email,
         source: 'initial-consult',
-        preselectedProgram: selectedPath,
+        preselectedProgram: programValue,
       });
       onOpenChange(false);
       toast({
@@ -106,34 +132,50 @@ export const InitialConsultModal = ({ open, onOpenChange, preselectedProgram }: 
 
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-      {/* Path Selection - Required First Question */}
-      <div className="space-y-3">
-        <Label className="text-sm font-semibold">How do you want to work with AI?</Label>
-        <RadioGroup value={selectedPath} onValueChange={setSelectedPath}>
-          {pathOptions.map((path) => (
-            <div key={path.value} className="flex items-start space-x-3 space-y-0">
-              <RadioGroupItem value={path.value} id={path.value} className="mt-1" />
-              <Label 
-                htmlFor={path.value} 
-                className="font-normal cursor-pointer flex-1 leading-tight"
-              >
-                <div>
-                  <span className="font-semibold block">{path.label}</span>
-                </div>
-              </Label>
+      {/* Path Selection - Required First Question (only show if not pre-selected) */}
+      {!preselectedProgram && (
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">How do you want to work with AI?</Label>
+          <RadioGroup value={selectedPath} onValueChange={setSelectedPath}>
+            {pathOptions.map((path) => (
+              <div key={path.value} className="flex items-start space-x-3 space-y-0">
+                <RadioGroupItem value={path.value} id={path.value} className="mt-1" />
+                <Label 
+                  htmlFor={path.value} 
+                  className="font-normal cursor-pointer flex-1 leading-tight"
+                >
+                  <div>
+                    <span className="font-semibold block">{path.label}</span>
+                  </div>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+          
+          {/* Conditional helper text based on selection */}
+          {selectedPath && (
+            <div className="pl-7 py-2 px-3 bg-muted/50 rounded-md border border-border/50">
+              <p className="text-sm text-muted-foreground">
+                {pathOptions.find(p => p.value === selectedPath)?.helper}
+              </p>
             </div>
-          ))}
-        </RadioGroup>
-        
-        {/* Conditional helper text based on selection */}
-        {selectedPath && (
-          <div className="pl-7 py-2 px-3 bg-muted/50 rounded-md border border-border/50">
-            <p className="text-sm text-muted-foreground">
-              {pathOptions.find(p => p.value === selectedPath)?.helper}
-            </p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+      
+      {/* Show commitment level if provided */}
+      {commitmentLevel && (
+        <div className="bg-mint/10 border border-mint/30 rounded-lg p-4">
+          <p className="text-sm font-semibold text-foreground mb-1">Selected Commitment:</p>
+          <p className="text-sm text-muted-foreground">
+            {commitmentLevel === "1hr" ? "1 Hour Session" :
+             commitmentLevel === "3hr" ? "3 Hour Session" :
+             commitmentLevel === "4wk" ? "4 Week Program" :
+             commitmentLevel === "90d" ? "90 Day Program" :
+             commitmentLevel}
+          </p>
+        </div>
+      )}
 
       {/* Name, Job Title & Email */}
       <div className="space-y-4">

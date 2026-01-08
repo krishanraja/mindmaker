@@ -23,15 +23,8 @@ const Navigation = () => {
     { 
       label: "Executive Advisory", 
       dropdown: [
-        { 
-          label: "Individual",
-          nested: [
-            { label: "One-Off", href: "/builder-session" },
-            { label: "Weekly Sync", href: "/builder-session" },
-            { label: "90-Day Sprint", href: "/builder-sprint" },
-          ]
-        },
-        { label: "Team", href: "/leadership-lab" },
+        { label: "Individual", href: "/individual" },
+        { label: "Team", href: "/team" },
       ]
     },
     { 
@@ -218,7 +211,11 @@ const Navigation = () => {
             <Button 
               size="sm" 
               className="ml-6 relative touch-target"
-              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+              onClick={() => {
+                // Import and open InitialConsultModal
+                // We'll use a custom event to trigger modal opening from Index page
+                window.dispatchEvent(new CustomEvent('openConsultModal'));
+              }}
             >
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-mint rounded-full animate-pulse" />
               Book Session
@@ -381,7 +378,7 @@ const Navigation = () => {
                   size="sm" 
                   className="w-fit mx-4 mt-4"
                   onClick={() => {
-                    window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank');
+                    window.dispatchEvent(new CustomEvent('openConsultModal'));
                     setIsOpen(false);
                   }}
                 >

@@ -2,24 +2,35 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ConsultationBooking } from "@/components/ConsultationBooking";
+import { InitialConsultModal } from "@/components/InitialConsultModal";
 
 interface FloatingBookCTAProps {
-  /** ID of the booking section to scroll to (optional - if not provided, opens sheet) */
+  /** ID of the booking section to scroll to (optional - if not provided, opens modal) */
   bookingSectionId?: string;
   /** Pre-selected program for the booking form */
   preselectedProgram?: string;
+  /** Commitment level (1hr, 3hr, 4wk, 90d) */
+  commitmentLevel?: string;
+  /** Audience type (individual or team) */
+  audienceType?: "individual" | "team";
+  /** Path type (build or orchestrate) - only for individual */
+  pathType?: "build" | "orchestrate";
 }
 
 /**
  * FloatingBookCTA - A floating "Book" button that appears on mobile after scrolling.
  * Provides quick access to the booking CTA without excessive scrolling.
  */
-export const FloatingBookCTA = ({ bookingSectionId, preselectedProgram }: FloatingBookCTAProps) => {
+export const FloatingBookCTA = ({ 
+  bookingSectionId, 
+  preselectedProgram,
+  commitmentLevel,
+  audienceType,
+  pathType
+}: FloatingBookCTAProps) => {
   const isMobile = useIsMobile();
   const [isVisible, setIsVisible] = useState(false);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -58,8 +69,8 @@ export const FloatingBookCTA = ({ bookingSectionId, preselectedProgram }: Floati
         element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     } else {
-      // Open sheet with compact booking form
-      setIsSheetOpen(true);
+      // Open modal with booking form
+      setIsModalOpen(true);
     }
   };
 
@@ -83,15 +94,15 @@ export const FloatingBookCTA = ({ bookingSectionId, preselectedProgram }: Floati
         </Button>
       </div>
 
-      {/* Booking Sheet */}
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent side="bottom" className="h-auto max-h-[85vh] overflow-y-auto">
-          <SheetHeader className="mb-4">
-            <SheetTitle className="text-center">Book Your Consultation</SheetTitle>
-          </SheetHeader>
-          <ConsultationBooking variant="compact" preselectedProgram={preselectedProgram} />
-        </SheetContent>
-      </Sheet>
+      {/* Booking Modal */}
+      <InitialConsultModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        preselectedProgram={preselectedProgram}
+        commitmentLevel={commitmentLevel}
+        audienceType={audienceType}
+        pathType={pathType}
+      />
     </>
   );
 };
