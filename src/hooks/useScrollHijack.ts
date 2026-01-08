@@ -1,15 +1,20 @@
 /**
- * @file useScrollHijack Hook v3
- * @description BULLETPROOF scroll hijacking with overflow-based locking
+ * @file useScrollHijack Hook v4
+ * @description BULLETPROOF scroll hijacking with seamless boundary exit
  * 
- * Key architectural changes from v2:
- * - NO body fixed positioning (was causing blank screen bug)
- * - Uses overflow:hidden + scroll event prevention
- * - RAF-based position maintenance loop
- * - Content stays visible during lock
+ * Key architectural changes:
+ * - v2: Body fixed positioning (caused blank screen bug)
+ * - v3: Overflow-based lock with RAF position maintenance (fixed blank screen)
+ * - v4: Boundary-based auto-release (fixes "stuck" UX issue)
  * 
- * The v2 bug: body.style.top = "-scrollY" pushed the ENTIRE body up,
- * including the section we wanted to show, resulting in blank screen.
+ * The v3 bug: Users got "stuck" at boundaries because:
+ * - Exit only happened at 100% progress
+ * - No exit at 0% when scrolling up
+ * - Escape velocity threshold was too high (12px/ms)
+ * - Extra scroll delta at boundaries was lost
+ * 
+ * v4 fix: Accumulate "overflow" scroll delta at boundaries.
+ * Once overflow exceeds threshold, release lock and let user continue.
  * 
  * @dependencies None (standalone hook)
  */
@@ -33,7 +38,7 @@ interface UseScrollHijackOptions {
   enabled?: boolean;
   /** Maximum progress change per frame (prevents skipping) */
   maxDeltaPerFrame?: number;
-  /** Escape velocity threshold (fast scroll = intent to skip) */
+  /** Escape velocity threshold (fast scroll = intent to skip) - v4: lowered default */
   escapeVelocityThreshold?: number;
   /** Callback when escape velocity detected */
   onEscapeVelocity?: () => void;
@@ -41,6 +46,10 @@ interface UseScrollHijackOptions {
   targetOffset?: number;
   /** Buffer zone for triggering (how close to targetOffset before lock) */
   triggerBuffer?: number;
+  /** v4: Overflow threshold - how much extra scroll at boundary triggers release (default: 150px) */
+  overflowThreshold?: number;
+  /** v4: Callback when released at boundary (top or bottom) */
+  onBoundaryRelease?: (boundary: 'top' | 'bottom') => void;
 }
 
 interface UseScrollHijackReturn {
@@ -88,10 +97,14 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     progressDivisor = 600,
     enabled = true,
     maxDeltaPerFrame = 0.08,
-    escapeVelocityThreshold = 15,
+    // v4: Lowered from 15 to 8 - more forgiving escape velocity
+    escapeVelocityThreshold = 8,
     onEscapeVelocity,
     targetOffset = 0,
     triggerBuffer = 100,
+    // v4: New boundary release options
+    overflowThreshold = 150,
+    onBoundaryRelease,
   } = options;
 
   // ============================================================
@@ -127,10 +140,15 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   const cooldownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasExitedViewportRef = useRef(false);
   
+  // v4: Boundary overflow tracking
+  const overflowDeltaRef = useRef(0);
+  const boundaryHitRef = useRef<'top' | 'bottom' | null>(null);
+  
   // Callback refs
   const onProgressRef = useRef(onProgress);
   const onEscapeVelocityRef = useRef(onEscapeVelocity);
   const isCompleteRef = useRef(isComplete);
+  const onBoundaryReleaseRef = useRef(onBoundaryRelease);
   
   // ============================================================
   // KEEP REFS IN SYNC
@@ -147,6 +165,10 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   useEffect(() => {
     isCompleteRef.current = isComplete;
   }, [isComplete]);
+  
+  useEffect(() => {
+    onBoundaryReleaseRef.current = onBoundaryRelease;
+  }, [onBoundaryRelease]);
 
   // ============================================================
   // POSITION MAINTENANCE LOOP (v3 - replaces body fixed positioning)
@@ -201,6 +223,10 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     // Reset progress tracking for fresh start
     velocityHistoryRef.current = [];
     accumulatedDeltaRef.current = 0;
+    
+    // v4: Reset overflow tracking
+    overflowDeltaRef.current = 0;
+    boundaryHitRef.current = null;
   }, [startPositionMaintenance]);
   
   const unlockBody = useCallback(() => {
@@ -229,21 +255,93 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   }, [stopPositionMaintenance]);
 
   // ============================================================
-  // PROGRESS UPDATE WITH SMOOTHING
+  // v4: BOUNDARY RELEASE FUNCTION
+  // ============================================================
+  
+  const releaseBoundary = useCallback((boundary: 'top' | 'bottom') => {
+    if (!isLockedRef.current) return;
+    
+    // Call boundary release callback if provided
+    if (onBoundaryReleaseRef.current) {
+      onBoundaryReleaseRef.current(boundary);
+    }
+    
+    // Unlock the body
+    unlockBody();
+    
+    // Reset overflow tracking
+    overflowDeltaRef.current = 0;
+    boundaryHitRef.current = null;
+  }, [unlockBody]);
+
+  // ============================================================
+  // PROGRESS UPDATE WITH SMOOTHING + v4 BOUNDARY OVERFLOW TRACKING
   // ============================================================
   
   const updateProgress = useCallback((rawDelta: number, direction: 'up' | 'down') => {
     const normalizedDelta = rawDelta / progressDivisor;
     const clampedDelta = clamp(normalizedDelta, -maxDeltaPerFrame, maxDeltaPerFrame);
     
-    const newProgress = clamp(progressRef.current + clampedDelta, 0, 1);
+    const currentProgress = progressRef.current;
+    const newProgress = clamp(currentProgress + clampedDelta, 0, 1);
     
-    if (newProgress !== progressRef.current) {
+    // v4: Track overflow at boundaries
+    // When at a boundary and user keeps scrolling in that direction,
+    // accumulate the "overflow" delta. Once it exceeds threshold, release.
+    
+    // Check if we're AT a boundary
+    const atTopBoundary = newProgress === 0;
+    const atBottomBoundary = newProgress === 1;
+    
+    // Check if user is trying to scroll PAST the boundary
+    const scrollingPastTop = atTopBoundary && rawDelta < 0; // At 0%, scrolling up
+    const scrollingPastBottom = atBottomBoundary && rawDelta > 0; // At 100%, scrolling down
+    
+    if (scrollingPastTop) {
+      // User is at top boundary, trying to scroll up (exit upward)
+      if (boundaryHitRef.current !== 'top') {
+        // First time hitting this boundary, reset overflow
+        boundaryHitRef.current = 'top';
+        overflowDeltaRef.current = 0;
+      }
+      // Accumulate overflow (use absolute value since rawDelta is negative)
+      overflowDeltaRef.current += Math.abs(rawDelta);
+      
+      // Check if overflow threshold reached
+      if (overflowDeltaRef.current >= overflowThreshold) {
+        releaseBoundary('top');
+        return; // Don't update progress, we're releasing
+      }
+    } else if (scrollingPastBottom) {
+      // User is at bottom boundary, trying to scroll down (exit downward)
+      if (boundaryHitRef.current !== 'bottom') {
+        // First time hitting this boundary, reset overflow
+        boundaryHitRef.current = 'bottom';
+        overflowDeltaRef.current = 0;
+      }
+      // Accumulate overflow
+      overflowDeltaRef.current += rawDelta;
+      
+      // Check if overflow threshold reached
+      if (overflowDeltaRef.current >= overflowThreshold) {
+        releaseBoundary('bottom');
+        return; // Don't update progress, we're releasing
+      }
+    } else {
+      // Not at a boundary or scrolling away from boundary - reset overflow tracking
+      if (boundaryHitRef.current !== null) {
+        boundaryHitRef.current = null;
+        overflowDeltaRef.current = 0;
+      }
+    }
+    
+    // Update progress if changed
+    if (newProgress !== currentProgress) {
       progressRef.current = newProgress;
       setProgress(newProgress);
       onProgressRef.current(newProgress, clampedDelta, direction);
     }
-  }, [progressDivisor, maxDeltaPerFrame]);
+  }, [progressDivisor, maxDeltaPerFrame, overflowThreshold, releaseBoundary]);
   
   const scheduleProgressUpdate = useCallback(() => {
     if (rafIdRef.current !== null) return;

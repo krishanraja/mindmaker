@@ -95,9 +95,10 @@ const BeforeAfterSplit = () => {
     setIsComplete(true);
   }, []);
 
-  // Use bulletproof scroll hijack hook v2
+  // Use bulletproof scroll hijack hook v4
   // targetOffset: 0 = section top flush with viewport top (matches screenshot)
   // triggerBuffer: 80 = lock engages when section is within 80px of target position
+  // v4: overflowThreshold = 150px extra scroll at boundary triggers seamless release
   const { isLocked, skipToEnd } = useScrollHijack({
     sectionRef,
     onProgress: handleProgress,
@@ -105,10 +106,11 @@ const BeforeAfterSplit = () => {
     progressDivisor: PROGRESS_DIVISOR,
     enabled: true,
     maxDeltaPerFrame: 0.08, // Max 8% progress per frame
-    escapeVelocityThreshold: 12, // pixels/ms
+    escapeVelocityThreshold: 8, // v4: Lowered from 12 to 8 - more forgiving
     onEscapeVelocity: handleEscapeVelocity,
     targetOffset: 0, // Section top should be at viewport top
     triggerBuffer: 80, // Lock within 80px of target
+    overflowThreshold: 150, // v4: 150px extra scroll at boundary triggers release
   });
 
   // Initialize CSS variable
