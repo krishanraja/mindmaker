@@ -4,6 +4,49 @@
 
 ---
 
+## Scroll Hijack v2 - Bulletproof Continuous Monitoring (2026-01-08)
+
+### Problem
+The v1 defense-in-depth fix (8 layers) still failed to lock reliably. Root cause: IntersectionObserver is asynchronous and can miss fast scrolling. Lock was triggering at wrong positions.
+
+### Root Causes Identified (v2)
+1. **IntersectionObserver is async** - Can miss fast scroll events entirely
+2. **No continuous scroll monitoring** - Only relied on event-based detection
+3. **No snap-to-position** - Lock captured whatever position existed at trigger moment
+4. **Wrong trigger zone math** - 50px gap between trigger and lock condition
+5. **Navbar flicker** - useScrollDirection checked wrong CSS class
+
+### Architectural Solution: Continuous Monitoring + Snap
+
+**Key Change: Replace IntersectionObserver with continuous scroll listener**
+- Scroll event runs on EVERY scroll (passive listener)
+- Checks section position continuously using getBoundingClientRect()
+- Snaps to exact target position before locking
+
+**New Parameters:**
+- `targetOffset`: Exact distance from viewport top when locked (default: 0)
+- `triggerBuffer`: How close to target before lock engages (default: 80px)
+
+**Snap-to-Position Logic:**
+1. Detect when section enters trigger zone
+2. Calculate ideal scroll position (section.top = targetOffset)
+3. Instant scroll to ideal position
+4. Lock body AFTER snap completes
+
+### Files Modified
+- `src/hooks/useScrollHijack.ts`: Complete rewrite with continuous monitoring
+- `src/hooks/useScrollDirection.ts`: Fixed to check both CSS classes
+- `src/components/ShowDontTell/ChaosToClarity.tsx`: Removed sentinel, added targetOffset
+- `src/components/ShowDontTell/BeforeAfterSplit.tsx`: Removed sentinel, added targetOffset
+
+### Verification
+- Continuous scroll monitoring prevents missed triggers
+- Snap-to-position ensures exact lock position
+- Navbar stays hidden during entire scroll hijack experience
+- Both sections lock at correct positions matching screenshots
+
+---
+
 ## PERMANENT Scroll Hijack Fix - Defense-in-Depth Architecture (2026-01-08)
 
 ### Problem

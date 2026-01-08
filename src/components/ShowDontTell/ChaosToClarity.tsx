@@ -196,9 +196,8 @@ const ChaosToClarity = () => {
   const progressRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Refs for scroll hijack (defense-in-depth)
+  // Ref for scroll hijack section
   const sectionRef = useRef<HTMLElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   
   // State only for discrete UI changes (visibility thresholds)
   const [uiState, setUiState] = useState({
@@ -372,9 +371,10 @@ const ChaosToClarity = () => {
     });
   }, [updateAnimationState]);
 
-  // Use defense-in-depth scroll hijack hook
+  // Use bulletproof scroll hijack hook v2
+  // targetOffset: 0 = section top flush with viewport top (matches screenshot)
+  // triggerBuffer: 80 = lock engages when section is within 80px of target position
   const { isLocked, skipToEnd } = useScrollHijack({
-    sentinelRef,
     sectionRef,
     onProgress: handleProgress,
     isComplete: uiState.isComplete,
@@ -383,6 +383,8 @@ const ChaosToClarity = () => {
     maxDeltaPerFrame: 0.08, // Max 8% progress per frame (prevents skipping)
     escapeVelocityThreshold: 12, // pixels/ms - trigger fast-forward
     onEscapeVelocity: handleEscapeVelocity,
+    targetOffset: 0, // Section top should be at viewport top
+    triggerBuffer: 80, // Lock within 80px of target
   });
 
   // Initialize CSS variables
@@ -399,14 +401,6 @@ const ChaosToClarity = () => {
       ref={sectionRef}
       className="w-full bg-background relative overflow-hidden min-h-screen scroll-hijack-section"
     >
-      {/* LAYER 4: Sentinel element for anticipatory detection */}
-      {/* Positioned 100px above the section to trigger lock preparation before section reaches viewport */}
-      <div 
-        ref={sentinelRef}
-        className="scroll-hijack-sentinel"
-        aria-hidden="true"
-      />
-      
       <div 
         ref={containerRef}
         className="w-full max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-4 chaos-clarity-container"

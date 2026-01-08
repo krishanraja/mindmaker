@@ -36,9 +36,8 @@ const BeforeAfterSplit = () => {
   const progressRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Refs for scroll hijack (defense-in-depth)
+  // Ref for scroll hijack section
   const sectionRef = useRef<HTMLElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   
   // Refs to track current state values without causing dependency issues
   const displayProgressRef = useRef(0);
@@ -96,9 +95,10 @@ const BeforeAfterSplit = () => {
     setIsComplete(true);
   }, []);
 
-  // Use defense-in-depth scroll hijack hook
+  // Use bulletproof scroll hijack hook v2
+  // targetOffset: 0 = section top flush with viewport top (matches screenshot)
+  // triggerBuffer: 80 = lock engages when section is within 80px of target position
   const { isLocked, skipToEnd } = useScrollHijack({
-    sentinelRef,
     sectionRef,
     onProgress: handleProgress,
     isComplete: isComplete,
@@ -107,6 +107,8 @@ const BeforeAfterSplit = () => {
     maxDeltaPerFrame: 0.08, // Max 8% progress per frame
     escapeVelocityThreshold: 12, // pixels/ms
     onEscapeVelocity: handleEscapeVelocity,
+    targetOffset: 0, // Section top should be at viewport top
+    triggerBuffer: 80, // Lock within 80px of target
   });
 
   // Initialize CSS variable
@@ -132,13 +134,6 @@ const BeforeAfterSplit = () => {
       ref={sectionRef}
       className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8 md:py-16 scroll-hijack-section"
     >
-      {/* LAYER 4: Sentinel element for anticipatory detection */}
-      <div 
-        ref={sentinelRef}
-        className="scroll-hijack-sentinel"
-        aria-hidden="true"
-      />
-      
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
         <div className="text-center mb-4 md:mb-6">

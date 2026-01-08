@@ -1,16 +1,12 @@
 /**
- * @file useScrollHijack Hook
- * @description Defense-in-depth scroll hijacking with 8 protection layers
+ * @file useScrollHijack Hook v2
+ * @description BULLETPROOF scroll hijacking with continuous monitoring
  * 
- * Layers implemented:
- * - Layer 1: HTML-level CSS (index.html)
- * - Layer 2: CSS Layer Priority (index.css @layer scroll-hijack)
- * - Layer 3: IntersectionObserver Detection
- * - Layer 4: Sentinel Element
- * - Layer 5: Multi-Event Blocking (wheel, touch, keyboard, programmatic)
- * - Layer 6: Instant Position Lock (body fixed)
- * - Layer 7: Animation Progress Smoothing
- * - Layer 8: Graceful Fast-Forward (escape velocity)
+ * Key architectural changes from v1:
+ * - CONTINUOUS scroll monitoring (not just IntersectionObserver)
+ * - SNAP-TO-POSITION before lock engages
+ * - Configurable targetOffset for precise positioning
+ * - Proper reset logic for re-engagement
  * 
  * @dependencies None (standalone hook)
  */
@@ -22,8 +18,6 @@ import { useState, useEffect, useRef, useCallback, RefObject } from 'react';
 // ============================================================
 
 interface UseScrollHijackOptions {
-  /** Reference to the sentinel element (placed above target section) */
-  sentinelRef: RefObject<HTMLElement>;
   /** Reference to the main section being hijacked */
   sectionRef: RefObject<HTMLElement>;
   /** Callback for animation progress updates */
@@ -40,6 +34,10 @@ interface UseScrollHijackOptions {
   escapeVelocityThreshold?: number;
   /** Callback when escape velocity detected */
   onEscapeVelocity?: () => void;
+  /** Target offset from viewport top when locked (default: 0) */
+  targetOffset?: number;
+  /** Buffer zone for triggering (how close to targetOffset before lock) */
+  triggerBuffer?: number;
 }
 
 interface UseScrollHijackReturn {
@@ -75,24 +73,22 @@ const BLOCKED_KEYS = new Set([
 const clamp = (value: number, min: number, max: number) => 
   Math.min(max, Math.max(min, value));
 
-const lerp = (start: number, end: number, t: number) => 
-  start + (end - start) * t;
-
 // ============================================================
 // MAIN HOOK
 // ============================================================
 
 export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijackReturn => {
   const {
-    sentinelRef,
     sectionRef,
     onProgress,
     isComplete,
     progressDivisor = 600,
     enabled = true,
-    maxDeltaPerFrame = 0.08, // Max 8% progress per frame
-    escapeVelocityThreshold = 15, // pixels/ms
+    maxDeltaPerFrame = 0.08,
+    escapeVelocityThreshold = 15,
     onEscapeVelocity,
+    targetOffset = 0,
+    triggerBuffer = 100,
   } = options;
 
   // ============================================================
@@ -104,12 +100,13 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   const [progress, setProgress] = useState(0);
   
   // ============================================================
-  // REFS (avoid re-renders, maintain state across events)
+  // REFS
   // ============================================================
   
   // Position lock
   const savedScrollYRef = useRef(0);
   const isLockedRef = useRef(false);
+  const targetScrollYRef = useRef(0);
   
   // Velocity tracking
   const lastWheelTimeRef = useRef(0);
@@ -122,11 +119,12 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   const accumulatedDeltaRef = useRef(0);
   const rafIdRef = useRef<number | null>(null);
   
-  // Cooldown management
+  // State management
   const releaseCooldownRef = useRef(false);
   const cooldownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasExitedViewportRef = useRef(false);
   
-  // Callback refs (avoid stale closures)
+  // Callback refs
   const onProgressRef = useRef(onProgress);
   const onEscapeVelocityRef = useRef(onEscapeVelocity);
   const isCompleteRef = useRef(isComplete);
@@ -148,24 +146,28 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   }, [isComplete]);
 
   // ============================================================
-  // LAYER 6: INSTANT POSITION LOCK
+  // LOCK/UNLOCK FUNCTIONS
   // ============================================================
   
-  const lockBody = useCallback(() => {
+  const lockBody = useCallback((scrollY: number) => {
     if (isLockedRef.current) return;
     
-    // Save current scroll position
-    savedScrollYRef.current = window.scrollY;
+    // Save the EXACT scroll position we want to maintain
+    savedScrollYRef.current = scrollY;
     
-    // Apply CSS classes (Layer 2 kicks in)
+    // Apply CSS classes
     document.documentElement.classList.add(CSS_CLASS_LOCKED);
     document.documentElement.classList.add(CSS_CLASS_LEGACY);
     
     // Set body top to maintain visual position
-    document.body.style.top = `-${savedScrollYRef.current}px`;
+    document.body.style.top = `-${scrollY}px`;
     
     isLockedRef.current = true;
     setIsLocked(true);
+    
+    // Reset progress tracking for fresh start
+    velocityHistoryRef.current = [];
+    accumulatedDeltaRef.current = 0;
   }, []);
   
   const unlockBody = useCallback(() => {
@@ -191,22 +193,19 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     }
     cooldownTimerRef.current = setTimeout(() => {
       releaseCooldownRef.current = false;
-    }, 500);
+    }, 300);
   }, []);
 
   // ============================================================
-  // LAYER 7 & 8: PROGRESS UPDATE WITH SMOOTHING & ESCAPE VELOCITY
+  // PROGRESS UPDATE WITH SMOOTHING
   // ============================================================
   
   const updateProgress = useCallback((rawDelta: number, direction: 'up' | 'down') => {
-    // Calculate progress delta with smoothing (Layer 7)
     const normalizedDelta = rawDelta / progressDivisor;
     const clampedDelta = clamp(normalizedDelta, -maxDeltaPerFrame, maxDeltaPerFrame);
     
-    // Update progress
     const newProgress = clamp(progressRef.current + clampedDelta, 0, 1);
     
-    // Only update if changed
     if (newProgress !== progressRef.current) {
       progressRef.current = newProgress;
       setProgress(newProgress);
@@ -222,7 +221,7 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
       accumulatedDeltaRef.current = 0;
       rafIdRef.current = null;
       
-      if (Math.abs(delta) < 0.5) return; // Ignore tiny movements
+      if (Math.abs(delta) < 0.5) return;
       
       const direction = delta > 0 ? 'down' : 'up';
       updateProgress(delta, direction);
@@ -230,18 +229,16 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   }, [updateProgress]);
 
   // ============================================================
-  // LAYER 8: ESCAPE VELOCITY DETECTION
+  // ESCAPE VELOCITY DETECTION
   // ============================================================
   
   const checkEscapeVelocity = useCallback(() => {
-    // Calculate average velocity from history
     if (velocityHistoryRef.current.length < 3) return false;
     
     const avgVelocity = velocityHistoryRef.current.reduce((a, b) => a + b, 0) 
       / velocityHistoryRef.current.length;
     
     if (avgVelocity > escapeVelocityThreshold) {
-      // User is scrolling very fast - they want to skip
       if (onEscapeVelocityRef.current) {
         onEscapeVelocityRef.current();
       }
@@ -256,21 +253,18 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     const velocity = Math.abs(delta) / timeDelta;
     velocityRef.current = velocity;
     
-    // Keep velocity history for smoothing
     velocityHistoryRef.current.push(velocity);
     if (velocityHistoryRef.current.length > 5) {
       velocityHistoryRef.current.shift();
     }
     
-    // Check for escape velocity
     checkEscapeVelocity();
   }, [checkEscapeVelocity]);
 
   // ============================================================
-  // LAYER 5: MULTI-EVENT BLOCKING
+  // EVENT HANDLERS
   // ============================================================
   
-  // Wheel handler
   const handleWheel = useCallback((e: WheelEvent) => {
     if (!isLockedRef.current) return;
     
@@ -281,15 +275,12 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     const timeDelta = now - lastWheelTimeRef.current;
     lastWheelTimeRef.current = now;
     
-    // Update velocity tracking
     updateVelocity(e.deltaY, timeDelta);
     
-    // Accumulate delta for RAF batching
     accumulatedDeltaRef.current += e.deltaY;
     scheduleProgressUpdate();
   }, [updateVelocity, scheduleProgressUpdate]);
   
-  // Touch handlers
   const handleTouchStart = useCallback((e: TouchEvent) => {
     lastTouchYRef.current = e.touches[0].clientY;
     lastTouchTimeRef.current = performance.now();
@@ -302,22 +293,19 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     e.stopPropagation();
     
     const currentY = e.touches[0].clientY;
-    const delta = lastTouchYRef.current - currentY; // Inverted for natural feel
+    const delta = lastTouchYRef.current - currentY;
     const now = performance.now();
     const timeDelta = now - lastTouchTimeRef.current;
     
     lastTouchYRef.current = currentY;
     lastTouchTimeRef.current = now;
     
-    // Update velocity tracking
     updateVelocity(delta, timeDelta);
     
-    // Accumulate delta for RAF batching
     accumulatedDeltaRef.current += delta;
     scheduleProgressUpdate();
   }, [updateVelocity, scheduleProgressUpdate]);
   
-  // Keyboard handler
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!isLockedRef.current) return;
     
@@ -325,7 +313,6 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
       e.preventDefault();
       e.stopPropagation();
       
-      // Convert key to scroll delta
       let delta = 0;
       switch (e.key) {
         case 'ArrowDown':
@@ -354,125 +341,125 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     }
   }, [scheduleProgressUpdate]);
   
-  // Prevent programmatic scroll during lock
-  const handleScroll = useCallback(() => {
-    if (!isLockedRef.current) return;
-    
-    // Force scroll position back
-    if (Math.abs(window.scrollY - savedScrollYRef.current) > 1) {
-      window.scrollTo(0, savedScrollYRef.current);
-    }
-  }, []);
-  
-  // History navigation handler
   const handlePopState = useCallback(() => {
     if (isLockedRef.current) {
-      // Prevent navigation during scroll hijack
       window.scrollTo(0, savedScrollYRef.current);
     }
   }, []);
 
   // ============================================================
-  // LAYER 3 & 4: INTERSECTION OBSERVER DETECTION
+  // CONTINUOUS SCROLL MONITORING - THE KEY FIX
   // ============================================================
   
-  useEffect(() => {
+  const handleScroll = useCallback(() => {
     if (!enabled) return;
     
-    const sentinel = sentinelRef.current;
     const section = sectionRef.current;
-    if (!sentinel || !section) return;
+    if (!section) return;
     
-    // IntersectionObserver for sentinel (anticipatory detection)
-    const sentinelObserver = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        
-        // Sentinel entering viewport = prepare for hijack
-        if (entry.isIntersecting && !isCompleteRef.current && !releaseCooldownRef.current) {
-          // Check if we're scrolling down (sentinel should be above section)
-          const sectionRect = section.getBoundingClientRect();
-          
-          // Only lock if section is close to viewport top
-          if (sectionRect.top <= 150 && sectionRect.top >= -50) {
-            lockBody();
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: '100px 0px 0px 0px', // Trigger 100px before reaching viewport
-        threshold: 0,
+    const rect = section.getBoundingClientRect();
+    const sectionTop = rect.top;
+    const scrollY = window.scrollY;
+    
+    // If locked, force scroll position back (prevent any drift)
+    if (isLockedRef.current) {
+      if (Math.abs(scrollY - savedScrollYRef.current) > 1) {
+        window.scrollTo(0, savedScrollYRef.current);
       }
-    );
+      return;
+    }
     
-    // Secondary observer on section itself (backup detection)
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        
-        if (entry.isIntersecting && !isCompleteRef.current && !releaseCooldownRef.current && !isLockedRef.current) {
-          // Backup lock trigger if sentinel missed
-          const rect = entry.boundingClientRect;
-          if (rect.top <= 80 && rect.top >= -20) {
-            lockBody();
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: '-80px 0px 0px 0px',
-        threshold: 0.1,
+    // Skip if in cooldown or already complete
+    if (releaseCooldownRef.current) return;
+    if (isCompleteRef.current && !hasExitedViewportRef.current) return;
+    
+    // Calculate the ideal scroll position for locking
+    // This is where the section top = targetOffset
+    const sectionTopFromDocumentTop = scrollY + sectionTop;
+    const idealScrollY = sectionTopFromDocumentTop - targetOffset;
+    
+    // Check if section is in the lock trigger zone
+    // Lock when section top is between targetOffset and targetOffset + triggerBuffer
+    const isInTriggerZone = sectionTop <= (targetOffset + triggerBuffer) && sectionTop >= (targetOffset - triggerBuffer);
+    
+    // Check if we're scrolling down into the section
+    const isApproachingSection = sectionTop <= (targetOffset + triggerBuffer * 2) && sectionTop > targetOffset;
+    
+    if (isInTriggerZone || isApproachingSection) {
+      // SNAP to the ideal position, then lock
+      if (Math.abs(scrollY - idealScrollY) > 2) {
+        // Need to snap first
+        window.scrollTo({
+          top: idealScrollY,
+          behavior: 'instant'
+        });
+        // Lock after snap settles
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (!isLockedRef.current && !releaseCooldownRef.current) {
+              lockBody(idealScrollY);
+            }
+          });
+        });
+      } else {
+        // Already at ideal position, lock immediately
+        lockBody(idealScrollY);
       }
-    );
+    }
     
-    sentinelObserver.observe(sentinel);
-    sectionObserver.observe(section);
-    
-    return () => {
-      sentinelObserver.disconnect();
-      sectionObserver.disconnect();
-    };
-  }, [enabled, sentinelRef, sectionRef, lockBody]);
+    // Track if section has exited viewport (scrolled past)
+    // This allows re-engagement when scrolling back up
+    if (rect.bottom < 0) {
+      hasExitedViewportRef.current = true;
+    } else if (rect.top > window.innerHeight) {
+      hasExitedViewportRef.current = true;
+      // Reset isComplete when section is fully out of view (above viewport)
+      // This allows re-engagement when user scrolls back down
+    }
+  }, [enabled, sectionRef, targetOffset, triggerBuffer, lockBody]);
 
   // ============================================================
-  // EVENT LISTENER MANAGEMENT
+  // EFFECT: SET UP EVENT LISTENERS
   // ============================================================
   
   useEffect(() => {
     if (!enabled) return;
     
-    // Add event listeners with proper options
+    // CRITICAL: Use scroll event for CONTINUOUS monitoring
+    // This is what was missing in v1 - IntersectionObserver alone is not enough
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Event blocking (only active when locked)
     window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true });
     window.addEventListener('keydown', handleKeyDown, { capture: true });
-    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('popstate', handlePopState);
     
+    // Initial check in case page loads with section already in view
+    handleScroll();
+    
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('wheel', handleWheel, { capture: true } as EventListenerOptions);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove, { capture: true } as EventListenerOptions);
       window.removeEventListener('keydown', handleKeyDown, { capture: true } as EventListenerOptions);
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('popstate', handlePopState);
       
-      // Cleanup RAF
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
       }
       
-      // Cleanup cooldown timer
       if (cooldownTimerRef.current) {
         clearTimeout(cooldownTimerRef.current);
       }
     };
-  }, [enabled, handleWheel, handleTouchStart, handleTouchMove, handleKeyDown, handleScroll, handlePopState]);
+  }, [enabled, handleScroll, handleWheel, handleTouchStart, handleTouchMove, handleKeyDown, handlePopState]);
 
   // ============================================================
-  // RELEASE ON COMPLETION
+  // EFFECT: RELEASE ON COMPLETION
   // ============================================================
   
   useEffect(() => {
@@ -482,12 +469,11 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
   }, [isComplete, unlockBody]);
 
   // ============================================================
-  // CLEANUP ON UNMOUNT
+  // EFFECT: CLEANUP ON UNMOUNT
   // ============================================================
   
   useEffect(() => {
     return () => {
-      // Always cleanup scroll lock on unmount
       if (isLockedRef.current) {
         document.documentElement.classList.remove(CSS_CLASS_LOCKED);
         document.documentElement.classList.remove(CSS_CLASS_LEGACY);
@@ -511,6 +497,7 @@ export const useScrollHijack = (options: UseScrollHijackOptions): UseScrollHijac
     setProgress(0);
     velocityHistoryRef.current = [];
     accumulatedDeltaRef.current = 0;
+    hasExitedViewportRef.current = false;
     onProgressRef.current(0, 0, 'up');
   }, []);
 

@@ -32,7 +32,9 @@ export const useScrollDirection = (options: UseScrollDirectionOptions = {}) => {
 
   const updateScrollDirection = useCallback(() => {
     // Check if scroll is locked - if so, keep nav bar hidden
-    const isScrollLocked = document.documentElement.classList.contains('scroll-locked');
+    // Check BOTH legacy class and new scroll-hijack class
+    const isScrollLocked = document.documentElement.classList.contains('scroll-locked') ||
+                           document.documentElement.classList.contains('scroll-hijack-locked');
     if (isScrollLocked) {
       setIsHidden(true);
       ticking.current = false;
