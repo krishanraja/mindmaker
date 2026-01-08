@@ -1,52 +1,126 @@
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { User, Users, Compass, ChevronDown, CheckCircle } from "lucide-react";
+import { User, Users, Compass, CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 
-const BuildPathSlider = ({ navigate }: { navigate: (path: string) => void }) => {
+type PathType = "build" | "orchestrate";
+
+interface Offering {
+  depth: string;
+  name: string;
+  duration: string;
+  description: string;
+  pricing?: string;
+  cta: string;
+  intensity: string;
+}
+
+const buildOfferings: Offering[] = [
+  {
+    depth: "1hr",
+    name: "Drop-In Build Session",
+    duration: "60 minutes",
+    description: "Live session with Krish. Bring one real problem. Leave with a working prototype, friction map, and prompts you can extend yourself.",
+    pricing: "$250 → $150 until Jan 1",
+    cta: "Book Build Session",
+    intensity: "Quick Win",
+  },
+  {
+    depth: "4wk",
+    name: "Weekly Build Cadence",
+    duration: "4 weeks async",
+    description: "Weekly recommendations and async access. Build at your own pace with guidance. Ship something real every week.",
+    cta: "Learn More",
+    intensity: "Steady Build",
+  },
+  {
+    depth: "90d",
+    name: "90-Day Builder Sprint",
+    duration: "90 days",
+    description: "Full transformation. Build working AI-enabled systems around your actual week. Leave with a Builder Dossier and the ability to extend everything independently.",
+    cta: "Learn How to Build",
+    intensity: "Deep Dive",
+  },
+];
+
+const orchestrateOfferings: Offering[] = [
+  {
+    depth: "1hr",
+    name: "Executive Decision Review",
+    duration: "60 minutes",
+    description: "A decision review session for leaders who delegate execution but own outcomes. Leave with frameworks to evaluate AI initiatives and direct teams effectively.",
+    pricing: "$250 → $150 until Jan 1",
+    cta: "Book Decision Review",
+    intensity: "Quick Clarity",
+  },
+  {
+    depth: "4wk",
+    name: "Weekly Orchestration Cadence",
+    duration: "4 weeks async",
+    description: "Weekly check-ins on AI governance and decision-making. Build oversight systems at your own pace. Gain control without building tools yourself.",
+    cta: "Learn More",
+    intensity: "Steady Control",
+  },
+  {
+    depth: "90d",
+    name: "90-Day Orchestration Program",
+    duration: "90 days",
+    description: "Full executive AI governance program. Build decision frameworks, oversight models, and evaluation criteria. Leave with board-level confidence on AI.",
+    cta: "Learn How to Orchestrate",
+    intensity: "Full Governance",
+  },
+];
+
+const pathInfo = {
+  build: {
+    icon: User,
+    label: "HANDS-ON LEADERS",
+    title: "Build with AI",
+    subtitle: "For operators who want to personally create AI-powered systems, apps, and workflows.",
+    bullets: [
+      "You actively build GTM systems, tools, or automations",
+      "You want AI to expand your creative and strategic output",
+      "You're willing to change how you work week to week",
+    ],
+    offerings: buildOfferings,
+    route: "/builder-sprint",
+  },
+  orchestrate: {
+    icon: Compass,
+    label: "HANDS-OFF EXECUTIVES",
+    title: "Orchestrate AI",
+    subtitle: "For executives who want control, clarity, and governance without building tools themselves.",
+    bullets: [
+      "You delegate execution but own decisions",
+      "You need board-level confidence on AI",
+      "You want systems you can oversee, not tinker with",
+    ],
+    offerings: orchestrateOfferings,
+    route: "/builder-session",
+  },
+};
+
+const PathSlider = ({ 
+  path, 
+  navigate 
+}: { 
+  path: PathType; 
+  navigate: (path: string) => void;
+}) => {
   const [journeyStage, setJourneyStage] = useState([0]);
-  
-  const offerings = [
-    {
-      name: "Drop-In Build Session",
-      duration: "60 minutes",
-      description: "Live session with Krish. Bring one real problem. Leave with a working prototype, friction map, and prompts you can extend yourself.",
-      pricing: "$250 → $150 until Jan 1",
-      cta: "Book Session",
-      link: "/builder-session",
-      intensity: "Quick Win",
-    },
-    {
-      name: "Weekly Build Cadence",
-      duration: "4 weeks async",
-      description: "Weekly recommendations and async access. Build at your own pace with guidance. Ship something real every week.",
-      cta: "Learn More",
-      link: "/builder-sprint",
-      intensity: "Steady Build",
-    },
-    {
-      name: "90-Day Builder Sprint",
-      duration: "90 days",
-      description: "Full transformation. Build working AI-enabled systems around your actual week. Leave with a Builder Dossier and the ability to extend everything independently.",
-      cta: "Learn How to Build",
-      link: "/builder-sprint",
-      intensity: "Deep Dive",
-    },
-  ];
+  const info = pathInfo[path];
+  const offerings = info.offerings;
 
   const currentIndex = journeyStage[0] <= 33 ? 0 : journeyStage[0] <= 66 ? 1 : 2;
   const currentOffering = offerings[currentIndex];
+  const depthParam = currentOffering.depth;
 
   return (
-    <div className="premium-card h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-      <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg w-fit">
-        CHOOSE YOUR DEPTH
-      </div>
-      
+    <div className="premium-card flex flex-col transition-all duration-300">
+      {/* Slider Section */}
       <div className="mb-6">
         <div className="text-xs font-bold text-muted-foreground mb-2">YOUR COMMITMENT</div>
         <Slider
@@ -63,6 +137,7 @@ const BuildPathSlider = ({ navigate }: { navigate: (path: string) => void }) => 
         </div>
       </div>
 
+      {/* Offering Details */}
       <div className="flex-1 flex flex-col transition-all duration-300">
         <div className="text-xs text-mint-dark font-bold mb-2">{currentOffering.intensity}</div>
         <h4 className="text-lg font-bold text-foreground mb-2">
@@ -88,7 +163,7 @@ const BuildPathSlider = ({ navigate }: { navigate: (path: string) => void }) => 
           className="w-full touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
           onClick={() => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            navigate(currentOffering.link);
+            navigate(`${info.route}?depth=${depthParam}`);
           }}
         >
           {currentOffering.cta}
@@ -98,52 +173,39 @@ const BuildPathSlider = ({ navigate }: { navigate: (path: string) => void }) => 
   );
 };
 
-interface TrackCardProps {
-  icon: React.ElementType;
-  label: string;
-  title: string;
-  subtitle: string;
-  bullets: string[];
-  cta: string;
-  link: string;
-  recommended?: boolean;
-}
-
-const TrackCard = ({ icon: IconComponent, label, title, subtitle, bullets, cta, link, recommended }: TrackCardProps) => {
-  const navigate = useNavigate();
-  
+const TeamCard = ({ navigate }: { navigate: (path: string) => void }) => {
   return (
-    <div className={`minimal-card h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${recommended ? 'ring-2 ring-mint/50' : ''}`}>
-      {recommended && (
-        <div className="inline-block bg-mint text-ink text-xs font-bold px-3 py-1 rounded-full mb-4 shadow-lg w-fit">
-          RECOMMENDED
-        </div>
-      )}
-      
+    <div className="minimal-card flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-          <IconComponent className="h-5 w-5" />
+          <Users className="h-5 w-5" />
         </div>
         <div className="text-xs font-bold text-muted-foreground">
-          {label}
+          EXEC TEAMS
         </div>
       </div>
       
       <h3 className="text-xl font-bold text-foreground mb-2">
-        {title}
+        Align your leadership team
       </h3>
       
       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-        {subtitle}
+        For exec teams that need shared AI decision frameworks, fast.
       </p>
       
       <ul className="space-y-2 mb-6 flex-1">
-        {bullets.map((bullet, index) => (
-          <li key={index} className="flex items-start gap-2 text-sm text-foreground">
-            <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
-            <span>{bullet}</span>
-          </li>
-        ))}
+        <li className="flex items-start gap-2 text-sm text-foreground">
+          <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
+          <span>Conflicting views on AI risk and value</span>
+        </li>
+        <li className="flex items-start gap-2 text-sm text-foreground">
+          <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
+          <span>Vendor noise and pilot confusion</span>
+        </li>
+        <li className="flex items-start gap-2 text-sm text-foreground">
+          <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
+          <span>Need a 90-day pilot charter</span>
+        </li>
       </ul>
       
       <Button
@@ -152,10 +214,10 @@ const TrackCard = ({ icon: IconComponent, label, title, subtitle, bullets, cta, 
         className="w-full touch-target mt-auto"
         onClick={() => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
-          navigate(link);
+          navigate("/leadership-lab");
         }}
       >
-        {cta}
+        Run an exec lab
       </Button>
     </div>
   );
@@ -166,186 +228,109 @@ const ProductLadder = () => {
   const navigate = useNavigate();
   const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
-  const [expandedTrack, setExpandedTrack] = useState<number | null>(null);
+  const [selectedPath, setSelectedPath] = useState<PathType>("build");
 
   // Auto-open modal when #book hash is present
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#book') {
         setConsultModalOpen(true);
-        // Remove the hash to clean up URL
         window.history.replaceState(null, '', window.location.pathname);
       }
     };
 
-    // Check on mount
     handleHashChange();
-
-    // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const tracks = [
-    {
-      icon: User,
-      label: "HANDS-ON LEADERS",
-      title: "Build with AI",
-      subtitle: "For operators who want to personally create AI-powered systems, apps, and workflows.",
-      bullets: [
-        "You actively build GTM systems, tools, or automations",
-        "You want AI to expand your creative and strategic output",
-        "You're willing to change how you work week to week",
-      ],
-      cta: "Learn how to build",
-      link: "/builder-sprint",
-      useSlider: true,
-    },
-    {
-      icon: Compass,
-      label: "HANDS-OFF EXECUTIVES",
-      title: "Orchestrate AI",
-      subtitle: "For executives who want control, clarity, and governance without building tools themselves.",
-      bullets: [
-        "You delegate execution but own decisions",
-        "You need board-level confidence on AI",
-        "You want systems you can oversee, not tinker with",
-      ],
-      cta: "Learn how to orchestrate",
-      link: "/builder-session",
-      useSlider: false,
-    },
-    {
-      icon: Users,
-      label: "EXEC TEAMS",
-      title: "Align your leadership team",
-      subtitle: "For exec teams that need shared AI decision frameworks, fast.",
-      bullets: [
-        "Conflicting views on AI risk and value",
-        "Vendor noise and pilot confusion",
-        "Need a 90-day pilot charter",
-      ],
-      cta: "Run an exec lab",
-      link: "/leadership-lab",
-      useSlider: false,
-    },
-  ];
+  const currentPathInfo = pathInfo[selectedPath];
+  const PathIcon = currentPathInfo.icon;
 
   return (
     <section className="section-padding bg-background" id="products">
       <div className="container-width">
+        {/* Header */}
         <div className="text-center mb-8 sm:mb-12 px-4 sm:px-0">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
             How do you want to work with AI?
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto mb-4">
-            Two ways to lead with AI, plus team alignment for exec teams ready to commit.
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+            Choose your path, then select your commitment level.
           </p>
         </div>
-        
-        {isMobile ? (
-          // Mobile: Collapsible Accordion
-          <div className="space-y-4 px-4">
-            {tracks.map((track, trackIndex) => {
-              const IconComponent = track.icon;
-              const isExpanded = expandedTrack === trackIndex;
-              
-              return (
-                <Collapsible
-                  key={trackIndex}
-                  open={isExpanded}
-                  onOpenChange={(open) => setExpandedTrack(open ? trackIndex : null)}
-                  className="fade-in-up"
-                  style={{animationDelay: `${trackIndex * 0.1}s`}}
-                >
-                  <CollapsibleTrigger className="w-full">
-                    <div className="flex items-center justify-between p-4 bg-card rounded-lg border border-border hover:border-border/60 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-                          <IconComponent className="h-5 w-5" />
-                        </div>
-                        <div className="text-left">
-                          <div className="text-xs font-bold text-muted-foreground">
-                            {track.label}
-                          </div>
-                          <h3 className="text-lg font-bold text-foreground">
-                            {track.title}
-                          </h3>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {track.subtitle}
-                          </p>
-                        </div>
-                      </div>
-                      <ChevronDown 
-                        className={`h-5 w-5 text-muted-foreground transition-transform duration-200 flex-shrink-0 ${
-                          isExpanded ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </div>
-                  </CollapsibleTrigger>
-                  
-                  <CollapsibleContent className="pt-4">
-                    {track.useSlider ? (
-                      <BuildPathSlider navigate={navigate} />
-                    ) : (
-                      <TrackCard
-                        icon={track.icon}
-                        label={track.label}
-                        title={track.title}
-                        subtitle={track.subtitle}
-                        bullets={track.bullets}
-                        cta={track.cta}
-                        link={track.link}
-                      />
-                    )}
-                  </CollapsibleContent>
-                </Collapsible>
-              );
-            })}
+
+        {/* Main Content: Tabs + Slider */}
+        <div className="max-w-2xl mx-auto px-4 sm:px-0 mb-12">
+          {/* Tab Buttons */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setSelectedPath("build")}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                selectedPath === "build"
+                  ? "bg-ink text-white shadow-md"
+                  : "bg-card border border-border text-foreground hover:border-ink/30"
+              }`}
+            >
+              <User className="h-4 w-4" />
+              <span>Build with AI</span>
+            </button>
+            <button
+              onClick={() => setSelectedPath("orchestrate")}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                selectedPath === "orchestrate"
+                  ? "bg-ink text-white shadow-md"
+                  : "bg-card border border-border text-foreground hover:border-ink/30"
+              }`}
+            >
+              <Compass className="h-4 w-4" />
+              <span>Orchestrate AI</span>
+            </button>
           </div>
-        ) : (
-          // Desktop: Grid Layout
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-4 sm:px-0">
-            {tracks.map((track, trackIndex) => {
-              return (
-                <div key={trackIndex} className="fade-in-up flex flex-col" style={{animationDelay: `${trackIndex * 0.1}s`}}>
-                  {track.useSlider ? (
-                    <>
-                      {/* Track Header for Slider */}
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
-                          <track.icon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-muted-foreground">
-                            {track.label}
-                          </div>
-                          <h3 className="text-xl font-bold text-foreground">
-                            {track.title}
-                          </h3>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {track.subtitle}
-                          </p>
-                        </div>
-                      </div>
-                      <BuildPathSlider navigate={navigate} />
-                    </>
-                  ) : (
-                    <TrackCard
-                      icon={track.icon}
-                      label={track.label}
-                      title={track.title}
-                      subtitle={track.subtitle}
-                      bullets={track.bullets}
-                      cta={track.cta}
-                      link={track.link}
-                    />
-                  )}
+
+          {/* Path Info Card */}
+          <div className="minimal-card mb-6 fade-in-up">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-ink text-white rounded-md flex items-center justify-center flex-shrink-0">
+                <PathIcon className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-muted-foreground">
+                  {currentPathInfo.label}
                 </div>
-              );
-            })}
+                <h3 className="text-xl font-bold text-foreground">
+                  {currentPathInfo.title}
+                </h3>
+              </div>
+            </div>
+            
+            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+              {currentPathInfo.subtitle}
+            </p>
+            
+            <ul className="space-y-2">
+              {currentPathInfo.bullets.map((bullet, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm text-foreground">
+                  <CheckCircle className="h-4 w-4 text-mint flex-shrink-0 mt-0.5" />
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
+
+          {/* Slider */}
+          <PathSlider path={selectedPath} navigate={navigate} />
+        </div>
+
+        {/* Team Section - Separate Below */}
+        <div className="max-w-md mx-auto px-4 sm:px-0">
+          <div className="text-center mb-6">
+            <p className="text-sm text-muted-foreground">
+              Need to align your entire leadership team first?
+            </p>
+          </div>
+          <TeamCard navigate={navigate} />
+        </div>
 
         {/* Initial Consult Modal */}
         <InitialConsultModal 
