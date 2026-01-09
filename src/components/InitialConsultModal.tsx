@@ -150,7 +150,7 @@ export const InitialConsultModal = ({
   };
 
   const formContent = (
-    <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+    <form onSubmit={handleSubmit} className="space-y-6 mt-4 px-1 sm:px-0">
       {/* Path Selection - Required First Question (only show if not pre-selected) */}
       {!preselectedProgram && (
         <div className="space-y-3">

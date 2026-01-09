@@ -560,7 +560,7 @@ const Individual = () => {
                 {content.title}
               </p>
               <p className="text-xs text-muted-foreground">
-                {content.duration} • {selectedPath === "build" ? "Build with AI" : "Orchestrate AI"}
+                {content.duration} • <span className="hidden sm:inline">{selectedPath === "build" ? "Build with AI" : "Orchestrate AI"}</span><span className="sm:hidden">{selectedPath === "build" ? "Build" : "Orchestrate"}</span>
               </p>
             </div>
             <Button

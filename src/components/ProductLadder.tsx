@@ -34,7 +34,7 @@ const buildOfferings: Offering[] = [
     name: "Weekly Build Cadence",
     duration: "4 weeks async",
     description: "Weekly recommendations and async access. Build at your own pace with guidance. Ship something real every week.",
-    cta: "Learn More",
+    cta: "Book Session",
     intensity: "Steady Build",
   },
   {
@@ -61,7 +61,7 @@ const orchestrateOfferings: Offering[] = [
     name: "Weekly Orchestration Cadence",
     duration: "4 weeks async",
     description: "Weekly check-ins on AI governance and decision-making. Build oversight systems at your own pace. Gain control without building tools yourself.",
-    cta: "Learn More",
+    cta: "Book Session",
     intensity: "Steady Control",
   },
   {
@@ -89,7 +89,7 @@ const teamOfferings: Offering[] = [
     name: "Accelerated Exec Lab",
     duration: "4 weeks",
     description: "Shortened executive team lab. Build shared decision frameworks and commit to a pilot with owner and gates. Fast-track your team's AI alignment.",
-    cta: "Learn More",
+    cta: "Book Session",
     intensity: "Focused Sprint",
   },
   {
