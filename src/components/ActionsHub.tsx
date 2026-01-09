@@ -184,8 +184,8 @@ export const ActionsHub = ({ onToolClick }: ActionsHubProps) => {
           "group",
           isOpen && "opacity-0 pointer-events-none"
         )}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: isOpen ? 0 : 1, x: isOpen ? 20 : 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isOpen ? 0 : 1 }}
         transition={{ duration: 0.3, delay: 0.3 }}
         aria-label="Open Actions Hub"
       >
@@ -227,4 +227,3 @@ export const ActionsHub = ({ onToolClick }: ActionsHubProps) => {
     </>
   );
 };
-
