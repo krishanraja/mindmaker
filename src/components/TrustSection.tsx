@@ -1,4 +1,4 @@
-import { Quote, TrendingUp, Clock, Users, Award, Lightbulb, BookOpen, Rocket } from "lucide-react";
+import { Quote, TrendingUp, Clock, Users, Award, Lightbulb, BookOpen, Rocket, Shield, CheckCircle2 } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -64,7 +64,7 @@ const TestimonialCard = ({ testimonial, onExpandChange }: TestimonialCardProps) 
 
 const TrustSection = () => {
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(4);
+  const [current, setCurrent] = useState(0);
   const [isAnyExpanded, setIsAnyExpanded] = useState(false);
 
   const testimonials = [
@@ -83,14 +83,6 @@ const TrustSection = () => {
       company: "Global Consulting Firm",
       metric: "Game-changing",
       icon: TrendingUp,
-    },
-    {
-      quote: "It's great to have a way to help my portfolio with what's next with an actual builder who also gets the board room.",
-      name: "Jennifer Xu",
-      role: "Investor",
-      company: "VC Fund",
-      metric: "12 portfolio companies",
-      icon: Users,
     },
     {
       quote: "Krish has experience in different environments ranging from corporate to start up and has built teams from the ground up displaying his entrepreneurial approach while being equally comfortable playing that role in more traditional organisations as well. The other wonderful attribute Krish brings is his very human approach - a great communicator of complexity and a warm nature that brings people together.",
@@ -123,6 +115,54 @@ const TrustSection = () => {
       company: "Media",
       metric: "Get Shit Done",
       icon: Rocket,
+    },
+    {
+      quote: "I went into a board conversation on AI the week after our session and for the first time I wasn't guessing. I had the questions, I knew what to push on, and I didn't get cornered. That alone made this worth it.",
+      name: "CEO",
+      role: "Chief Executive",
+      company: "Mid-market Services",
+      metric: "Board confidence",
+      icon: Shield,
+    },
+    {
+      quote: "I expected this to be another AI discussion. It wasn't. We killed a vendor proposal in about ten minutes because the assumptions didn't hold up. I forwarded the notes straight to my team and we moved on.",
+      name: "COO",
+      role: "Chief Operating Officer",
+      company: "B2B Technology",
+      metric: "Stopped bad spend",
+      icon: CheckCircle2,
+    },
+    {
+      quote: "I actually built two workflows in the sprint that I now use every day. Not demos. Not experiments. Real systems that made my week calmer almost immediately.",
+      name: "Head of Ops",
+      role: "Operations Leader",
+      company: "Scale-up",
+      metric: "Daily leverage",
+      icon: Clock,
+    },
+    {
+      quote: "I was sceptical going in. What I appreciated is that you were very direct about where we were letting hype drive decisions. It was uncomfortable at first, but it changed how I'm leading this internally.",
+      name: "CMO",
+      role: "Chief Marketing Officer",
+      company: "Consumer Brand",
+      metric: "Cleaner calls",
+      icon: TrendingUp,
+    },
+    {
+      quote: "You didn't turn into our internal AI person. You helped build the first set properly, then made it clear how we continue without you. That boundary matters, and it's rare.",
+      name: "GM",
+      role: "General Manager",
+      company: "Enterprise Division",
+      metric: "Independence",
+      icon: Award,
+    },
+    {
+      quote: "We used this with our exec team and it stopped the circular debates. We left with a clear pilot charter, owners, and success criteria. No slides. No fluff.",
+      name: "Exec Team Sponsor",
+      role: "Strategy Lead",
+      company: "Global Organisation",
+      metric: "Aligned team",
+      icon: Users,
     },
   ];
 
@@ -162,10 +202,10 @@ const TrustSection = () => {
       <div className="container-width relative z-10">
         <div className="text-center mb-12 sm:mb-16 px-4 sm:px-0">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-            Trusted by leaders who build, not just buy
+            Trusted by leaders who build and leaders who orchestrate
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Real results from executives who stopped talking about AI and started building with it
+            Short voice notes from senior operators after they stopped guessing and started making cleaner calls
           </p>
         </div>
         
@@ -174,7 +214,7 @@ const TrustSection = () => {
           opts={{ 
             align: "start", 
             loop: true,
-            startIndex: 4
+            startIndex: 0
           }} 
           className="w-full max-w-6xl mx-auto px-4 sm:px-0"
         >
@@ -222,7 +262,6 @@ const TrustSection = () => {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 opacity-40 mb-6">
             <div className="text-xl font-bold text-foreground">Fortune 500</div>
-            <div className="text-xl font-bold text-foreground">VC Firms</div>
             <div className="text-xl font-bold text-foreground">Scale-ups</div>
             <div className="text-xl font-bold text-foreground">Consulting</div>
           </div>
