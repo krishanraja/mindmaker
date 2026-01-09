@@ -22,8 +22,6 @@ const NewHero = () => {
     "Lead from the front with",
     "Show your team who's boss with",
     "Drive the next era of your business through",
-    "Increase your creative leadership with",
-    "Control your use of AI",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -274,8 +272,8 @@ const NewHero = () => {
               </span>
             </div>
             
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 sm:gap-4 fade-in-up" style={{animationDelay: '0.3s'}}>
+            {/* CTAs - overflow-hidden contains shadow expansion on hover */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 sm:gap-4 fade-in-up overflow-hidden" style={{animationDelay: '0.3s'}}>
               <Button 
                 size="lg" 
                 className="bg-mint text-ink hover:bg-mint-500/95 font-bold px-8 sm:px-10 py-6 sm:py-7 text-base sm:text-lg shadow-lg shadow-mint-lg hover:shadow-xl hover:shadow-mint-lg transition-all duration-300 ease-out hover:-translate-y-0.5 touch-target group"
