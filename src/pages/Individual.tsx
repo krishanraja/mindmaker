@@ -12,6 +12,7 @@ import { JourneyInfoCarousel, type JourneyCard } from "@/components/JourneyInfoC
 import { FloatingBookCTA } from "@/components/FloatingBookCTA";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSessionData } from "@/contexts/SessionDataContext";
 
 type PathType = "build" | "orchestrate";
 type DepthType = "1hr" | "4wk" | "90d";
@@ -253,6 +254,7 @@ const orchestrateContent = {
 
 const Individual = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { setQualificationData } = useSessionData();
   const [selectedPath, setSelectedPath] = useState<PathType>((searchParams.get("path") as PathType) || "build");
   const [commitmentSlider, setCommitmentSlider] = useState<number[]>([0]);
   const [consultModalOpen, setConsultModalOpen] = useState(false);
@@ -294,13 +296,37 @@ const Individual = () => {
     const newIndex = value[0] <= 33 ? 0 : value[0] <= 66 ? 1 : 2;
     const newDepth = depthOptions[newIndex];
     setSearchParams({ path: selectedPath, commitment: newDepth });
+    // Store qualification data
+    setQualificationData({
+      preselectedProgram: selectedPath,
+      commitmentLevel: newDepth,
+      audienceType: "individual",
+      pathType: selectedPath,
+    });
   };
 
   // Update URL when path changes
   const handlePathChange = (newPath: PathType) => {
     setSelectedPath(newPath);
     setSearchParams({ path: newPath, commitment: depth });
+    // Store qualification data
+    setQualificationData({
+      preselectedProgram: newPath,
+      commitmentLevel: depth,
+      audienceType: "individual",
+      pathType: newPath,
+    });
   };
+
+  // Store qualification data when component mounts or selections change
+  useEffect(() => {
+    setQualificationData({
+      preselectedProgram: selectedPath,
+      commitmentLevel: depth,
+      audienceType: "individual",
+      pathType: selectedPath,
+    });
+  }, [selectedPath, depth, setQualificationData]);
 
   const handleCTAClick = () => {
     setConsultModalOpen(true);

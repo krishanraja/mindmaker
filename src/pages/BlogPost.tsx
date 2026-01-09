@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Clock, User, Tag, ArrowRight, Share2, Linkedin, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { InitialConsultModal } from "@/components/InitialConsultModal";
+import { useSessionData } from "@/contexts/SessionDataContext";
 import { getBlogPostBySlug, blogPosts, BlogPost as BlogPostType } from "@/data/blogPosts";
 import ReactMarkdown from 'react-markdown';
 
@@ -25,6 +28,8 @@ const categoryColors: Record<string, string> = {
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { sessionData } = useSessionData();
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
   
   const post = slug ? getBlogPostBySlug(slug) : undefined;
   
@@ -294,7 +299,7 @@ const BlogPost = () => {
               <Button 
                 size="lg"
                 variant="mint"
-                onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                onClick={() => setConsultModalOpen(true)}
               >
                 Book a Builder Session
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -336,6 +341,16 @@ const BlogPost = () => {
       </main>
       
       <Footer />
+      
+      {/* Consult Modal */}
+      <InitialConsultModal
+        open={consultModalOpen}
+        onOpenChange={setConsultModalOpen}
+        preselectedProgram={sessionData.qualificationData?.preselectedProgram || "build"}
+        commitmentLevel={sessionData.qualificationData?.commitmentLevel}
+        audienceType={sessionData.qualificationData?.audienceType}
+        pathType={sessionData.qualificationData?.pathType || "build"}
+      />
     </div>
   );
 };

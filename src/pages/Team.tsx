@@ -11,6 +11,7 @@ import { PromoBanner } from "@/components/PromoBanner";
 import { JourneyInfoCarousel, type JourneyCard } from "@/components/JourneyInfoCarousel";
 import { FloatingBookCTA } from "@/components/FloatingBookCTA";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
+import { useSessionData } from "@/contexts/SessionDataContext";
 
 type DepthType = "3hr" | "4wk" | "90d";
 
@@ -152,6 +153,7 @@ const depthContent = {
 
 const Team = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { setQualificationData } = useSessionData();
   const [commitmentSlider, setCommitmentSlider] = useState<number[]>([0]);
   const [consultModalOpen, setConsultModalOpen] = useState(false);
 
@@ -192,11 +194,28 @@ const Team = () => {
     const newIndex = value[0] <= 33 ? 0 : value[0] <= 66 ? 1 : 2;
     const newDepth = depthOptions[newIndex];
     setSearchParams({ commitment: newDepth });
+    // Store qualification data
+    setQualificationData({
+      preselectedProgram: "team",
+      commitmentLevel: newDepth,
+      audienceType: "team",
+      pathType: undefined,
+    });
   };
 
   const handleCTAClick = () => {
     setConsultModalOpen(true);
   };
+
+  // Store qualification data when component mounts or depth changes
+  useEffect(() => {
+    setQualificationData({
+      preselectedProgram: "team",
+      commitmentLevel: depth,
+      audienceType: "team",
+      pathType: undefined,
+    });
+  }, [depth, setQualificationData]);
 
   const seoData = {
     title: `Team AI Programs - ${content.title}`,

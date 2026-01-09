@@ -10,7 +10,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
-import { openCalendlyPopup } from '@/utils/calendly';
+import { InitialConsultModal } from '@/components/InitialConsultModal';
+import { useSessionData } from '@/contexts/SessionDataContext';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { VoiceInputButton, InlineVoiceButton } from '@/components/ui/VoiceInputButton';
 
@@ -22,8 +23,9 @@ interface FrictionMapBuilderProps {
 export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuilderProps) => {
   const [problem, setProblem] = useState('');
   const [showTextInput, setShowTextInput] = useState(false);
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
   const { frictionMap, isGenerating, error, generateFrictionMap, clearFrictionMap } = useFrictionMap();
-  const { setFrictionMap } = useSessionData();
+  const { setFrictionMap, sessionData } = useSessionData();
   const isMobile = useIsMobile();
   const [resultTab, setResultTab] = useState<'overview' | 'tools' | 'prompts'>('overview');
 
@@ -529,13 +531,7 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
           </Button>
           <Button 
             className="flex-1 bg-mint text-ink hover:bg-mint/90"
-            onClick={async () => {
-              try {
-                await openCalendlyPopup({ source: 'friction-map' });
-              } catch (error) {
-                console.error('Error opening Calendly:', error);
-              }
-            }}
+            onClick={() => setConsultModalOpen(true)}
           >
             Build 4 More Like This →
           </Button>
@@ -627,6 +623,16 @@ export const FrictionMapBuilder = ({ compact = false, onClose }: FrictionMapBuil
       <p className="text-xs text-muted-foreground mt-4 text-center">
         Free • No email required • AI-powered analysis
       </p>
+      
+      {/* Consult Modal */}
+      <InitialConsultModal
+        open={consultModalOpen}
+        onOpenChange={setConsultModalOpen}
+        preselectedProgram={sessionData.qualificationData?.preselectedProgram || "build"}
+        commitmentLevel={sessionData.qualificationData?.commitmentLevel}
+        audienceType={sessionData.qualificationData?.audienceType}
+        pathType={sessionData.qualificationData?.pathType || "build"}
+      />
     </Card>
   );
 };

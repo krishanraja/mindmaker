@@ -9,7 +9,8 @@ import { MarkdownResponse } from '@/components/ui/markdown-response';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
-import { openCalendlyPopup } from '@/utils/calendly';
+import { InitialConsultModal } from '@/components/InitialConsultModal';
+import { useSessionData } from '@/contexts/SessionDataContext';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { VoiceInputButton, VoiceFirstPrompt, InlineVoiceButton } from '@/components/ui/VoiceInputButton';
 
@@ -23,6 +24,8 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showTextInput, setShowTextInput] = useState(false);
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
+  const { sessionData } = useSessionData();
   const isMobile = useIsMobile();
 
   const {
@@ -462,13 +465,23 @@ export const TryItWidget = ({ compact = false, onClose }: TryItWidgetProps) => {
             <Button
               size="lg"
               className="w-full bg-ink text-white hover:bg-ink/90"
-              onClick={() => openCalendlyPopup({ source: 'ai-decision-helper' })}
+              onClick={() => setConsultModalOpen(true)}
             >
               Book a Builder Session
             </Button>
           </div>
         )}
       </div>
+      
+      {/* Consult Modal */}
+      <InitialConsultModal
+        open={consultModalOpen}
+        onOpenChange={setConsultModalOpen}
+        preselectedProgram={sessionData.qualificationData?.preselectedProgram || "build"}
+        commitmentLevel={sessionData.qualificationData?.commitmentLevel}
+        audienceType={sessionData.qualificationData?.audienceType}
+        pathType={sessionData.qualificationData?.pathType || "build"}
+      />
     </div>
   );
 };

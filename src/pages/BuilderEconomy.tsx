@@ -1,10 +1,16 @@
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Radio, Video, FileText, ArrowRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
+import { InitialConsultModal } from "@/components/InitialConsultModal";
+import { useSessionData } from "@/contexts/SessionDataContext";
 
 const BuilderEconomy = () => {
+  const { sessionData } = useSessionData();
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
+  
   const formats = [
     {
       icon: Radio,
@@ -157,7 +163,7 @@ const BuilderEconomy = () => {
             <Button 
               size="lg"
               className="bg-ink text-white hover:bg-ink/90 font-semibold px-12 py-6 text-lg touch-target group"
-              onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+              onClick={() => setConsultModalOpen(true)}
             >
               Book a Builder Session
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -167,6 +173,16 @@ const BuilderEconomy = () => {
       </section>
       
       <Footer />
+      
+      {/* Consult Modal */}
+      <InitialConsultModal
+        open={consultModalOpen}
+        onOpenChange={setConsultModalOpen}
+        preselectedProgram={sessionData.qualificationData?.preselectedProgram || "build"}
+        commitmentLevel={sessionData.qualificationData?.commitmentLevel}
+        audienceType={sessionData.qualificationData?.audienceType}
+        pathType={sessionData.qualificationData?.pathType || "build"}
+      />
     </main>
   );
 };

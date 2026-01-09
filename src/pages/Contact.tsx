@@ -17,11 +17,15 @@ import krishHeadshot from "@/assets/krish-headshot.png";
 import { SEO } from "@/components/SEO";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { InitialConsultModal } from "@/components/InitialConsultModal";
+import { useSessionData } from "@/contexts/SessionDataContext";
 
 const Contact = () => {
   const navigate = useNavigate();
+  const { sessionData } = useSessionData();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -211,7 +215,7 @@ ${formData.message}
                 <Button 
                   variant="mint"
                   className="w-full"
-                  onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                  onClick={() => setConsultModalOpen(true)}
                 >
                   <Calendar className="h-4 w-4 mr-2" />
                   Book a Session
@@ -282,7 +286,7 @@ ${formData.message}
                       Send Another Message
                     </Button>
                     <Button 
-                      onClick={() => window.open('https://calendly.com/krish-raja/mindmaker-meeting', '_blank')}
+                      onClick={() => setConsultModalOpen(true)}
                     >
                       Book a Session
                     </Button>
@@ -426,6 +430,16 @@ ${formData.message}
       </main>
       
       <Footer />
+      
+      {/* Consult Modal */}
+      <InitialConsultModal
+        open={consultModalOpen}
+        onOpenChange={setConsultModalOpen}
+        preselectedProgram={sessionData.qualificationData?.preselectedProgram}
+        commitmentLevel={sessionData.qualificationData?.commitmentLevel}
+        audienceType={sessionData.qualificationData?.audienceType}
+        pathType={sessionData.qualificationData?.pathType}
+      />
     </div>
   );
 };

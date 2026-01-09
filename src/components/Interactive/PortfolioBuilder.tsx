@@ -12,7 +12,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon, MindmakerBadge } from '@/components/ui/MindmakerIcon';
 import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
-import { openCalendlyPopup } from '@/utils/calendly';
+import { InitialConsultModal } from '@/components/InitialConsultModal';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { VoiceInputButton } from '@/components/ui/VoiceInputButton';
 

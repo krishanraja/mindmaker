@@ -150,130 +150,138 @@ export const InitialConsultModal = ({
   };
 
   const formContent = (
-    <form onSubmit={handleSubmit} className="space-y-6 mt-4 px-1 sm:px-0">
-      {/* Path Selection - Required First Question (only show if not pre-selected) */}
-      {!preselectedProgram && (
-        <div className="space-y-3">
-          <Label className="text-sm font-semibold">How do you want to work with AI?</Label>
-          <RadioGroup value={selectedPath} onValueChange={setSelectedPath}>
-            {pathOptions.map((path) => (
-              <div key={path.value} className="flex items-start space-x-3 space-y-0">
-                <RadioGroupItem value={path.value} id={path.value} className="mt-1" />
-                <Label 
-                  htmlFor={path.value} 
-                  className="font-normal cursor-pointer flex-1 leading-tight"
-                >
-                  <div>
-                    <span className="font-semibold block">{path.label}</span>
-                  </div>
-                </Label>
+    <form onSubmit={handleSubmit} className="flex flex-col h-full">
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-4 px-1 sm:px-0 pr-1">
+        {/* Path Selection - Required First Question (only show if not pre-selected) */}
+        {!preselectedProgram && (
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold">How do you want to work with AI?</Label>
+            <RadioGroup value={selectedPath} onValueChange={setSelectedPath}>
+              {pathOptions.map((path) => (
+                <div key={path.value} className="flex items-start space-x-3 space-y-0">
+                  <RadioGroupItem value={path.value} id={path.value} className="mt-1" />
+                  <Label 
+                    htmlFor={path.value} 
+                    className="font-normal cursor-pointer flex-1 leading-tight"
+                  >
+                    <div>
+                      <span className="font-semibold block">{path.label}</span>
+                    </div>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+            
+            {/* Conditional helper text based on selection */}
+            {selectedPath && (
+              <div className="pl-7 py-2 px-3 bg-muted/50 rounded-md border border-border/50">
+                <p className="text-sm text-muted-foreground">
+                  {pathOptions.find(p => p.value === selectedPath)?.helper}
+                </p>
               </div>
-            ))}
-          </RadioGroup>
-          
-          {/* Conditional helper text based on selection */}
-          {selectedPath && (
-            <div className="pl-7 py-2 px-3 bg-muted/50 rounded-md border border-border/50">
-              <p className="text-sm text-muted-foreground">
-                {pathOptions.find(p => p.value === selectedPath)?.helper}
-              </p>
+            )}
+          </div>
+        )}
+        
+        {/* Show commitment level if provided */}
+        {commitmentLevel && (
+          <div className="bg-mint/10 border border-mint/30 rounded-lg p-4">
+            <p className="text-sm font-semibold text-foreground mb-1">Selected Commitment:</p>
+            <p className="text-sm text-muted-foreground">
+              {commitmentLevel === "1hr" ? "1 Hour Session" :
+               commitmentLevel === "3hr" ? "3 Hour Session" :
+               commitmentLevel === "4wk" ? "4 Week Program" :
+               commitmentLevel === "90d" ? "90 Day Program" :
+               commitmentLevel}
+            </p>
+          </div>
+        )}
+
+        {/* Name, Job Title & Email */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              required
+              className="w-[99%]"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="jobTitle">Job Title</Label>
+            <Input
+              id="jobTitle"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              placeholder="e.g. CEO, VP of Operations"
+              required
+              className="w-[99%]"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
+              required
+              className="w-[99%]"
+            />
+          </div>
+        </div>
+
+        {/* Value Props */}
+        <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border/50">
+          <div className="flex items-start gap-2 text-sm">
+            <span className="text-lg">🎯</span>
+            <div>
+              <span className="font-semibold">Free consultation</span>
+              <span className="text-muted-foreground"> • 45 minutes to map your outcomes • Zero pressure • Real conversation</span>
             </div>
-          )}
-        </div>
-      )}
-      
-      {/* Show commitment level if provided */}
-      {commitmentLevel && (
-        <div className="bg-mint/10 border border-mint/30 rounded-lg p-4">
-          <p className="text-sm font-semibold text-foreground mb-1">Selected Commitment:</p>
-          <p className="text-sm text-muted-foreground">
-            {commitmentLevel === "1hr" ? "1 Hour Session" :
-             commitmentLevel === "3hr" ? "3 Hour Session" :
-             commitmentLevel === "4wk" ? "4 Week Program" :
-             commitmentLevel === "90d" ? "90 Day Program" :
-             commitmentLevel}
-          </p>
-        </div>
-      )}
-
-      {/* Name, Job Title & Email */}
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="jobTitle">Job Title</Label>
-          <Input
-            id="jobTitle"
-            value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)}
-            placeholder="e.g. CEO, VP of Operations"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@company.com"
-            required
-          />
-        </div>
-      </div>
-
-      {/* Value Props */}
-      <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border/50">
-        <div className="flex items-start gap-2 text-sm">
-          <span className="text-lg">🎯</span>
-          <div>
-            <span className="font-semibold">Free consultation</span>
-            <span className="text-muted-foreground"> • 45 minutes to map your outcomes • Zero pressure • Real conversation</span>
           </div>
         </div>
       </div>
 
-      {/* Submit Button */}
-      <Button 
-        type="submit" 
-        className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold text-base py-6"
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Processing...
-          </>
-        ) : (
-          <>
-            Reserve My Spot
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </>
-        )}
-      </Button>
+      {/* Fixed Submit Button - Always visible */}
+      <div className="shrink-0 pt-4 mt-4 border-t border-border">
+        <Button 
+          type="submit" 
+          className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold text-base py-6"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              Reserve My Spot
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </>
+          )}
+        </Button>
+      </div>
     </form>
   );
 
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="max-h-[85vh] px-4">
-          <DrawerHeader className="text-left pb-4">
+        <DrawerContent className="max-h-[90vh] px-4 flex flex-col">
+          <DrawerHeader className="text-left pb-4 shrink-0">
             <DrawerTitle className="text-xl font-bold">Book Your Initial Consult</DrawerTitle>
             <DrawerDescription className="text-sm">
               45 minutes to map your outcomes • Zero pressure • Real conversation
             </DrawerDescription>
           </DrawerHeader>
-          <div className="overflow-y-auto pb-safe-bottom">
+          <div className="flex-1 min-h-0">
             {formContent}
           </div>
         </DrawerContent>
@@ -283,14 +291,16 @@ export const InitialConsultModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[520px] max-h-[90vh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle className="text-2xl font-bold">Book Your Initial Consult</DialogTitle>
           <DialogDescription className="text-base">
             45 minutes to map your outcomes • Zero pressure • Real conversation
           </DialogDescription>
         </DialogHeader>
-        {formContent}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          {formContent}
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -1,28 +1,23 @@
 /**
- * Script to send test emails for all CTA paths
- * Run with: deno run --allow-net scripts/send-test-emails.ts
+ * Simple script to send all test emails
+ * Usage: 
+ *   1. Set environment variables: SUPABASE_URL and SUPABASE_ANON_KEY
+ *   2. Run: node scripts/send-test-emails-simple.js
+ * 
+ * Or set them inline:
+ *   SUPABASE_URL=https://xxx.supabase.co SUPABASE_ANON_KEY=xxx node scripts/send-test-emails-simple.js
  */
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "";
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("Error: SUPABASE_URL and SUPABASE_ANON_KEY must be set");
-  Deno.exit(1);
+  console.error("Get these from your Supabase project settings");
+  process.exit(1);
 }
 
-interface TestLead {
-  name: string;
-  email: string;
-  jobTitle: string;
-  selectedProgram: string;
-  commitmentLevel?: string;
-  audienceType?: "individual" | "team";
-  pathType?: "build" | "orchestrate";
-  description: string;
-}
-
-const testLeads: TestLead[] = [
+const testLeads = [
   {
     name: "Krish Raja",
     email: "krish@tesla.com",
@@ -35,7 +30,7 @@ const testLeads: TestLead[] = [
     email: "krish@tesla.com",
     jobTitle: "CEO",
     selectedProgram: "initial-consult",
-    description: "Main Page - Book Session (Top Nav)"
+    description: "Navigation - Book Session (Top Nav)"
   },
   {
     name: "Krish Raja",
@@ -257,7 +252,7 @@ const testLeads: TestLead[] = [
   }
 ];
 
-async function sendTestEmail(lead: TestLead): Promise<void> {
+async function sendTestEmail(lead) {
   try {
     const response = await fetch(`${SUPABASE_URL}/functions/v1/send-lead-email`, {
       method: "POST",
@@ -288,34 +283,45 @@ async function sendTestEmail(lead: TestLead): Promise<void> {
     }
 
     const data = await response.json();
-    console.log(`✅ ${lead.description}`);
-    console.log(`   Lead ID: ${data.leadId || "N/A"}`);
-    console.log(`   Status: ${data.success ? "Success" : "Failed"}`);
-    console.log("");
+    return { success: true, lead, data };
   } catch (error) {
-    console.error(`❌ ${lead.description}`);
-    console.error(`   Error: ${error instanceof Error ? error.message : String(error)}`);
-    console.log("");
+    return { success: false, lead, error: error.message };
   }
 }
 
 async function main() {
   console.log("🚀 Sending test emails for all CTA paths...\n");
   console.log(`Total test scenarios: ${testLeads.length}\n`);
+  console.log(`Supabase URL: ${SUPABASE_URL}\n`);
+  
+  let successCount = 0;
+  let errorCount = 0;
   
   for (let i = 0; i < testLeads.length; i++) {
     const lead = testLeads[i];
     console.log(`[${i + 1}/${testLeads.length}] Sending: ${lead.description}`);
-    await sendTestEmail(lead);
+    
+    const result = await sendTestEmail(lead);
+    
+    if (result.success) {
+      successCount++;
+      console.log(`   ✅ Success - Lead ID: ${result.data?.leadId || "N/A"}`);
+    } else {
+      errorCount++;
+      console.log(`   ❌ Error: ${result.error}`);
+    }
+    console.log("");
     
     // Small delay between emails to avoid rate limiting
     if (i < testLeads.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
     }
   }
   
-  console.log("✅ All test emails sent!");
-  console.log(`📧 Check inbox at krish@themindmaker.ai for ${testLeads.length} emails`);
+  console.log("=".repeat(50));
+  console.log(`✅ Complete: ${successCount} succeeded, ${errorCount} failed`);
+  console.log(`📧 Check inbox at krish@themindmaker.ai for ${successCount} emails`);
+  console.log("=".repeat(50));
 }
 
 main().catch(console.error);

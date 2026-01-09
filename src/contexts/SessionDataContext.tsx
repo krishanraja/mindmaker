@@ -49,6 +49,13 @@ interface TryItData {
   challenges: { input: string; response: string; timestamp: Date }[];
 }
 
+export interface QualificationData {
+  preselectedProgram?: string;
+  commitmentLevel?: string;
+  audienceType?: "individual" | "team";
+  pathType?: "build" | "orchestrate";
+}
+
 export interface SessionData {
   sessionId: string;
   startedAt: Date;
@@ -56,6 +63,7 @@ export interface SessionData {
   portfolioBuilder?: PortfolioData;
   assessment?: AssessmentData;
   tryItWidget?: TryItData;
+  qualificationData?: QualificationData;
   pagesVisited: string[];
   timeOnSite: number;
   scrollDepth: number;
@@ -67,6 +75,7 @@ interface SessionDataContextType {
   setFrictionMap: (data: FrictionMapData) => void;
   setPortfolioBuilder: (data: PortfolioData) => void;
   setAssessment: (data: AssessmentData) => void;
+  setQualificationData: (data: QualificationData) => void;
   addTryItChallenge: (input: string, response: string) => void;
   trackPageVisit: (path: string) => void;
   updateScrollDepth: (depth: number) => void;
@@ -128,6 +137,10 @@ export const SessionDataProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setSessionData(prev => ({ ...prev, assessment: data }));
   }, []);
 
+  const setQualificationData = useCallback((data: QualificationData) => {
+    setSessionData(prev => ({ ...prev, qualificationData: data }));
+  }, []);
+
   const addTryItChallenge = useCallback((input: string, response: string) => {
     setSessionData(prev => ({
       ...prev,
@@ -163,6 +176,7 @@ export const SessionDataProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setFrictionMap,
       setPortfolioBuilder,
       setAssessment,
+      setQualificationData,
       addTryItChallenge,
       trackPageVisit,
       updateScrollDepth,

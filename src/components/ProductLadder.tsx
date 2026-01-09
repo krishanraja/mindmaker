@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { PromoBanner } from "@/components/PromoBanner";
+import { useSessionData } from "@/contexts/SessionDataContext";
 
 type AudienceType = "individual" | "team";
 type PathType = "build" | "orchestrate";
@@ -560,6 +561,7 @@ const TeamPath = ({
 // Main Component
 const ProductLadder = () => {
   const navigate = useNavigate();
+  const { setQualificationData } = useSessionData();
   const [consultModalOpen, setConsultModalOpen] = useState(false);
   const [preselectedProgram, setPreselectedProgram] = useState<string | undefined>();
   const [commitmentLevel, setCommitmentLevel] = useState<string | undefined>();
@@ -586,18 +588,32 @@ const ProductLadder = () => {
   };
 
   const handleIndividualCTAClick = (commitment: string, path: "build" | "orchestrate") => {
+    const qualificationData = {
+      preselectedProgram: path,
+      commitmentLevel: commitment,
+      audienceType: "individual" as const,
+      pathType: path,
+    };
     setCommitmentLevel(commitment);
     setAudienceType("individual");
     setPathType(path);
     setPreselectedProgram(path);
+    setQualificationData(qualificationData);
     setConsultModalOpen(true);
   };
 
   const handleTeamCTAClick = (commitment: string) => {
+    const qualificationData = {
+      preselectedProgram: "team",
+      commitmentLevel: commitment,
+      audienceType: "team" as const,
+      pathType: undefined,
+    };
     setCommitmentLevel(commitment);
     setAudienceType("team");
     setPathType(undefined);
     setPreselectedProgram("team");
+    setQualificationData(qualificationData);
     setConsultModalOpen(true);
   };
 

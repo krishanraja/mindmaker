@@ -151,6 +151,101 @@ const testLeads = [
     jobTitle: "Investor",
     selectedProgram: "portfolio-builder",
     description: "Portfolio Builder CTA"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "CEO",
+    selectedProgram: "build",
+    commitmentLevel: "1hr",
+    audienceType: "individual",
+    pathType: "build",
+    description: "BlogPost - CTA Button (with build qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "COO",
+    selectedProgram: "orchestrate",
+    commitmentLevel: "4wk",
+    audienceType: "individual",
+    pathType: "orchestrate",
+    description: "Contact Page - Quick Book CTA (with orchestrate qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "CMO",
+    selectedProgram: "team",
+    commitmentLevel: "90d",
+    audienceType: "team",
+    description: "Contact Page - Success Message CTA (with team qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "VP Product",
+    selectedProgram: "build",
+    commitmentLevel: "90d",
+    audienceType: "individual",
+    pathType: "build",
+    description: "BuilderEconomy - CTA Button (with build qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "CTO",
+    selectedProgram: "ai-decision-helper",
+    commitmentLevel: "1hr",
+    audienceType: "individual",
+    pathType: "build",
+    description: "AI Decision Helper - Book Session CTA (with build qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "Founder",
+    selectedProgram: "builder-assessment",
+    commitmentLevel: "4wk",
+    audienceType: "individual",
+    pathType: "build",
+    description: "Builder Assessment - Learn More CTA (with build qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "General Manager",
+    selectedProgram: "friction-map",
+    commitmentLevel: "90d",
+    audienceType: "individual",
+    pathType: "build",
+    description: "Friction Map Builder - Build 4 More CTA (with build qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "CEO",
+    selectedProgram: "initial-consult",
+    description: "Navigation - Book Session (no qualification - should show full form)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "VP Strategy",
+    selectedProgram: "initial-consult",
+    commitmentLevel: "1hr",
+    audienceType: "individual",
+    pathType: "orchestrate",
+    description: "Navigation - Book Session (with orchestrate qualification)"
+  },
+  {
+    name: "Krish Raja",
+    email: "krish@tesla.com",
+    jobTitle: "Chief Innovation Officer",
+    selectedProgram: "team",
+    commitmentLevel: "3hr",
+    audienceType: "team",
+    description: "Navigation - Book Session (with team qualification)"
   }
 ];
 

@@ -8,7 +8,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MindmakerIcon } from '@/components/ui/MindmakerIcon';
 import { ToolDrawerHeader } from '@/components/ui/tool-drawer-header';
-import { openCalendlyPopup } from '@/utils/calendly';
+import { InitialConsultModal } from '@/components/InitialConsultModal';
+import { useSessionData } from '@/contexts/SessionDataContext';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { VoiceInputButton } from '@/components/ui/VoiceInputButton';
 
@@ -29,11 +30,12 @@ const numberWords: Record<string, number> = {
 
 export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmentProps) => {
   const { currentStep, questions, answers, profile, isGenerating, answerQuestion, nextQuestion, reset } = useAssessment();
-  const { setAssessment } = useSessionData();
+  const { setAssessment, sessionData } = useSessionData();
   const isMobile = useIsMobile();
   const [resultTab, setResultTab] = useState<'profile' | 'strengths' | 'next'>('profile');
   const [highlightedOption, setHighlightedOption] = useState<string | null>(null);
   const [voiceMode, setVoiceMode] = useState(false);
+  const [consultModalOpen, setConsultModalOpen] = useState(false);
   const timeoutRefs = useRef<NodeJS.Timeout[]>([]);
 
   const currentQuestion = questions[currentStep];
@@ -540,13 +542,7 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
           <Button
             size="lg"
             className="w-full bg-mint text-ink hover:bg-mint/90 font-bold"
-            onClick={async () => {
-              try {
-                await openCalendlyPopup({ source: 'builder-assessment', preselectedProgram: profile.recommendedProduct });
-              } catch (error) {
-                console.error('Error opening Calendly:', error);
-              }
-            }}
+            onClick={() => setConsultModalOpen(true)}
           >
             Learn More
             <ArrowRight className="h-4 w-4 ml-2" />
@@ -629,6 +625,16 @@ export const BuilderAssessment = ({ compact = false, onClose }: BuilderAssessmen
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Consult Modal */}
+      <InitialConsultModal
+        open={consultModalOpen}
+        onOpenChange={setConsultModalOpen}
+        preselectedProgram={profile?.recommendedProduct || sessionData.qualificationData?.preselectedProgram}
+        commitmentLevel={sessionData.qualificationData?.commitmentLevel}
+        audienceType={sessionData.qualificationData?.audienceType}
+        pathType={sessionData.qualificationData?.pathType}
+      />
     </Card>
   );
 };
