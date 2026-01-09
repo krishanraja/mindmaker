@@ -30,23 +30,24 @@ CREATE INDEX IF NOT EXISTS idx_leads_selected_program ON public.leads(selected_p
 -- Enable RLS (Row Level Security)
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 
--- Policy: Allow service role to insert (for edge functions)
-CREATE POLICY IF NOT EXISTS "Service role can insert leads"
+-- Drop policies if they exist, then create them
+DROP POLICY IF EXISTS "Service role can insert leads" ON public.leads;
+CREATE POLICY "Service role can insert leads"
   ON public.leads
   FOR INSERT
   TO service_role
   WITH CHECK (true);
 
--- Policy: Allow service role to update (for email status updates)
-CREATE POLICY IF NOT EXISTS "Service role can update leads"
+DROP POLICY IF EXISTS "Service role can update leads" ON public.leads;
+CREATE POLICY "Service role can update leads"
   ON public.leads
   FOR UPDATE
   TO service_role
   USING (true)
   WITH CHECK (true);
 
--- Policy: Allow service role to select (for queries)
-CREATE POLICY IF NOT EXISTS "Service role can select leads"
+DROP POLICY IF EXISTS "Service role can select leads" ON public.leads;
+CREATE POLICY "Service role can select leads"
   ON public.leads
   FOR SELECT
   TO service_role

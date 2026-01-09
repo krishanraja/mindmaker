@@ -22,6 +22,8 @@ const NewHero = () => {
     "Lead from the front with",
     "Show your team who's boss with",
     "Drive the next era of your business through",
+    "Increase your creative leadership with",
+    "Control your use of AI",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);

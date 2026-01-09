@@ -496,6 +496,17 @@
     });
 
     updateStats();
+
+    // Auto-send all emails on page load
+    window.addEventListener('load', async () => {
+      console.log('Auto-sending all test emails...');
+      for (const scenario of testScenarios) {
+        await window.testScenario(scenario.id);
+        // Delay between emails
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+      console.log('All test emails sent!');
+    });
   </script>
 </body>
 </html>
