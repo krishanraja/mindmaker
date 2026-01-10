@@ -206,28 +206,41 @@ const handler = async (req: Request): Promise<Response> => {
     const personalDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "icloud.com", "me.com", "protonmail.com", "aol.com"];
     const isPersonalEmail = personalDomains.some(pd => domain.toLowerCase().includes(pd));
 
+    // Log AI research status for debugging
+    if (!googleAIApiKey) {
+      console.warn("⚠️ GOOGLE_AI_API_KEY not configured - company research will be skipped");
+      console.warn("To enable AI company research, add GOOGLE_AI_API_KEY to Supabase Edge Function secrets");
+    } else if (isPersonalEmail) {
+      console.log("Personal email domain detected - skipping company research");
+    } else {
+      console.log("AI company research enabled for domain:", domain);
+    }
+
     if (googleAIApiKey && domain && !isPersonalEmail) {
       try {
-        const researchPrompt = `You are a business research assistant. Research the company associated with the email domain "${domain}" and the person's job title "${jobTitle}".
+        console.log("Starting Gemini company research for:", domain);
+        
+        // More explicit prompt with better JSON formatting instructions
+        const researchPrompt = `You are a business intelligence analyst. Research the company with domain "${domain}".
 
-Please provide the following information:
-1. The actual company name (not just the domain)
-2. The industry/sector they operate in
-3. Company size category: startup (1-50 employees), smb (51-500), mid-market (501-5000), enterprise (5000+), or unknown
-4. Their most recent significant business news from the past 6 months (acquisition, funding round, product launch, leadership change, expansion, partnership, etc.). If no recent news found, say "No recent significant news found"
-5. Based on their interest in "${selectedProgram}" and commitment level "${commitmentLevel || 'not specified'}", suggest a one-sentence scope of work that would be relevant to their business needs
+TASK: Find accurate, current information about this company. The person's job title is "${jobTitle}".
 
-IMPORTANT: Use Google Search to find current, accurate information. If you cannot find reliable information, explicitly state "Unable to verify" rather than making assumptions.
-
-Format your response as a JSON object with these exact keys:
+REQUIRED OUTPUT - Return ONLY a valid JSON object with NO additional text:
 {
-  "companyName": "string",
-  "industry": "string",
-  "companySize": "startup|smb|mid-market|enterprise|unknown",
-  "latestNews": "string (one sentence)",
-  "suggestedScope": "string (one sentence)",
-  "confidence": "high|medium|low"
-}`;
+  "companyName": "Full official company name (e.g., 'Tesla, Inc.' not 'tesla.com')",
+  "industry": "Primary industry sector (e.g., 'Electric Vehicles & Clean Energy')",
+  "companySize": "One of: startup, smb, mid-market, enterprise",
+  "latestNews": "One sentence about recent company news, product launch, or announcement",
+  "suggestedScope": "One sentence suggesting how AI/automation training could help this company",
+  "confidence": "high, medium, or low based on data quality"
+}
+
+RULES:
+- Use Google Search to find current, accurate information
+- For well-known companies (Tesla, Google, Microsoft, etc.), you MUST return accurate data
+- companySize: startup=1-50, smb=51-500, mid-market=501-5000, enterprise=5000+
+- If truly unknown, use "Unknown" but try hard to find real data first
+- Return ONLY the JSON object, no markdown, no explanation`;
 
         // Use timeout wrapper for Gemini API (30 second timeout)
         const response = await fetchWithTimeout(
@@ -264,23 +277,33 @@ Format your response as a JSON object with these exact keys:
         }
 
         const data = await response.json();
-        console.log("Gemini research response:", JSON.stringify(data, null, 2));
+        console.log("Gemini research raw response:", JSON.stringify(data, null, 2));
 
-        // Extract text from Gemini response
-        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        // Extract text from Gemini response - check multiple possible paths
+        let responseText = "";
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          responseText = data.candidates[0].content.parts[0].text;
+        } else if (data.candidates?.[0]?.content?.parts) {
+          // Sometimes text is in multiple parts
+          responseText = data.candidates[0].content.parts.map((p: any) => p.text || "").join("");
+        }
+        
+        console.log("Gemini response text:", responseText);
         
         if (responseText) {
           // Try to extract JSON from the response (handle code blocks or plain JSON)
           let jsonText = responseText;
           
           // Remove markdown code blocks if present
-          jsonText = jsonText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+          jsonText = jsonText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
           
-          // Try to find JSON object
-          const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+          // Try to find JSON object - be more aggressive
+          const jsonMatch = jsonText.match(/\{[\s\S]*?\}/);
           if (jsonMatch) {
             try {
               const parsed = JSON.parse(jsonMatch[0]);
+              console.log("Parsed JSON from Gemini:", parsed);
+              
               companyResearch = {
                 companyName: ensureString(parsed.companyName, domain || "Unknown Company"),
                 industry: ensureString(parsed.industry, "Unknown"),
@@ -289,32 +312,48 @@ Format your response as a JSON object with these exact keys:
                 suggestedScope: ensureString(parsed.suggestedScope, "Discovery call to understand specific needs"),
                 confidence: ensureString(parsed.confidence, "low")
               };
-              console.log("Successfully parsed company research:", companyResearch);
+              console.log("✅ Successfully parsed company research:", companyResearch);
             } catch (parseError) {
               console.error("Failed to parse Gemini JSON response:", parseError);
-              console.error("Response text:", responseText);
-              // Try to extract information from text if JSON parsing fails
-              const companyMatch = responseText.match(/companyName["\s:]+"([^"]+)"/i) || 
-                                  responseText.match(/company["\s:]+"([^"]+)"/i) ||
-                                  responseText.match(/company["\s:]+([A-Z][^,\.\n]+)/i);
-              if (companyMatch && companyMatch[1]) {
-                companyResearch.companyName = ensureString(companyMatch[1].trim(), domain || "Unknown Company");
-                console.log("Extracted company name from text:", companyResearch.companyName);
-              }
+              console.error("Attempted to parse:", jsonMatch[0]);
+              
+              // Fallback: Try to extract key fields with regex
+              const nameMatch = responseText.match(/"companyName"\s*:\s*"([^"]+)"/i);
+              const industryMatch = responseText.match(/"industry"\s*:\s*"([^"]+)"/i);
+              const sizeMatch = responseText.match(/"companySize"\s*:\s*"([^"]+)"/i);
+              const newsMatch = responseText.match(/"latestNews"\s*:\s*"([^"]+)"/i);
+              
+              if (nameMatch) companyResearch.companyName = ensureString(nameMatch[1], domain || "Unknown Company");
+              if (industryMatch) companyResearch.industry = ensureString(industryMatch[1], "Unknown");
+              if (sizeMatch) companyResearch.companySize = ensureString(sizeMatch[1], "unknown");
+              if (newsMatch) companyResearch.latestNews = ensureString(newsMatch[1], "Unable to verify company information");
+              
+              console.log("Extracted via regex fallback:", companyResearch);
             }
           } else {
-            console.warn("No JSON object found in Gemini response");
-            // Try basic text extraction
-            const companyMatch = responseText.match(/(?:company|companyName)[\s:]+([A-Z][^,\.\n]+)/i);
-            if (companyMatch && companyMatch[1]) {
-              companyResearch.companyName = ensureString(companyMatch[1].trim(), domain || "Unknown Company");
+            console.warn("No JSON object found in Gemini response, trying regex extraction");
+            // Try to extract any useful information
+            const nameMatch = responseText.match(/(?:company\s*(?:name)?|companyName)\s*[:\-]\s*["']?([A-Z][^"'\n,]+)/i);
+            if (nameMatch && nameMatch[1]) {
+              companyResearch.companyName = ensureString(nameMatch[1].trim(), domain || "Unknown Company");
+              console.log("Extracted company name via fallback:", companyResearch.companyName);
             }
           }
         } else {
-          console.warn("Empty response from Gemini API");
+          console.warn("Empty response from Gemini API - check API key and quota");
         }
       } catch (error) {
         console.error("Error researching company with Gemini:", error);
+        console.error("Domain was:", domain);
+      }
+    } else {
+      // Log why research was skipped
+      if (!googleAIApiKey) {
+        console.log("Company research skipped: GOOGLE_AI_API_KEY not set");
+      } else if (!domain) {
+        console.log("Company research skipped: No domain extracted");
+      } else if (isPersonalEmail) {
+        console.log("Company research skipped: Personal email domain");
       }
     }
 
@@ -411,8 +450,8 @@ Format your response as a JSON object with these exact keys:
       console.warn('Supabase client not available - skipping database insert');
     }
 
-    // Build email HTML with professional CEO-grade design
-    // Clean, high-contrast, actionable lead capture email
+    // Build email HTML - Clean Minimal Apple-Style Design
+    // High contrast, excellent readability, professional
     let emailHtml = `
 <!DOCTYPE html>
 <html>
@@ -420,137 +459,151 @@ Format your response as a JSON object with these exact keys:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 680px; margin: 0 auto; padding: 0; background-color: #ffffff;">
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; line-height: 1.5; color: #1d1d1f; max-width: 600px; margin: 0 auto; padding: 0; background-color: #f5f5f7;">
   
-  <!-- Header: Lead Contact Information - MOST PROMINENT -->
-  <div style="background: linear-gradient(135deg, #0e1a2b 0%, #1a2b3d 100%); padding: 48px 40px; text-align: center;">
-    <p style="color: #7ef4c2; margin: 0 0 16px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">NEW LEAD</p>
-    <h1 style="color: #ffffff; margin: 0 0 12px 0; font-size: 42px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.1;">${escapeHtml(name)}</h1>
-    <p style="color: #ffffff; margin: 0 0 24px 0; font-size: 20px; font-weight: 500;">${escapeHtml(jobTitle || 'Role not specified')}</p>
+  <!-- Outer Container -->
+  <div style="background: #ffffff; margin: 20px; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
     
-    <!-- Lead Email - PROMINENTLY DISPLAYED -->
-    <div style="background: rgba(126, 244, 194, 0.2); border: 3px solid #7ef4c2; border-radius: 12px; padding: 20px; margin: 0 auto; max-width: 500px;">
-      <p style="color: #7ef4c2; margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">CONTACT EMAIL</p>
-      <a href="mailto:${escapeHtml(email)}" style="color: #ffffff; font-size: 22px; font-weight: 700; text-decoration: none; word-break: break-all; display: block;">${escapeHtml(email)}</a>
+    <!-- Header -->
+    <div style="background: #1d1d1f; padding: 40px 32px; text-align: center;">
+      <p style="color: #86868b; margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">New Lead</p>
+      <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">${escapeHtml(name)}</h1>
+      <p style="color: #a1a1a6; margin: 8px 0 0 0; font-size: 17px; font-weight: 400;">${escapeHtml(jobTitle || 'Role not specified')}</p>
     </div>
-  </div>
-  
-  <!-- Main Content -->
-  <div style="background: #ffffff; padding: 40px;">
     
-    <!-- Company Information -->
-    <div style="background: #f8f9fa; border-left: 4px solid #0e1a2b; border-radius: 8px; padding: 28px; margin-bottom: 32px;">
-      <h2 style="color: #0e1a2b; margin: 0 0 20px 0; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">COMPANY</h2>
-      <table style="width: 100%; border-collapse: collapse;">
-        <tr>
-          <td style="padding: 10px 0; color: #666666; font-size: 14px; width: 120px; vertical-align: top; font-weight: 600;">Company:</td>
-          <td style="padding: 10px 0; color: #1a1a1a; font-size: 16px; font-weight: 700;">${escapeHtml(companyResearch.companyName)}</td>
-        </tr>
-        <tr>
-          <td style="padding: 10px 0; color: #666666; font-size: 14px; vertical-align: top; font-weight: 600;">Industry:</td>
-          <td style="padding: 10px 0; color: #1a1a1a; font-size: 15px; font-weight: 500;">${escapeHtml(companyResearch.industry)}</td>
-        </tr>
-        <tr>
-          <td style="padding: 10px 0; color: #666666; font-size: 14px; vertical-align: top; font-weight: 600;">Size:</td>
-          <td style="padding: 10px 0; color: #1a1a1a; font-size: 15px;">
-            <span style="background: #e8f5f0; color: #0e1a2b; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; text-transform: capitalize;">${escapeHtml(companyResearch.companySize)}</span>
-          </td>
-        </tr>
+    <!-- Contact Email - HIGH CONTRAST -->
+    <div style="background: #0071e3; padding: 24px 32px; text-align: center;">
+      <p style="color: rgba(255,255,255,0.7); margin: 0 0 6px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Contact Email</p>
+      <a href="mailto:${escapeHtml(email)}" style="color: #ffffff; font-size: 20px; font-weight: 600; text-decoration: none; word-break: break-all;">${escapeHtml(email)}</a>
+    </div>
+    
+    <!-- Main Content -->
+    <div style="padding: 32px;">
+      
+      <!-- Company Card -->
+      <div style="background: #f5f5f7; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+        <h2 style="color: #1d1d1f; margin: 0 0 16px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Company Intelligence</h2>
+        
+        <div style="margin-bottom: 12px;">
+          <span style="color: #86868b; font-size: 13px; font-weight: 500;">Company</span>
+          <p style="color: #1d1d1f; margin: 4px 0 0 0; font-size: 17px; font-weight: 600;">${escapeHtml(companyResearch.companyName)}</p>
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+          <span style="color: #86868b; font-size: 13px; font-weight: 500;">Industry</span>
+          <p style="color: #1d1d1f; margin: 4px 0 0 0; font-size: 15px; font-weight: 500;">${escapeHtml(companyResearch.industry)}</p>
+        </div>
+        
+        <div style="margin-bottom: ${companyResearch.latestNews && companyResearch.latestNews !== 'Unable to verify company information' ? '12px' : '0'};">
+          <span style="color: #86868b; font-size: 13px; font-weight: 500;">Size</span>
+          <p style="color: #1d1d1f; margin: 4px 0 0 0; font-size: 15px; font-weight: 500; text-transform: capitalize;">${escapeHtml(companyResearch.companySize)}</p>
+        </div>
+        
         ${companyResearch.latestNews && companyResearch.latestNews !== 'Unable to verify company information' ? `
-        <tr>
-          <td style="padding: 10px 0; color: #666666; font-size: 14px; vertical-align: top; font-weight: 600;">Recent News:</td>
-          <td style="padding: 10px 0; color: #1a1a1a; font-size: 15px; line-height: 1.5;">${escapeHtml(companyResearch.latestNews)}</td>
-        </tr>
+        <div>
+          <span style="color: #86868b; font-size: 13px; font-weight: 500;">Recent News</span>
+          <p style="color: #1d1d1f; margin: 4px 0 0 0; font-size: 14px; font-weight: 400; line-height: 1.5;">${escapeHtml(companyResearch.latestNews)}</p>
+        </div>
         ` : ''}
-      </table>
-    </div>
+        
+        ${companyResearch.confidence && companyResearch.confidence !== 'low' ? `
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #d2d2d7;">
+          <span style="display: inline-block; background: ${companyResearch.confidence === 'high' ? '#34c759' : '#ff9500'}; color: #ffffff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase;">AI Confidence: ${escapeHtml(companyResearch.confidence)}</span>
+        </div>
+        ` : ''}
+      </div>
 
-    <!-- Program Interest - Prominent if available -->
-    ${commitmentLevel || sessionTypeLabel !== 'Not specified' ? `
-    <div style="background: linear-gradient(135deg, #7ef4c2 0%, #5dd4a8 100%); border-radius: 12px; padding: 32px; margin-bottom: 32px; border: 2px solid #0e1a2b;">
-      <h2 style="color: #0e1a2b; margin: 0 0 16px 0; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">PROGRAM INTEREST</h2>
-      ${commitmentLevel ? `
-      <p style="color: #0e1a2b; margin: 0 0 8px 0; font-size: 28px; font-weight: 900; line-height: 1.2;">${escapeHtml(commitmentLabels[commitmentLevel] || commitmentLevel)}</p>
+      <!-- Program Interest -->
+      ${commitmentLevel || sessionTypeLabel !== 'Not specified' ? `
+      <div style="background: #1d1d1f; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+        <h2 style="color: #86868b; margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Program Interest</h2>
+        ${commitmentLevel ? `
+        <p style="color: #ffffff; margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">${escapeHtml(commitmentLabels[commitmentLevel] || commitmentLevel)}</p>
+        ` : ''}
+        <p style="color: #a1a1a6; margin: 0; font-size: 15px; font-weight: 500;">${escapeHtml(sessionTypeLabel)}</p>
+      </div>
       ` : ''}
-      <p style="color: #0e1a2b; margin: ${commitmentLevel ? '8px' : '0'} 0 0 0; font-size: 18px; font-weight: 700;">${escapeHtml(sessionTypeLabel)}</p>
-    </div>
-    ` : ''}
-    
     `;
 
-    // Add session engagement data
-    if (sessionData.frictionMap) {
+    // Add session engagement data - only if there's meaningful data
+    const hasEngagementData = sessionData.frictionMap || 
+      (sessionData.portfolioBuilder && sessionData.portfolioBuilder.selectedTasks.length > 0) ||
+      sessionData.assessment ||
+      (sessionData.tryItWidget && sessionData.tryItWidget.challenges.length > 0);
+    
+    if (hasEngagementData) {
       emailHtml += `
-    <div style="background: #fff8e6; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #f59e0b;">
-      <h3 style="color: #92400e; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">🗺️ Used Friction Map Tool</h3>
-      <p style="margin: 0 0 8px 0; color: #451a03; font-size: 14px;"><strong>Problem:</strong> "${escapeHtml(sessionData.frictionMap.problem)}"</p>
-      <p style="margin: 0 0 8px 0; color: #451a03; font-size: 14px;"><strong>Potential Savings:</strong> ${sessionData.frictionMap.timeSaved}h/week</p>
-      <p style="margin: 0; color: #451a03; font-size: 14px;"><strong>Tools:</strong> ${sessionData.frictionMap.toolRecommendations.map(t => escapeHtml(t)).join(", ")}</p>
-    </div>
+      <!-- Session Activity -->
+      <div style="background: #f5f5f7; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+        <h2 style="color: #1d1d1f; margin: 0 0 16px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Session Activity</h2>
       `;
-    }
+      
+      if (sessionData.frictionMap) {
+        emailHtml += `
+        <div style="background: #ffffff; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+          <p style="color: #1d1d1f; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Friction Map Tool</p>
+          <p style="color: #86868b; margin: 0 0 4px 0; font-size: 13px;">Problem: "${escapeHtml(sessionData.frictionMap.problem)}"</p>
+          <p style="color: #1d1d1f; margin: 0; font-size: 13px; font-weight: 500;">Potential savings: ${sessionData.frictionMap.timeSaved}h/week</p>
+        </div>
+        `;
+      }
 
-    if (sessionData.portfolioBuilder && sessionData.portfolioBuilder.selectedTasks.length > 0) {
-      const tasks = sessionData.portfolioBuilder.selectedTasks.map(t => 
-        `${escapeHtml(t.name)} (${t.hours}h/week)`
-      ).join(", ");
-      emailHtml += `
-    <div style="background: #e8f5f0; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #7ef4c2;">
-      <h3 style="color: #0e1a2b; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">📊 Used Portfolio Builder</h3>
-      <p style="margin: 0 0 8px 0; color: #0e1a2b; font-size: 14px;"><strong>Tasks:</strong> ${tasks}</p>
-      <p style="margin: 0 0 8px 0; color: #0e1a2b; font-size: 14px;"><strong>Time Savings:</strong> ${sessionData.portfolioBuilder.totalTimeSaved}h/week</p>
-      <p style="margin: 0; color: #0e1a2b; font-size: 14px;"><strong>Cost Savings:</strong> $${sessionData.portfolioBuilder.totalCostSavings.toLocaleString()}/month</p>
-    </div>
-      `;
-    }
+      if (sessionData.portfolioBuilder && sessionData.portfolioBuilder.selectedTasks.length > 0) {
+        emailHtml += `
+        <div style="background: #ffffff; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+          <p style="color: #1d1d1f; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Portfolio Builder</p>
+          <p style="color: #1d1d1f; margin: 0 0 4px 0; font-size: 13px;"><strong>${sessionData.portfolioBuilder.totalTimeSaved}h/week</strong> time savings</p>
+          <p style="color: #34c759; margin: 0; font-size: 13px; font-weight: 600;">$${sessionData.portfolioBuilder.totalCostSavings.toLocaleString()}/month potential</p>
+        </div>
+        `;
+      }
 
-    if (sessionData.assessment) {
-      emailHtml += `
-    <div style="background: #eff6ff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #3b82f6;">
-      <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">✅ Completed Assessment</h3>
-      <p style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 14px;"><strong>Profile:</strong> ${escapeHtml(sessionData.assessment.profileType)}</p>
-      <p style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 14px;">${escapeHtml(sessionData.assessment.profileDescription)}</p>
-      <p style="margin: 0; color: #1e3a8a; font-size: 14px;"><strong>Recommended:</strong> ${escapeHtml(sessionData.assessment.recommendedProduct)}</p>
-    </div>
-      `;
-    }
+      if (sessionData.assessment) {
+        emailHtml += `
+        <div style="background: #ffffff; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+          <p style="color: #1d1d1f; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Assessment Completed</p>
+          <p style="color: #86868b; margin: 0 0 4px 0; font-size: 13px;">Profile: ${escapeHtml(sessionData.assessment.profileType)}</p>
+          <p style="color: #1d1d1f; margin: 0; font-size: 13px;">Recommended: ${escapeHtml(sessionData.assessment.recommendedProduct)}</p>
+        </div>
+        `;
+      }
 
-    if (sessionData.tryItWidget && sessionData.tryItWidget.challenges.length > 0) {
-      const lastChallenge = sessionData.tryItWidget.challenges[sessionData.tryItWidget.challenges.length - 1];
-      emailHtml += `
-    <div style="background: #fdf4ff; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #a855f7;">
-      <h3 style="color: #7e22ce; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">💡 Used Try It Widget (${sessionData.tryItWidget.challenges.length}x)</h3>
-      <p style="margin: 0 0 8px 0; color: #581c87; font-size: 14px;"><strong>Last Challenge:</strong> "${escapeHtml(lastChallenge.input)}"</p>
-      <p style="margin: 0; color: #581c87; font-size: 13px; font-style: italic;">"${escapeHtml(lastChallenge.response.substring(0, 200))}..."</p>
-    </div>
-      `;
+      if (sessionData.tryItWidget && sessionData.tryItWidget.challenges.length > 0) {
+        const lastChallenge = sessionData.tryItWidget.challenges[sessionData.tryItWidget.challenges.length - 1];
+        emailHtml += `
+        <div style="background: #ffffff; border-radius: 8px; padding: 16px;">
+          <p style="color: #1d1d1f; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Try It Widget (${sessionData.tryItWidget.challenges.length}x)</p>
+          <p style="color: #86868b; margin: 0; font-size: 13px; font-style: italic;">"${escapeHtml(lastChallenge.input.substring(0, 100))}${lastChallenge.input.length > 100 ? '...' : ''}"</p>
+        </div>
+        `;
+      }
+      
+      emailHtml += `</div>`;
     }
 
     // Add closing sections to email
     emailHtml += `
-    <!-- Engagement Metrics - Compact -->
-    <div style="background: #f8f9fa; border-radius: 8px; padding: 24px; margin-bottom: 32px; border: 1px solid #e0e0e0;">
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; text-align: center;">
-        <div>
-          <p style="color: #666666; margin: 0; font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Engagement</p>
-          <p style="color: #1a1a1a; margin: 8px 0 0 0; font-size: 20px; font-weight: 800;">${engagementLevel}</p>
+      <!-- Engagement Metrics -->
+      <div style="display: flex; justify-content: space-between; padding: 20px 0; border-top: 1px solid #d2d2d7;">
+        <div style="text-align: center; flex: 1;">
+          <p style="color: #86868b; margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Engagement</p>
+          <p style="color: #1d1d1f; margin: 6px 0 0 0; font-size: 18px; font-weight: 600;">${engagementLevel}</p>
         </div>
-        <div>
-          <p style="color: #666666; margin: 0; font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Score</p>
-          <p style="color: #1a1a1a; margin: 8px 0 0 0; font-size: 20px; font-weight: 800;">${engagementScore}/100</p>
+        <div style="text-align: center; flex: 1; border-left: 1px solid #d2d2d7; border-right: 1px solid #d2d2d7;">
+          <p style="color: #86868b; margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Score</p>
+          <p style="color: #1d1d1f; margin: 6px 0 0 0; font-size: 18px; font-weight: 600;">${engagementScore}/100</p>
         </div>
-        <div>
-          <p style="color: #666666; margin: 0; font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Time</p>
-          <p style="color: #1a1a1a; margin: 8px 0 0 0; font-size: 20px; font-weight: 800;">${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}</p>
+        <div style="text-align: center; flex: 1;">
+          <p style="color: #86868b; margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Time on Site</p>
+          <p style="color: #1d1d1f; margin: 6px 0 0 0; font-size: 18px; font-weight: 600;">${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}</p>
         </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Footer -->
-  <div style="text-align: center; padding: 24px; background: #0e1a2b; color: #ffffff;">
-    <p style="margin: 0; color: #7ef4c2; font-size: 11px; font-weight: 600;">Lead captured at <a href="https://www.themindmaker.ai" style="color: #7ef4c2; text-decoration: none;">themindmaker.ai</a></p>
-    <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.6); font-size: 10px;">© ${new Date().getFullYear()} Mindmaker LLC</p>
+    
+    <!-- Footer -->
+    <div style="text-align: center; padding: 20px 32px;">
+      <p style="margin: 0; color: #86868b; font-size: 12px;">Lead captured at <a href="https://www.themindmaker.ai" style="color: #0071e3; text-decoration: none;">themindmaker.ai</a></p>
+    </div>
   </div>
 </body>
 </html>
