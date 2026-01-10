@@ -90,7 +90,7 @@ export const FloatingBookCTA = ({
           className="w-full bg-mint text-ink hover:bg-mint/90 font-bold text-base py-6 shadow-lg shadow-mint/20"
         >
           <Calendar className="mr-2 h-5 w-5" />
-          Book Free Consultation
+          Book
         </Button>
       </div>
 

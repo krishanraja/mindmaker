@@ -12,6 +12,7 @@ import { JourneyInfoCarousel, type JourneyCard } from "@/components/JourneyInfoC
 import { FloatingBookCTA } from "@/components/FloatingBookCTA";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { useSessionData } from "@/contexts/SessionDataContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type DepthType = "3hr" | "4wk" | "90d";
 
@@ -156,6 +157,7 @@ const Team = () => {
   const { setQualificationData } = useSessionData();
   const [commitmentSlider, setCommitmentSlider] = useState<number[]>([0]);
   const [consultModalOpen, setConsultModalOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Initialize slider based on URL commitment param or default to 0
   useEffect(() => {
@@ -383,7 +385,7 @@ const Team = () => {
               className="px-12 py-6 text-lg font-bold"
               onClick={handleCTAClick}
             >
-              Book Your Session
+              {isMobile ? "Book" : "Book Your Session"}
             </Button>
           </div>
         </div>
@@ -409,7 +411,7 @@ const Team = () => {
               className="px-8 py-6 font-bold"
               onClick={handleCTAClick}
             >
-              Book Your Session
+              {isMobile ? "Book" : "Book Your Session"}
             </Button>
           </div>
         </div>

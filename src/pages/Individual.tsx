@@ -13,6 +13,7 @@ import { FloatingBookCTA } from "@/components/FloatingBookCTA";
 import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSessionData } from "@/contexts/SessionDataContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type PathType = "build" | "orchestrate";
 type DepthType = "1hr" | "4wk" | "90d";
@@ -258,6 +259,7 @@ const Individual = () => {
   const [selectedPath, setSelectedPath] = useState<PathType>((searchParams.get("path") as PathType) || "build");
   const [commitmentSlider, setCommitmentSlider] = useState<number[]>([0]);
   const [consultModalOpen, setConsultModalOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Initialize slider based on URL commitment param or default to 0
   useEffect(() => {
@@ -357,7 +359,7 @@ const Individual = () => {
               className="min-w-[140px]"
             >
               <User className="h-4 w-4 mr-2" />
-              Build with AI
+              {isMobile ? "Build" : "Build with AI"}
             </Button>
             <Button
               variant={selectedPath === "orchestrate" ? "default" : "outline"}
@@ -366,7 +368,7 @@ const Individual = () => {
               className="min-w-[140px]"
             >
               <Compass className="h-4 w-4 mr-2" />
-              Orchestrate AI
+              {isMobile ? "Orchestrate" : "Orchestrate AI"}
             </Button>
           </div>
 
@@ -569,7 +571,7 @@ const Individual = () => {
               className="px-12 py-6 text-lg font-bold"
               onClick={handleCTAClick}
             >
-              Book Your Session
+              {isMobile ? "Book" : "Book Your Session"}
             </Button>
           </div>
         </div>
@@ -595,7 +597,7 @@ const Individual = () => {
               className="px-8 py-6 font-bold"
               onClick={handleCTAClick}
             >
-              Book Your Session
+              {isMobile ? "Book" : "Book Your Session"}
             </Button>
           </div>
         </div>

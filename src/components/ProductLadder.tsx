@@ -7,6 +7,7 @@ import { InitialConsultModal } from "@/components/InitialConsultModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { PromoBanner } from "@/components/PromoBanner";
 import { useSessionData } from "@/contexts/SessionDataContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type AudienceType = "individual" | "team";
 type PathType = "build" | "orchestrate";
@@ -290,6 +291,7 @@ const CommitmentSlider = ({
   learnMoreLink: string;
 }) => {
   const [journeyStage, setJourneyStage] = useState([0]);
+  const isMobile = useIsMobile();
 
   const currentIndex = journeyStage[0] <= 33 ? 0 : journeyStage[0] <= 66 ? 1 : 2;
   const currentOffering = offerings[currentIndex];
@@ -355,7 +357,7 @@ const CommitmentSlider = ({
               className="flex-1 touch-target font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
               onClick={() => onCTAClick(depthParam)}
             >
-              {currentOffering.cta}
+              {isMobile ? "Book" : currentOffering.cta}
             </Button>
             <Button
               size="lg"
@@ -383,6 +385,7 @@ const IndividualPath = ({
   onCTAClick: (commitmentLevel: string, pathType: "build" | "orchestrate") => void;
 }) => {
   const [selectedPath, setSelectedPath] = useState<PathType>("build");
+  const isMobile = useIsMobile();
   const currentPathInfo = pathInfo[selectedPath];
   const PathIcon = currentPathInfo.icon;
 
@@ -415,7 +418,7 @@ const IndividualPath = ({
           }`}
         >
           <User className="h-4 w-4" />
-          <span>Build with AI</span>
+          <span>{isMobile ? "Build" : "Build with AI"}</span>
         </button>
         <button
           onClick={() => setSelectedPath("orchestrate")}
@@ -426,7 +429,7 @@ const IndividualPath = ({
           }`}
         >
           <Compass className="h-4 w-4" />
-          <span>Orchestrate AI</span>
+          <span>{isMobile ? "Orchestrate" : "Orchestrate AI"}</span>
         </button>
       </motion.div>
 
