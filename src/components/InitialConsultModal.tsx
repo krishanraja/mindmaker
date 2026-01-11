@@ -265,8 +265,8 @@ export const InitialConsultModal = ({
 
   const formContent = (
     <form onSubmit={handleSubmit} className="flex flex-col h-full">
-      {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto space-y-6 mt-4 px-1 sm:px-0 pr-1">
+      {/* Content area */}
+      <div className="flex-1 min-h-0 flex flex-col gap-4 px-1 sm:px-0 pr-1 overflow-y-auto">
         {/* Path Selection - Required First Question (only show if not pre-selected) */}
         {!effectivePreselectedProgram && (
           <div className="space-y-3">
@@ -289,7 +289,7 @@ export const InitialConsultModal = ({
             
             {/* Conditional helper text based on selection */}
             {selectedPath && (
-              <div className="pl-7 py-2 px-3 bg-muted/50 rounded-md border border-border/50">
+              <div className="pl-7 py-1.5 px-3 bg-muted/50 rounded-md border border-border/50">
                 <p className="text-sm text-muted-foreground">
                   {pathOptions.find(p => p.value === selectedPath)?.helper}
                 </p>
@@ -323,8 +323,8 @@ export const InitialConsultModal = ({
         
         {/* Show commitment level if provided (read-only display) */}
         {effectiveCommitmentLevel && (
-          <div className="bg-mint/10 border border-mint/30 rounded-lg p-4">
-            <p className="text-sm font-semibold text-foreground mb-1">Selected Commitment:</p>
+          <div className="bg-mint/10 border border-mint/30 rounded-lg p-3">
+            <p className="text-sm font-semibold text-foreground mb-0.5">Selected Commitment:</p>
             <p className="text-sm text-muted-foreground">
               {effectiveCommitmentLevel === "1hr" ? "1 Hour Session" :
                effectiveCommitmentLevel === "3hr" ? "3 Hour Session" :
@@ -336,7 +336,7 @@ export const InitialConsultModal = ({
         )}
 
         {/* Name, Job Title & Email */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
@@ -374,7 +374,7 @@ export const InitialConsultModal = ({
         </div>
 
         {/* Value Props */}
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border/50">
+        <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
           <div className="flex items-start gap-2 text-sm">
             <span className="text-lg">🎯</span>
             <div>
@@ -386,7 +386,7 @@ export const InitialConsultModal = ({
 
         {/* Error Message Display */}
         {emailError && (
-          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 space-y-2">
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
             <p className="text-sm font-semibold text-destructive">Error: {emailError}</p>
             <p className="text-xs text-muted-foreground">
               Please try again. If the problem persists, contact us at krish@themindmaker.ai
@@ -396,7 +396,7 @@ export const InitialConsultModal = ({
       </div>
 
       {/* Fixed Submit Button - Always visible */}
-      <div className="shrink-0 pt-4 mt-4 border-t border-border">
+      <div className="shrink-0 pt-3 mt-3 border-t border-border">
         <Button 
           type="submit" 
           className="w-full bg-mint text-ink hover:bg-mint/90 font-semibold text-base py-6"
@@ -426,8 +426,8 @@ export const InitialConsultModal = ({
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="max-h-[90vh] px-4 flex flex-col">
-          <DrawerHeader className="text-left pb-4 shrink-0">
+        <DrawerContent className="px-4 flex flex-col">
+          <DrawerHeader className="text-left pb-3 shrink-0">
             <DrawerTitle className="text-xl font-bold">Book Your Initial Consult</DrawerTitle>
             <DrawerDescription className="text-sm">
               45 minutes to map your outcomes • Zero pressure • Real conversation
@@ -450,7 +450,7 @@ export const InitialConsultModal = ({
             45 minutes to map your outcomes • Zero pressure • Real conversation
           </DialogDescription>
         </DialogHeader>
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="flex-1 min-h-0">
           {formContent}
         </div>
       </DialogContent>
