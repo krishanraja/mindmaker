@@ -26,6 +26,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { createLogger, extractRequestContext } from '../_shared/logger.ts';
 import { fetchWithTimeout } from '../_shared/timeout.ts';
 import { extractDomain, validateEnvVars, ensureString } from '../_shared/validation.ts';
+import { researchCompany, getDefaultResearch, type CompanyResearch } from '../_shared/company-research.ts';
 
 // Validate required environment variables at startup
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
@@ -38,6 +39,72 @@ const envValidation = validateEnvVars({
 if (!envValidation.isValid) {
   console.error("CRITICAL: Missing required environment variables:", envValidation.missing);
   // Don't throw here - we'll handle it in the handler to return proper error response
+}
+
+// Configuration validation on startup
+async function validateConfiguration(): Promise<{ isValid: boolean; errors: string[] }> {
+  const errors: string[] = [];
+  
+  // Validate RESEND_API_KEY
+  if (!RESEND_API_KEY || RESEND_API_KEY.trim() === '') {
+    errors.push('RESEND_API_KEY is not configured');
+  } else if (!RESEND_API_KEY.startsWith('re_')) {
+    errors.push('RESEND_API_KEY format invalid (should start with "re_")');
+  }
+  
+  // Validate GOOGLE_AI_API_KEY format (if present)
+  if (googleAIApiKey) {
+    if (googleAIApiKey.trim() === '') {
+      errors.push('GOOGLE_AI_API_KEY is empty');
+    } else {
+      // Test API key by making a minimal request
+      try {
+        const testResponse = await fetchWithTimeout(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${googleAIApiKey.trim()}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: 'test' }] }],
+              generationConfig: { maxOutputTokens: 1 }
+            })
+          },
+          5000 // 5 second timeout for health check
+        );
+        
+        if (!testResponse.ok && testResponse.status === 401) {
+          errors.push('GOOGLE_AI_API_KEY is invalid or expired');
+        } else if (!testResponse.ok && testResponse.status === 403) {
+          errors.push('GOOGLE_AI_API_KEY lacks required permissions');
+        }
+      } catch (error) {
+        // Timeout or network error - don't fail validation, just log
+        console.warn('Could not validate GOOGLE_AI_API_KEY (network/timeout):', error);
+      }
+    }
+  } else {
+    console.warn('GOOGLE_AI_API_KEY not configured - company research will be disabled');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+// Run configuration validation on module load (non-blocking)
+let configValidation: Promise<{ isValid: boolean; errors: string[] }> | null = null;
+if (import.meta.main) {
+  configValidation = validateConfiguration();
+  configValidation.then(result => {
+    if (!result.isValid) {
+      console.error('Configuration validation failed:', result.errors);
+    } else {
+      console.log('✅ Configuration validation passed');
+    }
+  }).catch(err => {
+    console.error('Configuration validation error:', err);
+  });
 }
 
 // Initialize Supabase client for database operations
@@ -121,10 +188,47 @@ const leadRequestSchema = z.object({
   }),
 });
 
+// Health check endpoint for configuration validation
+const healthCheck = async (): Promise<Response> => {
+  const configResult = await validateConfiguration();
+  
+  return new Response(
+    JSON.stringify({
+      status: configResult.isValid ? 'healthy' : 'unhealthy',
+      timestamp: new Date().toISOString(),
+      configuration: {
+        resendApiKey: {
+          configured: !!RESEND_API_KEY,
+          valid: RESEND_API_KEY ? RESEND_API_KEY.startsWith('re_') : false,
+        },
+        googleAiApiKey: {
+          configured: !!googleAIApiKey,
+          validated: configResult.errors.length === 0,
+        },
+      },
+      errors: configResult.errors,
+    }),
+    {
+      status: configResult.isValid ? 200 : 503,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    }
+  );
+};
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Health check endpoint
+  const url = new URL(req.url);
+  if (url.pathname.endsWith('/health') || url.searchParams.get('health') === 'true') {
+    return await healthCheck();
+  }
+
+  // Structured logging for observability - declare at handler start
+  const requestId = crypto.randomUUID();
+  const requestStartTime = Date.now();
 
   try {
     // Validate and sanitize RESEND_API_KEY early - fail fast if missing
@@ -168,7 +272,17 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     const { name, email, jobTitle, selectedProgram, commitmentLevel, audienceType, pathType, sessionData } = parseResult.data;
-    console.log("Processing lead:", { name, email, jobTitle, commitmentLevel, audienceType, pathType });
+    
+    console.log("[LeadEmail] Request received:", {
+      requestId,
+      timestamp: new Date().toISOString(),
+      email: email.substring(0, 10) + '...', // Partial email for privacy
+      jobTitle,
+      selectedProgram,
+      commitmentLevel,
+      audienceType,
+      pathType,
+    });
 
     // Safely extract domain from email
     const domain = extractDomain(email);
@@ -191,171 +305,76 @@ const handler = async (req: Request): Promise<Response> => {
     ];
     const engagementScore = Math.round(engagementFactors.reduce((a, b) => a + b, 0));
     
-    // Research company using Gemini with Google Search grounding
-    // Ensure companyName is always a string (never undefined)
-    let companyResearch = {
-      companyName: ensureString(domain, "Unknown Company"),
-      industry: "Unknown",
-      companySize: "unknown",
-      latestNews: "Unable to verify company information",
-      suggestedScope: "Discovery call to understand specific needs",
-      confidence: "low"
-    };
-
+    // Research company using improved multi-source architecture
     // Personal email domains to skip
     const personalDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "icloud.com", "me.com", "protonmail.com", "aol.com"];
     const isPersonalEmail = personalDomains.some(pd => domain.toLowerCase().includes(pd));
 
-    // Log AI research status for debugging
-    if (!googleAIApiKey) {
-      console.warn("⚠️ GOOGLE_AI_API_KEY not configured - company research will be skipped");
-      console.warn("To enable AI company research, add GOOGLE_AI_API_KEY to Supabase Edge Function secrets");
-    } else if (isPersonalEmail) {
-      console.log("Personal email domain detected - skipping company research");
-    } else {
-      console.log("AI company research enabled for domain:", domain);
-    }
+    // Initialize company research with defaults
+    let companyResearch: CompanyResearch = getDefaultResearch(domain);
+    
+    // Metrics tracking
+    const researchMetrics = {
+      startTime: Date.now(),
+      source: 'default' as string,
+      cached: false,
+      error: null as string | null,
+    };
 
-    if (googleAIApiKey && domain && !isPersonalEmail) {
+    // Perform research if not personal email
+    if (!isPersonalEmail && domain) {
       try {
-        console.log("Starting Gemini company research for:", domain);
+        console.log(`[CompanyResearch] Starting research for domain: ${domain}`);
         
-        // More explicit prompt with better JSON formatting instructions
-        const researchPrompt = `You are a business intelligence analyst. Research the company with domain "${domain}".
-
-TASK: Find accurate, current information about this company. The person's job title is "${jobTitle}".
-
-REQUIRED OUTPUT - Return ONLY a valid JSON object with NO additional text:
-{
-  "companyName": "Full official company name (e.g., 'Tesla, Inc.' not 'tesla.com')",
-  "industry": "Primary industry sector (e.g., 'Electric Vehicles & Clean Energy')",
-  "companySize": "One of: startup, smb, mid-market, enterprise",
-  "latestNews": "One sentence about recent company news, product launch, or announcement",
-  "suggestedScope": "One sentence suggesting how AI/automation training could help this company",
-  "confidence": "high, medium, or low based on data quality"
-}
-
-RULES:
-- Use Google Search to find current, accurate information
-- For well-known companies (Tesla, Google, Microsoft, etc.), you MUST return accurate data
-- companySize: startup=1-50, smb=51-500, mid-market=501-5000, enterprise=5000+
-- If truly unknown, use "Unknown" but try hard to find real data first
-- Return ONLY the JSON object, no markdown, no explanation`;
-
-        // Use timeout wrapper for Gemini API (30 second timeout)
-        const response = await fetchWithTimeout(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${googleAIApiKey}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: researchPrompt
-                }]
-              }],
-              tools: [{
-                googleSearchRetrieval: {} // Enable Google Search grounding
-              }],
-              generationConfig: {
-                temperature: 0.3,
-                topK: 40,
-                topP: 0.95,
-                maxOutputTokens: 1024,
-              }
-            }),
-          },
-          30000 // 30 second timeout
-        );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Gemini API error:", errorText);
-          throw new Error(`Gemini API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Gemini research raw response:", JSON.stringify(data, null, 2));
-
-        // Extract text from Gemini response - check multiple possible paths
-        let responseText = "";
-        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-          responseText = data.candidates[0].content.parts[0].text;
-        } else if (data.candidates?.[0]?.content?.parts) {
-          // Sometimes text is in multiple parts
-          responseText = data.candidates[0].content.parts.map((p: any) => p.text || "").join("");
-        }
+        const supabaseClient = getSupabaseClient();
         
-        console.log("Gemini response text:", responseText);
+        // Use new research utility with caching and retry logic
+        companyResearch = await researchCompany({
+          domain,
+          jobTitle,
+          googleAIApiKey: googleAIApiKey || undefined,
+          useCache: true,
+          cacheClient: supabaseClient,
+        });
+
+        researchMetrics.source = companyResearch.source || 'unknown';
+        researchMetrics.cached = companyResearch.source === 'cached';
         
-        if (responseText) {
-          // Try to extract JSON from the response (handle code blocks or plain JSON)
-          let jsonText = responseText;
-          
-          // Remove markdown code blocks if present
-          jsonText = jsonText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-          
-          // Try to find JSON object - be more aggressive
-          const jsonMatch = jsonText.match(/\{[\s\S]*?\}/);
-          if (jsonMatch) {
-            try {
-              const parsed = JSON.parse(jsonMatch[0]);
-              console.log("Parsed JSON from Gemini:", parsed);
-              
-              companyResearch = {
-                companyName: ensureString(parsed.companyName, domain || "Unknown Company"),
-                industry: ensureString(parsed.industry, "Unknown"),
-                companySize: ensureString(parsed.companySize, "unknown"),
-                latestNews: ensureString(parsed.latestNews, "Unable to verify company information"),
-                suggestedScope: ensureString(parsed.suggestedScope, "Discovery call to understand specific needs"),
-                confidence: ensureString(parsed.confidence, "low")
-              };
-              console.log("✅ Successfully parsed company research:", companyResearch);
-            } catch (parseError) {
-              console.error("Failed to parse Gemini JSON response:", parseError);
-              console.error("Attempted to parse:", jsonMatch[0]);
-              
-              // Fallback: Try to extract key fields with regex
-              const nameMatch = responseText.match(/"companyName"\s*:\s*"([^"]+)"/i);
-              const industryMatch = responseText.match(/"industry"\s*:\s*"([^"]+)"/i);
-              const sizeMatch = responseText.match(/"companySize"\s*:\s*"([^"]+)"/i);
-              const newsMatch = responseText.match(/"latestNews"\s*:\s*"([^"]+)"/i);
-              
-              if (nameMatch) companyResearch.companyName = ensureString(nameMatch[1], domain || "Unknown Company");
-              if (industryMatch) companyResearch.industry = ensureString(industryMatch[1], "Unknown");
-              if (sizeMatch) companyResearch.companySize = ensureString(sizeMatch[1], "unknown");
-              if (newsMatch) companyResearch.latestNews = ensureString(newsMatch[1], "Unable to verify company information");
-              
-              console.log("Extracted via regex fallback:", companyResearch);
-            }
-          } else {
-            console.warn("No JSON object found in Gemini response, trying regex extraction");
-            // Try to extract any useful information
-            const nameMatch = responseText.match(/(?:company\s*(?:name)?|companyName)\s*[:\-]\s*["']?([A-Z][^"'\n,]+)/i);
-            if (nameMatch && nameMatch[1]) {
-              companyResearch.companyName = ensureString(nameMatch[1].trim(), domain || "Unknown Company");
-              console.log("Extracted company name via fallback:", companyResearch.companyName);
-            }
-          }
-        } else {
-          console.warn("Empty response from Gemini API - check API key and quota");
-        }
+        console.log(`[CompanyResearch] ✅ Research completed:`, {
+          domain,
+          companyName: companyResearch.companyName,
+          industry: companyResearch.industry,
+          companySize: companyResearch.companySize,
+          confidence: companyResearch.confidence,
+          source: researchMetrics.source,
+          cached: researchMetrics.cached,
+        });
       } catch (error) {
-        console.error("Error researching company with Gemini:", error);
-        console.error("Domain was:", domain);
+        researchMetrics.error = error instanceof Error ? error.message : String(error);
+        console.error(`[CompanyResearch] ❌ Research failed for domain ${domain}:`, error);
+        // Fall back to default research (already set above)
       }
     } else {
-      // Log why research was skipped
-      if (!googleAIApiKey) {
-        console.log("Company research skipped: GOOGLE_AI_API_KEY not set");
+      if (isPersonalEmail) {
+        console.log(`[CompanyResearch] Skipped: Personal email domain (${domain})`);
       } else if (!domain) {
-        console.log("Company research skipped: No domain extracted");
-      } else if (isPersonalEmail) {
-        console.log("Company research skipped: Personal email domain");
+        console.log(`[CompanyResearch] Skipped: No domain extracted`);
       }
     }
+
+    // Log research metrics
+    const researchDuration = Date.now() - researchMetrics.startTime;
+    console.log(`[CompanyResearch] Metrics:`, {
+      domain,
+      duration: `${researchDuration}ms`,
+      source: researchMetrics.source,
+      cached: researchMetrics.cached,
+      success: !researchMetrics.error,
+      error: researchMetrics.error,
+      industry: companyResearch.industry,
+      companySize: companyResearch.companySize,
+      confidence: companyResearch.confidence,
+    });
 
     // Build comprehensive email
     const programLabels: Record<string, string> = {
@@ -402,14 +421,16 @@ RULES:
     const timeMinutes = Math.floor(sessionData.timeOnSite / 60);
     const timeSeconds = sessionData.timeOnSite % 60;
 
-    // Final safety check: Ensure companyResearch.companyName is ALWAYS a string
-    // This prevents any "Cannot read properties of undefined (reading 'replace')" errors
+    // Final safety check: Ensure all companyResearch fields are ALWAYS strings
+    // This prevents any "Cannot read properties of undefined" errors
     companyResearch.companyName = ensureString(companyResearch.companyName, domain || "Unknown Company");
     companyResearch.industry = ensureString(companyResearch.industry, "Unknown");
     companyResearch.companySize = ensureString(companyResearch.companySize, "unknown");
     companyResearch.latestNews = ensureString(companyResearch.latestNews, "Unable to verify company information");
     companyResearch.suggestedScope = ensureString(companyResearch.suggestedScope, "Discovery call to understand specific needs");
-    companyResearch.confidence = ensureString(companyResearch.confidence, "low");
+    companyResearch.confidence = (companyResearch.confidence === 'high' || companyResearch.confidence === 'medium' || companyResearch.confidence === 'low') 
+      ? companyResearch.confidence 
+      : 'low';
 
     // Insert lead to database FIRST (before email send)
     // This ensures we capture the lead even if email fails
@@ -613,10 +634,14 @@ RULES:
     let emailSent = false;
     let lastError: Error | null = null;
     const maxRetries = 3;
+    const emailStartTime = Date.now();
     
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`Email send attempt ${attempt}/${maxRetries}`);
+        console.log(`[EmailSend] Attempt ${attempt}/${maxRetries}`, {
+          requestId,
+          timestamp: new Date().toISOString(),
+        });
         
         // Log request details for debugging
         const requestBody = {
@@ -658,20 +683,16 @@ RULES:
           const errorText = await emailResponse.text();
           
           // Enhanced error logging for debugging
-          console.error("Resend API error details:", {
+          console.error("[EmailSend] ❌ Resend API error:", {
+            requestId,
+            attempt,
             status: emailResponse.status,
             statusText: emailResponse.statusText,
             errorBody: errorText,
-            attempt: attempt,
-            requestHeaders: {
-              'Authorization': `Bearer ${sanitizedApiKey.substring(0, 5)}...`,
-              'Content-Type': 'application/json'
-            },
-            responseHeaders: Object.fromEntries(emailResponse.headers.entries())
+            timestamp: new Date().toISOString(),
           });
           
           lastError = new Error(`Resend API error (${emailResponse.status}): ${errorText}`);
-          console.error(`Email send attempt ${attempt} failed:`, lastError.message);
           
           // Exponential backoff: 1s, 2s, 4s
           if (attempt < maxRetries) {
@@ -685,7 +706,16 @@ RULES:
         }
 
         const emailData = await emailResponse.json();
-        console.log("Email sent successfully:", emailData);
+        const emailDuration = Date.now() - emailStartTime;
+        
+        console.log("[EmailSend] ✅ Email sent successfully:", {
+          requestId,
+          attempt,
+          duration: `${emailDuration}ms`,
+          emailId: emailData.id,
+          timestamp: new Date().toISOString(),
+        });
+        
         emailSent = true;
         
         // Update lead record with email status
@@ -709,7 +739,13 @@ RULES:
         
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        console.error(`Email attempt ${attempt} error:`, lastError);
+        console.error("[EmailSend] ❌ Network/request error:", {
+          requestId,
+          attempt,
+          error: lastError.message,
+          stack: lastError.stack,
+          timestamp: new Date().toISOString(),
+        });
         
         if (attempt < maxRetries) {
           const backoffMs = Math.pow(2, attempt - 1) * 1000;
@@ -720,9 +756,25 @@ RULES:
     }
     
     if (!emailSent) {
-      console.error("CRITICAL: Email failed after all retry attempts");
+      const totalEmailDuration = Date.now() - emailStartTime;
+      console.error("[EmailSend] ❌ CRITICAL: Email failed after all retry attempts:", {
+        requestId,
+        totalAttempts: maxRetries,
+        totalDuration: `${totalEmailDuration}ms`,
+        lastError: lastError?.message,
+        timestamp: new Date().toISOString(),
+      });
       throw new Error(`Email delivery failed after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`);
     }
+
+    const requestDuration = Date.now() - requestStartTime;
+    
+    console.log("[LeadEmail] Request completed successfully:", {
+      requestId,
+      duration: `${requestDuration}ms`,
+      leadId,
+      timestamp: new Date().toISOString(),
+    });
 
     return new Response(JSON.stringify({ 
       success: true, 
@@ -732,7 +784,16 @@ RULES:
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("Error in send-lead-email function:", error);
+    const requestDuration = Date.now() - requestStartTime;
+    
+    console.error("[LeadEmail] Request failed:", {
+      requestId,
+      duration: `${requestDuration}ms`,
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString(),
+    });
+    
     return new Response(
       JSON.stringify({ error: error.message }),
       {
