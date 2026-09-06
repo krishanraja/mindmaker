@@ -1,6 +1,6 @@
 # Mindmake deployment
 
-Last updated: 28 August 2026, after the site rebuild's backend landed.
+Last updated: 6 September 2026, after the site rebuild's backend landed.
 
 This file records how the live Mindmake site is deployed and how to change it
 safely. Current identifiers live in `06_CURRENT_STATE.md`, and the ordered
@@ -34,10 +34,10 @@ and promotes production. The production build uses:
   live. Gate E was approved by Krish and closed on 27 August 2026 with a
   synthetic end-to-end lead from `mindmake.co`.
 
-Identifiers: the launch merged commit was
-`e520952a182d29312fa2878dd3f963740c1dccb7` (pull request #141, production
-`dpl_7KNTh3AhLsRKCbxUbq6oGeQ7EiH6`). The current production deployment and
-rollback target are recorded in `06_CURRENT_STATE.md` and move with each merge.
+Identifiers: the launch merged commit was `7557254` (pull request #152,
+production `dpl_HAoncV1RF3hcvcanqo7Yvc4tuAng`). The current production
+deployment and rollback target are recorded in `06_CURRENT_STATE.md` and move
+with each merge.
 
 ## Backend
 
@@ -47,7 +47,7 @@ everything else in the project belongs to CTRL and is not ours to touch.
 | Function | verify_jwt | Called by |
 |---|---|---|
 | `submit-mindmake-brief` | off | The browser, for the company read |
-| `enrich-company` | on | `submit-mindmake-brief` |
+| `enrich-company` | on | Called in-process by `submit-mindmake-brief` via the shared `_shared/enrich/orchestrate.ts` module, not over HTTP; the deployed HTTP endpoint is a thin wrapper over the same module, called separately by browser tooling outside the public site |
 | `get-ai-news` | off | The browser, for the live board and the homepage proof card |
 | `mindmake-personal-read` | off | The browser, for the personal read |
 | `send-follow-ups` | off | pg_cron only |
@@ -71,7 +71,8 @@ never in a migration.
 
 - Migrations: `mindmake_brief_requests`, `mindmake_brief_retention`,
   `mindmake_follow_up_and_personal_read`, `aa_model_snapshots`,
-  `mindmake_scheduled_jobs`, `mindmake_public_rpc_wrappers`. All are
+  `mindmake_scheduled_jobs`, `mindmake_public_rpc_wrappers`,
+  `personal_read_name_and_division`, `personal_read_handoff`. All are
   idempotent and all are registered in the remote migration history.
 - Every table the site writes is RLS-on with **no policies**, so only the
   service role reaches it. Adding an anon policy to any of them is a

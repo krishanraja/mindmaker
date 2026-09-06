@@ -1,6 +1,6 @@
 # Proof bank
 
-Last updated: 27 August 2026.
+Last updated: 6 September 2026.
 
 Internal, anonymised records of real Mindmake engagements. **Every entry is a real engagement that happened**, reduced to sector and role only. The numbers are kept; the names are gone. Only verified engagements belong in this file: if you cannot point at the invoice, it does not go in, and a shorter bank is the correct outcome rather than a problem to solve by topping it back up. (In August 2026 the 26 illustrative entries that once padded this bank were deleted for exactly that reason.)
 
@@ -58,7 +58,7 @@ Each entry carries: `id`, `mode` (the shape of the work, never a SKU: `decide` s
 - **the-call:** Skip the strategy deck. Write a one-page operating agreement instead. Tie every approved tool to a P&L line. Put AI decisions on the executive agenda so they stop landing on her desk. Build a product-strategy incubator inside the business that arms staff equally with AI, to observe who resists, who embraces, and whose dormant skills come alive ahead of a future restructure.
 - **the-work:** A one-page AI operating agreement. Three approved tools, eleven killed. A monthly executive AI cadence installed. The first cross-functional AI project shipped on time and defensible to finance.
 - **outcome:** Budget defended at the next review. First production AI workflow live in 90 days. The role pivoted from fractional fire-fighter to ongoing advisory.
-- **pull-quote:** "He took the problems that matched our business goals and our leadership needs and brought them together into a very thoughtful programme."
+- **pull-quote:** "It's been a good journey to bring him problems that match our business goals and leadership needs, and watch them come together in a very thoughtful programme."
 - **attribution:** President, broadcast business
 
 ### R-04

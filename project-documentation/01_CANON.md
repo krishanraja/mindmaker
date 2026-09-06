@@ -1,6 +1,6 @@
 # 01. Canon
 
-*Current as of 5 September 2026.*
+*Current as of 6 September 2026.*
 
 The commercial truth. Where anything else in this repository disagrees with this
 file or with `00_NORTH_STAR.md`, those two win and the other thing is wrong.
@@ -50,8 +50,8 @@ the reasoning. What they change in this file:
 The site uses two doors because they meet non-technical buyers in language they
 already have. These promises are locked:
 
-- **Build your AI brain.** Encode your taste and judgement, amplify your
-  strengths, uncover your blind spots.
+- **Build your AI brain.** A system that holds your taste and judgement, and
+  puts them to work.
 - **Build your AI GTM.** Create an AI-native GTM model across product, price,
   positioning or people.
 

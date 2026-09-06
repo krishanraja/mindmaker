@@ -14,9 +14,9 @@ tables are RLS-on with no policies, which means service role only.
 |---|---|---|---|
 | `get-ai-news` | v69 | false | The browser, for the board and the homepage card |
 | `mindmake-personal-read` | v20 | false | The browser, from `/ai-brain`, and every dead end on the site |
-| `send-follow-ups` | v2 | false | pg_cron, daily at 09:20 UTC |
+| `send-follow-ups` | v5 | false | pg_cron, daily at 09:20 UTC |
 | `aa-price-snapshot` | v1 | false | pg_cron, daily at 11:00 UTC |
-| `submit-mindmake-brief` | v14 | false | Still `main`'s body. The repository's day-14 enqueue is held back on purpose |
+| `submit-mindmake-brief` | v16 | false | The company read, plus the day-14 follow-up enqueue and the 5 September edge-rewrite copy |
 
 `get-ai-news` gained a board view and kept its previous response byte for byte.
 The two scheduled functions are public at the edge and guarded in code on the

@@ -1,6 +1,6 @@
 # 00. North star
 
-*Current as of 5 September 2026.*
+*Current as of 6 September 2026.*
 
 **If you read one file, read this one.** It is written for a person or a model
 arriving with no context, and it should leave you able to make a decision on

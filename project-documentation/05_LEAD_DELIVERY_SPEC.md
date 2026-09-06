@@ -1,6 +1,6 @@
 # Mindmake private brief delivery
 
-*Current as of 28 August 2026.*
+*Current as of 6 September 2026.*
 
 Status: **live**. The backend launched 26 August 2026 and Krish approved Gate E on 27 August 2026, so the public flag is on and the full journey runs in production: the migration and retention purge are applied, the functions are deployed at the versions recorded in `06_CURRENT_STATE.md`, which is the only place versions are written down, the sender `Mindmake <briefs@mindmake.co>` is verified with SPF, DKIM and DMARC passing, and the complete verification, delivery and tailored-choice matrix passed against the live backend with synthetic inboxes.
 
@@ -179,6 +179,8 @@ The operator email must never tell Krish to chase the visitor or import the addr
 ## Retention truth
 
 The code works for ten minutes and five failed tries lock it. Expiry stops the code but does not delete the request record. The approved retention schedule runs as a private daily purge (Gate B1, 26 August 2026): unverified requests delete 7 days after creation, rate-limit event hashes after 48 hours, and verified request, consent and delivery records 12 months after their last update. Earlier deletion happens through the published contact address and a manually verified private process. The public privacy notice states the same schedule.
+
+The two-email cap and the personal read carry retention rules added on 28 and 29 August 2026, run by `mindmake_purge_follow_ups()` at the end of each day's `send-follow-ups` run rather than the brief purge above: a sent follow-up row deletes 7 days after it sends, an unsent one 60 days after it was created, personal-read rate-limit hashes after 48 hours, and a personal read record 12 months after creation.
 
 ## Release gate (closed 27 August 2026)
 

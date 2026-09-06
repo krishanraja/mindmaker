@@ -1,6 +1,6 @@
 # Mindmake brand and testimonial proof
 
-Last updated: 27 August 2026. Proof permissions approved 2026-08-11; career-reference set extended by Krish 2026-08-27.
+Last updated: 6 September 2026. Proof permissions approved 2026-08-11; career-reference set extended by Krish 2026-08-27.
 
 This file is the single project source for attendee brands, client outcomes, Steph Darmanin's consent-gated excerpts, and named career references. Other project documents must point here rather than copy these lists. The rendered data lives in `src/data/rebuildProof.ts` and must match this file.
 
@@ -35,15 +35,15 @@ quote somebody gave under their own name is a different quote.
 
 ## Public framing
 
-Use this headline:
+Use this headline, over the proof section:
 
-> Mindmake has helped leaders across media, software and advisory with what's next in AI.
+> Real work, and what changed because of it.
 
-The earlier "over 4000 leaders" count is retired from public copy under the claim control in `01_CANON.md`: a count returns only when the section 6 evidence trail is compiled and Krish approves it.
+This replaced an earlier reach-shaped headline that was never wired into the site and predates the 5 September 2026 edge rewrite's count-free framing. The still-earlier "over 4000 leaders" count stays retired from public copy under the claim control in `01_CANON.md`: a count returns only when the section 6 evidence trail is compiled and Krish approves it.
 
 Use this line immediately above the brand grid:
 
-> Attended by people from organisations including
+> People from these organisations have joined our sessions
 
 The organisations below are attendance proof. They are not Mindmake advisory clients and must never be described as clients.
 
@@ -67,6 +67,8 @@ The organisations below are attendance proof. They are not Mindmake advisory cli
 16. Condé Nast
 
 All 16 organisations remain approved attendance proof. They are not all required on the homepage.
+
+Only three of the sixteen have logo art and a code entry today: BBC, Hearst and Condé Nast, in `rebuildProof.ts`'s `attendeeBrands` array. The other thirteen are approved names only, with no artwork or rendered instance yet; adding one anywhere live means adding both the asset and the array entry, not just this list.
 
 ## Current homepage logo selection
 
@@ -178,9 +180,11 @@ Place the excerpts where they support the surrounding message. Never group all o
 >
 > Steph Darmanin, Performance Coach
 
-## Approved named career references, exactly 9
+## Approved named career references, condensed here for 9 of the 10 the code now holds
 
 These are career references. They are not Mindmake client outcomes. Use them only after client proof or on the operator/about surface. The source is the professional recommendation set Krish supplied; the three references added on 27 August 2026 (Rob Hudson, Michael Ricciardone, Marie-Anne Leung Kam) were selected by Krish for their communication and human-approach themes and condensed faithfully from that set.
+
+**Gap found 6 September 2026:** `src/data/testimonials.ts` also carries a tenth reference, Joseph Kinchin (Business Development Director, ROAS media), which renders live on the case-studies archive with no condensed one-liner recorded here. It needs Krish's condensation, the same way the other nine were condensed, before this file is complete. His full quote on file: "Krish has proven himself a leading thinker in the ever evolving Programmatic and Data industry. His deep understand of both data and tech allows him concisely articulating the problems and solutions that are relevant for the present and in the future. In both roles where Krish has serviced us he has driven positive advertising outcomes through tangible advancements."
 
 ### Lizzie Young
 
@@ -240,8 +244,8 @@ Regional Managing Director, Channel Factory
 
 1. The approved reach headline (no count).
 2. The attendance qualifier and the current three-logo media strip: BBC, Hearst and Condé Nast. The full 16-brand set remains approved for other attendance-proof uses.
-3. Three result previews from the outcome stories, with the full archive on the case-studies route.
-4. The nine-voice career testimonial deck, one section, swipe-first on touch widths.
+3. All eight outcome stories, as a card deck the visitor flicks through, with the same eight repeated in full on the case-studies route.
+4. The client-and-outcome voices deck, one section, swipe-first on touch widths. Career references and session-attendee quotes stay off the homepage from 5 September 2026; the full thirty-three-voice archive stays on the case-studies route.
 5. Steph's excerpts appear only where consent is confirmed and never grouped together.
 
 ## Guardrails
